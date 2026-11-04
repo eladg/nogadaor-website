@@ -1,13 +1,50 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
 ---
 
 <BaseLayout title="שירותים">
+  <PageHeader title="שירותים">
+    <!-- TODO: משפט פתיחה קצר לעמוד – נוגה תספק -->
+    <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
+  </PageHeader>
+
   <section class="section">
     <div class="container">
-      <h1>שירותים</h1>
-      <!-- TODO: רשימת השירותים בפועל (❓ בסעיף 2 ב-REQUIREMENTS.md) – נוגה תספק. -->
-      <p class="placeholder">תוכן חסר: רשימת השירותים המוצעים ללקוחות.</p>
+      <!-- TODO: רשימת השירותים בפועל (❓ בסעיף 2 ב-REQUIREMENTS.md). כרגע שלושה כרטיסים לדוגמה; המספר לא סופי ואפשר להוסיף או להסיר. -->
+      <ul class="cards">
+        <li class="card">
+          <h2>[שם שירות]</h2>
+          <p class="placeholder">תוכן חסר: מה השירות כולל, ולמי הוא מתאים.</p>
+        </li>
+        <li class="card">
+          <h2>[שם שירות]</h2>
+          <p class="placeholder">תוכן חסר: מה השירות כולל, ולמי הוא מתאים.</p>
+        </li>
+        <li class="card">
+          <h2>[שם שירות]</h2>
+          <p class="placeholder">תוכן חסר: מה השירות כולל, ולמי הוא מתאים.</p>
+        </li>
+      </ul>
     </div>
   </section>
+
+  <section class="section section--mist">
+    <div class="container">
+      <h2>איך מתחילים</h2>
+      <!-- TODO: תיאור התהליך מרגע יצירת הקשר – נוגה תספק. אין להמציא שלבים, מחירים או משך זמן. -->
+      <p class="placeholder">תוכן חסר: איך נראה התהליך מהשיחה הראשונה ואילך.</p>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>
+
+<style>
+  /* בעמוד זה כותרת כל שירות היא h2 (העמוד כבר מכיל h1), באותו מראה של כותרת כרטיס */
+  .card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+</style>

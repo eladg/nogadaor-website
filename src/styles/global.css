@@ -134,6 +134,42 @@ a {
   color: var(--gold-light);
 }
 
+/* תיבת תמונה חסרה – ריבוע/מלבן מקווקו שמחזיק את מקום התמונה */
+.placeholder-img {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  border: 2px dashed var(--teal);
+  background: var(--mist);
+  border-radius: var(--radius);
+  color: var(--teal-dark);
+  text-align: center;
+  padding: 1rem;
+}
+
+/* רשת כרטיסים רספונסיבית: עמודה אחת בנייד, יותר במסך רחב */
+.cards {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.card h3 {
+  margin-bottom: 0.5rem;
+}
+.card p:last-child {
+  margin-bottom: 0;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

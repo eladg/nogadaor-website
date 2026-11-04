@@ -1,0 +1,27 @@
+---
+// פתיח אחיד לראש עמוד פנימי: כותרת ראשית ושורת הסבר אופציונלית.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<section class="page-header section section--mist">
+  <div class="container">
+    <h1>{title}</h1>
+    <div class="page-header__lead"><slot /></div>
+  </div>
+</section>
+
+<style>
+  .page-header {
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+  .page-header__lead :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

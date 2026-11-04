@@ -1,26 +1,82 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
 ---
 
 <BaseLayout title="בית">
-  <section class="section">
-    <div class="container">
-      <!-- TODO: ניסוח המסר המרכזי של האתר (❓ בסעיף 2 ב-REQUIREMENTS.md). נוגה תספק. -->
-      <h1>[כאן יופיע המסר המרכזי של האתר]</h1>
-      <p class="placeholder">
-        תוכן חסר: משפט הפתיחה / הצעת הערך. עדיין לא נקבע.
-      </p>
-      <!-- TODO: לחבר את הכפתור לעמוד צור קשר / קביעת שיחה כשיוחלט על אמצעי הקשר -->
-      <p><a class="btn" href="/contact/">קביעת שיחת היכרות</a></p>
+  <!-- אזור פתיחה: המסר המרכזי וכפתור פעולה -->
+  <section class="hero section">
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <!-- TODO: ניסוח המסר המרכזי של האתר (❓ בסעיף 2 ב-REQUIREMENTS.md). נוגה תספק. -->
+        <h1>[כאן יופיע המסר המרכזי של האתר]</h1>
+        <p class="placeholder">תוכן חסר: משפט פתיחה / הצעת ערך. עדיין לא נקבע.</p>
+        <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר (שלב 5) -->
+        <p><a class="btn" href="/contact/">קביעת שיחת היכרות</a></p>
+      </div>
+      <!-- TODO: תמונה ראשית (למשל תמונה של נוגה) – נוגה תבחר מהחומרים -->
+      <div class="placeholder-img hero__img" role="img" aria-label="מקום שמור לתמונה ראשית">
+        תמונה חסרה:<br />תמונה ראשית
+      </div>
     </div>
   </section>
 
-  <section class="section section--dark">
+  <!-- תמצית השירותים, עם קישור לעמוד המלא -->
+  <section class="section section--mist">
     <div class="container">
-      <h2>[כותרת לקריאה לפעולה]</h2>
-      <!-- TODO: טקסט לאזור הקריאה לפעולה – נוגה תספק -->
-      <p class="placeholder">תוכן חסר: טקסט קצר שמזמין ליצור קשר.</p>
-      <p><a class="btn" href="/contact/">צור קשר</a></p>
+      <h2>במה אני עוזרת</h2>
+      <!-- TODO: להחליף בתמצית של השירותים בפועל, אחרי שנוגה תספק את הרשימה (עמוד שירותים) -->
+      <ul class="cards">
+        <li class="card">
+          <h3>[שירות ראשון]</h3>
+          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
+        </li>
+        <li class="card">
+          <h3>[שירות שני]</h3>
+          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
+        </li>
+        <li class="card">
+          <h3>[שירות שלישי]</h3>
+          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
+        </li>
+      </ul>
+      <p class="more"><a href="/services/">לכל השירותים</a></p>
     </div>
   </section>
+
+  <!-- הגישה: הקשבה, עיבוד ובניית פתרון בזמן אמת (לפי סעיף 1 ב-REQUIREMENTS.md) -->
+  <section class="section">
+    <div class="container">
+      <h2>הגישה</h2>
+      <!-- TODO: ניסוח הגישה בקולה של נוגה. לפי המפרט: הקשבה, עיבוד ובניית פתרון בזמן אמת מתוך מה שהלקוח משתף. -->
+      <p class="placeholder">תוכן חסר: תיאור הגישה בניסוח של נוגה.</p>
+      <p class="more"><a href="/about/">עוד עליי</a></p>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>
+
+<style>
+  .hero__inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .hero__img {
+    aspect-ratio: 4 / 3;
+  }
+  .more {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-weight: 700;
+  }
+  @media (min-width: 48rem) {
+    .hero__inner {
+      grid-template-columns: 1.2fr 1fr;
+    }
+    .hero__img {
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

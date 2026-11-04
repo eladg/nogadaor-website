@@ -1,0 +1,28 @@
+---
+// אזור קריאה לפעולה כהה, שמופיע בתחתית העמודים.
+interface Props {
+  buttonLabel?: string;
+}
+const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
+---
+
+<section class="section section--dark cta-band">
+  <div class="container">
+    <!-- TODO: כותרת וטקסט לקריאה לפעולה – נוגה תספק ניסוח. אין להמציא הבטחות שיווקיות. -->
+    <h2>[כותרת לקריאה לפעולה]</h2>
+    <p class="placeholder">תוכן חסר: משפט או שניים שמזמינים ליצור קשר.</p>
+    <!-- TODO: לחבר לאמצעי הקשר / יומן שנוגה תבחר (שלב 5) -->
+    <p><a class="btn" href="/contact/">{buttonLabel}</a></p>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    text-align: center;
+  }
+  .cta-band .placeholder {
+    max-width: 36rem;
+    margin-inline: auto;
+    margin-bottom: 1.5rem;
+  }
+</style>

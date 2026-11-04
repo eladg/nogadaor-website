@@ -1,15 +1,60 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
 ---
 
 <BaseLayout title="אודות">
+  <PageHeader title="אודות">
+    <!-- TODO: משפט פתיחה קצר לעמוד – נוגה תספק -->
+    <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
+  </PageHeader>
+
+  <!-- הסיפור האישי ותמונה -->
   <section class="section">
-    <div class="container">
-      <h1>אודות</h1>
-      <!-- TODO: הסיפור האישי, הגישה, ולמי זה מתאים – נוגה תספק טקסט. אין להמציא פרטים על הניסיון שלה. -->
-      <p class="placeholder">תוכן חסר: הסיפור האישי, הגישה, ולמי זה מתאים.</p>
-      <!-- TODO: תמונה של נוגה – להוסיף אחרי שנוגה תבחר תמונה מתאימה לאתר -->
-      <p class="placeholder">תמונה חסרה: תמונה של נוגה.</p>
+    <div class="container about__grid">
+      <div>
+        <h2>הסיפור שלי</h2>
+        <!-- TODO: הסיפור האישי – נוגה תספק טקסט. אין להמציא פרטים על הניסיון, ההשכלה או הלקוחות. -->
+        <p class="placeholder">תוכן חסר: הסיפור האישי והדרך המקצועית.</p>
+      </div>
+      <!-- TODO: תמונה של נוגה – נוגה תבחר תמונה מתאימה ותאשר שימוש באתר -->
+      <div class="placeholder-img" role="img" aria-label="מקום שמור לתמונה של נוגה">
+        תמונה חסרה:<br />תמונה של נוגה
+      </div>
     </div>
   </section>
+
+  <!-- הגישה -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2>הגישה</h2>
+      <!-- TODO: ניסוח הגישה בקולה של נוגה. לפי המפרט: הקשבה, עיבוד ובניית פתרון בזמן אמת מתוך מה שהלקוח משתף, ולא מתודולוגיה קבועה. -->
+      <p class="placeholder">תוכן חסר: תיאור הגישה והדרך שבה מתנהלת העבודה המשותפת.</p>
+    </div>
+  </section>
+
+  <!-- למי זה מתאים -->
+  <section class="section">
+    <div class="container">
+      <h2>למי זה מתאים</h2>
+      <!-- TODO: הגדרת קהל היעד – נוגה תספק -->
+      <p class="placeholder">תוכן חסר: למי העבודה איתי מתאימה.</p>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 48rem) {
+    .about__grid {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+</style>
