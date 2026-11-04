@@ -12,7 +12,7 @@ export const contact = {
 export const socials = [
   { name: 'פייסבוק', href: 'https://www.facebook.com/nogadaor1' },
   { name: 'אינסטגרם', href: 'https://www.instagram.com/noga_dayan_or' },
-  // TODO: טיקטוק – נוגה צריכה לתת את הכתובת של הפרופיל. עד אז הקישור לא מוצג.
+  { name: 'טיקטוק', href: 'https://www.tiktok.com/@nogadayanor' },
   {
     name: 'יוטיוב',
     href: 'https://www.youtube.com/@%D7%A0%D7%95%D7%92%D7%94%D7%93%D7%99%D7%99%D7%9F%D7%90%D7%95%D7%A8',
