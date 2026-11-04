@@ -1,0 +1,40 @@
+---
+// תבנית בסיס לכל העמודים: כיוון עברית RTL, כותרת, ניווט ופוטר.
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך' } = Astro.props;
+// TODO: להשלים כתובת קנונית ותמונת שיתוף (Open Graph) כשיהיה דומיין ותמונה – שלב 6 (SEO)
+const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
+---
+
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">דילוג לתוכן הראשי</a>
+    <Header currentPath={Astro.url.pathname} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

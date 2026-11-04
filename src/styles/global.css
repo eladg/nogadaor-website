@@ -1,0 +1,163 @@
+/*
+  סגנון גלובלי לאתר.
+  הצבעים נלקחו מהלוגו (דגימה מקובץ "לוגו נוגה סופי.jpg").
+  כדי לשנות צבע או גופן בכל האתר – משנים כאן בלבד, בתוך :root.
+*/
+
+@import '@fontsource-variable/heebo';
+
+:root {
+  /* צבעי מותג */
+  --teal: #1d9da0; /* טורקיז מהלוגו – להדגשות ולרכיבים גדולים */
+  --teal-dark: #0f7478; /* טורקיז כהה – לטקסט וקישורים (ניגודיות טובה על לבן) */
+  --gold-light: #fcdc6d; /* זהב מהלוגו – תחילת המעבר */
+  --gold-dark: #d19a4a; /* זהב מהלוגו – סוף המעבר */
+  --gold-gradient: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  --navy: #0b1a33; /* כחול כהה – טקסט ואזורים כהים */
+  --white: #ffffff;
+  --mist: #f4f9f9; /* רקע בהיר מאוד בגוון טורקיז */
+  --line: #d8e6e7;
+
+  /* גופן – TODO: לאשר גופן סופי מול נוגה (כרגע Heebo, חינמי ונקי) */
+  --font: 'Heebo Variable', system-ui, sans-serif;
+
+  --max-width: 72rem;
+  --radius: 0.75rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--navy);
+  background: var(--white);
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0 0 0.75em;
+  color: var(--navy);
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+}
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+}
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--teal-dark);
+}
+
+/* חיווי פוקוס ברור לניווט במקלדת */
+:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.container {
+  width: min(100% - 2rem, var(--max-width));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: clamp(2.5rem, 7vw, 5rem);
+}
+
+.section--mist {
+  background: var(--mist);
+}
+
+.section--dark {
+  background: var(--navy);
+  color: var(--white);
+}
+.section--dark h1,
+.section--dark h2,
+.section--dark h3 {
+  color: var(--white);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8em 1.8em;
+  border-radius: 999px;
+  background: var(--gold-gradient);
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+/* תיבת תוכן חסר – מסמנת בבירור מקום שנוגה צריכה להשלים */
+.placeholder {
+  border: 2px dashed var(--teal);
+  background: var(--mist);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  color: var(--teal-dark);
+}
+.section--dark .placeholder {
+  background: transparent;
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  inset-block-start: -4rem;
+  inset-inline-start: 1rem;
+  background: var(--navy);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+}
+.skip-link:focus {
+  inset-block-start: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

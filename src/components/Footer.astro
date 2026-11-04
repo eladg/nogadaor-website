@@ -1,0 +1,39 @@
+---
+// פוטר האתר.
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="site-footer__name">נוגה דיין אור</p>
+    <p class="site-footer__tagline">הצלחה עסקית בדרך שלך</p>
+    <!-- TODO: להוסיף פרטי קשר וקישורי רשתות חברתיות אחרי שנוגה תחליט אילו אמצעי קשר להציג (שלב 5) -->
+    <p class="site-footer__copy">© {year} נוגה דיין אור. כל הזכויות שמורות.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--navy);
+    color: var(--white);
+    padding-block: 2.5rem;
+    text-align: center;
+  }
+  .site-footer p {
+    margin: 0 0 0.25rem;
+  }
+  .site-footer__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+  .site-footer__copy {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+</style>
