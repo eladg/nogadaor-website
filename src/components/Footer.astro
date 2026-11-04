@@ -1,5 +1,6 @@
 ---
 // פוטר האתר.
+import { contact, socials } from '../data/contact';
 const year = new Date().getFullYear();
 ---
 
@@ -7,7 +8,14 @@ const year = new Date().getFullYear();
   <div class="container">
     <p class="site-footer__name">נוגה דיין אור</p>
     <p class="site-footer__tagline">הצלחה עסקית בדרך שלך</p>
-    <!-- TODO: להוסיף פרטי קשר וקישורי רשתות חברתיות אחרי שנוגה תחליט אילו אמצעי קשר להציג (שלב 5) -->
+    <ul class="site-footer__links">
+      <li><a href={contact.whatsapp} target="_blank" rel="noopener">וואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
+      <li><a href={contact.phoneHref}>טלפון</a></li>
+      <li><a href={`mailto:${contact.email}`}>אימייל</a></li>
+      {socials.map((s) => (
+        <li><a href={s.href} target="_blank" rel="noopener">{s.name}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
+      ))}
+    </ul>
     <p class="site-footer__copy">© {year} נוגה דיין אור. כל הזכויות שמורות.</p>
   </div>
 </footer>
@@ -30,6 +38,22 @@ const year = new Date().getFullYear();
     background-clip: text;
     color: transparent;
     display: inline-block;
+  }
+  .site-footer__links {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+  }
+  .site-footer__links a {
+    color: var(--white);
+    text-decoration: underline;
+  }
+  .site-footer__links a:hover {
+    color: var(--gold-light);
   }
   .site-footer__copy {
     margin-top: 1rem;

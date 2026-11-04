@@ -1,13 +1,95 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { contact, socials } from '../data/contact';
 ---
 
-<BaseLayout title="צור קשר">
+<BaseLayout title="צור קשר" description="דברו איתי בוואטסאפ, בטלפון או באימייל.">
   <section class="section">
-    <div class="container">
+    <div class="container contact">
       <h1>צור קשר</h1>
-      <!-- TODO: טופס ופרטי קשר ייבנו בשלב 5, אחרי שנוגה תחליט אילו אמצעי קשר להציג ואיזה שירות טפסים להשתמש בו. -->
-      <p class="placeholder">תוכן חסר: טופס ופרטי קשר. ייבנו בשלב 5.</p>
+      <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
+      <p class="contact__lead">
+        מרגישים שיש בעסק פוטנציאל שלא מתממש עד הסוף? ביחד הרבה יותר קל לדייק, להחליט ולהניע מהלכים.
+      </p>
+
+      <p>
+        <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">
+          לשיחת וואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </p>
+
+      <p class="contact__hint">מתלבטים? משהו לא ברור? דברו איתי באהבה!</p>
+
+      <ul class="contact__list">
+        <li>
+          <span class="contact__label">טלפון</span>
+          <a href={contact.phoneHref} dir="ltr">{contact.phoneDisplay}</a>
+        </li>
+        <li>
+          <span class="contact__label">אימייל</span>
+          <a href={`mailto:${contact.email}`} dir="ltr">{contact.email}</a>
+        </li>
+      </ul>
+
+      <!-- TODO: טופס יצירת קשר – נדחה בהחלטת נוגה. דורש שירות טפסים חיצוני (Formspree / Netlify Forms וכד'), תלוי באירוח. -->
+
+      <h2>אפשר למצוא אותי גם כאן</h2>
+      <ul class="contact__socials">
+        {
+          socials.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noopener">
+                {s.name}
+                <span class="sr-only"> (נפתח בלשונית חדשה)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .contact {
+    max-width: 40rem;
+  }
+  .contact__lead {
+    font-size: 1.2rem;
+  }
+  .contact__hint {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .contact__list,
+  .contact__socials {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+  .contact__list li {
+    display: flex;
+    gap: 0.75rem;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact__label {
+    min-width: 4.5rem;
+    font-weight: 700;
+  }
+  .contact__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .contact__socials a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--teal);
+    border-radius: 999px;
+    font-weight: 700;
+  }
+  .contact__socials a:hover {
+    background: var(--mist);
+  }
+</style>
