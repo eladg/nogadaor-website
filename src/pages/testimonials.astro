@@ -3,7 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import ReviewsCarousel from '../components/ReviewsCarousel.astro';
 import { featuredVideo, videos } from '../data/testimonials';
+import { allReviews } from '../data/reviews';
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
@@ -38,14 +40,22 @@ import { featuredVideo, videos } from '../data/testimonials';
     </div>
   </section>
 
-  <!-- המלצות כתובות וסיפורי מקרה -->
+  <!-- המלצות כתובות: קרוסלה, מתעדכנת ידנית ב-src/data/reviews.ts -->
   <section class="section">
     <div class="container">
-      <h2>המלצות כתובות וסיפורי מקרה</h2>
-      <!-- TODO: נוגה תבחר המלצות כתובות מגוגל עסקי, מפייסבוק ומהאתר BIZMAKEBIZ, ותספק סיפורי מקרה.
-           אין להמציא או לשנות ציטוטים. לכל המלצה: הטקסט כלשונו, שם ומקור. לפני פרסום שם של לקוח לוודא שאישר. -->
-      <p class="placeholder">תוכן חסר: המלצות כתובות וסיפורי מקרה. יתווספו אחרי שנוגה תבחר אותם.</p>
+      <h2>מה אומרים עליי</h2>
+      <!-- TODO: להוסיף המלצות מפייסבוק כשנוגה תבחר. אין לשנות ציטוטים. -->
+      <ReviewsCarousel reviews={allReviews} label="המלצות לקוחות בכתב" />
       <!-- TODO: כפתורי "כתבו המלצה" בגוגל ובפייסבוק, כשיהיה קישור לכרטיס העסק בגוגל -->
+    </div>
+  </section>
+
+  <!-- סיפורי מקרה -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2>סיפורי מקרה</h2>
+      <!-- TODO: נוגה תספק סיפורי מקרה. אין להמציא. לפני פרסום שם של לקוח לוודא שאישר. -->
+      <p class="placeholder">תוכן חסר: סיפורי מקרה. יתווספו אחרי שנוגה תספק אותם.</p>
     </div>
   </section>
 

@@ -1,0 +1,220 @@
+---
+// קרוסלה של המלצות כתובות: שורה אחת שזזה לצדדים.
+// נגישה: כפתורי הקודם והבא, כפתור השהיה, גלילה במקלדת, והתנועה האוטומטית
+// נעצרת כשעוברים עם העכבר, כשיש פוקוס, או כשהמשתמש ביקש פחות תנועה.
+import type { Review } from '../data/reviews';
+
+interface Props {
+  reviews: Review[];
+  label?: string;
+}
+const { reviews, label = 'המלצות לקוחות' } = Astro.props;
+---
+
+<section class="reviews" aria-roledescription="קרוסלה" aria-label={label}>
+  <ul class="reviews__track" tabindex="0" aria-label={`${label}, אפשר לגלול הצידה`}>
+    {
+      reviews.map((r) => (
+        <li class="review">
+          <figure>
+            <p class="review__stars" role="img" aria-label={`דירוג ${r.stars} מתוך 5`}>
+              {'★'.repeat(r.stars)}
+            </p>
+            <blockquote class="review__text">{r.text}</blockquote>
+            <button type="button" class="review__more" hidden aria-expanded="false">
+              קרא עוד
+            </button>
+            <figcaption class="review__name">
+              {r.name}
+              <span class="review__source">מקור: {r.source}</span>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="reviews__controls">
+    <button type="button" class="reviews__btn" data-dir="prev" aria-label="ההמלצה הקודמת">
+      <span aria-hidden="true">→</span>
+    </button>
+    <button type="button" class="reviews__btn reviews__pause" aria-pressed="false">
+      <span class="reviews__pause-label">השהיית ההחלפה האוטומטית</span>
+    </button>
+    <button type="button" class="reviews__btn" data-dir="next" aria-label="ההמלצה הבאה">
+      <span aria-hidden="true">←</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.reviews').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.reviews__track')!;
+    const pauseBtn = root.querySelector<HTMLButtonElement>('.reviews__pause')!;
+    const pauseLabel = root.querySelector<HTMLElement>('.reviews__pause-label')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rtl = getComputedStyle(track).direction === 'rtl';
+
+    const step = () => {
+      const first = track.querySelector<HTMLElement>('.review');
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return (first?.getBoundingClientRect().width ?? track.clientWidth) + gap;
+    };
+    const atEnd = () =>
+      Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 4;
+    const atStart = () => Math.abs(track.scrollLeft) <= 4;
+    const go = (dir: 1 | -1) => {
+      // dir 1 = קדימה בכיוון הקריאה. ב-RTL זה גלילה שמאלה (ערך שלילי).
+      if (dir === 1 && atEnd()) {
+        track.scrollTo({ left: 0, behavior: reduce ? 'auto' : 'smooth' });
+        return;
+      }
+      if (dir === -1 && atStart()) {
+        track.scrollTo({
+          left: rtl ? -track.scrollWidth : track.scrollWidth,
+          behavior: reduce ? 'auto' : 'smooth',
+        });
+        return;
+      }
+      track.scrollBy({
+        left: (rtl ? -1 : 1) * dir * step(),
+        behavior: reduce ? 'auto' : 'smooth',
+      });
+    };
+
+    root.querySelector('[data-dir="next"]')!.addEventListener('click', () => go(1));
+    root.querySelector('[data-dir="prev"]')!.addEventListener('click', () => go(-1));
+
+    // "קרא עוד" רק להמלצות ארוכות
+    track.querySelectorAll<HTMLElement>('.review').forEach((card) => {
+      const text = card.querySelector<HTMLElement>('.review__text')!;
+      const more = card.querySelector<HTMLButtonElement>('.review__more')!;
+      if (text.scrollHeight > text.clientHeight + 2) {
+        more.hidden = false;
+        more.addEventListener('click', () => {
+          const open = card.classList.toggle('is-open');
+          more.textContent = open ? 'הצג פחות' : 'קרא עוד';
+          more.setAttribute('aria-expanded', String(open));
+        });
+      }
+    });
+
+    // החלפה אוטומטית, עם אפשרות השהיה
+    let paused = reduce;
+    let hover = false;
+    let focus = false;
+    const syncButton = () => {
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      pauseLabel.textContent = paused ? 'הפעלת ההחלפה האוטומטית' : 'השהיית ההחלפה האוטומטית';
+    };
+    syncButton();
+    pauseBtn.addEventListener('click', () => {
+      paused = !paused;
+      syncButton();
+    });
+    root.addEventListener('mouseenter', () => (hover = true));
+    root.addEventListener('mouseleave', () => (hover = false));
+    root.addEventListener('focusin', () => (focus = true));
+    root.addEventListener('focusout', () => (focus = false));
+    if (!reduce) {
+      setInterval(() => {
+        if (!paused && !hover && !focus && !document.hidden) go(1);
+      }, 7000);
+    }
+  });
+</script>
+
+<style>
+  .reviews__track {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0.25rem 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .review {
+    flex: 0 0 min(88%, 22rem);
+    scroll-snap-align: start;
+  }
+  .review figure {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold-dark);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .review__stars {
+    margin: 0 0 0.5rem;
+    color: var(--gold-dark);
+    letter-spacing: 0.1em;
+    font-size: 1.1rem;
+  }
+  .review__text {
+    margin: 0;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 7;
+    line-clamp: 7;
+    overflow: hidden;
+  }
+  .review.is-open .review__text {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+  .review__more {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--teal-dark);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .review__name {
+    margin-top: auto;
+    padding-top: 1rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
+  .reviews__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .reviews__btn {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding-inline: 0.9rem;
+    border: 1px solid var(--teal);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .reviews__btn:hover {
+    background: var(--mist);
+  }
+  .review__source {
+    display: block;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: var(--navy);
+  }
+</style>
