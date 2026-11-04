@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 ---
 
 <BaseLayout title="בית">
@@ -54,6 +55,16 @@ import CtaBand from '../components/CtaBand.astro';
     </div>
   </section>
 
+  <!-- סרטון תדמית מכנס העסקים שנוגה הפיקה, עם המלצות. הכותרת לקוחה מהדף ב-Canva -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2>קצת מכנס העסקים שפתח את השנה</h2>
+      <div class="conference">
+        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
+      </div>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>
 
@@ -65,6 +76,10 @@ import CtaBand from '../components/CtaBand.astro';
   }
   .hero__img {
     aspect-ratio: 4 / 3;
+  }
+  .conference {
+    max-width: 48rem;
+    margin-inline: auto;
   }
   .more {
     margin-top: 1.5rem;
