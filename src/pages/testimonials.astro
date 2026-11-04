@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import { featuredVideo, videos } from '../data/testimonials';
+---
+
+<BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
+  <PageHeader title="המלצות לקוחות">
+    <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
+    <p>קצת ממה שהלקוחות מספרים על תהליך הליווי</p>
+  </PageHeader>
+
+  <!-- הסרטון המרכזי: לקט ההמלצות -->
+  <section class="section">
+    <div class="container">
+      <div class="featured">
+        <YouTubeEmbed id={featuredVideo.id} title={featuredVideo.title} vertical={featuredVideo.vertical} />
+      </div>
+    </div>
+  </section>
+
+  <!-- כל סרטוני ההמלצות -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2 class="sr-only">סרטוני ההמלצות</h2>
+      <ul class="videos">
+        {
+          videos.map((v) => (
+            <li class:list={['videos__item', { 'videos__item--wide': !v.vertical }]}>
+              <YouTubeEmbed id={v.id} title={v.title} vertical={v.vertical} />
+              <p class="videos__caption">{v.title}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- המלצות כתובות וסיפורי מקרה -->
+  <section class="section">
+    <div class="container">
+      <h2>המלצות כתובות וסיפורי מקרה</h2>
+      <!-- TODO: נוגה תבחר המלצות כתובות מגוגל עסקי, מפייסבוק ומהאתר BIZMAKEBIZ, ותספק סיפורי מקרה.
+           אין להמציא או לשנות ציטוטים. לכל המלצה: הטקסט כלשונו, שם ומקור. לפני פרסום שם של לקוח לוודא שאישר. -->
+      <p class="placeholder">תוכן חסר: המלצות כתובות וסיפורי מקרה. יתווספו אחרי שנוגה תבחר אותם.</p>
+      <!-- TODO: כפתורי "כתבו המלצה" בגוגל ובפייסבוק, כשיהיה קישור לכרטיס העסק בגוגל -->
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .featured {
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+  .videos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    /* בנייד שני סרטונים אנכיים בשורה, כדי שכל סרטון לא יתפוס מסך שלם */
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+  }
+  .videos__item--wide {
+    grid-column: 1 / -1;
+    max-width: 36rem;
+  }
+  .videos__caption {
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 48rem) {
+    .videos {
+      grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+      gap: 1.5rem;
+    }
+    .videos__item--wide {
+      grid-column: span 2;
+    }
+  }
+</style>

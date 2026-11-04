@@ -1,0 +1,99 @@
+---
+// הטמעת סרטון יוטיוב קלה: מציגים תמונה ממוזערת וכפתור הפעלה.
+// הנגן של יוטיוב נטען רק כשהמבקר לוחץ, כך שהדף מהיר, אין ניגון אוטומטי,
+// ואין בקשות לצד שלישי לפני שהמבקר בחר לצפות.
+interface Props {
+  id: string; // מזהה הסרטון ביוטיוב
+  title: string; // תיאור הסרטון, לקוראי מסך
+  vertical?: boolean; // true לסרטון אנכי (Shorts)
+}
+const { id, title, vertical = false } = Astro.props;
+---
+
+<div class:list={['yt-embed', { 'yt-embed--vertical': vertical }]} data-id={id} data-title={title}>
+  <button type="button" class="yt-embed__btn" aria-label={`הפעלת הסרטון: ${title}`}>
+    <img
+      src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="yt-embed__play" aria-hidden="true"></span>
+  </button>
+</div>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const btn = (event.target as HTMLElement).closest('.yt-embed__btn');
+    if (!btn) return;
+    const box = btn.closest<HTMLElement>('.yt-embed');
+    if (!box) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.id}?autoplay=1&rel=0`;
+    iframe.title = box.dataset.title ?? 'סרטון';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    box.replaceChildren(iframe);
+    iframe.focus();
+  });
+</script>
+
+<style>
+  .yt-embed {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--navy);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .yt-embed--vertical {
+    aspect-ratio: 9 / 16;
+  }
+  .yt-embed__btn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .yt-embed__btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .yt-embed__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+  }
+  /* משולש ההפעלה */
+  .yt-embed__play::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 0;
+    height: 0;
+    border-block: 0.6rem solid transparent;
+    border-inline-start: 1rem solid var(--navy);
+    transform: translateX(-0.1rem);
+  }
+  .yt-embed__btn:hover .yt-embed__play {
+    filter: brightness(1.08);
+  }
+  .yt-embed :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
