@@ -1,34 +1,79 @@
 ---
-// עמוד אודות בעיצוב חדש (2026-11-05), בהשראת חלק מהאלמנטים באתר של מאשה בר,
-// בצבעים של נוגה: כחול כהה, טורקיז וזהב.
-// סדר האזורים: פתיח כהה, פס שירותים נע, נעים להכיר, מלב אל לב, הגישה, צוות המומחים, איך נעבוד יחד.
+// עמוד אודות (גרסה 2, 2026-11-05).
+// השראה כללית מ-meitalchesner.co.il/about (תמונות גדולות, טקסט עם הדגשות, אזורים מתחלפים)
+// ומ-masha-bar.co.il (אזורים כהים), בלי להעתיק את העיצוב של אף אחת מהן. הצבעים של נוגה: כחול, טורקיז וזהב.
+// סדר האזורים: פתיח עם תמונת רקע, הסיפור, הבנק והניסיון, איך אני עובדת (6 קוביות), מלב אל לב, צוות המומחים.
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { services } from '../data/services';
+import nogaStage from '../assets/noga-stage.webp'; // נוגה שלחה את התמונה בעצמה (2026-11-05)
 
-// הרקע המקצועי: הנוסח שנוגה סיפקה בעצמה (2026-11-04)
-const credentials = [
-  'MBA במנהל עסקים',
-  '20 שנות ניסיון בפיתוח עסקי וייעוץ אסטרטגי בבנק',
-  '10 שנות ניסיון ו-400 לקוחות קודמים',
-  '4 שנות ייעוץ מטעם משרד הכלכלה (ציון 9.4)',
-  'מאות ממליצים ברשתות החברתיות',
+// שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
+// icon הוא שם הציור הקטן מהרשימה icons שלמטה
+const ways = [
+  {
+    icon: 'eye',
+    title: 'לראות את התמונה המלאה',
+    text: 'לחבר בין נתונים, אנשים, לקוחות ותהליכים כדי להבין את שורש האתגר ולזהות הזדמנויות לצמיחה.',
+  },
+  {
+    icon: 'compass',
+    title: 'להתאים את הדרך לעסק',
+    text: 'לבנות מהלכים מתוך הבנת הזהות העסקית, המטרות, היכולות והאנשים שצריכים להוציא אותם לפועל.',
+  },
+  {
+    icon: 'growth',
+    title: 'להפיק יותר מהקיים',
+    text: 'לזהות פוטנציאל בלקוחות, בידע ובמשאבים הקיימים ולמצוא דרכים יצירתיות להפוך אותו להכנסות ולרווח.',
+  },
+  {
+    icon: 'list',
+    title: 'לפשט את הדרך ליישום',
+    text: 'לתרגם חשיבה אסטרטגית לפתרונות ברורים ומעשיים שאפשר לשלב בשגרת העבודה ולהתמיד בהם.',
+  },
+  {
+    icon: 'together',
+    title: 'לעבוד יחד עד לביצוע',
+    text: 'להיכנס לעומק החומרים, לקבל החלטות ולקדם יחד משימות ותוצרים כדי להפוך רעיונות למהלכים בשטח.',
+  },
+  {
+    icon: 'flag',
+    title: 'לחזק את יכולת ההובלה',
+    text: 'לפתח ביטחון בקבלת החלטות, לקיחת אחריות ורתימת אנשים כדי להמשיך להוביל את העסק גם לאחר הליווי.',
+  },
 ];
 
-// שלושת עמודי התווך מהדף שנוגה בנתה ב-Canva
-const pillars = ['פיצוח אסטרטגי', 'פתרונות פשוטים מותאמים אישית', 'יישום וליווי צעד אחר צעד'];
+// ציורים קטנים (קווים) לקוביות
+const icons: Record<string, string> = {
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/>',
+  growth: '<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  list: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>',
+  together: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15.5 14.6c2.6.4 4.5 2.6 4.5 5.4"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>',
+};
 ---
 
 <BaseLayout
   title="אודות"
-  description="נוגה דיין אור, יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה."
+  description="נעים להכיר, נוגה דיין אור: יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה."
 >
-  <!-- 1. פתיח כהה: שם גדול בזהב, התואר, כפתור ותמונה -->
+  <!-- 1. פתיח: תמונה של נוגה כרקע, עם הצללה כהה מאחורי הטקסט כדי שיהיה קריא תמיד -->
   <section class="a-hero">
-    <div class="container a-hero__grid">
+    <div class="a-hero__media">
+      <Image
+        src={nogaStage}
+        alt="נוגה דיין אור מרצה מול קהל"
+        widths={[640, 1024, 1536]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="container a-hero__inner">
       <div class="a-hero__text">
         <h1>
-          <span class="a-hero__hi">היי, אני</span>
+          <span class="a-hero__hi">נעים להכיר,</span>
           <span class="a-hero__name hl">נוגה דיין אור</span>
         </h1>
         <p class="a-hero__title">
@@ -36,119 +81,75 @@ const pillars = ['פיצוח אסטרטגי', 'פתרונות פשוטים מו�
           <span>באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
         </p>
         <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר -->
-        <a class="pill" href="/contact/">
-          <span class="pill__label">קביעת שיחת היכרות</span>
-          <span class="pill__arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          </span>
+        <a class="btn a-btn" href="/contact/">
+          קביעת שיחת היכרות
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
         </a>
       </div>
+    </div>
+  </section>
 
-      <!-- TODO: תמונה של נוגה. נוגה תבחר תמונה ותאשר שימוש באתר (עדיף תמונה בלי רקע, חתוכה) -->
-      <div class="a-hero__photo">
-        <div class="a-hero__frame" role="img" aria-label="מקום שמור לתמונה של נוגה">
-          <span>תמונה חסרה:<br />תמונה של נוגה</span>
-        </div>
+  <!-- 2. הסיפור: הפתיחה מהבנק (הנוסח של נוגה) -->
+  <section class="section a-story">
+    <div class="container a-story__inner reveal">
+      <h2 class="a-kicker">הסיפור שלי</h2>
+      <p class="a-story__lead">
+        מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>
+        — ועכשיו צריך לגרום ל־70 סניפים ו־300 יועצים לזוז? מישהו צריך לקחת את הרעיון, לחבר את
+        האנשים והמספרים ולבנות דוחות עבודה, נהלים, בקרות ודיווחים.
+      </p>
+      <p class="a-story__punch">התפקיד שלי היה <span class="hl--mark">לגרום לדברים לקרות.</span></p>
+    </div>
+  </section>
+
+  <!-- 3. הבנק והניסיון: טקסט ולצדו תמונה -->
+  <section class="section section--mist a-bank">
+    <div class="container a-bank__grid">
+      <div class="a-bank__text reveal">
+        <p>
+          <span class="hl--mark">15 שנה בתפקידים בהנהלת הבנק הבינלאומי</span> לימדו אותי המון על פיתוח עסקי,
+          ניהול עובדים והובלת תהליכים. עשיתי שם המון דברים מעניינים, אבל הכי הרבה אהבתי לייעץ
+          לדירקטוריון בפרויקטים אסטרטגיים פנים־ארגוניים.
+        </p>
+        <p>
+          וכמובן שלכל תפקיד הבאתי גם אותי: <strong>חדה, סקרנית, שואלת שאלות, ראש גדול ויצירתי</strong>
+          ואהבה לפתור אתגרים עסקיים עם פתרונות חכמים ואפס תקציבים.
+        </p>
+        <p>
+          יש לי <span class="hl--mark">תואר שני במנהל עסקים</span> מלפני שני עשורים, וגם ניסיון אמיתי של
+          <span class="hl--mark">ליווי יותר מ־500 עסקים</span>, ואת כל אלה אני מביאה לעסק שלכם.
+        </p>
+      </div>
+
+      <!-- TODO: תמונה נוספת של נוגה (למשל בפגישה עם לקוחות או בעבודה). נוגה תשלח -->
+      <div class="a-photo-slot reveal" role="img" aria-label="מקום שמור לתמונה נוספת של נוגה">
+        <span>מקום לתמונה נוספת שלך<br />(למשל בפגישה עם לקוחות)</span>
       </div>
     </div>
   </section>
 
-  <!-- 2. פס אלכסוני נע עם תחומי העבודה. נעצר במעבר עכבר ואצל מי שביקש פחות תנועה -->
-  <div class="strip">
-    <div class="strip__band">
-      <div class="strip__track">
-        <ul class="strip__list" aria-label="תחומי העבודה">
-          {services.map((s) => <li>{s.title}</li>)}
-        </ul>
-        <ul class="strip__list" aria-hidden="true">
-          {services.map((s) => <li>{s.title}</li>)}
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. נעים להכיר: הסיפור, ולצדו הרקע המקצועי -->
-  <section class="section a-intro">
-    <div class="container a-intro__grid">
-      <div class="reveal">
-        <h2 class="a-title">נעים <span class="hl--mark">להכיר</span></h2>
-        <!-- TODO: הסיפור האישי מ"נעים להכיר" ב-Canva. נוגה תספק טקסט. אין להמציא פרטים. -->
-        <p class="placeholder">תוכן חסר: הסיפור האישי והדרך המקצועית.</p>
-      </div>
-
-      <aside class="creds reveal" aria-labelledby="creds-title">
-        <h3 id="creds-title">הרקע המקצועי שלי</h3>
-        <ul>
-          {
-            credentials.map((c) => (
-              <li>
-                <span class="creds__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="16" height="16"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </span>
-                {c}
-              </li>
-            ))
-          }
-        </ul>
-        <a class="creds__more" href="/testimonials/">מה הלקוחות אומרים</a>
-      </aside>
-    </div>
-  </section>
-
-  <!-- 4. מלב אל לב: כרטיס ציטוט על רקע כהה -->
-  <section class="a-heart">
+  <!-- 4. איך אני עובדת: פסקת פתיחה של נוגה ושש קוביות -->
+  <section class="a-ways">
     <div class="container">
-      <figure class="quote reveal">
-        <span class="quote__mark" aria-hidden="true">”</span>
-        <h2>מלב <span class="hl">אל לב</span></h2>
-        <!-- TODO: הטקסט מ"מלב אל לב" ב-Canva, בקולה של נוגה. אין להמציא. -->
-        <p class="placeholder">תוכן חסר: הגישה האישית, מלב אל לב.</p>
-      </figure>
-    </div>
-  </section>
+      <div class="a-ways__head reveal">
+        <!-- TODO: הכותרת "איך אני עובדת" היא הצעה. נוגה יכולה לשנות -->
+        <h2>איך אני <span class="hl">עובדת</span></h2>
+        <p>
+          קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.
+          כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
+          לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
+        </p>
+      </div>
 
-  <!-- 5. הגישה: שלושה עמודי תווך ממוספרים -->
-  <section class="section section--mist">
-    <div class="container">
-      <h2 class="a-title reveal">הגישה <span class="hl--mark">שלי</span></h2>
-      <!-- TODO: משפט או שניים לכל עמוד תווך, בניסוח של נוגה -->
-      <ol class="pillars">
+      <ul class="ways">
         {
-          pillars.map((p, i) => (
-            <li class="pillar reveal" style={`transition-delay: ${i * 120}ms`}>
-              <span class="pillar__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{p}</h3>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- 6. צוות המומחים (מתוך עץ האתר) -->
-  <section class="section">
-    <div class="container reveal">
-      <h2 class="a-title">צוות <span class="hl--mark">המומחים</span></h2>
-      <!-- TODO: מי בצוות ומה התחום של כל אחד. נוגה תספק. אין להמציא שמות או תפקידים. -->
-      <p class="placeholder">תוכן חסר: צוות המומחים שעובד לצדי.</p>
-    </div>
-  </section>
-
-  <!-- 7. איך נעבוד יחד: כרטיסים כהים לכל שירות -->
-  <section class="section section--mist">
-    <div class="container">
-      <h2 class="a-title reveal">איך נוכל <span class="hl--mark">לעבוד יחד</span>?</h2>
-      <ul class="work">
-        {
-          services.map((s, i) => (
-            <li class="work__card reveal" style={`transition-delay: ${(i % 3) * 100}ms`}>
-              <a href={s.href}>
-                <h3>{s.title}</h3>
-                <p>{s.short}</p>
-                <span class="work__arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </span>
-              </a>
+          ways.map((w, i) => (
+            <li class="way reveal" style={`transition-delay: ${(i % 3) * 110}ms`}>
+              <span class="way__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icons[w.icon]} />
+              </span>
+              <h3>{w.title}</h3>
+              <p>{w.text}</p>
             </li>
           ))
         }
@@ -156,400 +157,315 @@ const pillars = ['פיצוח אסטרטגי', 'פתרונות פשוטים מו�
     </div>
   </section>
 
+  <!-- 5. מלב אל לב: תמונה וטקסט אישי -->
+  <section class="section">
+    <div class="container a-heart">
+      <!-- TODO: תמונה אישית של נוגה. נוגה תשלח -->
+      <div class="a-photo-slot reveal" role="img" aria-label="מקום שמור לתמונה אישית של נוגה">
+        <span>מקום לתמונה אישית שלך</span>
+      </div>
+      <div class="reveal">
+        <h2 class="a-title">מלב <span class="hl--mark">אל לב</span></h2>
+        <!-- TODO: הטקסט מ"מלב אל לב" ב-Canva, בקולה של נוגה. אין להמציא. -->
+        <p class="placeholder">תוכן חסר: הגישה האישית, מלב אל לב.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. צוות המומחים (מתוך עץ האתר) -->
+  <section class="section section--mist">
+    <div class="container reveal">
+      <h2 class="a-title">צוות <span class="hl--mark">המומחים</span></h2>
+      <!-- TODO: מי בצוות ומה התחום של כל אחד. נוגה תספק. אין להמציא שמות או תפקידים. -->
+      <p class="placeholder">תוכן חסר: צוות המומחים שעובד לצדי.</p>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>
 
 <style>
-  /* ---------- 1. פתיח ---------- */
+  /* ---------- 1. פתיח עם תמונת רקע ---------- */
   .a-hero {
     position: relative;
     overflow: hidden;
+    background: var(--navy-deep);
     color: var(--on-dark);
-    padding-block: clamp(3rem, 8vw, 6rem) clamp(3.5rem, 9vw, 6.5rem);
-    background:
-      radial-gradient(42rem 26rem at 88% 8%, rgb(29 157 160 / 0.28), transparent 70%),
-      radial-gradient(36rem 24rem at 6% 92%, rgb(209 154 74 / 0.22), transparent 70%),
-      linear-gradient(165deg, var(--navy) 0%, var(--navy-deep) 100%);
   }
-  /* רשת קווים עדינה ברקע, שנעלמת לכיוון הקצוות */
-  .a-hero::before {
+  /* בנייד: התמונה למעלה, והטקסט מתחתיה על כחול מלא */
+  .a-hero__media {
+    position: relative;
+    height: min(78vw, 26rem);
+  }
+  .a-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 28%;
+  }
+  .a-hero__media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 3.5rem 3.5rem,
-      linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 3.5rem 3.5rem;
-    mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 75%);
-    pointer-events: none;
+    background: linear-gradient(180deg, rgb(7 17 31 / 0.15) 0%, rgb(7 17 31 / 0.1) 55%, var(--navy-deep) 100%);
   }
-  .a-hero__grid {
+  .a-hero__inner {
     position: relative;
-    display: grid;
-    gap: 2.5rem;
-    align-items: center;
-  }
-  @media (min-width: 52rem) {
-    .a-hero__grid {
-      grid-template-columns: 1.35fr 1fr;
-      gap: 3rem;
-    }
-    .a-hero__name {
-      font-size: clamp(3rem, 6.5vw, 5.8rem);
-    }
+    padding-block: 0.5rem 3rem;
   }
   .a-hero h1 {
-    margin: 0 0 1.25rem;
-    color: var(--on-dark);
-    line-height: 1;
+    margin: 0 0 1rem;
+    color: var(--white);
+    line-height: 1.05;
   }
   .a-hero__hi {
     display: block;
-    font-size: clamp(1.6rem, 4vw, 2.6rem);
-    font-weight: 700;
-    margin-bottom: 0.3em;
+    font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+    font-weight: 600;
+    margin-bottom: 0.25em;
   }
   .a-hero__name {
     display: inline-block;
-    font-size: min(12.5vw, 5.8rem);
-    white-space: nowrap;
+    font-size: min(12vw, 4.8rem);
     font-weight: 900;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    white-space: nowrap;
     padding-bottom: 0.08em;
   }
   .a-hero__title {
-    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
     font-weight: 600;
     line-height: 1.5;
-    max-width: 32rem;
-    margin-bottom: 2rem;
+    max-width: 30rem;
+    margin-bottom: 1.75rem;
   }
   .a-hero__title span {
     display: block;
-    margin-top: 0.35em;
+    margin-top: 0.3em;
     font-weight: 400;
     color: var(--on-dark-soft);
   }
-
-  /* כפתור גלולה בזהב עם עיגול חץ */
-  .pill {
+  .a-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    text-decoration: none;
-    font-weight: 700;
-    color: var(--navy);
   }
-  .pill__label {
-    padding: 0.85em 1.9em;
-    border-radius: 999px;
-    background: var(--gold-gradient);
-    box-shadow: 0 18px 40px -18px rgb(252 220 109 / 0.8);
-  }
-  .pill__arrow {
-    display: grid;
-    place-items: center;
-    width: 3.1rem;
-    height: 3.1rem;
-    border-radius: 50%;
-    background: var(--teal);
-    color: var(--white);
+  .a-btn svg {
     transition: transform 0.3s ease;
   }
-  .pill:hover .pill__arrow {
-    transform: translateX(-0.3rem);
-  }
-  .pill:hover .pill__label {
-    filter: brightness(1.05);
-  }
-
-  /* מסגרת תמונה בצורת קשת עם טבעת זהב */
-  .a-hero__photo {
-    position: relative;
-    width: min(78%, 22rem);
-    margin-inline: auto;
-  }
-  .a-hero__photo::before {
-    content: '';
-    position: absolute;
-    inset: -0.9rem -0.9rem 1.2rem 0.9rem;
-    border: 2px solid var(--gold-light);
-    border-radius: 999px 999px 1.5rem 1.5rem;
-    opacity: 0.6;
-  }
-  .a-hero__frame {
-    position: relative;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 5;
-    border-radius: 999px 999px 1.5rem 1.5rem;
-    background: linear-gradient(180deg, rgb(29 157 160 / 0.35), var(--navy-soft));
-    border: 2px dashed rgb(252 220 109 / 0.7);
-    color: var(--gold-light);
-    text-align: center;
-    box-shadow: 0 44px 80px -40px rgb(0 0 0 / 0.85);
-  }
-
-  /* ---------- 2. פס נע ---------- */
-  .strip {
-    overflow: hidden;
-    padding-block: 2.25rem;
-    margin-block: -3.6rem;
-    position: relative;
-    z-index: 1;
-  }
-  .strip__band {
-    rotate: -2deg;
-    margin-inline: -5%;
-    background: var(--gold-gradient);
-    box-shadow: 0 20px 40px -24px rgb(11 26 51 / 0.6);
-    /* כיוון שמאל-ימין רק לצורך התנועה; הטקסט עצמו בעברית */
-    direction: ltr;
-  }
-  .strip__track {
-    display: flex;
-    width: max-content;
-    animation: strip 38s linear infinite;
-  }
-  .strip:hover .strip__track {
-    animation-play-state: paused;
-  }
-  .strip__list {
-    direction: rtl;
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .strip__list li {
-    padding: 0.85rem 1.4rem;
-    font-weight: 800;
-    font-size: 1.1rem;
-    color: var(--navy);
-    white-space: nowrap;
-  }
-  .strip__list li::after {
-    content: '✦';
-    margin-inline-start: 2.8rem;
-    color: var(--teal-dark);
-  }
-  @keyframes strip {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .strip__track {
-      animation: none;
-    }
-  }
-
-  /* ---------- כותרות אזור ---------- */
-  .a-title {
-    font-size: clamp(1.9rem, 5vw, 3rem);
-    font-weight: 900;
-    letter-spacing: -0.01em;
-  }
-
-  /* ---------- 3. נעים להכיר ---------- */
-  .a-intro {
-    padding-top: clamp(4.5rem, 10vw, 7rem);
-  }
-  .a-intro__grid {
-    display: grid;
-    gap: 2.5rem;
-    align-items: start;
-  }
-  @media (min-width: 52rem) {
-    .a-intro__grid {
-      grid-template-columns: 1.3fr 1fr;
-      gap: 3.5rem;
-    }
-  }
-  .creds {
-    background:
-      radial-gradient(20rem 14rem at 100% 0, rgb(29 157 160 / 0.3), transparent 70%),
-      var(--navy);
-    color: var(--on-dark);
-    border-radius: 1.5rem;
-    padding: 2rem 1.75rem;
-    box-shadow: 0 34px 64px -26px rgb(11 26 51 / 0.55);
-  }
-  .creds h3 {
-    color: var(--white);
-    font-size: 1.3rem;
-    margin-bottom: 1.25rem;
-  }
-  .creds ul {
-    list-style: none;
-    margin: 0 0 1.5rem;
-    padding: 0;
-    display: grid;
-    gap: 0.9rem;
-  }
-  .creds li {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    line-height: 1.5;
-  }
-  .creds__icon {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    margin-top: 0.05rem;
-    border-radius: 50%;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .creds__more {
-    color: var(--gold-light);
-    font-weight: 700;
-  }
-
-  /* ---------- 4. מלב אל לב ---------- */
-  .a-heart {
-    padding-block: clamp(3.5rem, 9vw, 6rem);
-    background:
-      radial-gradient(40rem 22rem at 96% 50%, rgb(29 157 160 / 0.24), transparent 72%),
-      radial-gradient(34rem 20rem at 4% 54%, rgb(209 154 74 / 0.18), transparent 74%),
-      var(--navy-deep);
-  }
-  .quote {
-    position: relative;
-    max-width: 46rem;
-    margin: 0 auto;
-    padding: clamp(2.5rem, 6vw, 3.5rem) clamp(1.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3rem);
-    border-radius: 1.75rem;
-    background: rgb(255 255 255 / 0.05);
-    border: 1px solid rgb(255 255 255 / 0.14);
-    box-shadow:
-      inset 0 0 0 1px rgb(255 255 255 / 0.04),
-      0 30px 60px -30px rgb(0 0 0 / 0.7);
-    text-align: center;
-  }
-  .quote__mark {
-    position: absolute;
-    inset-block-start: -2.6rem;
-    inset-inline-start: 50%;
-    translate: 50% 0;
-    font-size: 8rem;
-    font-weight: 900;
-    line-height: 1;
-    background: var(--gold-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .quote h2 {
-    color: var(--white);
-    font-size: clamp(1.9rem, 5vw, 3rem);
-    font-weight: 900;
-  }
-  .quote .placeholder {
-    margin: 0;
-  }
-
-  /* ---------- 5. הגישה ---------- */
-  .pillars {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  }
-  .pillar {
-    background: var(--white);
-    border-radius: 1.5rem;
-    padding: 1.75rem 1.6rem 1.5rem;
-    border: 1px solid var(--line);
-    box-shadow: 0 24px 50px -30px rgb(11 26 51 / 0.35);
-  }
-  .pillar__num {
-    display: block;
-    font-size: 3.2rem;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 0.75rem;
-    color: transparent;
-    -webkit-text-stroke: 2px var(--teal);
-  }
-  .pillar h3 {
-    margin: 0;
-    font-size: 1.35rem;
-  }
-
-  /* ---------- 7. איך נעבוד יחד ---------- */
-  .work {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  }
-  .work__card a {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 13rem;
-    padding: 1.75rem 1.6rem 4.5rem;
-    border-radius: 1.5rem;
-    text-decoration: none;
-    color: var(--on-dark);
-    background:
-      radial-gradient(18rem 12rem at 100% 0, rgb(29 157 160 / 0.35), transparent 70%),
-      linear-gradient(165deg, var(--navy-soft), var(--navy-deep));
-    box-shadow: 0 34px 64px -30px rgb(11 26 51 / 0.6);
-    transition: transform 0.35s ease, box-shadow 0.35s ease;
-  }
-  .work__card a:hover {
-    transform: translateY(-0.35rem);
-    box-shadow: 0 40px 70px -30px rgb(11 26 51 / 0.7);
-  }
-  .work__card h3 {
-    color: var(--white);
-    font-size: 1.35rem;
-    margin-bottom: 0.5rem;
-  }
-  .work__card p {
-    margin: 0;
-    color: var(--on-dark-soft);
-    line-height: 1.6;
-  }
-  .work__arrow {
-    position: absolute;
-    inset-block-end: 1.4rem;
-    inset-inline-end: 1.4rem;
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 50%;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    transition: transform 0.3s ease;
-  }
-  .work__card a:hover .work__arrow {
+  .a-btn:hover svg {
     transform: translateX(-0.25rem);
   }
 
-  /* תיבות "תוכן חסר" על רקע כהה */
-  .a-heart .placeholder,
-  .a-hero .placeholder {
-    background: transparent;
-    border-color: var(--gold-light);
+  /* במסך רחב: התמונה ממלאת את כל הפתיח, והטקסט בצד ימין על הצללה כהה */
+  @media (min-width: 52rem) {
+    .a-hero {
+      display: flex;
+      align-items: center;
+      min-height: clamp(32rem, 80vh, 44rem);
+    }
+    /* התמונה תופסת את הצד השמאלי בלבד, כך שהטקסט בימין לא עולה עליה אף פעם */
+    .a-hero__media {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 64%;
+      height: auto;
+    }
+    .a-hero__media img {
+      object-position: 50% 28%;
+    }
+    .a-hero__media::after {
+      background:
+        linear-gradient(to left, var(--navy-deep) 0%, rgb(7 17 31 / 0.7) 16%, rgb(7 17 31 / 0) 42%),
+        linear-gradient(to right, rgb(7 17 31 / 0.85) 0%, rgb(7 17 31 / 0) 30%),
+        linear-gradient(0deg, rgb(7 17 31 / 0.7) 0%, rgb(7 17 31 / 0) 28%),
+        rgb(7 17 31 / 0.12);
+    }
+    .a-hero__inner {
+      padding-block: 4rem;
+    }
+    .a-hero__text {
+      max-width: 34rem;
+      text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
+    }
+  }
+
+  /* ---------- כותרות ---------- */
+  .a-title {
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 900;
+  }
+  .a-kicker {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--teal-dark);
+    margin-bottom: 1.25rem;
+  }
+  .a-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 3px;
+    margin-inline-end: 0.6rem;
+    vertical-align: middle;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+
+  /* ---------- 2. הסיפור ---------- */
+  .a-story__inner {
+    max-width: 50rem;
+  }
+  .a-story__lead {
+    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    line-height: 1.75;
+    font-weight: 500;
+  }
+  .a-wish {
+    display: inline-block;
+    padding: 0 0.45em;
+    border-radius: 0.4em;
+    background: var(--navy);
     color: var(--gold-light);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+  }
+  .a-story__punch {
+    margin: 1.75rem 0 0;
+    font-size: clamp(1.7rem, 4.4vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.3;
+  }
+
+  /* ---------- 3. הבנק והניסיון ---------- */
+  .a-bank__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 52rem) {
+    .a-bank__grid {
+      grid-template-columns: 1.3fr 1fr;
+      gap: 4rem;
+    }
+  }
+  .a-bank__text {
+    font-size: 1.2rem;
+  }
+  .a-bank__text p:last-child {
+    margin-bottom: 0;
+  }
+  .a-bank__text strong {
+    color: var(--teal-dark);
+  }
+
+  /* מקום לתמונה: מלבן מעוגל, עד שנוגה תשלח תמונה */
+  .a-photo-slot {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    width: min(100%, 24rem);
+    margin-inline: auto;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    border: 2px dashed var(--teal);
+    background:
+      radial-gradient(circle at 30% 20%, rgb(252 220 109 / 0.25), transparent 55%),
+      var(--white);
+    color: var(--teal-dark);
+    text-align: center;
+    box-shadow: 0 28px 50px -30px rgb(11 26 51 / 0.45);
+  }
+
+  /* ---------- 4. איך אני עובדת ---------- */
+  .a-ways {
+    padding-block: clamp(3.5rem, 9vw, 6rem);
+    color: var(--on-dark);
+    background:
+      radial-gradient(40rem 24rem at 100% 0, rgb(29 157 160 / 0.22), transparent 70%),
+      radial-gradient(34rem 22rem at 0 100%, rgb(209 154 74 / 0.14), transparent 72%),
+      var(--navy);
+  }
+  .a-ways__head {
+    max-width: 46rem;
+    margin-bottom: 2.75rem;
+  }
+  .a-ways h2 {
+    color: var(--white);
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 900;
+  }
+  .a-ways__head p {
+    font-size: 1.15rem;
+    color: var(--on-dark);
+    margin: 0;
+  }
+  .ways {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  }
+  @media (min-width: 62rem) {
+    .ways {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .way {
+    position: relative;
+    padding: 1.75rem 1.6rem 1.6rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(160deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+    border: 1px solid rgb(255 255 255 / 0.1);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+      border-color 0.3s ease;
+  }
+  .way:hover {
+    border-color: rgb(252 220 109 / 0.55);
+  }
+  .way__icon {
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    margin-bottom: 1.1rem;
+    border-radius: 0.9rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .way h3 {
+    color: var(--white);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .way p {
+    margin: 0;
+    color: var(--on-dark-soft);
+    line-height: 1.65;
+    font-size: 1.02rem;
+  }
+
+  /* ---------- 5. מלב אל לב ---------- */
+  .a-heart {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 52rem) {
+    .a-heart {
+      grid-template-columns: 1fr 1.3fr;
+      gap: 4rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pill__arrow,
-    .work__card a,
-    .work__arrow {
+    .a-btn svg {
       transition: none;
     }
   }
