@@ -12,16 +12,37 @@ export async function getStaticPaths() {
 
 const { guide } = Astro.props;
 const { Content } = await render(guide);
-const waText = encodeURIComponent(`היי נוגה, קראתי את המדריך "${guide.data.title}" ואשמח לשמוע עוד`);
+const isArticle = guide.data.type === 'article';
+const typeLabel = isArticle ? 'מאמר' : 'מדריך';
+const waText = encodeURIComponent(`היי נוגה, קראתי את ה${typeLabel} "${guide.data.title}" ואשמח לשמוע עוד`);
+const publishedText = guide.data.published?.toLocaleDateString('he-IL', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 ---
 
 <BaseLayout title={guide.data.title} description={guide.data.description}>
   <section class="guide-hero section section--mist">
     <div class="container guide-hero__inner">
-      <p class="guide-hero__kicker"><a href="/guides/">מדריכים והרצאות</a> / מדריך</p>
+      <p class="guide-hero__kicker"><a href="/guides/">מדריכים והרצאות</a> / {typeLabel}</p>
       <h1>{guide.data.title}</h1>
       {guide.data.tagline && <p class="guide-hero__tagline">{guide.data.tagline}</p>}
-      <p class="guide-hero__lead">{guide.data.description}</p>
+      {
+        isArticle ? (
+          <p class="guide-hero__lead">
+            נוגה דיין אור
+            {publishedText && <> · {publishedText}</>}
+            {guide.data.sourceUrl && (
+              <>
+                {' '}· פורסם לראשונה ב<a href={guide.data.sourceUrl} rel="noopener">{guide.data.sourceName}</a>
+              </>
+            )}
+          </p>
+        ) : (
+          <p class="guide-hero__lead">{guide.data.description}</p>
+        )
+      }
     </div>
   </section>
 
@@ -38,7 +59,7 @@ const waText = encodeURIComponent(`היי נוגה, קראתי את המדריך
       <p>מוזמנים לפגישת זום קצרה, לשדרוג השיווק של העסק שלכם, לגמרי במתנה.</p>
       <p class="guide-cta__actions">
         <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לשיחה בוואטסאפ</a>
-        <a class="guide-cta__link" href="/guides/">לכל המדריכים</a>
+        <a class="guide-cta__link" href="/guides/">לכל המדריכים והמאמרים</a>
       </p>
     </div>
   </section>

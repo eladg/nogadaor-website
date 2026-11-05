@@ -8,7 +8,9 @@ import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { quizYear } from '../../data/quiz';
 
-const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const guides = all.filter((g) => g.data.type === 'guide');
+const articles = all.filter((g) => g.data.type === 'article');
 ---
 
 <BaseLayout
@@ -72,8 +74,20 @@ const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.d
   <section class="section">
     <div class="container">
       <h2>מאמרים</h2>
-      <!-- TODO: המאמר שנוגה כתבה – נוגה תשלח את הטקסט. אין להמציא תוכן. -->
-      <p class="placeholder">תוכן חסר: המאמר שנוגה כתבה. יתווסף כשיתקבל.</p>
+      <ul class="cards">
+        {
+          articles.map((a) => (
+            <li class="card guide-card">
+              <p class="guide-card__type">מאמר</p>
+              <h3>
+                <a href={`/guides/${a.id}/`}>{a.data.title}</a>
+              </h3>
+              <p>{a.data.description}</p>
+              <p class="guide-card__more" aria-hidden="true">לקריאה ←</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
