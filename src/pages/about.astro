@@ -1,12 +1,14 @@
 ---
-// עמוד אודות (גרסה 2, 2026-11-05).
-// השראה כללית מ-meitalchesner.co.il/about (תמונות גדולות, טקסט עם הדגשות, אזורים מתחלפים)
-// ומ-masha-bar.co.il (אזורים כהים), בלי להעתיק את העיצוב של אף אחת מהן. הצבעים של נוגה: כחול, טורקיז וזהב.
-// סדר האזורים: פתיח עם תמונת רקע, הסיפור, הבנק והניסיון, איך אני עובדת (6 קוביות), מלב אל לב, צוות המומחים.
+// עמוד אודות (גרסה 3, 2026-11-05).
+// השראה כללית מ-meitalchesner.co.il/about ומ-masha-bar.co.il, בלי להעתיק את העיצוב של אף אחת מהן.
+// הצבעים של נוגה: כחול, טורקיז וזהב.
+// סדר האזורים (לבקשת נוגה): פתיח עם תמונת רקע, הדרך שלנו (6 קוביות), הסיפור ברצף אחד, מומחים שאני עובדת איתם.
+// "מלב אל לב" הוסר בינתיים: נוגה אמרה שהסיפור שלה כבר כתוב מספיק מלב אל לב.
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
-import nogaStage from '../assets/noga-stage.webp'; // נוגה שלחה את התמונה בעצמה (2026-11-05)
+import nogaStage from '../assets/noga-stage.jpg'; // התמונה המקורית שנוגה שלחה (2026-11-05)
+import { experts } from '../data/experts';
 
 // שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
 // icon הוא שם הציור הקטן מהרשימה icons שלמטה
@@ -64,8 +66,8 @@ const icons: Record<string, string> = {
       <Image
         src={nogaStage}
         alt="נוגה דיין אור מרצה מול קהל"
-        widths={[640, 1024, 1536]}
-        sizes="100vw"
+        widths={[640, 1024, 1600, 2000]}
+        sizes="(min-width: 52rem) 60vw, 100vw"
         loading="eager"
         fetchpriority="high"
       />
@@ -89,58 +91,10 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 2. הסיפור: הפתיחה מהבנק (הנוסח של נוגה) -->
-  <section class="section a-story">
-    <div class="container a-story__inner reveal">
-      <h2 class="a-kicker">הסיפור שלי</h2>
-      <p class="a-story__lead">
-        מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>
-        — ועכשיו צריך לגרום ל־70 סניפים ו־300 יועצים לזוז? מישהו צריך לקחת את הרעיון, לחבר את
-        האנשים והמספרים ולבנות דוחות עבודה, נהלים, בקרות ודיווחים.
-      </p>
-      <p class="a-story__punch">התפקיד שלי היה <span class="hl--mark">לגרום לדברים לקרות.</span></p>
-    </div>
-  </section>
-
-  <!-- 3. הבנק והניסיון: טקסט ולצדו תמונה -->
-  <section class="section section--mist a-bank">
-    <div class="container a-bank__grid">
-      <div class="a-bank__text reveal">
-        <p>
-          <span class="hl--mark">20 שנה בתפקידים בהנהלת הבנק הבינלאומי</span> לימדו אותי המון על פיתוח עסקי,
-          ניהול עובדים והובלת תהליכים. עשיתי שם המון דברים מעניינים, אבל הכי הרבה אהבתי לייעץ
-          לדירקטוריון בפרויקטים אסטרטגיים פנים־ארגוניים.
-        </p>
-        <p>
-          וכמובן שלכל תפקיד הבאתי גם אותי: <strong>חדה, סקרנית, שואלת שאלות, ראש גדול ויצירתי</strong>
-          ואהבה לפתור אתגרים עסקיים עם פתרונות חכמים ואפס תקציבים.
-        </p>
-        <p>
-          יש לי <span class="hl--mark">תואר שני במנהל עסקים</span> מלפני שני עשורים, וגם ניסיון אמיתי של
-          <span class="hl--mark">ליווי 450 עסקים</span>, ואת כל אלה אני מביאה לעסק שלכם.
-        </p>
-      </div>
-
-      <!-- TODO: תמונה נוספת של נוגה (למשל בפגישה עם לקוחות או בעבודה). נוגה תשלח -->
-      <div class="a-photo-slot reveal" role="img" aria-label="מקום שמור לתמונה נוספת של נוגה">
-        <span>מקום לתמונה נוספת שלך<br />(למשל בפגישה עם לקוחות)</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. איך אני עובדת: פסקת פתיחה של נוגה ושש קוביות -->
+  <!-- 2. הדרך שלנו: שש קוביות, מיד אחרי הפתיח (לבקשת נוגה) -->
   <section class="a-ways">
     <div class="container">
-      <div class="a-ways__head reveal">
-        <!-- TODO: הכותרת "איך אני עובדת" היא הצעה. נוגה יכולה לשנות -->
-        <h2>איך אני <span class="hl">עובדת</span></h2>
-        <p>
-          קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.
-          כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
-          לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
-        </p>
-      </div>
-
+      <h2 class="a-ways__title reveal">הדרך <span class="hl">שלנו</span></h2>
       <ul class="ways">
         {
           ways.map((w, i) => (
@@ -157,27 +111,60 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 5. מלב אל לב: תמונה וטקסט אישי -->
-  <section class="section">
-    <div class="container a-heart">
-      <!-- TODO: תמונה אישית של נוגה. נוגה תשלח -->
-      <div class="a-photo-slot reveal" role="img" aria-label="מקום שמור לתמונה אישית של נוגה">
-        <span>מקום לתמונה אישית שלך</span>
+  <!-- 3. הסיפור: הטקסט של נוגה ברצף אחד, בלי פיצול לאזורים. ולצדו מקום לתמונה -->
+  <section class="section a-story">
+    <div class="container a-story__grid">
+      <div class="a-story__text reveal">
+        <h2 class="a-kicker">הסיפור שלי</h2>
+        <p>
+          מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>
+          — ועכשיו צריך לגרום לעשרות סניפים ולמאות יועצי השקעות לזוז? מישהו צריך לקחת את הרעיון, לחבר
+          את האנשים והמספרים ולבנות דוחות עבודה, נהלים, בקרות ודיווחים.
+          <span class="hl--mark">התפקיד שלי היה לגרום לדברים לקרות.</span>
+        </p>
+        <p>
+          <span class="hl--mark">20 שנה בתפקידים בהנהלת הבנק הבינלאומי</span> לימדו אותי המון על פיתוח עסקי,
+          ניהול עובדים והובלת תהליכים. עשיתי שם המון דברים מעניינים, אבל הכי הרבה אהבתי לייעץ
+          לדירקטוריון בפרויקטים אסטרטגיים פנים־ארגוניים. וכמובן שלכל תפקיד הבאתי גם אותי: חדה,
+          סקרנית, שואלת שאלות, ראש גדול ויצירתי ואהבה לפתור אתגרים עסקיים עם פתרונות חכמים ואפס תקציבים.
+        </p>
+        <p>
+          יש לי <span class="hl--mark">תואר שני במנהל עסקים</span> מלפני שני עשורים, וגם ניסיון אמיתי של
+          <span class="hl--mark">ליווי 450 עסקים</span>, ואת כל אלה אני מביאה לעסק שלכם.
+        </p>
+        <p>
+          קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.
+          כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
+          לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
+        </p>
       </div>
-      <div class="reveal">
-        <h2 class="a-title">מלב <span class="hl--mark">אל לב</span></h2>
-        <!-- TODO: הטקסט מ"מלב אל לב" ב-Canva, בקולה של נוגה. אין להמציא. -->
-        <p class="placeholder">תוכן חסר: הגישה האישית, מלב אל לב.</p>
+
+      <!-- TODO: תמונה נוספת של נוגה. נוגה תבחר ותאשר -->
+      <div class="a-story__photo">
+        <div class="a-photo-slot" role="img" aria-label="מקום שמור לתמונה נוספת של נוגה">
+          <span>מקום לתמונה נוספת שלך</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 6. צוות המומחים (מתוך עץ האתר) -->
+  <!-- 4. מומחים שאני עובדת איתם: הם אינם חלק מהארגון. הרשימה ב-src/data/experts.ts -->
   <section class="section section--mist">
-    <div class="container reveal">
-      <h2 class="a-title">צוות <span class="hl--mark">המומחים</span></h2>
-      <!-- TODO: מי בצוות ומה התחום של כל אחד. נוגה תספק. אין להמציא שמות או תפקידים. -->
-      <p class="placeholder">תוכן חסר: צוות המומחים שעובד לצדי.</p>
+    <div class="container">
+      <h2 class="a-title reveal">מומחים <span class="hl--mark">שאני עובדת איתם</span></h2>
+      <ul class="experts">
+        {
+          experts.map((e, i) => (
+            <li class={`expert reveal${e.placeholder ? ' expert--todo' : ''}`} style={`transition-delay: ${(i % 3) * 100}ms`}>
+              <span class="expert__mono" aria-hidden="true">{e.placeholder ? '?' : e.name.charAt(0)}</span>
+              <div>
+                <h3>{e.placeholder ? `תוכן חסר: ${e.name}` : e.name}</h3>
+                <p>{e.field}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
@@ -317,13 +304,28 @@ const icons: Record<string, string> = {
   }
 
   /* ---------- 2. הסיפור ---------- */
-  .a-story__inner {
-    max-width: 50rem;
+  /* הטקסט ברצף אחד, ולצדו תמונה שנשארת במקום בזמן הגלילה (במחשב) */
+  .a-story__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
   }
-  .a-story__lead {
-    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
-    line-height: 1.75;
-    font-weight: 500;
+  @media (min-width: 52rem) {
+    .a-story__grid {
+      grid-template-columns: 1.45fr 1fr;
+      gap: 4rem;
+    }
+    .a-story__photo {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
+  .a-story__text {
+    font-size: 1.2rem;
+    line-height: 1.85;
+  }
+  .a-story__text p:last-child {
+    margin-bottom: 0;
   }
   .a-wish {
     display: inline-block;
@@ -333,34 +335,6 @@ const icons: Record<string, string> = {
     color: var(--gold-light);
     font-weight: 800;
     letter-spacing: 0.03em;
-  }
-  .a-story__punch {
-    margin: 1.75rem 0 0;
-    font-size: clamp(1.7rem, 4.4vw, 2.6rem);
-    font-weight: 900;
-    line-height: 1.3;
-  }
-
-  /* ---------- 3. הבנק והניסיון ---------- */
-  .a-bank__grid {
-    display: grid;
-    gap: 2.5rem;
-    align-items: center;
-  }
-  @media (min-width: 52rem) {
-    .a-bank__grid {
-      grid-template-columns: 1.3fr 1fr;
-      gap: 4rem;
-    }
-  }
-  .a-bank__text {
-    font-size: 1.2rem;
-  }
-  .a-bank__text p:last-child {
-    margin-bottom: 0;
-  }
-  .a-bank__text strong {
-    color: var(--teal-dark);
   }
 
   /* מקום לתמונה: מלבן מעוגל, עד שנוגה תשלח תמונה */
@@ -381,28 +355,21 @@ const icons: Record<string, string> = {
     box-shadow: 0 28px 50px -30px rgb(11 26 51 / 0.45);
   }
 
-  /* ---------- 4. איך אני עובדת ---------- */
+  /* ---------- 2. הדרך שלנו ---------- */
   .a-ways {
     padding-block: clamp(3.5rem, 9vw, 6rem);
     color: var(--on-dark);
     background:
       radial-gradient(40rem 24rem at 100% 0, rgb(29 157 160 / 0.22), transparent 70%),
       radial-gradient(34rem 22rem at 0 100%, rgb(209 154 74 / 0.14), transparent 72%),
-      var(--navy);
+      linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 45%);
+    border-top: 1px solid rgb(252 220 109 / 0.18); /* קו זהב עדין שמפריד מהפתיח */
   }
-  .a-ways__head {
-    max-width: 46rem;
-    margin-bottom: 2.75rem;
-  }
-  .a-ways h2 {
+  .a-ways__title {
     color: var(--white);
     font-size: clamp(1.9rem, 5vw, 2.8rem);
     font-weight: 900;
-  }
-  .a-ways__head p {
-    font-size: 1.15rem;
-    color: var(--on-dark);
-    margin: 0;
+    margin-bottom: 2.25rem;
   }
   .ways {
     list-style: none;
@@ -453,17 +420,52 @@ const icons: Record<string, string> = {
     font-size: 1.02rem;
   }
 
-  /* ---------- 5. מלב אל לב ---------- */
-  .a-heart {
+  /* ---------- 4. מומחים שאני עובדת איתם ---------- */
+  .experts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    gap: 2.5rem;
-    align-items: center;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
   }
-  @media (min-width: 52rem) {
-    .a-heart {
-      grid-template-columns: 1fr 1.3fr;
-      gap: 4rem;
-    }
+  .expert {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.4rem 1.4rem 1.3rem;
+    border-radius: 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 40px -30px rgb(11 26 51 / 0.4);
+  }
+  .expert__mono {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+  .expert h3 {
+    font-size: 1.15rem;
+    margin: 0.1rem 0 0.3rem;
+  }
+  .expert p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--teal-dark);
+  }
+  /* פרט שנוגה עוד צריכה להשלים */
+  .expert--todo {
+    border: 2px dashed var(--teal);
+    background: var(--mist);
+    box-shadow: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
