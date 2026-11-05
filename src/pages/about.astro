@@ -11,6 +11,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
+import { contact } from '../data/contact';
 
 // כל התמונות מהתיקייה, לפי המספר שבתחילת שם הקובץ
 const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
@@ -116,10 +117,8 @@ const icons: Record<string, string> = {
           <span class="a-hero__hi">נעים להכיר,</span>
           <span class="a-hero__name hl">נוגה דיין אור</span>
         </h1>
-        <p class="a-hero__title">
-          <span class="a-hero__role">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות</span>{' '}
-          <span class="a-hero__how">באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
-        </p>
+        <!-- משפט אחד ברצף, באותו עיצוב (לבקשת נוגה) -->
+        <p class="a-hero__title">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה</p>
         <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר -->
         <a class="btn a-btn" href="/contact/">
           קביעת שיחת היכרות
@@ -135,11 +134,12 @@ const icons: Record<string, string> = {
       <div class="a-story__text reveal">
         <p class="a-kicker">הסיפור שלי</p>
         <!-- המשפט של נוגה (2026-11-05) -->
-        <h2 class="a-story__title">מאוהבת בלעשות עסקים <span class="hl--mark">ולהזיז בניינים</span></h2>
+        <h2 class="a-story__title">מאוהבת בלעשות עסקים</h2>
+        <!-- שימו לב: ב-Astro ירידת שורה לפני תגית או אחריה נמחקת, ולכן הרווחים כאן כתובים במפורש עם {' '} -->
         <p>
-          מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>
+          מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>{' '}
           — ועכשיו צריך לגרום לעשרות סניפים ולמאות יועצי השקעות לזוז? מישהו צריך לקחת את הרעיון, לחבר
-          את האנשים והמספרים ולבנות דוחות עבודה, נהלים, בקרות ודיווחים.
+          את האנשים והמספרים ולבנות דוחות עבודה, נהלים, בקרות ודיווחים.{' '}
           <span class="hl--mark">התפקיד שלי היה לגרום לדברים לקרות.</span>
         </p>
         <p>
@@ -149,16 +149,13 @@ const icons: Record<string, string> = {
           סקרנית, שואלת שאלות, ראש גדול ויצירתי ואהבה לפתור אתגרים עסקיים עם פתרונות חכמים ואפס תקציבים.
         </p>
         <p>
-          יש לי <span class="hl--mark">תואר שני במנהל עסקים</span> מלפני שני עשורים, וגם ניסיון אמיתי של
+          יש לי <span class="hl--mark">תואר שני במנהל עסקים</span> מלפני שני עשורים, וגם ניסיון אמיתי של{' '}
           <span class="hl--mark">ליווי 450 עסקים</span>, ואת כל אלה אני מביאה לעסק שלכם.
         </p>
         <p>
-          קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.
-          <!-- המשפט הזה מודגש לבקשת נוגה -->
-          <strong class="a-strong">
-            כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
-            לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
-          </strong>
+          <!-- המשפט השני מודגש לבקשת נוגה, כחלק מהפסקה -->
+          קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.{' '}
+          <strong class="a-strong">כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.</strong>
         </p>
       </div>
 
@@ -305,11 +302,41 @@ const icons: Record<string, string> = {
         </div>
       ))
     }
+
+    <!-- 9. צור קשר: כפתור לוואטסאפ בסוף העמוד (לבקשת נוגה) -->
+    <div class="container a-contact">
+      <a class="btn a-wa" href={contact.whatsapp} target="_blank" rel="noopener">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.3Z"/></svg>
+        צור קשר בוואטסאפ
+        <span class="sr-only"> (נפתח בלשונית חדשה)</span>
+      </a>
+    </div>
   </section>
 </BaseLayout>
 
 
 <style>
+  /* כפתור הוואטסאפ בסוף העמוד */
+  .a-contact {
+    display: flex;
+    justify-content: center;
+    padding-top: clamp(2rem, 5vw, 3rem);
+  }
+  .a-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+    padding: 0.85em 2em;
+    box-shadow: 0 18px 40px -20px rgb(209 154 74 / 0.9);
+  }
+  /* בעמוד הזה המרווחים קטנים יותר מהרגיל (בקשה של נוגה) */
+  .section {
+    padding-block: clamp(2.25rem, 5vw, 3.5rem);
+  }
+  .a-title {
+    margin-bottom: 1rem;
+  }
   /* ---------- 1. פתיח עם תמונת רקע ---------- */
   .a-hero {
     position: relative;
@@ -336,7 +363,7 @@ const icons: Record<string, string> = {
   }
   .a-hero__inner {
     position: relative;
-    padding-block: 0.5rem 3rem;
+    padding-block: 0.5rem 2.25rem;
   }
   .a-hero h1 {
     margin: 0 0 1rem;
@@ -356,16 +383,12 @@ const icons: Record<string, string> = {
     white-space: nowrap;
     padding-bottom: 0.08em;
   }
-  /* התואר וההמשך "באמצעות..." זורמים ברצף, בלי שבירת שורה ביניהם (בקשה של נוגה) */
+  /* התואר: משפט אחד ברצף, באותו עיצוב (בקשה של נוגה) */
   .a-hero__title {
     font-size: clamp(1.1rem, 2.2vw, 1.35rem);
     font-weight: 600;
     line-height: 1.55;
-    margin-bottom: 1.75rem;
-  }
-  .a-hero__how {
-    font-weight: 400;
-    color: var(--on-dark-soft);
+    margin-bottom: 1.5rem;
   }
   .a-btn {
     display: inline-flex;
@@ -406,11 +429,7 @@ const icons: Record<string, string> = {
         rgb(7 17 31 / 0.12);
     }
     .a-hero__inner {
-      padding-block: 4rem;
-    }
-    /* במחשב התואר נכנס בשורה אחת */
-    .a-hero__role {
-      white-space: nowrap;
+      padding-block: 3rem;
     }
     .a-hero__text {
       max-width: min(38rem, 55vw);
@@ -478,17 +497,10 @@ const icons: Record<string, string> = {
     margin-bottom: 1.5rem;
   }
   /* המשפט המודגש בסוף הסיפור: פס זהב בצד ורקע עדין */
+  /* המשפט המודגש בסוף הסיפור: מודגש כחלק מהפסקה */
   .a-strong {
-    display: block;
-    margin-top: 1rem;
-    padding: 1rem 1.25rem;
-    border-inline-start: 4px solid var(--gold-dark);
-    border-radius: 0.25rem 0.9rem 0.9rem 0.25rem;
-    background: var(--mist);
+    font-weight: 800;
     color: var(--navy);
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.7;
   }
 
   /* צמד תמונות: גדולה, ומעליה קטנה שחופפת בפינה עם מסגרת לבנה */
@@ -520,20 +532,7 @@ const icons: Record<string, string> = {
   }
 
   /* ---------- 4. מה מניע אותי ---------- */
-  .a-drive__grid {
-    display: grid;
-    gap: 1rem 4rem;
-    align-items: start;
-  }
-  @media (min-width: 52rem) {
-    .a-drive__grid {
-      grid-template-columns: 1fr 2fr;
-    }
-    .a-drive__grid .a-title {
-      position: sticky;
-      top: 6.5rem;
-    }
-  }
+  /* הכותרת מעל והטקסט לרוחב (נוגה לא אהבה כותרת בצד עם חצי עמוד ריק) */
   .a-drive__text {
     font-size: 1.2rem;
     line-height: 1.85;
@@ -559,7 +558,7 @@ const icons: Record<string, string> = {
 
   /* ---------- 5. דווקא עכשיו ---------- */
   .a-now {
-    padding-block: clamp(3.5rem, 9vw, 6rem);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
     color: var(--on-dark);
     text-align: center;
     background:
@@ -614,13 +613,13 @@ const icons: Record<string, string> = {
 
   /* ---------- 8. רגעים מהכנסים: שורות תמונות נעות ---------- */
   .a-moments {
-    padding-block: clamp(3.5rem, 9vw, 5.5rem);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
     overflow: hidden;
     /* רקע בהיר: מפריד בין "דווקא עכשיו" הכהה לבין הפוטר הכהה */
     background: var(--white);
   }
   .a-moments .a-title {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
   }
   .reel {
     --h: clamp(10rem, 22vw, 15rem);
@@ -739,7 +738,7 @@ const icons: Record<string, string> = {
 
   /* ---------- 2. הדרך שלנו ---------- */
   .a-ways {
-    padding-block: clamp(3.5rem, 9vw, 6rem);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
     color: var(--on-dark);
     background:
       radial-gradient(40rem 24rem at 100% 0, rgb(29 157 160 / 0.22), transparent 70%),
@@ -751,7 +750,7 @@ const icons: Record<string, string> = {
     color: var(--white);
     font-size: clamp(1.9rem, 5vw, 2.8rem);
     font-weight: 900;
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.5rem;
   }
   .ways {
     list-style: none;
