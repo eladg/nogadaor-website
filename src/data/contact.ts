@@ -7,6 +7,8 @@ export const contact = {
   phoneDisplay: '054-2472729',
   phoneHref: 'tel:+972542472729',
   email: 'nogadaor@gmail.com',
+  // קבוצת הוואטסאפ של הקהילה "תודעה עסקית מנצחת" (נוגה, 2026-11-05)
+  whatsappGroup: 'https://chat.whatsapp.com/CCIKnR46ukwKcZgjFxB6il',
 };
 
 export const socials = [
