@@ -11,16 +11,21 @@ export const contact = {
   whatsappGroup: 'https://chat.whatsapp.com/CCIKnR46ukwKcZgjFxB6il',
 };
 
+// icon: שם האייקון ב-src/components/Icon.astro. handle: מה שמוצג מתחת לשם בעמוד צור קשר.
 export const socials = [
-  { name: 'פייסבוק', href: 'https://www.facebook.com/nogadaor1' },
-  { name: 'אינסטגרם', href: 'https://www.instagram.com/noga_dayan_or' },
-  { name: 'טיקטוק', href: 'https://www.tiktok.com/@nogadayanor' },
+  { name: 'פייסבוק', icon: 'facebook', handle: 'nogadaor1', href: 'https://www.facebook.com/nogadaor1' },
+  { name: 'אינסטגרם', icon: 'instagram', handle: '@noga_dayan_or', href: 'https://www.instagram.com/noga_dayan_or' },
+  { name: 'טיקטוק', icon: 'tiktok', handle: '@nogadayanor', href: 'https://www.tiktok.com/@nogadayanor' },
   {
     name: 'יוטיוב',
+    icon: 'youtube',
+    handle: 'נוגה דיין אור',
     href: 'https://www.youtube.com/@%D7%A0%D7%95%D7%92%D7%94%D7%93%D7%99%D7%99%D7%9F%D7%90%D7%95%D7%A8',
   },
   {
     name: 'לינקדאין',
+    icon: 'linkedin',
+    handle: 'Noga Dayan Or',
     href: 'https://www.linkedin.com/in/noga-dayan-or-%D7%A0%D7%95%D7%92%D7%94-%D7%93%D7%99%D7%99%D7%9F-%D7%90%D7%95%D7%A8-06810a136',
   },
-];
+] as const;

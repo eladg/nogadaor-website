@@ -1,0 +1,84 @@
+---
+// אייקונים פשוטים (SVG) לשימוש חוזר באתר: רשתות חברתיות, דרכי קשר ואייקונים קטנים לרשימות.
+// הצבע נלקח מהטקסט שמסביב (currentColor). האייקונים דקורטיביים (aria-hidden), ולכן
+// הקישור או הטקסט שלידם חייבים לומר במילים מה הם.
+// שימוש: <Icon name="instagram" size={24} />
+interface Props {
+  name: keyof typeof icons;
+  size?: number;
+  class?: string;
+}
+
+// fill: צורה מלאה. stroke: קו (בעובי 2).
+const icons = {
+  whatsapp: {
+    type: 'fill',
+    svg: '<path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.5-.3Z"/>',
+  },
+  facebook: {
+    type: 'fill',
+    svg: '<path d="M13.5 21v-7.5H16l.4-3H13.5V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4A21 21 0 0 0 14.3 4c-2.3 0-3.9 1.4-3.9 4v2.5H8v3h2.4V21Z"/>',
+  },
+  instagram: {
+    type: 'stroke',
+    svg: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="0.6" fill="currentColor"/>',
+  },
+  youtube: {
+    type: 'fill',
+    svg: '<path fill-rule="evenodd" d="M2.5 8.2A3.4 3.4 0 0 1 5.6 5C7.6 4.8 9.8 4.7 12 4.7s4.4.1 6.4.3a3.4 3.4 0 0 1 3.1 3.2c.1 1.3.2 2.5.2 3.8s-.1 2.5-.2 3.8a3.4 3.4 0 0 1-3.1 3.2c-2 .2-4.2.3-6.4.3s-4.4-.1-6.4-.3a3.4 3.4 0 0 1-3.1-3.2C2.4 14.5 2.3 13.3 2.3 12s.1-2.5.2-3.8ZM10 8.8v6.4l5.5-3.2Z"/>',
+  },
+  tiktok: {
+    type: 'fill',
+    svg: '<path d="M16.6 3h-3.2v11.8a2.6 2.6 0 1 1-2.6-2.6c.3 0 .6 0 .8.1V9a5.9 5.9 0 1 0 5 5.8V9a7.3 7.3 0 0 0 4.2 1.3V7.1a4.2 4.2 0 0 1-4.2-4.1Z"/>',
+  },
+  linkedin: {
+    type: 'fill',
+    svg: '<path fill-rule="evenodd" d="M4.5 3h15A1.5 1.5 0 0 1 21 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-15A1.5 1.5 0 0 1 4.5 3Zm3.9 3.6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM7.1 10.6v7.3h2.6v-7.3Zm4.4 0v7.3h2.5v-3.8c0-1 .3-2 1.5-2s1.3 1.1 1.3 2.1v3.7h2.6v-4.2c0-2.2-.5-3.4-2.9-3.4-1.2 0-2 .6-2.4 1.2v-.9Z"/>',
+  },
+  phone: {
+    type: 'stroke',
+    svg: '<path d="M21 16.4v2.7a1.8 1.8 0 0 1-2 1.8 17.8 17.8 0 0 1-7.8-2.8 17.5 17.5 0 0 1-5.4-5.4A17.8 17.8 0 0 1 3 4.9 1.8 1.8 0 0 1 4.8 3h2.7a1.8 1.8 0 0 1 1.8 1.5c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8.3 10a14.4 14.4 0 0 0 5.4 5.4l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.5 1.9Z"/>',
+  },
+  mail: {
+    type: 'stroke',
+    svg: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  },
+  chat: {
+    type: 'stroke',
+    svg: '<path d="M20.5 12a8.5 8.5 0 0 1-12.3 7.6L3.5 21l1.4-4.5A8.5 8.5 0 1 1 20.5 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-width="2.6"/>',
+  },
+  users: {
+    type: 'stroke',
+    svg: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-1a4.5 4.5 0 0 1 4.5-4.5h4a4.5 4.5 0 0 1 4.5 4.5v1"/><path d="M15.5 4.7a3.5 3.5 0 0 1 0 6.6M21.5 20v-1a4.5 4.5 0 0 0-3.2-4.3"/>',
+  },
+  megaphone: {
+    type: 'stroke',
+    svg: '<path d="M3 10.5v3a1 1 0 0 0 1 1h2.5l6 4.5v-14l-6 4.5H4a1 1 0 0 0-1 1Z"/><path d="M16 9a4.2 4.2 0 0 1 0 6M18.8 6.2a8.2 8.2 0 0 1 0 11.6"/>',
+  },
+  gift: {
+    type: 'stroke',
+    svg: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v7.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V12M12 8v13"/><path d="M12 8S10.6 3.5 8 3.5a2.25 2.25 0 0 0 0 4.5M12 8s1.4-4.5 4-4.5a2.25 2.25 0 0 1 0 4.5"/>',
+  },
+  sun: {
+    type: 'stroke',
+    svg: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  },
+  heart: {
+    type: 'fill',
+    svg: '<path d="M12 20.5s-8.5-5-8.5-11A4.8 4.8 0 0 1 12 6.4a4.8 4.8 0 0 1 8.5 3.1c0 6-8.5 11-8.5 11Z"/>',
+  },
+  arrow: {
+    type: 'stroke',
+    svg: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  },
+} as const;
+
+const { name, size = 24, class: className } = Astro.props;
+const icon = icons[name];
+const strokeProps =
+  icon.type === 'stroke'
+    ? { fill: 'none', stroke: 'currentColor', 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }
+    : { fill: 'currentColor' };
+---
+
+<svg class={className} aria-hidden="true" focusable="false" viewBox="0 0 24 24" width={size} height={size} {...strokeProps} set:html={icon.svg} />

@@ -1,0 +1,87 @@
+---
+// טקסט ארוך עם כפתור "קרא עוד".
+// preview מוצג תמיד. more מוסתר עד הלחיצה. בלי JavaScript הכול מוצג (ואין כפתור).
+// ירידת שורה אחת בטקסט = שורה חדשה, ירידה כפולה = פסקה חדשה.
+interface Props {
+  preview: string;
+  more?: string;
+  class?: string;
+}
+const { preview, more, class: className } = Astro.props;
+const paras = (t: string) => t.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+---
+
+<div class:list={['rm', className]} data-rm>
+  {paras(preview).map((p) => <p>{p}</p>)}
+  {
+    more && (
+      <>
+        <div class="rm__more" data-rm-more>
+          {paras(more).map((p) => <p>{p}</p>)}
+        </div>
+        <button class="rm__btn" type="button" aria-expanded="false" data-rm-btn hidden>
+          <span class="rm__open">קרא עוד</span>
+          <span class="rm__close">סגירה</span>
+        </button>
+      </>
+    )
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rm]').forEach((box) => {
+    const more = box.querySelector<HTMLElement>('[data-rm-more]');
+    const btn = box.querySelector<HTMLButtonElement>('[data-rm-btn]');
+    if (!more || !btn) return;
+    more.hidden = true;
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      more.hidden = open;
+    });
+  });
+</script>
+
+<style>
+  .rm p {
+    white-space: pre-line;
+    margin: 0 0 0.85em;
+  }
+  .rm__more[hidden] {
+    display: none;
+  }
+  .rm__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.35em 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 800;
+    color: var(--rm-color, var(--teal-dark));
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    text-decoration-color: var(--gold-dark);
+  }
+  .rm__btn::after {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    /* חץ קטן למטה (ולמעלה כשהטקסט פתוח) */
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-0.15em) rotate(45deg);
+    transition: transform 0.25s ease;
+  }
+  .rm__btn[aria-expanded='true']::after {
+    transform: translateY(0.15em) rotate(-135deg);
+  }
+  .rm__btn[aria-expanded='true'] .rm__open,
+  .rm__btn[aria-expanded='false'] .rm__close {
+    display: none;
+  }
+</style>
