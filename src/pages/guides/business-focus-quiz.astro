@@ -1,0 +1,317 @@
+---
+// שאלון מיקוד פיתוח עסקי – גרסה אינטראקטיבית.
+// המבקר בוחר ניקוד 0 עד 5 לכל היגד, והסכום מתעדכן מיד.
+// התשובות נשמרות רק בדפדפן של המבקר (localStorage) ולא נשלחות לשום מקום.
+// ההיגדים ב-src/data/quiz.ts
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { quizItems, quizYear } from '../../data/quiz';
+import { contact } from '../../data/contact';
+
+const max = quizItems.length * 5;
+const scores = [0, 1, 2, 3, 4, 5];
+const waText = encodeURIComponent('היי נוגה, מילאתי את שאלון המיקוד העסקי ואשמח לעזרה בבחירת המיקודים');
+---
+
+<BaseLayout
+  title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
+  description={`שאלון קצר של 20 היגדים שעוזר לבעלי עסקים לבחור מיקודים ראשונים לפיתוח עסקי בשנת ${quizYear}.`}
+>
+  <section class="q-hero section section--mist">
+    <div class="container q-hero__inner">
+      <p class="q-hero__kicker"><a href="/guides/">מדריכים והרצאות</a> / שאלון</p>
+      <h1>שאלון מיקוד פיתוח עסקי לשנת {quizYear}</h1>
+      <p class="q-hero__lead">תן לעצמך ניקוד בין 0 (הכי נמוך) ל-5 (הכי גבוה) לכל היגד.</p>
+      <p>הניקוד מתעדכן תוך כדי, ובסוף תראו אילו תחומים קיבלו את הציון הנמוך ביותר. התשובות נשמרות רק במכשיר שלכם.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container q-body">
+      <form id="quiz" class="quiz" novalidate>
+        <ol class="quiz__list">
+          {
+            quizItems.map((text, i) => (
+              <li class="quiz__item">
+                <fieldset data-text={text}>
+                  <legend>
+                    <span class="quiz__num">{i + 1}.</span> {text}
+                  </legend>
+                  <div class="quiz__scale">
+                    {scores.map((s) => (
+                      <label class="quiz__opt">
+                        <input type="radio" name={`q${i}`} value={s} />
+                        <span>{s}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="quiz__bar">
+          <div aria-live="polite">
+            <p class="quiz__total">הניקוד שלך: <strong><span data-total>0</span> מתוך {max}</strong></p>
+            <p class="quiz__answered">ענית על <span data-answered>0</span> מתוך {quizItems.length} היגדים</p>
+          </div>
+          <button type="reset" class="quiz__reset">איפוס</button>
+        </div>
+      </form>
+
+      <div class="result" data-result hidden>
+        <h2>סכם את הניקוד מכל השאלות. האם אתה מרוצה מהציון שלך?</h2>
+        <p class="result__score">
+          הניקוד שלך: <strong data-total-final>0</strong> מתוך {max}
+        </p>
+        <h3>בחר מיקודים ראשונים לפיתוח עסקי לשנה הקרובה</h3>
+        <p>אלה ההיגדים שקיבלו את הניקוד הנמוך ביותר. אולי כאן כדאי להתחיל:</p>
+        <ul class="result__low" data-low></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark q-cta">
+    <div class="container">
+      <h2>כאן בשבילכם בכל אתגר פיתוח עסקי</h2>
+      <p>מלווה עסקים בתהליכי פיתוח עסקי, גיוס לקוחות, ניהול ואסטרטגיה.</p>
+      <p class="q-cta__actions">
+        <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לשיחה בוואטסאפ</a>
+        <a href={contact.phoneHref}>נוגה, {contact.phoneDisplay}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const KEY = 'focus-quiz-2027';
+  const form = document.getElementById('quiz') as HTMLFormElement;
+  const items = Array.from(form.querySelectorAll<HTMLFieldSetElement>('fieldset'));
+  const totalEls = document.querySelectorAll<HTMLElement>('[data-total], [data-total-final]');
+  const answeredEl = document.querySelector<HTMLElement>('[data-answered]')!;
+  const result = document.querySelector<HTMLElement>('[data-result]')!;
+  const lowList = document.querySelector<HTMLUListElement>('[data-low]')!;
+
+  function read(): (number | null)[] {
+    return items.map((fs) => {
+      const checked = fs.querySelector<HTMLInputElement>('input:checked');
+      return checked ? Number(checked.value) : null;
+    });
+  }
+
+  function update() {
+    const values = read();
+    const answered = values.filter((v) => v !== null) as number[];
+    const total = answered.reduce((a, b) => a + b, 0);
+    totalEls.forEach((el) => (el.textContent = String(total)));
+    answeredEl.textContent = String(answered.length);
+
+    // התוצאה מוצגת רק אחרי שענו על כל ההיגדים
+    const done = answered.length === items.length;
+    result.hidden = !done;
+    if (done) {
+      // ההיגדים עם הניקוד הנמוך ביותר (עד 5), לפי הסדר בשאלון
+      const ranked = values
+        .map((v, i) => ({ v: v as number, i }))
+        .sort((a, b) => a.v - b.v || a.i - b.i)
+        .slice(0, 5);
+      lowList.innerHTML = '';
+      for (const { v, i } of ranked) {
+        const li = document.createElement('li');
+        const text = items[i].dataset.text;
+        li.textContent = `${text} (ניקוד ${v})`;
+        lowList.appendChild(li);
+      }
+    }
+
+    try {
+      localStorage.setItem(KEY, JSON.stringify(values));
+    } catch {
+      /* אין גישה לאחסון בדפדפן – השאלון עובד גם בלי */
+    }
+  }
+
+  // שחזור תשובות קודמות, אם נשמרו במכשיר
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (Array.isArray(saved)) {
+      saved.forEach((v, i) => {
+        if (v === null || !items[i]) return;
+        const input = items[i].querySelector<HTMLInputElement>(`input[value="${v}"]`);
+        if (input) input.checked = true;
+      });
+    }
+  } catch {
+    /* מתעלמים */
+  }
+
+  form.addEventListener('change', update);
+  form.addEventListener('reset', () => setTimeout(update, 0));
+  update();
+</script>
+
+<style>
+  .q-hero {
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+  .q-hero__inner,
+  .q-body {
+    max-width: 46rem;
+  }
+  .q-hero__kicker {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  .q-hero h1 {
+    color: var(--teal-dark);
+  }
+  .q-hero__lead {
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .q-hero p:last-child {
+    margin-bottom: 0;
+  }
+
+  .quiz__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .quiz__item fieldset {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem 1.1rem;
+  }
+  .quiz__item legend {
+    float: inline-start; /* מאפשר ללג'נד להתנהג כמו טקסט רגיל בתוך המסגרת */
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+  .quiz__num {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .quiz__scale {
+    clear: both;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.4rem;
+    max-width: 22rem;
+  }
+  .quiz__opt {
+    position: relative;
+  }
+  .quiz__opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .quiz__opt span {
+    display: grid;
+    place-items: center;
+    min-height: 2.75rem; /* מטרה נוחה ללחיצה באצבע */
+    border: 2px solid var(--line);
+    border-radius: 0.5rem;
+    font-weight: 700;
+    background: var(--white);
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .quiz__opt input:hover + span {
+    border-color: var(--teal);
+  }
+  .quiz__opt input:checked + span {
+    background: var(--teal-dark);
+    border-color: var(--teal-dark);
+    color: var(--white);
+  }
+  .quiz__opt input:focus-visible + span {
+    outline: 3px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  /* פס הניקוד נשאר צמוד לתחתית המסך בזמן הגלילה */
+  .quiz__bar {
+    position: sticky;
+    bottom: 0;
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 0.6rem 1.1rem;
+    line-height: 1.4;
+  }
+  .quiz__total {
+    margin: 0;
+  }
+  .quiz__total strong {
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
+  .quiz__answered {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+  .quiz__reset {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 0.35em 1.1em;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .result {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border: 2px solid var(--teal);
+    border-radius: var(--radius);
+    background: var(--mist);
+  }
+  .result h2 {
+    font-size: 1.4rem;
+    color: var(--teal-dark);
+  }
+  .result__score strong {
+    font-size: 1.5rem;
+    color: var(--teal-dark);
+  }
+  .result__low {
+    margin: 0;
+    padding-inline-start: 1.3em;
+  }
+  .result__low li {
+    margin-bottom: 0.4rem;
+  }
+
+  .q-cta {
+    text-align: center;
+  }
+  .q-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 0 0;
+  }
+  .q-cta a:not(.btn) {
+    color: var(--gold-light);
+  }
+</style>

@@ -1,0 +1,146 @@
+---
+// עמוד הדרכה בודדת. הנתונים ב-src/data/trainings.ts
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { trainings, type Training } from '../../data/trainings';
+import { contact } from '../../data/contact';
+
+export function getStaticPaths() {
+  return trainings.map((training) => ({ params: { slug: training.slug }, props: { training } }));
+}
+
+const { training } = Astro.props as { training: Training };
+const waText = encodeURIComponent(`היי נוגה, אשמח לפרטים על ההדרכה "${training.title}"`);
+const others = trainings.filter((t) => t.slug !== training.slug);
+---
+
+<BaseLayout title={training.title} description={training.lead.join(' ')}>
+  <section class="t-hero section section--mist">
+    <div class="container t-hero__inner">
+      <p class="t-hero__kicker"><a href="/trainings/">קטלוג הדרכות</a> / הדרכה</p>
+      <h1>{training.title}</h1>
+      {training.lead.map((p) => <p class="t-hero__lead">{p}</p>)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container t-body">
+      <h2>מה נלמד בהדרכה</h2>
+      <ul class="topics">
+        {
+          training.topics.map((topic) => (
+            <li>
+              <strong>{topic.title}</strong>
+              {topic.text && <span>{topic.text}</span>}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>משך ופורמט</h2>
+      <p class="format">{training.format}</p>
+
+      <h2>למי מתאימה</h2>
+      <!-- TODO: נוגה תספק למי ההדרכה מתאימה (בעלי עסקים, ארגונים, קבוצות וכד'). אין להמציא. -->
+      <p class="placeholder">תוכן חסר: למי ההדרכה מתאימה.</p>
+    </div>
+  </section>
+
+  <section class="section section--dark t-cta">
+    <div class="container">
+      <h2>להזמין את ההדרכה כהרצאה או כסדנה</h2>
+      <p class="t-cta__actions">
+        <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לפרטים בוואטסאפ</a>
+        <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--mist">
+    <div class="container">
+      <h2>הדרכות נוספות</h2>
+      <ul class="others">
+        {
+          others.map((t) => (
+            <li>
+              <a href={`/trainings/${t.slug}/`}>{t.title}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .t-hero {
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+  .t-hero__inner,
+  .t-body {
+    max-width: 46rem;
+  }
+  .t-hero__kicker {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  .t-hero h1 {
+    color: var(--teal-dark);
+  }
+  .t-hero__lead {
+    font-weight: 700;
+  }
+  .t-hero__lead:last-child {
+    margin-bottom: 0;
+  }
+  .t-body h2 {
+    color: var(--teal-dark);
+    margin-top: 2rem;
+  }
+  .t-body h2:first-child {
+    margin-top: 0;
+  }
+  .topics {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .topics li {
+    border: 1px solid var(--line);
+    border-inline-start: 5px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 0.9rem 1.2rem;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .format {
+    font-weight: 700;
+  }
+  .t-cta {
+    text-align: center;
+  }
+  .t-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 0 0;
+  }
+  .t-cta a:not(.btn) {
+    color: var(--gold-light);
+  }
+  .others {
+    columns: 2 18rem;
+    column-gap: 2rem;
+    padding-inline-start: 1.2em;
+    margin: 0;
+  }
+  .others li {
+    margin-bottom: 0.5rem;
+    break-inside: avoid;
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+// עמוד מרכז ההדרכות: כרטיס לכל הדרכה מהקטלוג, וקישור לעמוד שלה.
+// הנתונים ב-src/data/trainings.ts
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { trainings } from '../../data/trainings';
+import { contact } from '../../data/contact';
+
+const waText = encodeURIComponent('היי נוגה, אשמח לפרטים על ההדרכות שלך');
+---
+
+<BaseLayout
+  title="הדרכות"
+  description="קטלוג ההדרכות של נוגה דיין אור: שיווק, תוכן, קהילה בוואטסאפ, AI, מנהיגות, נטוורקינג וקבלת החלטות. כל הדרכה ניתנת כהרצאה או כסדנה יישומית."
+>
+  <PageHeader title="קטלוג הדרכות">
+    <!-- הפתיח נלקח מעמוד השער של הקטלוג -->
+    <p>יועצת עסקית, ניסיון של שני עשורים בתהליכי ניהול ופיתוח עסקי, מכורה לפיתוח והגשמת חלומות עסקים.</p>
+    <ul class="pillars" aria-label="הגישה">
+      <li>חשיבה הוליסטית אסטרטגית</li>
+      <li>התייעלות פרקטית להגדלת הכנסות</li>
+      <li>מחויבות אישית לתוצאות משותפות</li>
+    </ul>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container">
+      <h2>ההדרכות</h2>
+      <p class="intro">כל הדרכה ניתנת כהרצאה, ואפשר להפוך אותה לסדנה יישומית.</p>
+      <ul class="cards">
+        {
+          trainings.map((t) => (
+            <li class="card training-card">
+              <h3>
+                <a href={`/trainings/${t.slug}/`}>{t.title}</a>
+              </h3>
+              <p>{t.lead[0]}</p>
+              <p class="training-card__format">{t.format}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <!-- TODO: לפי העץ באתר אמורות להיות כ-12 הרצאות. בקטלוג 8. נוגה תשלים. -->
+    </div>
+  </section>
+
+  <section class="section section--dark trainings-cta">
+    <div class="container">
+      <h2>להזמנת הרצאה או סדנה</h2>
+      <p>אפשר להזמין כל הדרכה לקבוצה, לארגון או לכנס.</p>
+      <p class="trainings-cta__actions">
+        <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לפרטים בוואטסאפ</a>
+        <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pillars {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .pillars li {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.35em 1em;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .intro {
+    margin-bottom: 1.5rem;
+  }
+  .training-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .training-card h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .training-card h3 a:hover {
+    color: var(--teal-dark);
+    text-decoration: underline;
+  }
+  .training-card__format {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .trainings-cta {
+    text-align: center;
+  }
+  .trainings-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 0 0;
+  }
+  .trainings-cta a:not(.btn) {
+    color: var(--gold-light);
+  }
+</style>

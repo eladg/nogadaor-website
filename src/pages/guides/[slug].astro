@@ -1,0 +1,157 @@
+---
+// עמוד מדריך בודד. התוכן נקרא מקובץ Markdown בתיקייה src/content/guides.
+// כדי להוסיף מדריך: יוצרים קובץ חדש שם, והעמוד נבנה אוטומטית.
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { contact } from '../../data/contact';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides');
+  return guides.map((guide) => ({ params: { slug: guide.id }, props: { guide } }));
+}
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+const waText = encodeURIComponent(`היי נוגה, קראתי את המדריך "${guide.data.title}" ואשמח לשמוע עוד`);
+---
+
+<BaseLayout title={guide.data.title} description={guide.data.description}>
+  <section class="guide-hero section section--mist">
+    <div class="container guide-hero__inner">
+      <p class="guide-hero__kicker"><a href="/guides/">מדריכים והרצאות</a> / מדריך</p>
+      <h1>{guide.data.title}</h1>
+      {guide.data.tagline && <p class="guide-hero__tagline">{guide.data.tagline}</p>}
+      <p class="guide-hero__lead">{guide.data.description}</p>
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="container prose">
+      <Content />
+    </div>
+  </article>
+
+  <section class="section section--dark guide-cta">
+    <div class="container">
+      <h2>רוצים לדבר על זה?</h2>
+      <!-- TODO: נוגה תאשר את הנוסח. זו הקריאה לפעולה שהופיעה בסוף המדריכים (פגישת זום קצרה במתנה). -->
+      <p>מוזמנים לפגישת זום קצרה, לשדרוג השיווק של העסק שלכם, לגמרי במתנה.</p>
+      <p class="guide-cta__actions">
+        <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לשיחה בוואטסאפ</a>
+        <a class="guide-cta__link" href="/guides/">לכל המדריכים</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-hero {
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+  .guide-hero__inner {
+    max-width: 46rem;
+  }
+  .guide-hero__kicker {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--teal-dark);
+  }
+  .guide-hero h1 {
+    color: var(--teal-dark);
+    margin-bottom: 0.25rem;
+  }
+  .guide-hero__tagline {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .guide-hero__lead {
+    margin-bottom: 0;
+  }
+
+  .guide-cta {
+    text-align: center;
+  }
+  .guide-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 0 0;
+  }
+  .guide-cta__link {
+    color: var(--gold-light);
+  }
+
+  /* עיצוב הטקסט שמגיע מקובץ ה-Markdown */
+  .prose {
+    max-width: 46rem;
+  }
+  .prose :global(h2) {
+    color: var(--teal-dark);
+    margin-top: 2.5em;
+    padding-top: 1.25em;
+    border-top: 1px solid var(--line);
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .prose :global(h3) {
+    margin-top: 1.75em;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-inline-start: 1.4em;
+    margin: 0 0 1.25em;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.4em;
+  }
+  .prose :global(li::marker) {
+    color: var(--teal);
+    font-weight: 700;
+  }
+  /* משפטי מפתח (שהודגשו בטורקיז בקובץ המקורי) */
+  .prose :global(blockquote) {
+    margin: 1.75em 0;
+    padding: 1.1em 1.4em;
+    background: var(--mist);
+    border-inline-start: 5px solid var(--teal);
+    border-radius: var(--radius);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+  .prose :global(blockquote strong) {
+    color: var(--navy);
+  }
+  /* טבלאות: גלילה לצדדים בנייד במקום שבירת העמוד */
+  .prose :global(table) {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    font-size: 1rem;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    border: 1px solid var(--line);
+    padding: 0.6em 0.8em;
+    text-align: start;
+    vertical-align: top;
+    min-width: 9rem;
+  }
+  .prose :global(th) {
+    background: var(--mist);
+  }
+  .prose :global(td:first-child) {
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+</style>

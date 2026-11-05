@@ -1,0 +1,130 @@
+---
+// עמוד מרכז "מדריכים והרצאות": מדריכים, הרצאות לצפייה בחינם ומאמרים, לפי הסדר.
+// כרגע הכל פתוח לצפייה (בלי הורדה ובלי איסוף אימייל).
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import { quizYear } from '../../data/quiz';
+
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="מדריכים והרצאות"
+  description="מדריכים, שאלון מיקוד עסקי והרצאות לצפייה בחינם לבעלי עסקים, מאת נוגה דיין אור."
+>
+  <PageHeader title="מדריכים והרצאות">
+    <!-- TODO: משפט פתיחה קצר לעמוד – נוגה תספק -->
+    <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container">
+      <h2>מדריכים</h2>
+      <p class="intro">כל המדריכים פתוחים לקריאה כאן באתר.</p>
+      <!-- הוחלט (2026-11-05): בשלב ראשון הכל פתוח, בלי איסוף אימיילים. לא לבנות שער אימייל עד שנוגה תבקש. -->
+      <ul class="cards">
+        {
+          guides.map((g) => (
+            <li class="card guide-card">
+              <p class="guide-card__type">מדריך</p>
+              <h3>
+                <a href={`/guides/${g.id}/`}>{g.data.title}</a>
+              </h3>
+              <p>{g.data.description}</p>
+              <p class="guide-card__more" aria-hidden="true">לקריאה ←</p>
+            </li>
+          ))
+        }
+        <li class="card guide-card guide-card--quiz">
+          <p class="guide-card__type">שאלון</p>
+          <h3>
+            <a href="/guides/business-focus-quiz/">שאלון מיקוד פיתוח עסקי לשנת {quizYear}</a>
+          </h3>
+          <p>20 היגדים, ניקוד 0 עד 5 לכל אחד. בסוף תראו אילו תחומים כדאי לבחור כמיקודים ראשונים לשנה הקרובה.</p>
+          <p class="guide-card__more" aria-hidden="true">למילוי השאלון ←</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- הרצאות לצפייה בחינם מהיוטיוב -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2>הרצאות לצפייה בחינם</h2>
+      <!-- TODO: נוגה תבחר אילו עוד הרצאות מהערוץ להציג. כרגע הדרכה אחת, שכותרתה ביוטיוב כוללת "הדרכה חינמית". -->
+      <div class="training">
+        <YouTubeEmbed
+          id="QANXfOW_s-Q"
+          title="נוגה דיין אור הדרכה חינמית - עסק מקצועי הוא עסק מעוצב"
+        />
+        <p class="training__caption">הדרכה חינמית: עסק מקצועי הוא עסק מעוצב</p>
+      </div>
+      <p class="trainings-link">
+        מחפשים הרצאה או סדנה לקבוצה או לארגון? <a href="/trainings/">לקטלוג ההדרכות</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- מאמרים -->
+  <section class="section">
+    <div class="container">
+      <h2>מאמרים</h2>
+      <!-- TODO: המאמר שנוגה כתבה – נוגה תשלח את הטקסט. אין להמציא תוכן. -->
+      <p class="placeholder">תוכן חסר: המאמר שנוגה כתבה. יתווסף כשיתקבל.</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .intro {
+    margin-bottom: 1.5rem;
+  }
+  .guide-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .guide-card--quiz {
+    border-top-color: var(--gold-dark);
+  }
+  .guide-card__type {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    margin-bottom: 0.35rem;
+  }
+  .guide-card h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  /* כל הכרטיס לחיץ, דרך הקישור שבכותרת */
+  .guide-card h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .guide-card:hover {
+    border-color: var(--teal);
+  }
+  .guide-card__more {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .training {
+    max-width: 48rem;
+  }
+  .training__caption {
+    margin: 0.5rem 0 0;
+    font-weight: 700;
+  }
+  .trainings-link {
+    margin: 1.5rem 0 0;
+  }
+</style>
