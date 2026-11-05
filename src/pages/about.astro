@@ -1,39 +1,54 @@
 ---
-// עמוד אודות (גרסה 3, 2026-11-05).
+// עמוד אודות (גרסה 4, 2026-11-05). נוגה אמרה שהעמוד גמור, חוץ מהמומחים.
 // השראה כללית מ-meitalchesner.co.il/about ומ-masha-bar.co.il, בלי להעתיק את העיצוב של אף אחת מהן.
 // הצבעים של נוגה: כחול, טורקיז וזהב.
-// סדר האזורים (לבקשת נוגה): פתיח עם תמונת רקע, הדרך שלנו (6 קוביות), הסיפור ברצף אחד עם צמד תמונות,
-// גלריית רגעים מהכנסים, מומחים שאני עובדת איתם.
-// "מלב אל לב" הוסר בינתיים: נוגה אמרה שהסיפור שלה כבר כתוב מספיק מלב אל לב.
-// התמונות: נוגה שלחה אותן (2026-11-05). היא ביקשה לפזר אותן כך שלא יופיעו כמה תמונות במה ברצף,
-// ובלי מסגרות לאורך. כל התמונות שנשלחו שמורות ב"חומרים גרפיים לאתר/תמונות מכנסים".
+// סדר האזורים: פתיח, הדרך שלנו (6 קוביות), הסיפור עם צמד תמונות, מה מניע אותי, דווקא עכשיו,
+// הקהילה שלי + מחוץ לעבודה, מומחים, גלריית תמונות נעה, סיסמת סיום.
+// כל הטקסטים: הנוסח של נוגה (2026-11-05), עם עריכה קלה שהיא ביקשה.
+// התמונות: נוגה שלחה אותן. כולן שמורות במקור ב"חומרים גרפיים לאתר/תמונות מכנסים",
+// והגרסאות באתר (חתוכות, עם תיקון תאורה עדין) ב-src/assets/about/gallery.
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import nogaStage from '../assets/noga-stage.jpg';
-import facingAudience from '../assets/about/facing-audience.jpg';
-import hug from '../assets/about/hug.jpg';
-import groupFive from '../assets/about/group-five.jpg';
-import audience from '../assets/about/audience.jpg';
-import lookingAhead from '../assets/about/looking-ahead.jpg';
-import notebooks from '../assets/about/notebooks-badges.jpg';
-import stageParticipants from '../assets/about/stage-participants.jpg';
-import groupFour from '../assets/about/group-four-c.jpg';
-import amongAudience from '../assets/about/among-audience.jpg';
 import { experts } from '../data/experts';
 
-// גלריית רגעים: מעורבב בכוונה (אנשים, קהל, במה, חומרים), לא כמה תמונות במה ברצף.
-// size: big = ריבוע גדול, wide = רחבה, רגילה = בלי size. pos = איזה חלק בתמונה להראות כשהיא נחתכת.
-const moments = [
-  { src: groupFive, alt: 'נוגה עם משתתפות בכנס', size: 'big' },
-  { src: audience, alt: 'קהל המשתתפים באולם הכנס', size: 'wide' },
-  { src: lookingAhead, alt: 'נוגה על הבמה מביטה אל הקהל בחיוך' },
-  // החיתוך מימין מסתיר תג שם של משתתפת
-  { src: notebooks, alt: 'מחברות "הצלחה עסקית בדרך שלך" שחולקו בכנס', pos: '100% 50%' },
-  { src: stageParticipants, alt: 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"', size: 'wide' },
-  { src: groupFour, alt: 'נוגה עם משתתפות בכנס' },
-  { src: amongAudience, alt: 'נוגה בין המשתתפים בזמן שאלות מהקהל' },
-];
+// כל התמונות מהתיקייה, לפי המספר שבתחילת שם הקובץ
+const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
+const pic = (num: string) => {
+  const key = Object.keys(files).find((k) => k.split('/').pop()!.startsWith(`${num}-`));
+  if (!key) throw new Error(`חסרה תמונה ${num} ב-src/assets/about/gallery`);
+  return files[key];
+};
+
+// תיאורי התמונות (לקוראי מסך)
+const alts: Record<string, string> = {
+  '03': 'נוגה יושבת על ספסל בגינה ומחייכת',
+  '04': 'מחברות "הצלחה עסקית בדרך שלך" על שולחן הכנס',
+  '05': 'נוגה ליד הדוכן על הבמה, מחייכת למצלמה',
+  '06': 'משתתפים נרשמים בעמדת הקבלה של הכנס',
+  '07': 'נוגה עם משתתפות בכנס',
+  '09': 'נוגה עם משתתפים בכנס',
+  '10': 'נוגה עם משתתפים בכנס',
+  '11': 'נוגה עם שני משתתפים בכנס',
+  '12': 'נוגה עם משתתפות בכנס',
+  '13': 'נוגה מרצה על הבמה',
+  '14': 'קהל המשתתפים באולם הכנס',
+  '16': 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"',
+  '17': 'נוגה על הבמה מביטה אל הקהל בחיוך',
+  '18': 'נוגה מרצה בכנס "מנהיגות במקסימום"',
+  '19': 'נוגה בין המשתתפים בזמן שאלה מהקהל',
+  '20': 'נוגה בשיחה על הבמה עם מרצה נוספת',
+  '21': 'רול-אפ של הכנס "מנהיגות במקסימום" עם התמונה של נוגה',
+  '22': 'מחברות ועטים שהוכנו למשתתפי הכנס',
+  '23': 'נוגה מדברת אל הקהל',
+};
+// שתי שורות שזזות לכיוונים הפוכים. הסדר מעורבב בכוונה, כדי שלא יהיו כמה תמונות במה ברצף.
+// תמונות 15 ו-08 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
+const rows = [
+  ['07', '14', '05', '04', '18', '09', '21', '06', '17'],
+  ['12', '19', '22', '13', '10', '20', '03', '23', '11', '16'],
+].map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] })));
 
 // שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
 // icon הוא שם הציור הקטן מהרשימה icons שלמטה
@@ -164,38 +179,80 @@ const icons: Record<string, string> = {
         </p>
       </div>
 
-      <!-- צמד תמונות רחבות שחופפות מעט, במקום מסגרת לאורך -->
+      <!-- צמד תמונות רחבות שחופפות מעט -->
       <div class="a-story__photos reveal">
-        <Image class="pic pic--main" src={facingAudience} alt="נוגה על הבמה מול קהל המשתתפים" widths={[600, 900, 1300]} sizes="(min-width: 52rem) 40vw, 100vw" />
-        <Image class="pic pic--small" src={hug} alt="נוגה מחובקת עם משתתפת בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 22vw, 60vw" />
+        <Image class="pic pic--main" src={pic('15')} alt="נוגה על הבמה מול קהל המשתתפים" widths={[600, 900, 1300]} sizes="(min-width: 52rem) 40vw, 100vw" />
+        <Image class="pic pic--small" src={pic('08')} alt="נוגה מחובקת עם משתתפת בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 22vw, 60vw" />
       </div>
     </div>
   </section>
 
-  <!-- 4. רגעים מהכנסים: גלריה מעורבבת -->
-  <section class="section a-moments">
-    <div class="container">
-      <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
-      <h2 class="a-title reveal">רגעים <span class="hl--mark">מהכנסים</span></h2>
-      <ul class="moments">
-        {
-          moments.map((m, i) => (
-            <li class={`moment reveal${m.size ? ` moment--${m.size}` : ''}`} style={`transition-delay: ${(i % 4) * 80}ms`}>
-              <Image
-                src={m.src}
-                alt={m.alt}
-                widths={m.size === 'big' ? [600, 1000, 1400] : [400, 700, 1000]}
-                sizes={m.size ? '(min-width: 52rem) 50vw, 100vw' : '(min-width: 52rem) 25vw, 50vw'}
-                style={m.pos ? `object-position: ${m.pos}` : undefined}
-              />
-            </li>
-          ))
-        }
-      </ul>
+  <!-- 4. מה מניע אותי (הנוסח של נוגה, 2026-11-05) -->
+  <section class="section section--mist a-drive">
+    <div class="container a-drive__grid">
+      <h2 class="a-title reveal">מה <span class="hl--mark">מניע</span> אותי</h2>
+      <div class="a-drive__text reveal">
+        <p class="a-drive__lead">
+          אני מאמינה שכל עסק וכל בעל עסק הוא מיוחד. אין מתכון אחד לבניית עסק ואין שיטה להצלחה.
+          כולם יכולים הכול, כשהם רק רוצים.
+        </p>
+        <p>
+          כבעלי עסקים, אנחנו חייבים להסמיך את עצמנו ולא לחכות לאישורים, ולעשות בדרך שלנו, לא כמו אחרים.
+          זה מה שהופך אותנו למנהיגים, וזה מה שממגנט אלינו את הלקוחות המדויקים.
+        </p>
+        <p>
+          הליווי שלי דואג למנף את הכישורים הקיימים ולחבר עוד יותר לתשוקה, לאנרגיה ולשליחות. מתוך
+          החיבור הזה בונים יסודות אסטרטגיים חזקים, ייחודיים ומבודלים, ובוחרים את הקהלים הנכונים.
+        </p>
+        <p>
+          במקביל מחזקים את מה שיחזיק את העסק גם אחרי הליווי: חוסן ואמונה עצמית, קבלת החלטות בקלות,
+          מנהיגות ולקיחת אחריות, ועשייה גם כשמפחדים.
+        </p>
+        <p>
+          כי כשאנחנו מחוברים והחלטיים, אנחנו יכולים לכבוש כל יעד ולהגשים את הבלתי אפשרי, וזה צריך
+          להיות בדרך שלך. זו המשמעות של הסלוגן שלי:
+        </p>
+        <p class="a-slogan">הצלחה עסקית בדרך שלך</p>
+      </div>
     </div>
   </section>
 
-  <!-- 4. מומחים שאני עובדת איתם: הם אינם חלק מהארגון. הרשימה ב-src/data/experts.ts -->
+  <!-- 5. דווקא עכשיו: משפט מסכם על רקע כחול -->
+  <section class="a-now">
+    <div class="container a-now__inner reveal">
+      <h2 class="a-now__title">דווקא <span class="hl">עכשיו</span></h2>
+      <p>
+        הטכנולוגיה משנה את העולם בקצב מסחרר, ורוב האנשים לא מספיקים לאמץ את השינויים. זה בדיוק
+        הרגע להעז, לסמוך על עצמנו ולחשוב בגדול.
+      </p>
+      <p class="a-now__big">
+        העולם כבר מרחיב את גבולות האפשר. הגיע הזמן להרחיב גם את מה שאתם מרשים לעצמכם.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. הקהילה שלי ומחוץ לעבודה: שני כרטיסים -->
+  <section class="section">
+    <div class="container a-cards">
+      <article class="a-card reveal">
+        <h2 class="a-card__title">הקהילה <span class="hl--mark">שלי</span></h2>
+        <p>
+          כבר 4 שנים אני מנהלת את <strong>"תודעה עסקית מנצחת"</strong>, קהילה של מאות בעלי עסקים. הקהילה
+          מביאה להם עוצמה, אנרגיה ומוטיבציה לעשייה עסקית ולניהול נכון של התודעה.
+        </p>
+        <!-- TODO: קישור לעמוד הקהילה, כשייבנה -->
+      </article>
+      <article class="a-card reveal" style="transition-delay: 120ms">
+        <h2 class="a-card__title">מחוץ <span class="hl--mark">לעבודה</span></h2>
+        <p>
+          אמא לשלושה וגרה בראשון לציון. אוהבת טבע, נחלים, טיולים בג'יפים והרפתקאות, לרקוד, לצחוק,
+          והרבה חברים.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 7. מומחים שאני עובדת איתם: הם אינם חלק מהארגון. הרשימה ב-src/data/experts.ts -->
   <section class="section section--mist">
     <div class="container">
       <h2 class="a-title reveal">מומחים <span class="hl--mark">שאני עובדת איתם</span></h2>
@@ -212,6 +269,40 @@ const icons: Record<string, string> = {
           ))
         }
       </ul>
+    </div>
+  </section>
+
+  <!-- 8. רגעים מהכנסים: שתי שורות תמונות שזזות לכיוונים הפוכים.
+       נעצרות במעבר עכבר. אצל מי שביקש פחות תנועה הן עומדות, ואפשר לגלול אותן לצדדים. -->
+  <section class="a-moments" aria-labelledby="moments-title">
+    <div class="container">
+      <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
+      <h2 id="moments-title" class="a-title reveal">רגעים <span class="hl">מהכנסים</span></h2>
+    </div>
+    {
+      rows.map((row, r) => (
+        <div class={`reel reel--${r % 2 ? 'b' : 'a'}`}>
+          <div class="reel__track">
+            {[0, 1].map((copy) => (
+              <ul class="reel__set" aria-hidden={copy === 1 ? 'true' : undefined}>
+                {row.map((p) => (
+                  <li class="reel__item">
+                    <Image src={p.src} alt={copy === 1 ? '' : p.alt} widths={[400, 700]} sizes="22rem" />
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- 9. סיום: הסיסמה שחותמת כל פוסט של נוגה -->
+  <section class="section a-end">
+    <div class="container reveal">
+      <p class="a-end__motto">קמים ונהיים ענקיים מהחיים</p>
+      <p class="a-end__sign">שלכם, נוגה</p>
     </div>
   </section>
 
@@ -412,65 +503,227 @@ const icons: Record<string, string> = {
     rotate: -2deg;
   }
 
-  /* ---------- רגעים מהכנסים: גלריה על רקע כחול ---------- */
+  /* ---------- 4. מה מניע אותי ---------- */
+  .a-drive__grid {
+    display: grid;
+    gap: 1rem 4rem;
+    align-items: start;
+  }
+  @media (min-width: 52rem) {
+    .a-drive__grid {
+      grid-template-columns: 1fr 2fr;
+    }
+    .a-drive__grid .a-title {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
+  .a-drive__text {
+    font-size: 1.2rem;
+    line-height: 1.85;
+  }
+  .a-drive__lead {
+    font-size: clamp(1.3rem, 2.6vw, 1.55rem);
+    font-weight: 700;
+    line-height: 1.6;
+    color: var(--teal-dark);
+  }
+  /* הסלוגן: מודגש, באותו גופן של האתר */
+  .a-slogan {
+    display: inline-block;
+    margin: 0.25rem 0 0;
+    padding: 0.35em 0.9em;
+    border-radius: 0.75rem;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    font-weight: 900;
+    line-height: 1.3;
+  }
+
+  /* ---------- 5. דווקא עכשיו ---------- */
+  .a-now {
+    padding-block: clamp(3.5rem, 9vw, 6rem);
+    color: var(--on-dark);
+    text-align: center;
+    background:
+      radial-gradient(40rem 22rem at 50% 0, rgb(29 157 160 / 0.25), transparent 70%),
+      radial-gradient(30rem 18rem at 50% 100%, rgb(209 154 74 / 0.16), transparent 72%),
+      var(--navy-deep);
+  }
+  .a-now__inner {
+    max-width: 48rem;
+  }
+  .a-now__title {
+    color: var(--white);
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 900;
+  }
+  .a-now p {
+    font-size: 1.2rem;
+  }
+  .a-now__big {
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.4rem, 3.4vw, 2rem) !important;
+    font-weight: 800;
+    line-height: 1.45;
+    color: var(--white);
+  }
+
+  /* ---------- 6. הקהילה ומחוץ לעבודה ---------- */
+  .a-cards {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+  .a-card {
+    padding: 2rem 1.9rem 1.75rem;
+    border-radius: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--teal);
+    box-shadow: 0 24px 50px -32px rgb(11 26 51 / 0.4);
+    font-size: 1.15rem;
+  }
+  .a-card + .a-card {
+    border-top-color: var(--gold-dark);
+  }
+  .a-card__title {
+    font-size: clamp(1.5rem, 3.6vw, 2rem);
+    font-weight: 900;
+  }
+  .a-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---------- 8. רגעים מהכנסים: שורות תמונות נעות ---------- */
   .a-moments {
+    padding-block: clamp(3.5rem, 9vw, 5.5rem);
+    overflow: hidden;
     background:
       radial-gradient(36rem 22rem at 100% 0, rgb(29 157 160 / 0.2), transparent 70%),
       var(--navy);
   }
   .a-moments .a-title {
     color: var(--white);
+    margin-bottom: 2rem;
   }
-  .a-moments .hl--mark {
-    color: var(--gold-light);
-    background: none;
+  .reel {
+    --h: clamp(10rem, 22vw, 15rem);
+    /* כיוון שמאל-ימין רק לצורך התנועה */
+    direction: ltr;
+    /* הקצוות נמוגים בעדינות */
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .moments {
-    list-style: none;
+  .reel + .reel {
+    margin-top: 1rem;
+  }
+  .reel__track {
+    display: flex;
+    width: max-content;
+    animation: reel-a 80s linear infinite;
+  }
+  .reel--b .reel__track {
+    animation-name: reel-b;
+    animation-duration: 95s;
+  }
+  .reel:hover .reel__track {
+    animation-play-state: paused;
+  }
+  .reel__set {
+    display: flex;
+    gap: 1rem;
+    padding: 0.6rem 1rem 0.6rem 0;
     margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.75rem;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: clamp(9rem, 38vw, 13rem);
-    grid-auto-flow: dense;
+    list-style: none;
   }
-  @media (min-width: 52rem) {
-    .moments {
-      gap: 1rem;
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: clamp(10rem, 16vw, 14rem);
-    }
-  }
-  .moment {
+  .reel__item {
+    height: var(--h);
+    flex: none;
     overflow: hidden;
     border-radius: 1.1rem;
     background: var(--navy-soft);
+    box-shadow: 0 18px 36px -20px rgb(0 0 0 / 0.7);
   }
-  .moment--wide {
-    grid-column: span 2;
+  /* תמונות לסירוגין קצת למעלה וקצת למטה, כדי שהשורה לא תהיה קשיחה */
+  .reel__item:nth-child(even) {
+    translate: 0 0.6rem;
   }
-  .moment--big {
-    grid-column: span 2;
-    grid-row: span 2;
+  .reel__item:nth-child(odd) {
+    translate: 0 -0.6rem;
   }
-  .moment :global(img) {
-    width: 100%;
+  .reel__item :global(img) {
+    display: block;
     height: 100%;
-    object-fit: cover;
+    width: auto;
     transition: transform 0.6s ease;
   }
-  .moment:hover :global(img) {
-    transform: scale(1.04);
+  .reel__item:hover :global(img) {
+    transform: scale(1.05);
   }
+  @keyframes reel-a {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes reel-b {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  /* מי שביקש פחות תנועה: התמונות עומדות, ואפשר לגלול לצדדים */
   @media (prefers-reduced-motion: reduce) {
-    .moment :global(img) {
+    .reel {
+      overflow-x: auto;
+      mask-image: none;
+    }
+    .reel__track {
+      animation: none;
+    }
+    .reel__set[aria-hidden='true'] {
+      display: none;
+    }
+    .reel__item :global(img) {
       transition: none;
     }
-    .moment:hover :global(img) {
+    .reel__item:hover :global(img) {
       transform: none;
     }
   }
+
+  /* ---------- 9. סיום ---------- */
+  .a-end {
+    text-align: center;
+  }
+  .a-end__motto {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--navy);
+  }
+  .a-end__motto::after {
+    content: '';
+    display: block;
+    width: 5rem;
+    height: 5px;
+    margin: 1rem auto 0;
+    border-radius: 3px;
+    background: var(--gold-gradient);
+  }
+  .a-end__sign {
+    margin: 1rem 0 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
 
   /* ---------- 2. הדרך שלנו ---------- */
   .a-ways {
