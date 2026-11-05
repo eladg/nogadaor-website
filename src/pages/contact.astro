@@ -2,7 +2,7 @@
 // עמוד צור קשר, גרסה 2 (2026-11-05). לפי ההנחיות של נוגה: כל הדרכים להתחבר אליה במקום אחד,
 // כולל הקהילה (אין עמוד קהילה נפרד). אווירה שמחה וקלילה, מלא אייקונים, מקצועי ומזמין.
 // הסיסמה ומשפט ההשראה בפתיח: נוגה אישרה (2026-11-05). התמונה בפתיח: נוגה שלחה אותה לעמוד הזה.
-// הסדר: פתיח ← כל הדרכים להתחבר (אייקונים) ← טופס פנייה והרשמה לתכנים ← הקהילה ← מהאינסטגרם.
+// הסדר (נוגה, 2026-11-05): פתיח ← קרוסלת "כל הדרכים להתחבר" ← הקהילה ← מהאינסטגרם ← טופס פנייה והרשמה לתכנים.
 // הטפסים מעוצבים בלבד ועדיין לא מחוברים לשום שירות. TODO: לחבר שירות טפסים ושירות דיוור.
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -15,19 +15,19 @@ import nogaBench from '../assets/contact/noga-bench.jpg';
 
 const instagram = socials.find((s) => s.icon === 'instagram')!;
 
-// כל הדרכים להתחבר: קודם דרכי הקשר הישירות, אחריהן הרשתות
+// הקרוסלה "כל הדרכים להתחבר" (נוגה, 2026-11-05): הוואטסאפ שלה, הקהילה והרשתות.
+// הטלפון והאימייל מופיעים ליד טופס הפנייה.
 const ways = [
-  { name: 'וואטסאפ', icon: 'whatsapp', handle: contact.phoneDisplay, href: contact.whatsapp, external: true, ltr: true },
-  { name: 'טלפון', icon: 'phone', handle: contact.phoneDisplay, href: contact.phoneHref, external: false, ltr: true },
-  { name: 'אימייל', icon: 'mail', handle: contact.email, href: `mailto:${contact.email}`, external: false, ltr: true },
-  ...socials.map((s) => ({ ...s, external: true, ltr: !/[א-ת]/.test(s.handle) })),
+  { name: 'וואטסאפ', icon: 'whatsapp', handle: 'לשיחה איתי', href: contact.whatsapp, ltr: false },
+  { name: 'הקהילה', icon: 'users', handle: 'תודעה עסקית מנצחת', href: contact.whatsappGroup, ltr: false },
+  ...socials.map((s) => ({ ...s, ltr: !/[א-ת]/.test(s.handle) })),
 ] as const;
 
 const [featuredPost, ...morePosts] = instagramPosts;
 ---
 
 <BaseLayout title="צור קשר" description="כל הדרכים להתחבר לנוגה דיין אור: וואטסאפ, טלפון, אימייל, רשתות חברתיות, קהילת העסקים תודעה עסקית מנצחת והרשמה לתכנים במייל.">
-  <!-- 1. פתיח: הסיסמה, דרכי קשר מהירות ותמונה -->
+  <!-- 1. פתיח: הסיסמה ותמונה -->
   <section class="c-hero">
     <div class="container c-hero__grid">
       <div class="c-hero__text">
@@ -36,20 +36,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
         <p class="c-hero__lead">בואו נבדוק יחד איך עושים סדר ומוצאים כסף גם בעסק שלך</p>
         <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
         <p class="c-hero__hint">מתלבטים? משהו לא ברור? דברו איתי באהבה!</p>
-        <div class="c-hero__actions">
-          <a class="btn c-btn" href={contact.whatsapp} target="_blank" rel="noopener">
-            <Icon name="whatsapp" size={20} />
-            לשיחת וואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
-          <a class="c-quick" href={contact.phoneHref}>
-            <span class="c-quick__icon"><Icon name="phone" size={18} /></span>
-            <span dir="ltr">{contact.phoneDisplay}</span>
-          </a>
-          <a class="c-quick" href={`mailto:${contact.email}`}>
-            <span class="c-quick__icon"><Icon name="mail" size={18} /></span>
-            <span dir="ltr">{contact.email}</span>
-          </a>
-        </div>
+        <!-- בפתיח אין כפתורים, טלפון ואימייל (נוגה, 2026-11-05): הקרוסלה שמתחת מובילה לכל הדרכים -->
       </div>
 
       <div class="c-hero__photo">
@@ -63,40 +50,144 @@ const [featuredPost, ...morePosts] = instagramPosts;
     </div>
   </section>
 
-  <!-- 2. כל הדרכים להתחבר: אייקונים עם קישורים -->
+  <!-- 2. כל הדרכים להתחבר: קרוסלת לוגואים, כל לוגו הוא קישור -->
   <section class="section c-ways reveal" aria-labelledby="ways-title">
     <div class="container">
       <h2 id="ways-title" class="c-title c-center">כל הדרכים <span class="hl--mark">להתחבר</span></h2>
       <!-- המשפט הזה הוא הצעה שלי, לאישור נוגה -->
       <p class="c-sub c-center">עוקבים, שואלים, מתייעצים או סתם אומרים שלום. אני כאן.</p>
-      <ul class="c-ways__grid">
+    </div>
+    <!-- קרוסלה לרוחב העמוד שזזה לאט (נעצרת במעבר עכבר או במיקוד מקלדת).
+         הרשימה מופיעה פעמיים כדי שהתנועה תהיה רציפה; העותק השני מוסתר מקוראי מסך ומהמקלדת. -->
+    <div class="c-marquee">
+      <div class="c-marquee__track">
         {
-          ways.map((w) => (
-            <li>
-              <a class="c-way" href={w.href} {...(w.external ? { target: '_blank', rel: 'noopener' } : {})}>
-                <span class="c-way__icon">
-                  <Icon name={w.icon} size={28} />
+          [0, 1].map((copy) => (
+            <ul class="c-marquee__list" aria-hidden={copy === 1 ? 'true' : undefined}>
+              {ways.map((w) => (
+                <li>
+                  <a class="c-way" href={w.href} target="_blank" rel="noopener" tabindex={copy === 1 ? -1 : undefined}>
+                    <span class="c-way__icon">
+                      <Icon name={w.icon} size={34} />
+                    </span>
+                    <span class="c-way__name">{w.name}</span>
+                    <span class="c-way__handle" dir={w.ltr ? 'ltr' : undefined}>
+                      {w.handle}
+                    </span>
+                    <span class="sr-only"> (נפתח בלשונית חדשה)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. הקהילה: קבוצת הוואטסאפ "תודעה עסקית מנצחת" (הטקסטים של נוגה, src/data/community.ts) -->
+  <section class="c-community reveal" aria-labelledby="community-title">
+    <div class="container c-community__grid">
+      <div class="c-community__info">
+        <p class="c-eyebrow c-eyebrow--dark"><Icon name="users" size={16} /> הקהילה שלי</p>
+        <h2 id="community-title" class="c-community__title">קבוצת הוואטסאפ <span class="hl">"תודעה עסקית מנצחת"</span></h2>
+        {communityIntro.map((p) => <p>{p}</p>)}
+        <ul class="c-perks">
+          {
+            communityPerks.map((perk) => (
+              <li>
+                <span class="c-perks__icon">
+                  <Icon name={perk.icon} size={22} />
                 </span>
-                <span class="c-way__name">{w.name}</span>
-                <span class="c-way__handle" dir={w.ltr ? 'ltr' : undefined}>
-                  {w.handle}
-                </span>
-                {w.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
+                {perk.text}
+              </li>
+            ))
+          }
+        </ul>
+        <a class="btn c-btn" href={contact.whatsappGroup} target="_blank" rel="noopener">
+          <Icon name="whatsapp" size={20} />
+          להצטרפות לקבוצה<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+
+      <!-- פוסט מתוך הקהילה, בעיצוב של הודעה -->
+      <article class="c-post" aria-labelledby="post-title">
+        <header class="c-post__head">
+          <Image class="c-post__avatar" src={nogaBench} alt="" widths={[96]} sizes="48px" />
+          <div>
+            <h3 id="post-title" class="c-post__who">נוגה דיין אור</h3>
+            <p class="c-post__where">מתוך הקהילה</p>
+          </div>
+        </header>
+        <ReadMore class="c-post__body" preview={communityPost.preview} more={communityPost.more} />
+        <p class="c-post__signoff">{communityPost.signoff}</p>
+        <p class="c-post__sign">שלכם, נוגה</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 4. מהאינסטגרם: פוסטים שנוגה בחרה (src/data/instagram.ts), עם קישור לכל פוסט -->
+  <section class="section c-insta reveal" aria-labelledby="insta-title">
+    <div class="container">
+      <div class="c-insta__head">
+        <h2 id="insta-title" class="c-title">מה קורה <span class="hl--mark">באינסטגרם</span></h2>
+        <a class="c-follow" href={instagram.href} target="_blank" rel="noopener">
+          <Icon name="instagram" size={20} />
+          לעקוב אחריי <span dir="ltr">{instagram.handle}</span><span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+
+      <article class="c-ig c-ig--featured">
+        <a class="c-ig__media" href={featuredPost.href} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+          <Image src={featuredPost.image} alt="" widths={[400, 640]} sizes="(min-width: 52rem) 24rem, 90vw" />
+        </a>
+        <div class="c-ig__content">
+          <ReadMore class="c-ig__text" preview={featuredPost.preview} more={featuredPost.more} />
+          <a class="c-ig__link" href={featuredPost.href} target="_blank" rel="noopener">
+            לפוסט באינסטגרם <Icon name="arrow" size={18} /><span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+        </div>
+      </article>
+
+      <ul class="c-ig__grid">
+        {
+          morePosts.map((post) => (
+            <li class="c-ig">
+              <a class="c-ig__media" href={post.href} target="_blank" rel="noopener">
+                <Image src={post.image} alt={post.alt} widths={[320, 480]} sizes="(min-width: 64rem) 16rem, (min-width: 36rem) 45vw, 90vw" />
+                {post.kind === 'reel' && <span class="c-ig__badge">סרטון</span>}
+                <span class="sr-only"> (לפוסט באינסטגרם, נפתח בלשונית חדשה)</span>
               </a>
+              <div class="c-ig__content">
+                <ReadMore class="c-ig__text" preview={post.preview} more={post.more} />
+                <a class="c-ig__link" href={post.href} target="_blank" rel="noopener">
+                  {post.kind === 'reel' ? 'לצפייה באינסטגרם' : 'לפוסט באינסטגרם'} <Icon name="arrow" size={18} />
+                  <span class="sr-only"> (נפתח בלשונית חדשה)</span>
+                </a>
+              </div>
             </li>
           ))
         }
       </ul>
     </div>
   </section>
-
-  <!-- 3. טופס פנייה, ולצדו הרשמה לתכנים במייל -->
+  <!-- 5. טופס פנייה, ולצדו הרשמה לתכנים במייל -->
   <section class="section section--mist c-forms reveal">
     <div class="container c-forms__grid">
       <!-- TODO: לחבר את הטופס לשירות טפסים (Formspree / Netlify Forms וכד'). כרגע הוא לא שולח דבר. -->
       <form class="c-form js-demo-form" method="post" novalidate aria-labelledby="form-title">
         <h2 id="form-title" class="c-title">השאירו <span class="hl--mark">פרטים</span></h2>
         <p class="c-form__note">ואחזור אליכם בהקדם</p>
+        <p class="c-form__direct">
+          <a class="c-quick" href={contact.phoneHref}>
+            <span class="c-quick__icon"><Icon name="phone" size={18} /></span>
+            <span dir="ltr">{contact.phoneDisplay}</span>
+          </a>
+          <a class="c-quick" href={`mailto:${contact.email}`}>
+            <span class="c-quick__icon"><Icon name="mail" size={18} /></span>
+            <span dir="ltr">{contact.email}</span>
+          </a>
+        </p>
         <div class="c-form__row">
           <label>
             <span>שם מלא</span>
@@ -146,92 +237,6 @@ const [featuredPost, ...morePosts] = instagramPosts;
     </div>
   </section>
 
-  <!-- 4. הקהילה: קבוצת הוואטסאפ "תודעה עסקית מנצחת" (הטקסטים של נוגה, src/data/community.ts) -->
-  <section class="c-community reveal" aria-labelledby="community-title">
-    <div class="container c-community__grid">
-      <div class="c-community__info">
-        <p class="c-eyebrow c-eyebrow--dark"><Icon name="users" size={16} /> הקהילה שלי</p>
-        <h2 id="community-title" class="c-community__title">קבוצת הוואטסאפ <span class="hl">"תודעה עסקית מנצחת"</span></h2>
-        {communityIntro.map((p) => <p>{p}</p>)}
-        <ul class="c-perks">
-          {
-            communityPerks.map((perk) => (
-              <li>
-                <span class="c-perks__icon">
-                  <Icon name={perk.icon} size={22} />
-                </span>
-                {perk.text}
-              </li>
-            ))
-          }
-        </ul>
-        <a class="btn c-btn" href={contact.whatsappGroup} target="_blank" rel="noopener">
-          <Icon name="whatsapp" size={20} />
-          להצטרפות לקבוצה<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-        </a>
-      </div>
-
-      <!-- פוסט מתוך הקהילה, בעיצוב של הודעה -->
-      <article class="c-post" aria-labelledby="post-title">
-        <header class="c-post__head">
-          <Image class="c-post__avatar" src={nogaBench} alt="" widths={[96]} sizes="48px" />
-          <div>
-            <h3 id="post-title" class="c-post__who">נוגה דיין אור</h3>
-            <p class="c-post__where">מתוך הקהילה</p>
-          </div>
-        </header>
-        <ReadMore class="c-post__body" preview={communityPost.preview} more={communityPost.more} />
-        <p class="c-post__signoff">{communityPost.signoff}</p>
-        <p class="c-post__sign">שלכם, נוגה</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- 5. מהאינסטגרם: פוסטים שנוגה בחרה (src/data/instagram.ts), עם קישור לכל פוסט -->
-  <section class="section c-insta reveal" aria-labelledby="insta-title">
-    <div class="container">
-      <div class="c-insta__head">
-        <h2 id="insta-title" class="c-title">מה קורה <span class="hl--mark">באינסטגרם</span></h2>
-        <a class="c-follow" href={instagram.href} target="_blank" rel="noopener">
-          <Icon name="instagram" size={20} />
-          לעקוב אחריי <span dir="ltr">{instagram.handle}</span><span class="sr-only"> (נפתח בלשונית חדשה)</span>
-        </a>
-      </div>
-
-      <article class="c-ig c-ig--featured">
-        <a class="c-ig__media" href={featuredPost.href} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-          <Image src={featuredPost.image} alt="" widths={[400, 640]} sizes="(min-width: 52rem) 24rem, 90vw" />
-        </a>
-        <div class="c-ig__content">
-          <ReadMore class="c-ig__text" preview={featuredPost.preview} more={featuredPost.more} />
-          <a class="c-ig__link" href={featuredPost.href} target="_blank" rel="noopener">
-            לפוסט באינסטגרם <Icon name="arrow" size={18} /><span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
-        </div>
-      </article>
-
-      <ul class="c-ig__grid">
-        {
-          morePosts.map((post) => (
-            <li class="c-ig">
-              <a class="c-ig__media" href={post.href} target="_blank" rel="noopener">
-                <Image src={post.image} alt={post.alt} widths={[320, 480]} sizes="(min-width: 64rem) 16rem, (min-width: 36rem) 45vw, 90vw" />
-                {post.kind === 'reel' && <span class="c-ig__badge">סרטון</span>}
-                <span class="sr-only"> (לפוסט באינסטגרם, נפתח בלשונית חדשה)</span>
-              </a>
-              <div class="c-ig__content">
-                <ReadMore class="c-ig__text" preview={post.preview} more={post.more} />
-                <a class="c-ig__link" href={post.href} target="_blank" rel="noopener">
-                  {post.kind === 'reel' ? 'לצפייה באינסטגרם' : 'לפוסט באינסטגרם'} <Icon name="arrow" size={18} />
-                  <span class="sr-only"> (נפתח בלשונית חדשה)</span>
-                </a>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
 </BaseLayout>
 
 <!-- הטפסים עוד לא מחוברים: במקום לשלוח, מוצגת הודעה. TODO: להסיר כשמחברים שירות טפסים -->
@@ -448,30 +453,53 @@ const [featuredPost, ...morePosts] = instagramPosts;
   }
 
   /* ---------- 2. כל הדרכים להתחבר ---------- */
-  .c-ways__grid {
+  .c-ways {
+    overflow: hidden;
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  /* הקרוסלה: שורה אחת לרוחב כל העמוד, עם דהייה בקצוות */
+  .c-marquee {
+    overflow: hidden;
+    padding-block: 0.75rem 1.25rem;
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(to left, transparent, #000 6%, #000 94%, transparent);
+  }
+  .c-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: c-marquee 38s linear infinite;
+  }
+  .c-marquee:hover .c-marquee__track,
+  .c-marquee:focus-within .c-marquee__track {
+    animation-play-state: paused;
+  }
+  /* בכיוון ימין-לשמאל העותק השני נמצא משמאל, ולכן זזים ימינה בחצי מהרוחב */
+  @keyframes c-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(50%);
+    }
+  }
+  .c-marquee__list {
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (min-width: 40rem) {
-    .c-ways__grid {
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 56rem;
-      margin-inline: auto;
-    }
+    padding: 0 0.6rem;
+    display: flex;
+    gap: 1.2rem;
+    padding-inline-end: 1.2rem;
   }
   .c-way {
     --tint: rgb(25 154 181 / 0.1);
     --ink: var(--teal);
+    width: 11.5rem;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
-    padding: 1.25rem 0.75rem 1.1rem;
+    padding: 1.5rem 0.75rem 1.25rem;
     border-radius: 1.25rem;
     background: var(--white);
     border: 1px solid var(--line);
@@ -500,8 +528,8 @@ const [featuredPost, ...morePosts] = instagramPosts;
   .c-way__icon {
     display: grid;
     place-items: center;
-    width: 3.6rem;
-    height: 3.6rem;
+    width: 4.6rem;
+    height: 4.6rem;
     margin-bottom: 0.4rem;
     border-radius: 50%;
     background: var(--tint);
@@ -912,5 +940,24 @@ const [featuredPost, ...morePosts] = instagramPosts;
     .c-ig__media :global(img) {
       transition: none;
     }
+    /* בלי תנועה: שורה אחת שגוללים לצדדים ביד, בלי העותק הכפול */
+    .c-marquee {
+      overflow-x: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .c-marquee__track {
+      animation: none;
+    }
+    .c-marquee__list[aria-hidden='true'] {
+      display: none;
+    }
+  }
+
+  .c-form__direct {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.5rem;
+    margin: 0 0 0.5rem;
   }
 </style>
