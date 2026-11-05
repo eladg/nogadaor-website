@@ -33,6 +33,7 @@ const alts: Record<string, string> = {
   '12': 'נוגה עם משתתפות בכנס',
   '13': 'נוגה מרצה על הבמה',
   '14': 'קהל המשתתפים באולם הכנס',
+  '15': 'נוגה על הבמה מול קהל המשתתפים',
   '16': 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"',
   '17': 'נוגה על הבמה מביטה אל הקהל בחיוך',
   '18': 'נוגה מרצה בכנס "מנהיגות במקסימום"',
@@ -43,10 +44,10 @@ const alts: Record<string, string> = {
   '23': 'נוגה מדברת אל הקהל',
 };
 // שתי שורות שזזות לכיוונים הפוכים. הסדר מעורבב בכוונה, כדי שלא יהיו כמה תמונות במה ברצף.
-// תמונות 15 ו-08 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
+// תמונות 23, 08 ו-12 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
 const rows = [
   ['07', '14', '05', '22', '18', '09', '21', '06', '17'],
-  ['12', '19', '13', '10', '20', '03', '23', '11', '16'],
+  ['19', '13', '10', '15', '20', '03', '11', '16'],
 ].map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] })));
 
 // שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
@@ -161,8 +162,12 @@ const icons: Record<string, string> = {
 
       <!-- צמד תמונות רחבות שחופפות מעט -->
       <div class="a-story__photos reveal">
-        <Image class="pic pic--main" src={pic('15')} alt="נוגה על הבמה מול קהל המשתתפים" widths={[600, 900, 1300]} sizes="(min-width: 52rem) 40vw, 100vw" />
-        <Image class="pic pic--small" src={pic('08')} alt="נוגה מחובקת עם משתתפת בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 22vw, 60vw" />
+        <!-- תמונה שרואים בה את הפנים של נוגה (בקשה של נוגה), ומתחתיה עוד שתי תמונות עם אנשים -->
+        <Image class="pic pic--main" src={pic('23')} alt="נוגה מדברת אל קהל המשתתפים" widths={[600, 900, 1300]} sizes="(min-width: 52rem) 40vw, 100vw" />
+        <div class="pic-pair">
+          <Image class="pic pic--a" src={pic('08')} alt="נוגה מחובקת עם משתתפת בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 20vw, 50vw" />
+          <Image class="pic pic--b" src={pic('12')} alt="נוגה עם משתתפות בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 20vw, 50vw" />
+        </div>
       </div>
     </div>
   </section>
@@ -489,10 +494,9 @@ const icons: Record<string, string> = {
     color: var(--navy);
   }
 
-  /* צמד תמונות: גדולה, ומעליה קטנה שחופפת בפינה עם מסגרת לבנה */
+  /* תמונות לצד הסיפור: גדולה למעלה, ומתחתיה שתיים קטנות במסגרת לבנה שחופפות אותה מעט */
   .a-story__photos {
     position: relative;
-    padding-bottom: 18%;
   }
   .pic {
     display: block;
@@ -502,19 +506,31 @@ const icons: Record<string, string> = {
     border-radius: 1.5rem;
   }
   .pic--main {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 4 / 3;
+    object-position: 58% 40%; /* מתמקד בפנים של נוגה */
     box-shadow: 0 30px 60px -32px rgb(11 26 51 / 0.55);
   }
-  .pic--small {
-    position: absolute;
-    bottom: 0;
-    left: -4%;
-    width: 58%;
+  .pic-pair {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: -1rem;
+    padding-inline: 0.75rem;
+  }
+  .pic--a,
+  .pic--b {
     aspect-ratio: 4 / 3;
     border: 6px solid var(--white);
     border-radius: 1.25rem;
     box-shadow: 0 24px 48px -24px rgb(11 26 51 / 0.6);
-    rotate: -2deg;
+  }
+  .pic--a {
+    rotate: 2deg;
+  }
+  .pic--b {
+    rotate: -2.5deg;
+    margin-top: 1.25rem;
   }
 
   /* ---------- 4. מה מניע אותי ---------- */
