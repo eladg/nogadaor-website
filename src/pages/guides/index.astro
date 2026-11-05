@@ -6,7 +6,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { quizYear } from '../../data/quiz';
+import { quizYear, quizQuestions } from '../../data/quiz';
 import GuideCover from '../../components/guide/GuideCover.astro';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
@@ -53,7 +53,7 @@ const articles = all.filter((g) => g.data.type === 'article');
           <h3>
             <a href="/guides/business-focus-quiz/">שאלון מיקוד פיתוח עסקי לשנת {quizYear}</a>
           </h3>
-          <p>25 שאלות קצרות על 9 תחומים בעסק. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
+          <p>{quizQuestions.length} שאלות קצרות על 9 תחומים בעסק. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
           <p class="guide-card__more" aria-hidden="true">למילוי השאלון ←</p>
         </li>
       </ul>
