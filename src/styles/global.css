@@ -5,6 +5,7 @@
 */
 
 @import '@fontsource-variable/heebo';
+@import '@fontsource-variable/playpen-sans-hebrew'; /* גופן "כתב יד" למילים אישיות של נוגה */
 
 :root {
   /* צבעי מותג */
@@ -14,12 +15,17 @@
   --gold-dark: #d19a4a; /* זהב מהלוגו – סוף המעבר */
   --gold-gradient: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
   --navy: #0b1a33; /* כחול כהה – טקסט ואזורים כהים */
+  --navy-deep: #07111f; /* כחול כהה עוד יותר – לעומק ולמעברי צבע באזורים הכהים */
+  --navy-soft: #13284a; /* כחול כהה בהיר מעט – לכרטיסים על רקע כהה */
+  --on-dark: #e8eef6; /* טקסט על רקע כהה (לבן רך) */
+  --on-dark-soft: #a9b8cc; /* טקסט משני על רקע כהה */
   --white: #ffffff;
   --mist: #f4f9f9; /* רקע בהיר מאוד בגוון טורקיז */
   --line: #d8e6e7;
 
   /* גופן – TODO: לאשר גופן סופי מול נוגה (כרגע Heebo, חינמי ונקי) */
   --font: 'Heebo Variable', system-ui, sans-serif;
+  --font-hand: 'Playpen Sans Hebrew Variable', var(--font); /* כתב יד: למילים אישיות בלבד, לא לטקסט רגיל */
 
   --max-width: 72rem;
   --radius: 0.75rem;
@@ -192,8 +198,43 @@ a {
   inset-block-start: 1rem;
 }
 
+/* מילה מודגשת בזהב בתוך כותרת: <span class="hl">מילה</span> */
+.hl {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* על רקע בהיר הזהב חלש מדי לקריאה, ולכן שם ההדגשה היא טורקיז עם "מרקר" זהב מתחת */
+.hl--mark {
+  background: linear-gradient(transparent 62%, rgb(252 220 109 / 0.75) 62%, rgb(252 220 109 / 0.75) 92%, transparent 92%);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--teal-dark);
+  padding-inline: 0.08em;
+}
+
+/* הופעה עדינה בגלילה. הסקריפט ב-BaseLayout מוסיף את המחלקה is-in.
+   בלי JavaScript, או אצל מי שביקש פחות תנועה, הכול מוצג רגיל. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

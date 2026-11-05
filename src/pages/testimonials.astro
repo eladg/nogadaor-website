@@ -8,9 +8,6 @@ import Carousel from '../components/Carousel.astro';
 import ReviewsCarousel from '../components/ReviewsCarousel.astro';
 import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
-
-// המקורות של ההמלצות הכתובות, לפי סדר ההופעה
-const sources = [...new Set(allReviews.map((r) => r.source))];
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
@@ -21,26 +18,18 @@ const sources = [...new Set(allReviews.map((r) => r.source))];
         <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
         <p class="t-hero__lead">קצת ממה שהלקוחות מספרים על תהליך הליווי</p>
 
-        <!-- המספרים מחושבים מהרשימות עצמן, ומתעדכנים לבד כשמוסיפים המלצה -->
-        <ul class="t-stats">
-          <li>
-            <strong>{allReviews.length}</strong>
-            <span>המלצות כתובות</span>
-          </li>
-          <li>
-            <strong>{videos.length + 1}</strong>
-            <span>סרטוני המלצה</span>
-          </li>
-        </ul>
-        <p class="t-sources">
-          מקורות:{' '}
-          {sources.map((s, i) => (
-            <>
-              <bdi>{s}</bdi>
-              {i < sources.length - 1 && ' · '}
-            </>
-          ))}
-        </p>
+        <!-- מילים אישיות של נוגה בכתב יד (הנוסח שלה, 2026-11-05). במקום ספירת ההמלצות, שנוגה ביקשה להוריד -->
+        <blockquote class="t-note">
+          <p>
+            תודה ללקוחות המהממים שלי על האמון, על הדרך המשותפת ועל המילים שמרגשות אותי כל כך.
+            לעולם לא אפסיק להודות ולהעריך בחזרה <span role="img" aria-label="לב">❤️</span>
+          </p>
+          <p>
+            מאחורי כל המלצה כאן יש תהליך של חשיבה ופיצוח, החלטות שקיבלו כיוון ורעיונות שהפכו
+            למהלכים בעסק. עשייה משותפת שמביאה איתה גם תוצאות, ביטחון והרבה אנרגיה להמשיך קדימה.
+          </p>
+          <footer class="t-note__sign">נוגה</footer>
+        </blockquote>
 
         <p class="t-hero__links">
           <a href="#videos">לסרטונים</a>
@@ -129,31 +118,44 @@ const sources = [...new Set(allReviews.map((r) => r.source))];
     font-size: 1.3rem;
   }
 
-  .t-stats {
-    list-style: none;
-    padding: 0;
-    margin: 1.75rem 0 0.75rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  .t-stats li {
+  /* מילים אישיות בכתב יד, כמו פתק שנכתב ביד */
+  .t-note {
+    position: relative;
+    margin: 1.75rem 0 0;
+    max-width: 36rem;
+    padding: 1.6rem 1.6rem 1.2rem;
     background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 1rem;
-    padding: 0.9rem 1.4rem;
-    min-width: 9rem;
-    box-shadow: 0 6px 20px rgb(11 26 51 / 0.05);
+    border-radius: 1.25rem;
+    box-shadow: 0 18px 40px -22px rgb(11 26 51 / 0.35);
+    font-family: var(--font-hand);
+    font-size: 1.25rem;
+    line-height: 1.85;
+    color: var(--navy);
+    rotate: -0.6deg;
   }
-  .t-stats strong {
-    display: block;
-    font-size: 2.2rem;
-    line-height: 1.1;
+  /* מירכאות זהב גדולות בפינה */
+  .t-note::before {
+    content: '”';
+    position: absolute;
+    inset-block-start: -0.42em;
+    inset-inline-start: 0.35em;
+    font-family: var(--font);
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .t-note p {
+    margin: 0 0 0.8em;
+  }
+  .t-note__sign {
+    text-align: end;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--teal-dark);
-  }
-  .t-sources {
-    margin: 0;
-    font-size: 0.95rem;
   }
   .t-hero__links {
     display: flex;
