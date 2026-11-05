@@ -77,8 +77,8 @@ const icons: Record<string, string> = {
           <span class="a-hero__name hl">נוגה דיין אור</span>
         </h1>
         <p class="a-hero__title">
-          יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות
-          <span>באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
+          <span class="a-hero__role">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות</span>{' '}
+          <span class="a-hero__how">באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
         </p>
         <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר -->
         <a class="btn a-btn" href="/contact/">
@@ -107,7 +107,7 @@ const icons: Record<string, string> = {
     <div class="container a-bank__grid">
       <div class="a-bank__text reveal">
         <p>
-          <span class="hl--mark">15 שנה בתפקידים בהנהלת הבנק הבינלאומי</span> לימדו אותי המון על פיתוח עסקי,
+          <span class="hl--mark">20 שנה בתפקידים בהנהלת הבנק הבינלאומי</span> לימדו אותי המון על פיתוח עסקי,
           ניהול עובדים והובלת תהליכים. עשיתי שם המון דברים מעניינים, אבל הכי הרבה אהבתי לייעץ
           לדירקטוריון בפרויקטים אסטרטגיים פנים־ארגוניים.
         </p>
@@ -231,16 +231,14 @@ const icons: Record<string, string> = {
     white-space: nowrap;
     padding-bottom: 0.08em;
   }
+  /* התואר וההמשך "באמצעות..." זורמים ברצף, בלי שבירת שורה ביניהם (בקשה של נוגה) */
   .a-hero__title {
     font-size: clamp(1.1rem, 2.2vw, 1.35rem);
     font-weight: 600;
-    line-height: 1.5;
-    max-width: 30rem;
+    line-height: 1.55;
     margin-bottom: 1.75rem;
   }
-  .a-hero__title span {
-    display: block;
-    margin-top: 0.3em;
+  .a-hero__how {
     font-weight: 400;
     color: var(--on-dark-soft);
   }
@@ -269,7 +267,7 @@ const icons: Record<string, string> = {
       top: 0;
       bottom: 0;
       left: 0;
-      width: 64%;
+      width: 60%;
       height: auto;
     }
     .a-hero__media img {
@@ -285,8 +283,12 @@ const icons: Record<string, string> = {
     .a-hero__inner {
       padding-block: 4rem;
     }
+    /* במחשב התואר נכנס בשורה אחת */
+    .a-hero__role {
+      white-space: nowrap;
+    }
     .a-hero__text {
-      max-width: 34rem;
+      max-width: min(38rem, 55vw);
       text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
     }
   }
