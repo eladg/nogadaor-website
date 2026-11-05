@@ -12,6 +12,7 @@ import { contact, socials } from '../data/contact';
 import { communityIntro, communityPerks, communityPost } from '../data/community';
 import { instagramPosts } from '../data/instagram';
 import nogaBench from '../assets/contact/noga-bench.jpg';
+import heroPhoto from '../assets/about/gallery/14-audience.jpg';
 
 const instagram = socials.find((s) => s.icon === 'instagram')!;
 
@@ -27,26 +28,13 @@ const [featuredPost, ...morePosts] = instagramPosts;
 ---
 
 <BaseLayout title="צור קשר" description="כל הדרכים להתחבר לנוגה דיין אור: וואטסאפ, טלפון, אימייל, רשתות חברתיות, קהילת העסקים תודעה עסקית מנצחת והרשמה לתכנים במייל.">
-  <!-- 1. פתיח: הסיסמה ותמונה -->
+  <!-- 1. פתיח: פס רחב ונמוך עם תמונת אווירה מהכנס והסיסמה (נוגה, 2026-11-05: שהתמונה לא תעכב
+       את הגעה לדברים החשובים, ואפשר תמונת אווירה במקום תמונה שלה). משפט ההשראה עבר לטופס, כדי לפזר את הסיסמאות. -->
   <section class="c-hero">
-    <div class="container c-hero__grid">
-      <div class="c-hero__text">
-        <p class="c-eyebrow"><Icon name="heart" size={16} /> צור קשר</p>
-        <h1>להעז לגלות את הגרסה <span class="hl--mark">האמיצה</span> של העסק שלך</h1>
-        <p class="c-hero__lead">בואו נבדוק יחד איך עושים סדר ומוצאים כסף גם בעסק שלך</p>
-        <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
-        <p class="c-hero__hint">מתלבטים? משהו לא ברור? דברו איתי באהבה!</p>
-        <!-- בפתיח אין כפתורים, טלפון ואימייל (נוגה, 2026-11-05): הקרוסלה שמתחת מובילה לכל הדרכים -->
-      </div>
-
-      <div class="c-hero__photo">
-        <Image src={nogaBench} alt="נוגה דיין אור יושבת על ספסל בגינה ומחייכת" widths={[400, 640, 900]} sizes="(min-width: 52rem) 28vw, 75vw" loading="eager" />
-        <!-- בועות אייקונים מקשטות סביב התמונה -->
-        <span class="c-bubble c-bubble--1" aria-hidden="true"><Icon name="instagram" size={22} /></span>
-        <span class="c-bubble c-bubble--2" aria-hidden="true"><Icon name="whatsapp" size={24} /></span>
-        <span class="c-bubble c-bubble--3" aria-hidden="true"><Icon name="heart" size={18} /></span>
-        <span class="c-bubble c-bubble--4" aria-hidden="true"><Icon name="facebook" size={22} /></span>
-      </div>
+    <Image class="c-hero__bg" src={heroPhoto} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
+    <div class="container c-hero__text">
+      <p class="c-eyebrow c-eyebrow--dark"><Icon name="heart" size={16} /> צור קשר</p>
+      <h1>להעז לגלות את הגרסה <span class="hl">האמיצה</span> של העסק שלך</h1>
     </div>
   </section>
 
@@ -96,9 +84,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
           {
             communityPerks.map((perk) => (
               <li>
-                <span class="c-perks__icon">
-                  <Icon name={perk.icon} size={22} />
-                </span>
+                <Icon name="check" size={18} />
                 {perk.text}
               </li>
             ))
@@ -177,7 +163,8 @@ const [featuredPost, ...morePosts] = instagramPosts;
       <!-- TODO: לחבר את הטופס לשירות טפסים (Formspree / Netlify Forms וכד'). כרגע הוא לא שולח דבר. -->
       <form class="c-form js-demo-form" method="post" novalidate aria-labelledby="form-title">
         <h2 id="form-title" class="c-title">השאירו <span class="hl--mark">פרטים</span></h2>
-        <p class="c-form__note">ואחזור אליכם בהקדם</p>
+        <!-- משפט ההשראה (נוגה אישרה) עבר לכאן מהפתיח, כדי לפזר את הסיסמאות בעמוד -->
+        <p class="c-form__note">בואו נבדוק יחד איך עושים סדר ומוצאים כסף גם בעסק שלך</p>
         <p class="c-form__direct">
           <a class="c-quick" href={contact.phoneHref}>
             <span class="c-quick__icon"><Icon name="phone" size={18} /></span>
@@ -204,7 +191,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
         </label>
         <label>
           <span>במה אפשר לעזור?</span>
-          <textarea name="message" rows="4"></textarea>
+          <textarea name="message" rows="2"></textarea>
         </label>
         <button class="btn" type="submit">שליחה</button>
         <p class="c-form__status" role="status" aria-live="polite"></p>
@@ -262,7 +249,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
   }
   .c-sub {
     font-size: 1.1rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto 0.75rem;
     color: var(--navy);
     opacity: 0.85;
   }
@@ -288,57 +275,6 @@ const [featuredPost, ...morePosts] = instagramPosts;
   .c-eyebrow--dark :global(svg) {
     color: var(--gold-light);
   }
-  .c-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-  }
-
-  /* ---------- 1. פתיח ---------- */
-  .c-hero {
-    overflow: hidden;
-    padding-block: clamp(2.25rem, 6vw, 4.5rem);
-    background:
-      radial-gradient(36rem 22rem at 92% 8%, rgb(25 154 181 / 0.16), transparent 70%),
-      radial-gradient(30rem 20rem at 4% 92%, rgb(252 220 109 / 0.26), transparent 70%),
-      var(--mist);
-    border-bottom: 1px solid var(--line);
-  }
-  .c-hero__grid {
-    display: grid;
-    gap: 2.5rem;
-    align-items: center;
-  }
-  @media (min-width: 52rem) {
-    .c-hero__grid {
-      grid-template-columns: 1.35fr 1fr;
-      gap: 4rem;
-    }
-  }
-  .c-hero h1 {
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
-    font-weight: 900;
-    line-height: 1.2;
-    margin-bottom: 0.9rem;
-  }
-  .c-hero__lead {
-    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
-    font-weight: 600;
-    line-height: 1.55;
-    max-width: 38rem;
-    margin-bottom: 0.6rem;
-  }
-  .c-hero__hint {
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  .c-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.25rem;
-    margin-top: 1.5rem;
-  }
   .c-quick {
     display: inline-flex;
     align-items: center;
@@ -353,109 +289,69 @@ const [featuredPost, ...morePosts] = instagramPosts;
   .c-quick__icon {
     display: grid;
     place-items: center;
-    width: 2.3rem;
-    height: 2.3rem;
+    width: 2.1rem;
+    height: 2.1rem;
     border-radius: 50%;
-    background: var(--white);
+    background: var(--mist);
     color: var(--teal-dark);
-    box-shadow: 0 6px 16px -8px rgb(11 26 51 / 0.35);
+  }
+  .c-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
   }
 
-  .c-hero__photo {
+  /* ---------- 1. פתיח: פס רחב ונמוך עם תמונת אווירה ---------- */
+  .c-hero {
     position: relative;
-    width: min(100%, 21rem);
-    margin-inline: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    min-height: clamp(13rem, 30vw, 18rem);
+    padding-block: 2rem;
+    background: var(--navy);
   }
-  /* עיגול כחול וטבעת זהב מאחורי התמונה */
-  .c-hero__photo::before,
-  .c-hero__photo::after {
+  .c-hero :global(.c-hero__bg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 45%;
+  }
+  /* שכבה כהה בכחול של האתר, כדי שהטקסט תמיד יהיה קריא */
+  .c-hero::after {
     content: '';
     position: absolute;
-    border-radius: 50%;
+    inset: 0;
+    background:
+      radial-gradient(30rem 16rem at 100% 100%, rgb(25 154 181 / 0.45), transparent 70%),
+      linear-gradient(270deg, rgb(7 17 31 / 0.92) 0%, rgb(11 26 51 / 0.78) 45%, rgb(11 26 51 / 0.45) 100%);
   }
-  .c-hero__photo::before {
-    width: 78%;
-    aspect-ratio: 1;
-    inset-inline-end: -14%;
-    top: -6%;
-    background: rgb(25 154 181 / 0.18);
-  }
-  .c-hero__photo::after {
-    width: 34%;
-    aspect-ratio: 1;
-    inset-inline-start: -12%;
-    bottom: 6%;
-    border: 3px solid var(--gold-dark);
-    opacity: 0.6;
-  }
-  .c-hero__photo :global(img) {
+  .c-hero__text {
     position: relative;
     z-index: 1;
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: 50% 22%;
-    /* צורת קשת: עגול למעלה */
-    border-radius: 999px 999px 1.75rem 1.75rem;
-    box-shadow: 0 30px 60px -30px rgb(11 26 51 / 0.55);
   }
-  .c-bubble {
-    position: absolute;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 50%;
-    background: var(--white);
-    color: var(--teal);
-    box-shadow: 0 12px 28px -12px rgb(11 26 51 / 0.45);
-    animation: c-float 5s ease-in-out infinite;
-  }
-  .c-bubble--1 {
-    top: 14%;
-    inset-inline-start: -8%;
-  }
-  .c-bubble--2 {
-    top: 46%;
-    inset-inline-end: -9%;
-    width: 3.6rem;
-    height: 3.6rem;
-    background: var(--teal);
+  .c-hero h1 {
+    max-width: 40rem;
+    margin: 0;
+    font-size: clamp(2rem, 5.2vw, 3.3rem);
+    font-weight: 900;
+    line-height: 1.2;
     color: var(--white);
-    animation-delay: -1.5s;
-  }
-  .c-bubble--3 {
-    top: -3%;
-    inset-inline-end: 22%;
-    width: 2.6rem;
-    height: 2.6rem;
-    background: var(--gold-gradient);
-    color: var(--white);
-    animation-delay: -3s;
-  }
-  .c-bubble--4 {
-    bottom: 12%;
-    inset-inline-start: -6%;
-    color: var(--navy);
-    animation-delay: -2.2s;
-  }
-  @keyframes c-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-0.6rem);
-    }
+    text-wrap: balance;
   }
 
   /* ---------- 2. כל הדרכים להתחבר ---------- */
+  /* פחות רווחים מהרגיל בעמוד הזה (נוגה: שלא יצטרכו לגלול הרבה) */
+  .c-ways,
+  .c-insta,
+  .c-forms {
+    padding-block: clamp(1.75rem, 4.5vw, 3rem);
+  }
   .c-ways {
     overflow: hidden;
-    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+    padding-bottom: clamp(1rem, 3vw, 2rem);
   }
   /* הקרוסלה: שורה אחת לרוחב כל העמוד, עם דהייה בקצוות */
   .c-marquee {
@@ -576,7 +472,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
   .c-form__note {
     margin: 0 0 0.25rem;
     color: var(--teal-dark);
-    font-weight: 600;
+    font-weight: 700;
   }
   .c-form__row {
     display: grid;
@@ -620,7 +516,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
   }
   textarea {
     resize: vertical;
-    min-height: 7rem;
+    min-height: 3.6rem;
   }
   .c-form .btn,
   .c-news .btn {
@@ -703,7 +599,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
 
   /* ---------- 4. הקהילה ---------- */
   .c-community {
-    padding-block: clamp(2.75rem, 7vw, 5rem);
+    padding-block: clamp(2rem, 5vw, 3.25rem);
     color: var(--on-dark);
     background:
       radial-gradient(40rem 24rem at 100% 0, rgb(25 154 181 / 0.25), transparent 70%),
@@ -712,13 +608,13 @@ const [featuredPost, ...morePosts] = instagramPosts;
   }
   .c-community__grid {
     display: grid;
-    gap: 2.5rem;
+    gap: 1.75rem;
     align-items: start;
   }
   @media (min-width: 56rem) {
     .c-community__grid {
       grid-template-columns: 1.1fr 1fr;
-      gap: 3.5rem;
+      gap: 3rem;
     }
   }
   .c-community__title {
@@ -726,43 +622,31 @@ const [featuredPost, ...morePosts] = instagramPosts;
     font-size: clamp(1.8rem, 4.5vw, 2.5rem);
     font-weight: 900;
     line-height: 1.25;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
   }
   .c-community__info > p:not(.c-eyebrow) {
-    font-size: 1.08rem;
-    line-height: 1.75;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 0.6rem;
   }
+  /* חלק מהכללים של הקבוצה: שורות פשוטות עם וי, בלי ריבועים */
   .c-perks {
     list-style: none;
-    margin: 1.5rem 0 1.75rem;
+    margin: 0.75rem 0 1.25rem;
     padding: 0;
-    display: grid;
-    gap: 0.75rem;
-  }
-  @media (min-width: 36rem) {
-    .c-perks {
-      grid-template-columns: 1fr 1fr;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
   }
   .c-perks li {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.8rem 1rem;
-    border-radius: 1rem;
-    background: rgb(255 255 255 / 0.06);
-    border: 1px solid rgb(255 255 255 / 0.1);
-    font-weight: 600;
-    line-height: 1.45;
+    gap: 0.45rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--white);
   }
-  .c-perks__icon {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 50%;
-    background: rgb(25 154 181 / 0.25);
+  .c-perks li :global(svg) {
     color: var(--gold-light);
   }
 
@@ -824,7 +708,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.1rem;
   }
   .c-follow {
     display: inline-flex;
@@ -933,9 +817,6 @@ const [featuredPost, ...morePosts] = instagramPosts;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .c-bubble {
-      animation: none;
-    }
     .c-way,
     .c-ig__media :global(img) {
       transition: none;
