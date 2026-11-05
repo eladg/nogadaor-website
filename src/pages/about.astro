@@ -2,13 +2,38 @@
 // עמוד אודות (גרסה 3, 2026-11-05).
 // השראה כללית מ-meitalchesner.co.il/about ומ-masha-bar.co.il, בלי להעתיק את העיצוב של אף אחת מהן.
 // הצבעים של נוגה: כחול, טורקיז וזהב.
-// סדר האזורים (לבקשת נוגה): פתיח עם תמונת רקע, הדרך שלנו (6 קוביות), הסיפור ברצף אחד, מומחים שאני עובדת איתם.
+// סדר האזורים (לבקשת נוגה): פתיח עם תמונת רקע, הדרך שלנו (6 קוביות), הסיפור ברצף אחד עם צמד תמונות,
+// גלריית רגעים מהכנסים, מומחים שאני עובדת איתם.
 // "מלב אל לב" הוסר בינתיים: נוגה אמרה שהסיפור שלה כבר כתוב מספיק מלב אל לב.
+// התמונות: נוגה שלחה אותן (2026-11-05). היא ביקשה לפזר אותן כך שלא יופיעו כמה תמונות במה ברצף,
+// ובלי מסגרות לאורך. כל התמונות שנשלחו שמורות ב"חומרים גרפיים לאתר/תמונות מכנסים".
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
-import nogaStage from '../assets/noga-stage.jpg'; // התמונה המקורית שנוגה שלחה (2026-11-05)
+import nogaStage from '../assets/noga-stage.jpg';
+import facingAudience from '../assets/about/facing-audience.jpg';
+import hug from '../assets/about/hug.jpg';
+import groupFive from '../assets/about/group-five.jpg';
+import audience from '../assets/about/audience.jpg';
+import lookingAhead from '../assets/about/looking-ahead.jpg';
+import notebooks from '../assets/about/notebooks-badges.jpg';
+import stageParticipants from '../assets/about/stage-participants.jpg';
+import groupFour from '../assets/about/group-four-c.jpg';
+import amongAudience from '../assets/about/among-audience.jpg';
 import { experts } from '../data/experts';
+
+// גלריית רגעים: מעורבב בכוונה (אנשים, קהל, במה, חומרים), לא כמה תמונות במה ברצף.
+// size: big = ריבוע גדול, wide = רחבה, רגילה = בלי size. pos = איזה חלק בתמונה להראות כשהיא נחתכת.
+const moments = [
+  { src: groupFive, alt: 'נוגה עם משתתפות בכנס', size: 'big' },
+  { src: audience, alt: 'קהל המשתתפים באולם הכנס', size: 'wide' },
+  { src: lookingAhead, alt: 'נוגה על הבמה מביטה אל הקהל בחיוך' },
+  // החיתוך מימין מסתיר תג שם של משתתפת
+  { src: notebooks, alt: 'מחברות "הצלחה עסקית בדרך שלך" שחולקו בכנס', pos: '100% 50%' },
+  { src: stageParticipants, alt: 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"', size: 'wide' },
+  { src: groupFour, alt: 'נוגה עם משתתפות בכנס' },
+  { src: amongAudience, alt: 'נוגה בין המשתתפים בזמן שאלות מהקהל' },
+];
 
 // שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
 // icon הוא שם הציור הקטן מהרשימה icons שלמטה
@@ -139,12 +164,34 @@ const icons: Record<string, string> = {
         </p>
       </div>
 
-      <!-- TODO: תמונה נוספת של נוגה. נוגה תבחר ותאשר -->
-      <div class="a-story__photo">
-        <div class="a-photo-slot" role="img" aria-label="מקום שמור לתמונה נוספת של נוגה">
-          <span>מקום לתמונה נוספת שלך</span>
-        </div>
+      <!-- צמד תמונות רחבות שחופפות מעט, במקום מסגרת לאורך -->
+      <div class="a-story__photos reveal">
+        <Image class="pic pic--main" src={facingAudience} alt="נוגה על הבמה מול קהל המשתתפים" widths={[600, 900, 1300]} sizes="(min-width: 52rem) 40vw, 100vw" />
+        <Image class="pic pic--small" src={hug} alt="נוגה מחובקת עם משתתפת בכנס" widths={[400, 700]} sizes="(min-width: 52rem) 22vw, 60vw" />
       </div>
+    </div>
+  </section>
+
+  <!-- 4. רגעים מהכנסים: גלריה מעורבבת -->
+  <section class="section a-moments">
+    <div class="container">
+      <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
+      <h2 class="a-title reveal">רגעים <span class="hl--mark">מהכנסים</span></h2>
+      <ul class="moments">
+        {
+          moments.map((m, i) => (
+            <li class={`moment reveal${m.size ? ` moment--${m.size}` : ''}`} style={`transition-delay: ${(i % 4) * 80}ms`}>
+              <Image
+                src={m.src}
+                alt={m.alt}
+                widths={m.size === 'big' ? [600, 1000, 1400] : [400, 700, 1000]}
+                sizes={m.size ? '(min-width: 52rem) 50vw, 100vw' : '(min-width: 52rem) 25vw, 50vw'}
+                style={m.pos ? `object-position: ${m.pos}` : undefined}
+              />
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
@@ -315,7 +362,7 @@ const icons: Record<string, string> = {
       grid-template-columns: 1.45fr 1fr;
       gap: 4rem;
     }
-    .a-story__photo {
+    .a-story__photos {
       position: sticky;
       top: 6.5rem;
     }
@@ -337,22 +384,92 @@ const icons: Record<string, string> = {
     letter-spacing: 0.03em;
   }
 
-  /* מקום לתמונה: מלבן מעוגל, עד שנוגה תשלח תמונה */
-  .a-photo-slot {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 5;
-    width: min(100%, 24rem);
-    margin-inline: auto;
-    padding: 1rem;
+  /* צמד תמונות: גדולה, ומעליה קטנה שחופפת בפינה עם מסגרת לבנה */
+  .a-story__photos {
+    position: relative;
+    padding-bottom: 18%;
+  }
+  .pic {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
     border-radius: 1.5rem;
-    border: 2px dashed var(--teal);
+  }
+  .pic--main {
+    aspect-ratio: 3 / 2;
+    box-shadow: 0 30px 60px -32px rgb(11 26 51 / 0.55);
+  }
+  .pic--small {
+    position: absolute;
+    bottom: 0;
+    left: -4%;
+    width: 58%;
+    aspect-ratio: 4 / 3;
+    border: 6px solid var(--white);
+    border-radius: 1.25rem;
+    box-shadow: 0 24px 48px -24px rgb(11 26 51 / 0.6);
+    rotate: -2deg;
+  }
+
+  /* ---------- רגעים מהכנסים: גלריה על רקע כחול ---------- */
+  .a-moments {
     background:
-      radial-gradient(circle at 30% 20%, rgb(252 220 109 / 0.25), transparent 55%),
-      var(--white);
-    color: var(--teal-dark);
-    text-align: center;
-    box-shadow: 0 28px 50px -30px rgb(11 26 51 / 0.45);
+      radial-gradient(36rem 22rem at 100% 0, rgb(29 157 160 / 0.2), transparent 70%),
+      var(--navy);
+  }
+  .a-moments .a-title {
+    color: var(--white);
+  }
+  .a-moments .hl--mark {
+    color: var(--gold-light);
+    background: none;
+  }
+  .moments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(9rem, 38vw, 13rem);
+    grid-auto-flow: dense;
+  }
+  @media (min-width: 52rem) {
+    .moments {
+      gap: 1rem;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: clamp(10rem, 16vw, 14rem);
+    }
+  }
+  .moment {
+    overflow: hidden;
+    border-radius: 1.1rem;
+    background: var(--navy-soft);
+  }
+  .moment--wide {
+    grid-column: span 2;
+  }
+  .moment--big {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .moment :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .moment:hover :global(img) {
+    transform: scale(1.04);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .moment :global(img) {
+      transition: none;
+    }
+    .moment:hover :global(img) {
+      transform: none;
+    }
   }
 
   /* ---------- 2. הדרך שלנו ---------- */
