@@ -1,317 +1,721 @@
 ---
-// שאלון מיקוד פיתוח עסקי – גרסה אינטראקטיבית.
-// המבקר בוחר ניקוד 0 עד 5 לכל היגד, והסכום מתעדכן מיד.
+// שאלון מיקוד פיתוח עסקי, גרסה 3 (2026-11-05): "מבחן אמריקאי עם תובנות".
+// 25 שאלות ב-9 תחומים. כל תשובה מתארת מצב מוחשי (3 עד 0 נקודות). שאלה אחת בכל מסך, עם פס התקדמות.
+// בסוף: אחוז לכל תחום, שלושת התחומים החלשים כמיקודים (עם תובנה וקישור למדריך) ושתי החוזקות.
 // התשובות נשמרות רק בדפדפן של המבקר (localStorage) ולא נשלחות לשום מקום.
-// ההיגדים ב-src/data/quiz.ts
+// השאלות, התשובות והתובנות ב-src/data/quiz.ts (טיוטה לאישור נוגה).
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { quizItems, quizYear } from '../../data/quiz';
+import Icon from '../../components/Icon.astro';
+import { quizAreas, quizQuestions, quizLevels, quizYear } from '../../data/quiz';
 import { contact } from '../../data/contact';
 
-const max = quizItems.length * 5;
-const scores = [0, 1, 2, 3, 4, 5];
-const waText = encodeURIComponent('היי נוגה, מילאתי את שאלון המיקוד העסקי ואשמח לעזרה בבחירת המיקודים');
+const total = quizQuestions.length;
+const areaById = Object.fromEntries(quizAreas.map((a) => [a.id, a]));
+const config = {
+  areas: quizAreas.map((a) => ({ id: a.id, title: a.title, count: quizQuestions.filter((q) => q.area === a.id).length })),
+  questionAreas: quizQuestions.map((q) => q.area),
+  levels: quizLevels,
+  whatsapp: contact.whatsapp,
+};
 ---
 
 <BaseLayout
   title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
-  description={`שאלון קצר של 20 היגדים שעוזר לבעלי עסקים לבחור מיקודים ראשונים לפיתוח עסקי בשנת ${quizYear}.`}
+  description={`שאלון אבחון עסקי של ${total} שאלות ב-9 תחומים: אסטרטגיה, הצעת שירות ותמחור, נראות דיגיטלית, שיווק, קהילה, מכירות ושימור, ניהול והתייעלות, כספים ומנהיגות. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.`}
 >
-  <section class="q-hero section section--mist">
-    <div class="container q-hero__inner">
-      <p class="q-hero__kicker"><a href="/guides/">מדריכים והרצאות</a> / שאלון</p>
-      <h1>שאלון מיקוד פיתוח עסקי לשנת {quizYear}</h1>
-      <p class="q-hero__lead">תן לעצמך ניקוד בין 0 (הכי נמוך) ל-5 (הכי גבוה) לכל היגד.</p>
-      <p>הניקוד מתעדכן תוך כדי, ובסוף תראו אילו תחומים קיבלו את הציון הנמוך ביותר. התשובות נשמרות רק במכשיר שלכם.</p>
+  <header class="qz-hero">
+    <div class="container qz-hero__inner">
+      <p class="qz-crumbs"><a href="/guides/">מדריכים והרצאות</a> <span aria-hidden="true">/</span> שאלון</p>
+      <h1>שאלון מיקוד פיתוח עסקי לשנת <span class="hl">{quizYear}</span></h1>
+      <p class="qz-hero__lead">
+        {total} שאלות קצרות על 9 תחומים בעסק. בכל שאלה בחרו את התשובה שהכי מתארת את המצב היום, גם אם היא לא מושלמת. בסוף תקבלו פרופיל של העסק ושלושה מיקודים לשנה הקרובה.
+      </p>
+      <ul class="qz-meta">
+        <li><Icon name="clock" size={16} /> כ-5 דקות</li>
+        <li><Icon name="layers" size={16} /> 9 תחומים</li>
+        <li><Icon name="heart" size={16} /> התשובות נשמרות רק במכשיר שלכם</li>
+      </ul>
     </div>
-  </section>
+  </header>
 
-  <section class="section">
-    <div class="container q-body">
-      <form id="quiz" class="quiz" novalidate>
-        <ol class="quiz__list">
+  <section class="section qz-body">
+    <div class="container qz-wrap">
+      <form id="quiz" class="qz" novalidate>
+        <!-- פס התקדמות (מוצג רק עם JavaScript) -->
+        <div class="qz-progress" data-progress hidden>
+          <div class="qz-progress__top">
+            <span class="qz-progress__area" data-area-name></span>
+            <span class="qz-progress__count">שאלה <span data-current>1</span> מתוך {total}</span>
+          </div>
+          <div class="qz-progress__track"><span class="qz-progress__fill" data-fill></span></div>
+        </div>
+
+        <ol class="qz-list">
           {
-            quizItems.map((text, i) => (
-              <li class="quiz__item">
-                <fieldset data-text={text}>
-                  <legend>
-                    <span class="quiz__num">{i + 1}.</span> {text}
-                  </legend>
-                  <div class="quiz__scale">
-                    {scores.map((s) => (
-                      <label class="quiz__opt">
-                        <input type="radio" name={`q${i}`} value={s} />
-                        <span>{s}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              </li>
-            ))
+            quizQuestions.map((q, i) => {
+              const area = areaById[q.area];
+              return (
+                <li class="qz-q" data-q={i}>
+                  <fieldset>
+                    <legend>
+                      <span class="qz-q__area">
+                        <Icon name={area.icon as 'target'} size={16} /> {area.title}
+                      </span>
+                      <span class="qz-q__text">{q.text}</span>
+                    </legend>
+                    <div class="qz-opts">
+                      {q.options.map((opt, k) => (
+                        <label class="qz-opt">
+                          <input type="radio" name={`q${i}`} value={3 - k} />
+                          <span class="qz-opt__mark" aria-hidden="true" />
+                          <span class="qz-opt__text">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                </li>
+              );
+            })
           }
         </ol>
 
-        <div class="quiz__bar">
-          <div aria-live="polite">
-            <p class="quiz__total">הניקוד שלך: <strong><span data-total>0</span> מתוך {max}</strong></p>
-            <p class="quiz__answered">ענית על <span data-answered>0</span> מתוך {quizItems.length} היגדים</p>
-          </div>
-          <button type="reset" class="quiz__reset">איפוס</button>
+        <div class="qz-nav" data-nav hidden>
+          <button type="button" class="qz-nav__back" data-back>
+            <span aria-hidden="true">→</span> הקודמת
+          </button>
+          <button type="button" class="qz-nav__next" data-next>
+            הבאה <span aria-hidden="true">←</span>
+          </button>
         </div>
+        <noscript><p class="qz-note">כדי לראות את התוצאה צריך לאפשר JavaScript בדפדפן.</p></noscript>
       </form>
 
-      <div class="result" data-result hidden>
-        <h2>סכם את הניקוד מכל השאלות. האם אתה מרוצה מהציון שלך?</h2>
-        <p class="result__score">
-          הניקוד שלך: <strong data-total-final>0</strong> מתוך {max}
-        </p>
-        <h3>בחר מיקודים ראשונים לפיתוח עסקי לשנה הקרובה</h3>
-        <p>אלה ההיגדים שקיבלו את הניקוד הנמוך ביותר. אולי כאן כדאי להתחיל:</p>
-        <ul class="result__low" data-low></ul>
-      </div>
-    </div>
-  </section>
+      <!-- התוצאה -->
+      <div class="qz-result" data-result hidden tabindex="-1">
+        <div class="qz-score">
+          <div class="qz-score__ring" data-ring>
+            <span class="qz-score__num"><span data-percent>0</span>%</span>
+          </div>
+          <div>
+            <p class="qz-score__kicker">הפרופיל העסקי שלך</p>
+            <h2 class="qz-score__title" data-level-title></h2>
+            <p class="qz-score__text" data-level-text></p>
+          </div>
+        </div>
 
-  <section class="section section--dark q-cta">
-    <div class="container">
-      <h2>כאן בשבילכם בכל אתגר פיתוח עסקי</h2>
-      <p>מלווה עסקים בתהליכי פיתוח עסקי, גיוס לקוחות, ניהול ואסטרטגיה.</p>
-      <p class="q-cta__actions">
-        <a class="btn" href={`${contact.whatsapp}?text=${waText}`}>לשיחה בוואטסאפ</a>
-        <a href={contact.phoneHref}>נוגה, {contact.phoneDisplay}</a>
-      </p>
+        <h3 class="qz-h3">איך נראה העסק בכל תחום</h3>
+        <ul class="qz-bars" data-bars>
+          {
+            quizAreas.map((a) => (
+              <li class="qz-bar" data-bar={a.id}>
+                <span class="qz-bar__label">
+                  <Icon name={a.icon as 'target'} size={18} /> {a.title}
+                </span>
+                <span class="qz-bar__track">
+                  <span class="qz-bar__fill" />
+                </span>
+                <span class="qz-bar__pct" />
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="qz-h3">שלושת המיקודים שלך לשנת {quizYear}</h3>
+        <p class="qz-sub">אלה התחומים שקיבלו את הציון הנמוך ביותר. כאן השינוי הכי קטן ייתן את התוצאה הכי גדולה.</p>
+        <div class="qz-focus" data-focus>
+          {
+            quizAreas.map((a) => (
+              <article class="qz-card" data-card={a.id} hidden>
+                <span class="qz-card__icon">
+                  <Icon name={a.icon as 'target'} size={24} />
+                </span>
+                <h4 class="qz-card__title">
+                  {a.title} <span class="qz-card__pct" />
+                </h4>
+                <p class="qz-card__text">{a.insight}</p>
+                {a.link && (
+                  <a class="qz-card__link" href={a.link.href}>
+                    {a.link.label} <Icon name="arrow" size={16} />
+                  </a>
+                )}
+              </article>
+            ))
+          }
+        </div>
+
+        <p class="qz-strengths" data-strengths></p>
+
+        <div class="qz-actions">
+          <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
+            <Icon name="whatsapp" size={20} /> לשיחה על המיקודים שלי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          <button type="button" class="qz-actions__again" data-again>למילוי מחדש</button>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
-<script>
-  const KEY = 'focus-quiz-2027';
-  const form = document.getElementById('quiz') as HTMLFormElement;
-  const items = Array.from(form.querySelectorAll<HTMLFieldSetElement>('fieldset'));
-  const totalEls = document.querySelectorAll<HTMLElement>('[data-total], [data-total-final]');
-  const answeredEl = document.querySelector<HTMLElement>('[data-answered]')!;
-  const result = document.querySelector<HTMLElement>('[data-result]')!;
-  const lowList = document.querySelector<HTMLUListElement>('[data-low]')!;
+<script is:inline define:vars={{ config }}>
+  (function () {
+    var KEY = 'focus-quiz-2027-v3';
+    var form = document.getElementById('quiz');
+    var qs = Array.prototype.slice.call(form.querySelectorAll('.qz-q'));
+    var progress = document.querySelector('[data-progress]');
+    var fill = document.querySelector('[data-fill]');
+    var currentEl = document.querySelector('[data-current]');
+    var areaName = document.querySelector('[data-area-name]');
+    var nav = document.querySelector('[data-nav]');
+    var back = document.querySelector('[data-back]');
+    var next = document.querySelector('[data-next]');
+    var result = document.querySelector('[data-result]');
+    var titles = {};
+    config.areas.forEach(function (a) { titles[a.id] = a.title; });
+    var idx = 0;
 
-  function read(): (number | null)[] {
-    return items.map((fs) => {
-      const checked = fs.querySelector<HTMLInputElement>('input:checked');
-      return checked ? Number(checked.value) : null;
-    });
-  }
-
-  function update() {
-    const values = read();
-    const answered = values.filter((v) => v !== null) as number[];
-    const total = answered.reduce((a, b) => a + b, 0);
-    totalEls.forEach((el) => (el.textContent = String(total)));
-    answeredEl.textContent = String(answered.length);
-
-    // התוצאה מוצגת רק אחרי שענו על כל ההיגדים
-    const done = answered.length === items.length;
-    result.hidden = !done;
-    if (done) {
-      // ההיגדים עם הניקוד הנמוך ביותר (עד 5), לפי הסדר בשאלון
-      const ranked = values
-        .map((v, i) => ({ v: v as number, i }))
-        .sort((a, b) => a.v - b.v || a.i - b.i)
-        .slice(0, 5);
-      lowList.innerHTML = '';
-      for (const { v, i } of ranked) {
-        const li = document.createElement('li');
-        const text = items[i].dataset.text;
-        li.textContent = `${text} (ניקוד ${v})`;
-        lowList.appendChild(li);
-      }
-    }
-
-    try {
-      localStorage.setItem(KEY, JSON.stringify(values));
-    } catch {
-      /* אין גישה לאחסון בדפדפן – השאלון עובד גם בלי */
-    }
-  }
-
-  // שחזור תשובות קודמות, אם נשמרו במכשיר
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-    if (Array.isArray(saved)) {
-      saved.forEach((v, i) => {
-        if (v === null || !items[i]) return;
-        const input = items[i].querySelector<HTMLInputElement>(`input[value="${v}"]`);
-        if (input) input.checked = true;
+    function values() {
+      return qs.map(function (q) {
+        var c = q.querySelector('input:checked');
+        return c ? Number(c.value) : null;
       });
     }
-  } catch {
-    /* מתעלמים */
-  }
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(values())); } catch (e) {}
+    }
+    function show(i) {
+      idx = Math.max(0, Math.min(qs.length - 1, i));
+      qs.forEach(function (q, k) { q.hidden = k !== idx; });
+      currentEl.textContent = idx + 1;
+      areaName.textContent = titles[config.questionAreas[idx]];
+      var answered = values().filter(function (v) { return v !== null; }).length;
+      fill.style.width = (answered / qs.length) * 100 + '%';
+      back.disabled = idx === 0;
+      var hasAnswer = values()[idx] !== null;
+      next.disabled = !hasAnswer;
+      next.innerHTML = idx === qs.length - 1 ? 'לתוצאה <span aria-hidden="true">←</span>' : 'הבאה <span aria-hidden="true">←</span>';
+    }
+    function finish() {
+      var v = values();
+      var sums = {}, max = {};
+      config.areas.forEach(function (a) { sums[a.id] = 0; max[a.id] = a.count * 3; });
+      v.forEach(function (val, i) { sums[config.questionAreas[i]] += val || 0; });
+      var pct = {};
+      config.areas.forEach(function (a) { pct[a.id] = Math.round((sums[a.id] / max[a.id]) * 100); });
+      var all = v.reduce(function (s, x) { return s + (x || 0); }, 0);
+      var overall = Math.round((all / (qs.length * 3)) * 100);
 
-  form.addEventListener('change', update);
-  form.addEventListener('reset', () => setTimeout(update, 0));
-  update();
+      document.querySelector('[data-percent]').textContent = overall;
+      document.querySelector('[data-ring]').style.setProperty('--p', overall);
+      var level = config.levels.find(function (l) { return overall >= l.min; });
+      document.querySelector('[data-level-title]').textContent = level.title;
+      document.querySelector('[data-level-text]').textContent = level.text;
+
+      config.areas.forEach(function (a) {
+        var bar = document.querySelector('[data-bar="' + a.id + '"]');
+        bar.querySelector('.qz-bar__fill').style.width = pct[a.id] + '%';
+        bar.querySelector('.qz-bar__pct').textContent = pct[a.id] + '%';
+        bar.classList.remove('is-focus');
+      });
+      // שלושת התחומים החלשים (בתיקו: לפי סדר התחומים)
+      var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
+        .sort(function (a, b) { return a.p - b.p || a.i - b.i; });
+      var focus = order.slice(0, 3);
+      var strengths = order.slice(-2).reverse();
+      var focusBox = document.querySelector('[data-focus]');
+      focusBox.querySelectorAll('[data-card]').forEach(function (c) { c.hidden = true; });
+      focus.forEach(function (f) {
+        var card = focusBox.querySelector('[data-card="' + f.id + '"]');
+        card.hidden = false;
+        card.querySelector('.qz-card__pct').textContent = '(' + f.p + '%)';
+        focusBox.appendChild(card);
+        document.querySelector('[data-bar="' + f.id + '"]').classList.add('is-focus');
+      });
+      document.querySelector('[data-strengths]').innerHTML =
+        '<strong>החוזקות שלך:</strong> ' + strengths.map(function (s) { return titles[s.id]; }).join(' וגם ') + '. כדאי להישען עליהן בדרך למיקודים.';
+      var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי. המיקודים שיצאו לי: ' + focus.map(function (f) { return titles[f.id]; }).join(', ') + '. אשמח לשיחה';
+      document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
+
+      form.hidden = true;
+      result.hidden = false;
+      result.focus({ preventScroll: true });
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // מצב "שאלה אחת בכל מסך" (רק עם JavaScript)
+    form.classList.add('is-wizard');
+    progress.hidden = false;
+    nav.hidden = false;
+
+    // שחזור תשובות קודמות
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (Array.isArray(saved)) {
+        saved.forEach(function (val, i) {
+          if (val === null || !qs[i]) return;
+          var inp = qs[i].querySelector('input[value="' + val + '"]');
+          if (inp) inp.checked = true;
+        });
+      }
+    } catch (e) {}
+    var firstOpen = values().indexOf(null);
+    show(firstOpen === -1 ? qs.length - 1 : firstOpen);
+
+    form.addEventListener('change', function () {
+      save();
+      show(idx);
+      // מעבר אוטומטי לשאלה הבאה אחרי בחירה
+      setTimeout(function () {
+        if (idx < qs.length - 1) {
+          show(idx + 1);
+          var first = qs[idx].querySelector('input:checked') || qs[idx].querySelector('input');
+          if (first) first.focus({ preventScroll: true });
+        }
+      }, 320);
+    });
+    back.addEventListener('click', function () { show(idx - 1); });
+    next.addEventListener('click', function () {
+      if (idx === qs.length - 1) {
+        if (values().indexOf(null) === -1) finish();
+        else show(values().indexOf(null));
+      } else show(idx + 1);
+    });
+    document.querySelector('[data-again]').addEventListener('click', function () {
+      form.reset();
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      result.hidden = true;
+      form.hidden = false;
+      show(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  })();
 </script>
 
 <style>
-  .q-hero {
-    border-bottom: 1px solid var(--line);
-    padding-block: clamp(2rem, 6vw, 4rem);
+  /* ---------- פתיח ---------- */
+  .qz-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2rem, 6vw, 3.75rem);
+    color: var(--on-dark);
+    background:
+      radial-gradient(36rem 22rem at 100% 0, rgb(25 154 181 / 0.45), transparent 70%),
+      radial-gradient(28rem 20rem at 0 100%, rgb(209 154 74 / 0.28), transparent 72%),
+      linear-gradient(160deg, var(--navy-deep), var(--navy) 55%, #10345a);
   }
-  .q-hero__inner,
-  .q-body {
-    max-width: 46rem;
+  .qz-hero__inner {
+    max-width: 48rem;
   }
-  .q-hero__kicker {
+  .qz-crumbs {
+    margin: 0 0 0.75rem;
     font-size: 0.95rem;
-    margin-bottom: 0.5rem;
+    color: var(--on-dark-soft);
   }
-  .q-hero h1 {
-    color: var(--teal-dark);
+  .qz-crumbs a {
+    color: var(--gold-light);
   }
-  .q-hero__lead {
+  .qz-hero h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(2rem, 5.2vw, 3.1rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--white);
+  }
+  .qz-hero__lead {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    max-width: 40rem;
+  }
+  .qz-meta {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .qz-meta li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    font-size: 0.92rem;
     font-weight: 700;
-    font-size: 1.2rem;
   }
-  .q-hero p:last-child {
-    margin-bottom: 0;
+  .qz-meta :global(svg) {
+    color: var(--gold-light);
   }
 
-  .quiz__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0.9rem;
+  /* ---------- השאלון ---------- */
+  .qz-body {
+    padding-block: clamp(1.75rem, 5vw, 3rem);
   }
-  .quiz__item fieldset {
-    margin: 0;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 1rem 1.2rem 1.1rem;
+  .qz-wrap {
+    max-width: 46rem;
   }
-  .quiz__item legend {
-    float: inline-start; /* מאפשר ללג'נד להתנהג כמו טקסט רגיל בתוך המסגרת */
-    width: 100%;
-    padding: 0;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
+  .qz-progress {
+    margin-bottom: 1.25rem;
   }
-  .quiz__num {
+  .qz-progress__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+  .qz-progress__area {
     color: var(--teal-dark);
-    font-weight: 700;
   }
-  .quiz__scale {
-    clear: both;
+  .qz-progress__track {
+    display: block;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: var(--mist);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .qz-progress__fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal), var(--gold-dark));
+    transition: width 0.35s ease;
+  }
+  .qz-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.4rem;
-    max-width: 22rem;
+    gap: 1.25rem;
   }
-  .quiz__opt {
+  .qz-q {
+    margin: 0;
+  }
+  .qz-q fieldset {
+    margin: 0;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(18rem 10rem at 100% 0, rgb(25 154 181 / 0.1), transparent 70%),
+      var(--white);
+    box-shadow: 0 26px 50px -42px rgb(11 26 51 / 0.6);
+  }
+  .qz-q legend {
+    display: contents;
+  }
+  .qz-q__area {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.6rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    background: rgb(25 154 181 / 0.12);
+    color: var(--teal-dark);
+    font-size: 0.88rem;
+    font-weight: 800;
+  }
+  .qz-q__text {
+    display: block;
+    margin-bottom: 1.1rem;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 900;
+    line-height: 1.35;
+    color: var(--navy);
+  }
+  .qz-opts {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .qz-opt {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    border-radius: 1rem;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.45;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      transform 0.15s ease;
   }
-  .quiz__opt input {
+  .qz-opt:hover {
+    border-color: var(--teal);
+    transform: translateX(-2px);
+  }
+  .qz-opt input {
     position: absolute;
     opacity: 0;
     inset: 0;
     margin: 0;
     cursor: pointer;
   }
-  .quiz__opt span {
-    display: grid;
-    place-items: center;
-    min-height: 2.75rem; /* מטרה נוחה ללחיצה באצבע */
-    border: 2px solid var(--line);
-    border-radius: 0.5rem;
-    font-weight: 700;
+  .qz-opt__mark {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    border: 2px solid var(--teal);
     background: var(--white);
-    transition: background-color 0.15s, border-color 0.15s;
+    transition: box-shadow 0.15s ease;
   }
-  .quiz__opt input:hover + span {
+  .qz-opt:has(input:checked) {
     border-color: var(--teal);
+    background: linear-gradient(135deg, rgb(25 154 181 / 0.14), rgb(25 154 181 / 0.04));
   }
-  .quiz__opt input:checked + span {
-    background: var(--teal-dark);
-    border-color: var(--teal-dark);
-    color: var(--white);
+  .qz-opt:has(input:checked) .qz-opt__mark {
+    background: var(--teal);
+    box-shadow: inset 0 0 0 3px var(--white);
   }
-  .quiz__opt input:focus-visible + span {
-    outline: 3px solid var(--teal);
+  .qz-opt:has(input:focus-visible) {
+    outline: 3px solid var(--gold-dark);
     outline-offset: 2px;
   }
-
-  /* פס הניקוד נשאר צמוד לתחתית המסך בזמן הגלילה */
-  .quiz__bar {
-    position: sticky;
-    bottom: 0;
-    margin-top: 1.25rem;
+  .qz-nav {
     display: flex;
-    gap: 1rem;
-    align-items: center;
     justify-content: space-between;
-    background: var(--navy);
-    color: var(--white);
-    border-radius: var(--radius) var(--radius) 0 0;
-    padding: 0.6rem 1.1rem;
-    line-height: 1.4;
+    gap: 1rem;
+    margin-top: 1.1rem;
   }
-  .quiz__total {
-    margin: 0;
-  }
-  .quiz__total strong {
-    color: var(--gold-light);
-    font-size: 1.2rem;
-    white-space: nowrap;
-  }
-  .quiz__answered {
-    margin: 0;
-    font-size: 0.85rem;
-    opacity: 0.85;
-  }
-  .quiz__reset {
-    background: transparent;
-    color: var(--white);
-    border: 1px solid currentColor;
+  .qz-nav button,
+  .qz-actions__again {
+    padding: 0.65rem 1.4rem;
     border-radius: 999px;
-    padding: 0.35em 1.1em;
     font: inherit;
-    font-size: 0.95rem;
+    font-weight: 800;
     cursor: pointer;
   }
+  .qz-nav__back,
+  .qz-actions__again {
+    border: 2px solid var(--line);
+    background: var(--white);
+    color: var(--navy);
+  }
+  .qz-nav__next {
+    border: 0;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .qz-nav button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .qz-note {
+    margin-top: 1rem;
+    font-weight: 700;
+  }
 
-  .result {
-    margin-top: 2.5rem;
-    padding: 1.5rem;
-    border: 2px solid var(--teal);
-    border-radius: var(--radius);
-    background: var(--mist);
+  /* ---------- התוצאה ---------- */
+  .qz-result:focus {
+    outline: none;
   }
-  .result h2 {
-    font-size: 1.4rem;
-    color: var(--teal-dark);
+  .qz-score {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: clamp(1.4rem, 4vw, 2rem);
+    border-radius: 1.75rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(20rem 12rem at 100% 0, rgb(25 154 181 / 0.5), transparent 70%),
+      radial-gradient(18rem 12rem at 0 100%, rgb(209 154 74 / 0.3), transparent 70%),
+      var(--navy);
   }
-  .result__score strong {
-    font-size: 1.5rem;
-    color: var(--teal-dark);
+  .qz-score__ring {
+    --p: 0;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold-light) calc(var(--p) * 1%), rgb(255 255 255 / 0.12) 0);
   }
-  .result__low {
+  .qz-score__num {
+    display: grid;
+    place-items: center;
+    width: 5.9rem;
+    height: 5.9rem;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 1.7rem;
+    font-weight: 900;
+  }
+  .qz-score__kicker {
+    margin: 0 0 0.2rem;
+    color: var(--gold-light);
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+  .qz-score__title {
+    margin: 0 0 0.3rem;
+    color: var(--white);
+    font-size: clamp(1.45rem, 3.5vw, 1.9rem);
+    font-weight: 900;
+  }
+  .qz-score__text {
     margin: 0;
-    padding-inline-start: 1.3em;
+    line-height: 1.6;
   }
-  .result__low li {
-    margin-bottom: 0.4rem;
+  @media (max-width: 30rem) {
+    .qz-score {
+      flex-direction: column;
+      text-align: center;
+    }
   }
-
-  .q-cta {
-    text-align: center;
+  .qz-h3 {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--navy);
   }
-  .q-cta__actions {
+  .qz-sub {
+    margin: -0.25rem 0 1rem;
+  }
+  .qz-bars {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+    display: grid;
+    gap: 0.65rem;
+    border-radius: 1.25rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  .qz-bar {
+    display: grid;
+    grid-template-columns: minmax(9rem, 13rem) 1fr 3rem;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .qz-bar__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .qz-bar__label :global(svg) {
+    flex: none;
+    color: var(--teal-dark);
+  }
+  .qz-bar__track {
+    height: 0.75rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .qz-bar__fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #6cc3d5, var(--teal));
+    transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .qz-bar.is-focus .qz-bar__fill {
+    background: var(--gold-gradient);
+  }
+  .qz-bar.is-focus .qz-bar__label {
+    color: #8a5a17;
+  }
+  .qz-bar__pct {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 34rem) {
+    .qz-bar {
+      grid-template-columns: 1fr 2.8rem;
+    }
+    .qz-bar__track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+  .qz-focus {
+    display: grid;
+    gap: 1rem;
+  }
+  .qz-card {
+    position: relative;
+    padding: 1.3rem 1.4rem 1.2rem;
+    padding-inline-start: 4.6rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(160deg, var(--white) 40%, rgb(252 220 109 / 0.22));
+    border: 1px solid rgb(209 154 74 / 0.45);
+  }
+  .qz-card__icon {
+    position: absolute;
+    inset-inline-start: 1.2rem;
+    top: 1.3rem;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.85rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .qz-card__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .qz-card__pct {
+    font-weight: 700;
+    color: #8a5a17;
+    font-size: 0.95rem;
+  }
+  .qz-card__text {
+    margin: 0 0 0.5rem;
+    line-height: 1.65;
+  }
+  .qz-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .qz-strengths {
+    margin: 1.25rem 0 0;
+    padding: 1rem 1.2rem;
+    border-radius: 1rem;
+    background: rgb(25 154 181 / 0.1);
+    border-inline-start: 4px solid var(--teal);
+  }
+  .qz-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 1.5rem;
-    justify-content: center;
     align-items: center;
-    margin: 1.5rem 0 0;
+    gap: 0.9rem 1.25rem;
+    margin-top: 1.5rem;
   }
-  .q-cta a:not(.btn) {
-    color: var(--gold-light);
+  .qz-actions__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qz-progress__fill,
+    .qz-bar__fill,
+    .qz-opt {
+      transition: none;
+    }
   }
 </style>
