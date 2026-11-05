@@ -1,0 +1,192 @@
+---
+// קרוסלה כללית: שורה אחת של פריטים שזזה לצדדים.
+// משמשת גם לסרטוני ההמלצות וגם להמלצות הכתובות.
+// השימוש: <Carousel label="..."><li>...</li><li>...</li></Carousel>
+// נגישה: כפתורי הקודם והבא, גלילה במקלדת ובאצבע.
+// עם auto: החלפה אוטומטית כל 7 שניות, כפתור השהיה, ועצירה כשעוברים עם העכבר,
+// כשיש פוקוס, או כשהמשתמש ביקש פחות תנועה.
+interface Props {
+  label: string; // שם הקרוסלה לקוראי מסך
+  itemWidth?: string; // רוחב כל פריט (ערך CSS)
+  auto?: boolean;
+}
+const { label, itemWidth = 'min(88%, 22rem)', auto = false } = Astro.props;
+---
+
+<div
+  class="carousel"
+  role="region"
+  aria-roledescription="קרוסלה"
+  aria-label={label}
+  data-auto={auto ? 'true' : undefined}
+  style={`--item-width: ${itemWidth}`}
+>
+  <ul class="carousel__track" tabindex="0" aria-label={`${label}, אפשר לגלול הצידה`}>
+    <slot />
+  </ul>
+
+  <div class="carousel__controls">
+    <button type="button" class="carousel__btn" data-dir="prev" aria-label="הקודם">
+      <span aria-hidden="true">→</span>
+    </button>
+    {
+      auto && (
+        <button type="button" class="carousel__btn carousel__pause" aria-pressed="false">
+          <span class="carousel__pause-label">השהיית ההחלפה האוטומטית</span>
+        </button>
+      )
+    }
+    <button type="button" class="carousel__btn" data-dir="next" aria-label="הבא">
+      <span aria-hidden="true">←</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.carousel').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.carousel__track')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rtl = getComputedStyle(track).direction === 'rtl';
+    const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth';
+
+    const step = () => {
+      const first = track.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return (first?.getBoundingClientRect().width ?? track.clientWidth) + gap;
+    };
+    const atEnd = () => Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 4;
+    const atStart = () => Math.abs(track.scrollLeft) <= 4;
+
+    // dir 1 = קדימה בכיוון הקריאה. ב-RTL זה גלילה שמאלה (ערך שלילי).
+    const go = (dir: 1 | -1, wrap = true) => {
+      if (dir === 1 && atEnd()) {
+        if (wrap) track.scrollTo({ left: 0, behavior });
+        return;
+      }
+      if (dir === -1 && atStart()) {
+        if (wrap) track.scrollTo({ left: rtl ? -track.scrollWidth : track.scrollWidth, behavior });
+        return;
+      }
+      track.scrollBy({ left: (rtl ? -1 : 1) * dir * step(), behavior });
+    };
+
+    root.querySelector('[data-dir="next"]')!.addEventListener('click', () => go(1));
+    root.querySelector('[data-dir="prev"]')!.addEventListener('click', () => go(-1));
+
+    // סימון הקצוות, כדי להציג הצללה רק בצד שיש בו עוד תוכן
+    const syncEdges = () => {
+      root.classList.toggle('is-start', atStart());
+      root.classList.toggle('is-end', atEnd());
+    };
+    track.addEventListener('scroll', syncEdges, { passive: true });
+    window.addEventListener('resize', syncEdges);
+    syncEdges();
+
+    if (root.dataset.auto !== 'true') return;
+
+    const pauseBtn = root.querySelector<HTMLButtonElement>('.carousel__pause')!;
+    const pauseLabel = root.querySelector<HTMLElement>('.carousel__pause-label')!;
+    let paused = reduce;
+    let hover = false;
+    let focus = false;
+    const syncButton = () => {
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      pauseLabel.textContent = paused ? 'הפעלת ההחלפה האוטומטית' : 'השהיית ההחלפה האוטומטית';
+    };
+    syncButton();
+    pauseBtn.addEventListener('click', () => {
+      paused = !paused;
+      syncButton();
+    });
+    root.addEventListener('mouseenter', () => (hover = true));
+    root.addEventListener('mouseleave', () => (hover = false));
+    root.addEventListener('focusin', () => (focus = true));
+    root.addEventListener('focusout', () => (focus = false));
+    if (!reduce) {
+      setInterval(() => {
+        if (!paused && !hover && !focus && !document.hidden) go(1);
+      }, 7000);
+    }
+  });
+</script>
+
+<style>
+  .carousel {
+    position: relative;
+  }
+  .carousel__track {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0.25rem 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  .carousel__track > :global(li) {
+    flex: 0 0 var(--item-width);
+    scroll-snap-align: start;
+  }
+
+  /* הצללה עדינה בקצה שיש בו עוד פריטים, רמז שאפשר לגלול */
+  .carousel::before,
+  .carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 4rem;
+    width: 2.5rem;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+  }
+  .carousel::before {
+    inset-inline-start: 0;
+    background: linear-gradient(to left, var(--carousel-bg, var(--white)), transparent);
+  }
+  .carousel::after {
+    inset-inline-end: 0;
+    background: linear-gradient(to right, var(--carousel-bg, var(--white)), transparent);
+  }
+  .carousel.is-start::before,
+  .carousel.is-end::after {
+    opacity: 0;
+  }
+
+  .carousel__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .carousel__btn {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding-inline: 0.9rem;
+    border: 1px solid var(--teal);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .carousel__btn:hover {
+    background: var(--teal-dark);
+    border-color: var(--teal-dark);
+    color: var(--white);
+  }
+  .carousel__pause {
+    font-size: 0.9rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel::before,
+    .carousel::after {
+      transition: none;
+    }
+  }
+</style>

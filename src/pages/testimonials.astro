@@ -1,59 +1,92 @@
 ---
+// עמוד ההמלצות: פתיח עם לקט ההמלצות, קרוסלת סרטונים, קרוסלת המלצות כתובות, וסיפורי מקרה.
+// הסרטונים ב-src/data/testimonials.ts, ההמלצות הכתובות ב-src/data/reviews.ts
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHeader from '../components/PageHeader.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import Carousel from '../components/Carousel.astro';
 import ReviewsCarousel from '../components/ReviewsCarousel.astro';
 import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
+
+// המקורות של ההמלצות הכתובות, לפי סדר ההופעה
+const sources = [...new Set(allReviews.map((r) => r.source))];
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
-  <PageHeader title="המלצות לקוחות">
-    <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
-    <p>קצת ממה שהלקוחות מספרים על תהליך הליווי</p>
-  </PageHeader>
+  <section class="t-hero">
+    <div class="container t-hero__grid">
+      <div class="t-hero__text">
+        <h1>המלצות לקוחות</h1>
+        <!-- הנוסח לקוח מהדף שנוגה בנתה ב-Canva -->
+        <p class="t-hero__lead">קצת ממה שהלקוחות מספרים על תהליך הליווי</p>
 
-  <!-- הסרטון המרכזי: לקט ההמלצות -->
-  <section class="section">
-    <div class="container">
-      <div class="featured">
-        <YouTubeEmbed id={featuredVideo.id} title={featuredVideo.title} vertical={featuredVideo.vertical} />
+        <!-- המספרים מחושבים מהרשימות עצמן, ומתעדכנים לבד כשמוסיפים המלצה -->
+        <ul class="t-stats">
+          <li>
+            <strong>{allReviews.length}</strong>
+            <span>המלצות כתובות</span>
+          </li>
+          <li>
+            <strong>{videos.length + 1}</strong>
+            <span>סרטוני המלצה</span>
+          </li>
+        </ul>
+        <p class="t-sources">
+          מקורות:{' '}
+          {sources.map((s, i) => (
+            <>
+              <bdi>{s}</bdi>
+              {i < sources.length - 1 && ' · '}
+            </>
+          ))}
+        </p>
+
+        <p class="t-hero__links">
+          <a href="#videos">לסרטונים</a>
+          <a href="#reviews">להמלצות הכתובות</a>
+        </p>
       </div>
+
+      <figure class="t-hero__video">
+        <div class="phone">
+          <YouTubeEmbed id={featuredVideo.id} title={featuredVideo.title} vertical />
+        </div>
+        <figcaption>{featuredVideo.name}</figcaption>
+      </figure>
     </div>
   </section>
 
-  <!-- כל סרטוני ההמלצות -->
-  <section class="section section--mist">
+  <!-- סרטוני ההמלצות: שורה אחת שזזה לצדדים -->
+  <section class="section" id="videos">
     <div class="container">
-      <h2 class="sr-only">סרטוני ההמלצות</h2>
-      <ul class="videos">
+      <h2 class="t-title">לקוחות מספרים</h2>
+      <Carousel label="סרטוני המלצות" itemWidth="clamp(10.5rem, 42%, 14rem)">
         {
           videos.map((v) => (
-            <li class:list={['videos__item', { 'videos__item--wide': !v.vertical }]}>
-              <YouTubeEmbed id={v.id} title={v.title} vertical={v.vertical} />
-              <p class="videos__caption">{v.title}</p>
+            <li class="v-card">
+              <YouTubeEmbed id={v.id} title={v.title} vertical />
+              <p class="v-card__name">{v.name}</p>
+              {v.role && <p class="v-card__role">{v.role}</p>}
             </li>
           ))
         }
-      </ul>
+      </Carousel>
     </div>
   </section>
 
   <!-- המלצות כתובות: קרוסלה, מתעדכנת ידנית ב-src/data/reviews.ts -->
-  <section class="section">
+  <section class="section section--mist t-reviews" id="reviews">
     <div class="container">
-      <h2>מה אומרים עליי</h2>
-      <!-- TODO: להוסיף המלצות מפייסבוק כשנוגה תבחר. אין לשנות ציטוטים. -->
+      <h2 class="t-title">מה אומרים עליי</h2>
       <ReviewsCarousel reviews={allReviews} label="המלצות לקוחות בכתב" />
-      <!-- TODO: כפתורי "כתבו המלצה" בגוגל ובפייסבוק, כשיהיה קישור לכרטיס העסק בגוגל -->
     </div>
   </section>
 
   <!-- סיפורי מקרה -->
-  <section class="section section--mist">
+  <section class="section">
     <div class="container">
-      <h2>סיפורי מקרה</h2>
+      <h2 class="t-title">סיפורי מקרה</h2>
       <!-- TODO: נוגה תספק סיפורי מקרה. אין להמציא. לפני פרסום שם של לקוח לוודא שאישר. -->
       <p class="placeholder">תוכן חסר: סיפורי מקרה. יתווספו אחרי שנוגה תספק אותם.</p>
     </div>
@@ -63,36 +96,118 @@ import { allReviews } from '../data/reviews';
 </BaseLayout>
 
 <style>
-  .featured {
-    max-width: 20rem;
-    margin-inline: auto;
+  /* פתיח: טקסט מצד אחד, לקט ההמלצות במסגרת של טלפון מהצד השני */
+  .t-hero {
+    background:
+      radial-gradient(circle at 15% 20%, rgb(252 220 109 / 0.25), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgb(29 157 160 / 0.14), transparent 45%),
+      var(--mist);
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(2.5rem, 7vw, 4.5rem);
   }
-  .videos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .t-hero__grid {
     display: grid;
-    gap: 1.5rem;
-    /* בנייד שני סרטונים אנכיים בשורה, כדי שכל סרטון לא יתפוס מסך שלם */
-    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-    gap: 1rem;
-    align-items: start;
-  }
-  .videos__item--wide {
-    grid-column: 1 / -1;
-    max-width: 36rem;
-  }
-  .videos__caption {
-    margin: 0.5rem 0 0;
-    font-size: 0.95rem;
+    gap: 2.5rem;
+    align-items: center;
   }
   @media (min-width: 48rem) {
-    .videos {
-      grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-      gap: 1.5rem;
+    .t-hero__grid {
+      grid-template-columns: 1fr auto;
+      gap: 4rem;
     }
-    .videos__item--wide {
-      grid-column: span 2;
-    }
+  }
+  .t-hero__kicker {
+    margin: 0 0 0.25rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    letter-spacing: 0.02em;
+  }
+  .t-hero h1 {
+    margin-bottom: 0.35em;
+  }
+  .t-hero__lead {
+    font-size: 1.3rem;
+  }
+
+  .t-stats {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .t-stats li {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 0.9rem 1.4rem;
+    min-width: 9rem;
+    box-shadow: 0 6px 20px rgb(11 26 51 / 0.05);
+  }
+  .t-stats strong {
+    display: block;
+    font-size: 2.2rem;
+    line-height: 1.1;
+    color: var(--teal-dark);
+  }
+  .t-sources {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .t-hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1.5rem 0 0;
+    font-weight: 700;
+  }
+
+  .t-hero__video {
+    margin: 0 auto;
+    width: min(16rem, 70vw);
+    text-align: center;
+  }
+  .phone {
+    padding: 0.45rem;
+    border-radius: 1.6rem;
+    box-shadow: 0 18px 40px rgb(11 26 51 / 0.22);
+    background: var(--gold-gradient); /* מסגרת זהב */
+  }
+  .phone :global(.yt-embed) {
+    border-radius: 1.15rem;
+  }
+  .t-hero__video figcaption {
+    margin-top: 0.75rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
+  /* כותרת אזור עם קו זהב קצר מתחת */
+  .t-title::after {
+    content: '';
+    display: block;
+    width: 3.5rem;
+    height: 4px;
+    margin-top: 0.6rem;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+
+  .v-card__name {
+    margin: 0.6rem 0 0;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .v-card__role {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+    color: var(--teal-dark);
+    line-height: 1.35;
+  }
+
+  /* צבע ההצללה בקצות הקרוסלה = צבע הרקע של האזור */
+  .t-reviews {
+    --carousel-bg: var(--mist);
   }
 </style>
