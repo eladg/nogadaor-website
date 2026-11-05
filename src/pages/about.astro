@@ -1,15 +1,14 @@
 ---
-// עמוד אודות (גרסה 4, 2026-11-05). נוגה אמרה שהעמוד גמור, חוץ מהמומחים.
+// עמוד אודות (גרסה 5, 2026-11-05). נוגה אמרה שהעמוד גמור, חוץ מהמומחים.
 // השראה כללית מ-meitalchesner.co.il/about ומ-masha-bar.co.il, בלי להעתיק את העיצוב של אף אחת מהן.
-// הצבעים של נוגה: כחול, טורקיז וזהב.
-// סדר האזורים: פתיח, הדרך שלנו (6 קוביות), הסיפור עם צמד תמונות, מה מניע אותי, דווקא עכשיו,
-// הקהילה שלי + מחוץ לעבודה, מומחים, גלריית תמונות נעה, סיסמת סיום.
+// הצבעים של נוגה: כחול, טורקיז וזהב. הדגשות: .hl--mark (קו זהב מעוגל, לא מרקר).
+// הסדר שנוגה קבעה: פתיח קצר, הסיפור, הקהילה + מחוץ לעבודה, עקרונות הליווי שלי (כהה), שותפים מקצועיים,
+// התפיסה שלי, דווקא עכשיו + הסיסמה, תמונות. בלי אזור הקריאה לפעולה הכללי בתחתית.
 // כל הטקסטים: הנוסח של נוגה (2026-11-05), עם עריכה קלה שהיא ביקשה.
 // התמונות: נוגה שלחה אותן. כולן שמורות במקור ב"חומרים גרפיים לאתר/תמונות מכנסים",
 // והגרסאות באתר (חתוכות, עם תיקון תאורה עדין) ב-src/assets/about/gallery.
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CtaBand from '../components/CtaBand.astro';
 import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
 
@@ -24,7 +23,6 @@ const pic = (num: string) => {
 // תיאורי התמונות (לקוראי מסך)
 const alts: Record<string, string> = {
   '03': 'נוגה יושבת על ספסל בגינה ומחייכת',
-  '04': 'מחברות "הצלחה עסקית בדרך שלך" על שולחן הכנס',
   '05': 'נוגה ליד הדוכן על הבמה, מחייכת למצלמה',
   '06': 'משתתפים נרשמים בעמדת הקבלה של הכנס',
   '07': 'נוגה עם משתתפות בכנס',
@@ -46,8 +44,8 @@ const alts: Record<string, string> = {
 // שתי שורות שזזות לכיוונים הפוכים. הסדר מעורבב בכוונה, כדי שלא יהיו כמה תמונות במה ברצף.
 // תמונות 15 ו-08 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
 const rows = [
-  ['07', '14', '05', '04', '18', '09', '21', '06', '17'],
-  ['12', '19', '22', '13', '10', '20', '03', '23', '11', '16'],
+  ['07', '14', '05', '22', '18', '09', '21', '06', '17'],
+  ['12', '19', '13', '10', '20', '03', '23', '11', '16'],
 ].map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] })));
 
 // שש הקוביות: הנוסח של נוגה (2026-11-05). נוגה ביקשה לא לקרוא לזה "שיטה".
@@ -131,31 +129,13 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 2. הדרך שלנו: שש קוביות, מיד אחרי הפתיח (לבקשת נוגה) -->
-  <section class="a-ways">
-    <div class="container">
-      <h2 class="a-ways__title reveal">הדרך <span class="hl">שלנו</span></h2>
-      <ul class="ways">
-        {
-          ways.map((w, i) => (
-            <li class="way reveal" style={`transition-delay: ${(i % 3) * 110}ms`}>
-              <span class="way__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icons[w.icon]} />
-              </span>
-              <h3>{w.title}</h3>
-              <p>{w.text}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 3. הסיפור: הטקסט של נוגה ברצף אחד, בלי פיצול לאזורים. ולצדו מקום לתמונה -->
+  <!-- 2. הסיפור: מתחיל מיד אחרי הפתיח (לבקשת נוגה). הטקסט ברצף אחד, ולצדו צמד תמונות -->
   <section class="section a-story">
     <div class="container a-story__grid">
       <div class="a-story__text reveal">
-        <h2 class="a-kicker">הסיפור שלי</h2>
+        <p class="a-kicker">הסיפור שלי</p>
+        <!-- המשפט של נוגה (2026-11-05) -->
+        <h2 class="a-story__title">מאוהבת בלעשות עסקים <span class="hl--mark">ולהזיז בניינים</span></h2>
         <p>
           מכירים את זה שבכל שבועיים סמנכ״ל בבנק קם בבוקר ואומר <span class="a-wish" lang="en" dir="ltr">“I WISH”</span>
           — ועכשיו צריך לגרום לעשרות סניפים ולמאות יועצי השקעות לזוז? מישהו צריך לקחת את הרעיון, לחבר
@@ -174,8 +154,11 @@ const icons: Record<string, string> = {
         </p>
         <p>
           קשה לי להחליט אם קוראים לזה ייעוץ עסקי, ארגוני, שיווקי או אסטרטגי, כי זה הרבה מכל דבר.
-          כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
-          לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
+          <!-- המשפט הזה מודגש לבקשת נוגה -->
+          <strong class="a-strong">
+            כל עסק הוא שונה ומיוחד, ואני באה ולומדת את המצב הקיים ומה רוצים להשיג, ועוזרת לכם לגרום
+            לזה לקרות: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.
+          </strong>
         </p>
       </div>
 
@@ -187,52 +170,8 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 4. מה מניע אותי (הנוסח של נוגה, 2026-11-05) -->
-  <section class="section section--mist a-drive">
-    <div class="container a-drive__grid">
-      <h2 class="a-title reveal">מה <span class="hl--mark">מניע</span> אותי</h2>
-      <div class="a-drive__text reveal">
-        <p class="a-drive__lead">
-          אני מאמינה שכל עסק וכל בעל עסק הוא מיוחד. אין מתכון אחד לבניית עסק ואין שיטה להצלחה.
-          כולם יכולים הכול, כשהם רק רוצים.
-        </p>
-        <p>
-          כבעלי עסקים, אנחנו חייבים להסמיך את עצמנו ולא לחכות לאישורים, ולעשות בדרך שלנו, לא כמו אחרים.
-          זה מה שהופך אותנו למנהיגים, וזה מה שממגנט אלינו את הלקוחות המדויקים.
-        </p>
-        <p>
-          הליווי שלי דואג למנף את הכישורים הקיימים ולחבר עוד יותר לתשוקה, לאנרגיה ולשליחות. מתוך
-          החיבור הזה בונים יסודות אסטרטגיים חזקים, ייחודיים ומבודלים, ובוחרים את הקהלים הנכונים.
-        </p>
-        <p>
-          במקביל מחזקים את מה שיחזיק את העסק גם אחרי הליווי: חוסן ואמונה עצמית, קבלת החלטות בקלות,
-          מנהיגות ולקיחת אחריות, ועשייה גם כשמפחדים.
-        </p>
-        <p>
-          כי כשאנחנו מחוברים והחלטיים, אנחנו יכולים לכבוש כל יעד ולהגשים את הבלתי אפשרי, וזה צריך
-          להיות בדרך שלך. זו המשמעות של הסלוגן שלי:
-        </p>
-        <p class="a-slogan">הצלחה עסקית בדרך שלך</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. דווקא עכשיו: משפט מסכם על רקע כחול -->
-  <section class="a-now">
-    <div class="container a-now__inner reveal">
-      <h2 class="a-now__title">דווקא <span class="hl">עכשיו</span></h2>
-      <p>
-        הטכנולוגיה משנה את העולם בקצב מסחרר, ורוב האנשים לא מספיקים לאמץ את השינויים. זה בדיוק
-        הרגע להעז, לסמוך על עצמנו ולחשוב בגדול.
-      </p>
-      <p class="a-now__big">
-        העולם כבר מרחיב את גבולות האפשר. הגיע הזמן להרחיב גם את מה שאתם מרשים לעצמכם.
-      </p>
-    </div>
-  </section>
-
-  <!-- 6. הקהילה שלי ומחוץ לעבודה: שני כרטיסים -->
-  <section class="section">
+  <!-- 3. הקהילה שלי ומחוץ לעבודה: שני כרטיסים -->
+  <section class="section section--mist a-cards-sec">
     <div class="container a-cards">
       <article class="a-card reveal">
         <h2 class="a-card__title">הקהילה <span class="hl--mark">שלי</span></h2>
@@ -252,10 +191,32 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 7. מומחים שאני עובדת איתם: הם אינם חלק מהארגון. הרשימה ב-src/data/experts.ts -->
-  <section class="section section--mist">
+  <!-- 4. עקרונות הליווי שלי: שש קוביות על רקע כחול. בגוף יחיד: זה האתר של נוגה -->
+  <section class="a-ways">
     <div class="container">
-      <h2 class="a-title reveal">מומחים <span class="hl--mark">שאני עובדת איתם</span></h2>
+      <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת בגוף יחיד שמתאימה לתוכן הקוביות -->
+      <h2 class="a-ways__title reveal">עקרונות <span class="hl">הליווי שלי</span></h2>
+      <ul class="ways">
+        {
+          ways.map((w, i) => (
+            <li class="way reveal" style={`transition-delay: ${(i % 3) * 110}ms`}>
+              <span class="way__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icons[w.icon]} />
+              </span>
+              <h3>{w.title}</h3>
+              <p>{w.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. שותפים מקצועיים: מומחים שנוגה עובדת איתם (אינם חלק מהארגון). הרשימה ב-src/data/experts.ts -->
+  <section class="section">
+    <div class="container">
+      <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת מקצועית יותר מ"מומחים שאני עובדת איתם" -->
+      <h2 class="a-title reveal">שותפים <span class="hl--mark">מקצועיים</span></h2>
       <ul class="experts">
         {
           experts.map((e, i) => (
@@ -272,12 +233,60 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- 8. רגעים מהכנסים: שתי שורות תמונות שזזות לכיוונים הפוכים.
-       נעצרות במעבר עכבר. אצל מי שביקש פחות תנועה הן עומדות, ואפשר לגלול אותן לצדדים. -->
+  <!-- 6. התפיסה שלי (לשעבר "מה מניע אותי"; הנוסח של נוגה) -->
+  <section class="section section--mist a-drive">
+    <div class="container a-drive__grid">
+      <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת מקצועית יותר -->
+      <h2 class="a-title reveal">התפיסה <span class="hl--mark">שלי</span></h2>
+      <div class="a-drive__text reveal">
+        <p class="a-drive__lead">
+          אני מאמינה שכל עסק וכל בעל עסק הוא מיוחד. אין מתכון אחד לבניית עסק ואין שיטה להצלחה.
+          כולם יכולים הכול, כשהם רק רוצים.
+        </p>
+        <p>
+          כבעלי עסקים, אנחנו חייבים <span class="hl--mark">להסמיך את עצמנו</span> ולא לחכות לאישורים, ולעשות
+          בדרך שלנו, לא כמו אחרים. זה מה שהופך אותנו למנהיגים, וזה מה שממגנט אלינו את הלקוחות המדויקים.
+        </p>
+        <p>
+          הליווי שלי דואג למנף את הכישורים הקיימים ולחבר עוד יותר לתשוקה, לאנרגיה ולשליחות. מתוך
+          החיבור הזה בונים יסודות אסטרטגיים חזקים, ייחודיים ומבודלים, ובוחרים את הקהלים הנכונים.
+        </p>
+        <p>
+          במקביל מחזקים את מה שיחזיק את העסק גם אחרי הליווי: חוסן ואמונה עצמית, קבלת החלטות בקלות,
+          מנהיגות ולקיחת אחריות, ועשייה גם כשמפחדים.
+        </p>
+        <p>
+          כי כשאנחנו מחוברים והחלטיים, אנחנו יכולים לכבוש כל יעד ולהגשים את הבלתי אפשרי, וזה צריך
+          להיות בדרך שלך. זו המשמעות של הסלוגן שלי:
+        </p>
+        <p class="a-slogan">הצלחה עסקית בדרך שלך</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. דווקא עכשיו, ובסופו הסיסמה שחותמת כל פוסט של נוגה -->
+  <section class="a-now">
+    <div class="container a-now__inner reveal">
+      <h2 class="a-now__title">דווקא <span class="hl">עכשיו</span></h2>
+      <p>
+        הטכנולוגיה משנה את העולם בקצב מסחרר, ורוב האנשים לא מספיקים לאמץ את השינויים. זה בדיוק
+        הרגע להעז, לסמוך על עצמנו ולחשוב בגדול.
+      </p>
+      <p class="a-now__big">
+        העולם כבר מרחיב את גבולות האפשר. הגיע הזמן להרחיב גם את מה שאתם מרשים לעצמכם.
+      </p>
+      <p class="a-now__motto hl">קמים ונהיים ענקיים מהחיים</p>
+      <p class="a-now__sign">שלכם, נוגה</p>
+    </div>
+  </section>
+
+  <!-- 8. רגעים מהכנסים: שתי שורות תמונות שזזות לכיוונים הפוכים, בסוף העמוד (לבקשת נוגה).
+       נעצרות במעבר עכבר. אצל מי שביקש פחות תנועה הן עומדות, ואפשר לגלול אותן לצדדים.
+       בעמוד הזה אין את אזור הקריאה לפעולה הכללי: נוגה אמרה שהרצף הזה מספיק. -->
   <section class="a-moments" aria-labelledby="moments-title">
     <div class="container">
       <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
-      <h2 id="moments-title" class="a-title reveal">רגעים <span class="hl">מהכנסים</span></h2>
+      <h2 id="moments-title" class="a-title reveal">רגעים <span class="hl--mark">מהכנסים</span></h2>
     </div>
     {
       rows.map((row, r) => (
@@ -297,17 +306,8 @@ const icons: Record<string, string> = {
       ))
     }
   </section>
-
-  <!-- 9. סיום: הסיסמה שחותמת כל פוסט של נוגה -->
-  <section class="section a-end">
-    <div class="container reveal">
-      <p class="a-end__motto">קמים ונהיים ענקיים מהחיים</p>
-      <p class="a-end__sign">שלכם, נוגה</p>
-    </div>
-  </section>
-
-  <CtaBand />
 </BaseLayout>
+
 
 <style>
   /* ---------- 1. פתיח עם תמונת רקע ---------- */
@@ -320,7 +320,7 @@ const icons: Record<string, string> = {
   /* בנייד: התמונה למעלה, והטקסט מתחתיה על כחול מלא */
   .a-hero__media {
     position: relative;
-    height: min(78vw, 26rem);
+    height: min(62vw, 20rem);
   }
   .a-hero__media img {
     width: 100%;
@@ -384,7 +384,7 @@ const icons: Record<string, string> = {
     .a-hero {
       display: flex;
       align-items: center;
-      min-height: clamp(32rem, 80vh, 44rem);
+      min-height: clamp(24rem, 58vh, 32rem);
     }
     /* התמונה תופסת את הצד השמאלי בלבד, כך שהטקסט בימין לא עולה עליה אף פעם */
     .a-hero__media {
@@ -465,14 +465,30 @@ const icons: Record<string, string> = {
   .a-story__text p:last-child {
     margin-bottom: 0;
   }
+  /* I WISH: הדגשה עדינה (נוגה אמרה שהיה מודגש מדי) */
   .a-wish {
-    display: inline-block;
-    padding: 0 0.45em;
-    border-radius: 0.4em;
-    background: var(--navy);
-    color: var(--gold-light);
-    font-weight: 800;
-    letter-spacing: 0.03em;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  /* כותרת הסיפור: המשפט של נוגה */
+  .a-story__title {
+    font-size: clamp(1.8rem, 4.6vw, 2.7rem);
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+  }
+  /* המשפט המודגש בסוף הסיפור: פס זהב בצד ורקע עדין */
+  .a-strong {
+    display: block;
+    margin-top: 1rem;
+    padding: 1rem 1.25rem;
+    border-inline-start: 4px solid var(--gold-dark);
+    border-radius: 0.25rem 0.9rem 0.9rem 0.25rem;
+    background: var(--mist);
+    color: var(--navy);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.7;
   }
 
   /* צמד תמונות: גדולה, ומעליה קטנה שחופפת בפינה עם מסגרת לבנה */
@@ -600,12 +616,10 @@ const icons: Record<string, string> = {
   .a-moments {
     padding-block: clamp(3.5rem, 9vw, 5.5rem);
     overflow: hidden;
-    background:
-      radial-gradient(36rem 22rem at 100% 0, rgb(29 157 160 / 0.2), transparent 70%),
-      var(--navy);
+    /* רקע בהיר: מפריד בין "דווקא עכשיו" הכהה לבין הפוטר הכהה */
+    background: var(--white);
   }
   .a-moments .a-title {
-    color: var(--white);
     margin-bottom: 2rem;
   }
   .reel {
@@ -697,31 +711,29 @@ const icons: Record<string, string> = {
     }
   }
 
-  /* ---------- 9. סיום ---------- */
-  .a-end {
-    text-align: center;
-  }
-  .a-end__motto {
-    margin: 0;
+  /* הסיסמה בסוף "דווקא עכשיו": גדולה ובזהב, באותו גופן של האתר */
+  .a-now .a-now__motto {
+    display: block;
+    width: fit-content;
+    margin: 2.5rem auto 0;
     font-size: clamp(2rem, 6vw, 3.6rem);
     font-weight: 900;
     line-height: 1.2;
-    color: var(--navy);
   }
-  .a-end__motto::after {
+  .a-now__motto::after {
     content: '';
     display: block;
     width: 5rem;
-    height: 5px;
+    height: 4px;
     margin: 1rem auto 0;
     border-radius: 3px;
     background: var(--gold-gradient);
   }
-  .a-end__sign {
-    margin: 1rem 0 0;
+  .a-now .a-now__sign {
+    margin: 0.9rem 0 0;
     font-size: 1.35rem;
     font-weight: 700;
-    color: var(--teal-dark);
+    color: var(--on-dark);
   }
 
 

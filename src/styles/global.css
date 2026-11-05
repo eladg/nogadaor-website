@@ -205,13 +205,24 @@ a {
   background-clip: text;
   color: transparent;
 }
-/* על רקע בהיר הזהב חלש מדי לקריאה, ולכן שם ההדגשה היא טורקיז עם "מרקר" זהב מתחת */
+/* הדגשה על רקע בהיר: טורקיז, עם קו זהב מעוגל שנמתח מתחת למילים כשמגיעים לאזור
+   (בהשראת חץ הזהב שבמיתוג של נוגה). נוגה לא אהבה "מרקר" (2026-11-05).
+   בשורה ששוברת לשתיים, כל שורה מקבלת קו משלה. */
 .hl--mark {
-  background: linear-gradient(transparent 62%, rgb(252 220 109 / 0.75) 62%, rgb(252 220 109 / 0.75) 92%, transparent 92%);
-  -webkit-background-clip: border-box;
-  background-clip: border-box;
   color: var(--teal-dark);
-  padding-inline: 0.08em;
+  font-weight: 800;
+  padding-bottom: 0.14em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 55 3, 130 2, 197 8' fill='none' stroke='%23d19a4a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: 100% 0.36em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s;
+}
+/* לפני שהאזור מופיע הקו עוד לא מצויר, והוא נמתח מימין לשמאל */
+.js .reveal:not(.is-in) .hl--mark {
+  background-size: 0% 0.36em;
 }
 
 /* הופעה עדינה בגלילה. הסקריפט ב-BaseLayout מוסיף את המחלקה is-in.
@@ -236,5 +247,10 @@ a {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .hl--mark,
+  .js .reveal:not(.is-in) .hl--mark {
+    transition: none;
+    background-size: 100% 0.36em;
   }
 }
