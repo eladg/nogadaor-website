@@ -7,6 +7,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { quizYear } from '../../data/quiz';
+import GuideCover from '../../components/guide/GuideCover.astro';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 const guides = all.filter((g) => g.data.type === 'guide');
@@ -27,19 +28,26 @@ const articles = all.filter((g) => g.data.type === 'article');
       <h2>מדריכים</h2>
       <p class="intro">כל המדריכים פתוחים לקריאה כאן באתר.</p>
       <!-- הוחלט (2026-11-05): בשלב ראשון הכל פתוח, בלי איסוף אימיילים. לא לבנות שער אימייל עד שנוגה תבקש. -->
-      <ul class="cards">
+      <!-- כל מדריך מקבל כריכה באותו סגנון (src/components/guide/GuideCover.astro) -->
+      <ul class="g-shelf">
         {
           guides.map((g) => (
-            <li class="card guide-card">
-              <p class="guide-card__type">מדריך</p>
-              <h3>
-                <a href={`/guides/${g.id}/`}>{g.data.title}</a>
-              </h3>
-              <p>{g.data.description}</p>
-              <p class="guide-card__more" aria-hidden="true">לקריאה ←</p>
+            <li class="g-shelf__item">
+              <div class="g-shelf__cover">
+                <GuideCover title={g.data.title} variant={g.data.coverVariant} size="sm" />
+              </div>
+              <div class="g-shelf__text">
+                <h3>
+                  <a href={`/guides/${g.id}/`}>{g.data.title}</a>
+                </h3>
+                {g.data.tagline && <p class="g-shelf__tagline">{g.data.tagline}</p>}
+                <p class="g-shelf__more" aria-hidden="true">לקריאה ←</p>
+              </div>
             </li>
           ))
         }
+      </ul>
+      <ul class="cards quiz-row">
         <li class="card guide-card guide-card--quiz">
           <p class="guide-card__type">שאלון</p>
           <h3>
@@ -97,6 +105,71 @@ const articles = all.filter((g) => g.data.type === 'article');
 <style>
   .intro {
     margin-bottom: 1.5rem;
+  }
+  /* מדף המדריכים: כריכה ומתחתיה הכותרת */
+  .g-shelf {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+  }
+  .g-shelf__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 1rem 1rem 1.1rem;
+    border-radius: 1.25rem;
+    background:
+      radial-gradient(14rem 9rem at 100% 0, rgb(25 154 181 / 0.14), transparent 70%),
+      var(--mist);
+    border: 1px solid var(--line);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .g-shelf__item:hover,
+  .g-shelf__item:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -30px rgb(11 26 51 / 0.6);
+  }
+  .g-shelf__cover {
+    width: 78%;
+    margin: 0 auto 1rem;
+  }
+  .g-shelf__text h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.1rem;
+    line-height: 1.35;
+  }
+  .g-shelf__text a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .g-shelf__text a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .g-shelf__tagline {
+    margin: 0 0 0.4rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .g-shelf__more {
+    margin: auto 0 0;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .quiz-row {
+    max-width: 26rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .g-shelf__item {
+      transition: none;
+    }
   }
   .guide-card {
     position: relative;

@@ -1,0 +1,90 @@
+---
+// "פס" רחב ומודגש באמצע מדריך: משפט גדול על רקע במעבר צבעים (כחול כהה, כחול או זהב).
+// משמש לשבור את הקריאה במקומות החשובים.
+interface Props {
+  tone?: 'dark' | 'blue' | 'gold';
+  kicker?: string;
+}
+const { tone = 'dark', kicker } = Astro.props;
+---
+
+<div class:list={['band-g', `band-g--${tone}`]}>
+  {kicker && <p class="band-g__kicker">{kicker}</p>}
+  <div class="band-g__text"><slot /></div>
+</div>
+
+<style>
+  .band-g {
+    position: relative;
+    overflow: hidden;
+    margin: 2.5rem 0;
+    padding: clamp(1.75rem, 5vw, 2.75rem) clamp(1.5rem, 5vw, 3rem);
+    border-radius: 1.75rem;
+    text-align: center;
+    color: var(--white);
+    background:
+      radial-gradient(22rem 12rem at 100% 0, rgb(25 154 181 / 0.55), transparent 70%),
+      radial-gradient(20rem 12rem at 0 100%, rgb(209 154 74 / 0.35), transparent 70%),
+      linear-gradient(135deg, var(--navy-deep), var(--navy) 60%, #12335a);
+  }
+  @media (min-width: 64rem) {
+    .band-g {
+      margin-inline: -2.5rem;
+    }
+  }
+  .band-g--blue {
+    background:
+      radial-gradient(22rem 12rem at 0 0, rgb(255 255 255 / 0.25), transparent 70%),
+      linear-gradient(135deg, #127a90, var(--teal) 55%, #3fb3cb);
+  }
+  .band-g--gold {
+    color: var(--navy);
+    background:
+      radial-gradient(20rem 12rem at 100% 100%, rgb(255 255 255 / 0.45), transparent 70%),
+      linear-gradient(135deg, #f6cf62, var(--gold-light) 45%, #e2b25f);
+  }
+  /* נקודות זוהרות קטנות לקישוט */
+  .band-g::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(255 255 255 / 0.14) 1.5px, transparent 1.6px);
+    background-size: 22px 22px;
+    -webkit-mask-image: linear-gradient(to left, #000, transparent 55%);
+    mask-image: linear-gradient(to left, #000, transparent 55%);
+    pointer-events: none;
+  }
+  .band-g__kicker {
+    position: relative;
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--gold-light);
+  }
+  .band-g--blue .band-g__kicker {
+    color: var(--white);
+    opacity: 0.85;
+  }
+  .band-g--gold .band-g__kicker {
+    color: var(--navy);
+  }
+  .band-g__text {
+    position: relative;
+    font-size: clamp(1.3rem, 3.2vw, 1.75rem);
+    font-weight: 900;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+  .band-g__text :global(p) {
+    margin: 0 0 0.4em;
+  }
+  .band-g__text :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .band-g__text :global(strong) {
+    color: var(--gold-light);
+  }
+  .band-g--gold .band-g__text :global(strong) {
+    color: var(--teal-dark);
+  }
+</style>

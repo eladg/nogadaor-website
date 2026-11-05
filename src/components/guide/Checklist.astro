@@ -1,0 +1,122 @@
+---
+// רשימת בדיקה: כל שורה ברשימה (Markdown) הופכת לתיבת סימון שאפשר ללחוץ עליה.
+// הסימונים לא נשמרים (רק לשימוש תוך כדי קריאה). בלי JavaScript מוצגת רשימה עם עיגולים.
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="chk-g" data-checklist>
+  {title && <p class="chk-g__title">{title}</p>}
+  <slot />
+  <p class="chk-g__count" data-check-count aria-live="polite"></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-checklist]').forEach((box, b) => {
+    const items = [...box.querySelectorAll<HTMLLIElement>(':scope > ul > li, :scope > ol > li')];
+    const count = box.querySelector<HTMLElement>('[data-check-count]');
+    const update = () => {
+      const done = box.querySelectorAll('input:checked').length;
+      if (count) count.textContent = done ? `סימנתם ${done} מתוך ${items.length}` : '';
+    };
+    items.forEach((li, i) => {
+      const id = `chk-${b}-${i}`;
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = id;
+      const label = document.createElement('label');
+      label.htmlFor = id;
+      while (li.firstChild) label.appendChild(li.firstChild);
+      li.append(input, label);
+      input.addEventListener('change', () => {
+        li.classList.toggle('is-done', input.checked);
+        update();
+      });
+    });
+    box.classList.add('is-ready');
+  });
+</script>
+
+<style>
+  .chk-g {
+    margin: 2rem 0 2.25rem;
+    padding: 1.4rem 1.4rem 0.8rem;
+    border-radius: 1.25rem;
+    background:
+      radial-gradient(16rem 9rem at 100% 0, rgb(25 154 181 / 0.18), transparent 70%),
+      var(--mist);
+    border: 1px solid var(--line);
+  }
+  .chk-g__title {
+    margin: 0 0 0.75rem;
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: var(--navy);
+  }
+  .chk-g :global(ul),
+  .chk-g :global(ol) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .chk-g :global(li) {
+    position: relative;
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    padding-inline-start: 2.9rem;
+    border-radius: 0.9rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    transition: background 0.2s ease;
+  }
+  /* העיגול לסימון */
+  .chk-g :global(li)::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.85rem;
+    top: 0.75rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 0.45rem;
+    border: 2px solid var(--teal);
+    background: var(--white);
+  }
+  .chk-g :global(li.is-done) {
+    background: rgb(25 154 181 / 0.1);
+  }
+  .chk-g :global(li.is-done)::before {
+    background: var(--teal)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7'/%3E%3C/svg%3E")
+      center / 85% no-repeat;
+  }
+  .chk-g :global(li input) {
+    position: absolute;
+    inset-inline-start: 0.85rem;
+    top: 0.75rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .chk-g :global(li input:focus-visible) {
+    opacity: 1;
+    outline: 3px solid var(--gold-dark);
+    outline-offset: 2px;
+  }
+  .chk-g :global(li label) {
+    cursor: pointer;
+    display: block;
+  }
+  .chk-g__count {
+    min-height: 1.5em;
+    margin: 0.6rem 0 0;
+    font-weight: 800;
+    color: var(--teal-dark);
+    font-size: 0.95rem;
+  }
+</style>

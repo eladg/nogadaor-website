@@ -1,0 +1,87 @@
+---
+// דירוג לפי סדר חשיבות (אינפוגרפיקה): פסים שהולכים ומתקצרים.
+// items: [{ title, note? }] מהחשוב ביותר לפחות חשוב.
+interface Props {
+  title?: string;
+  items: { title: string; note?: string }[];
+}
+const { title, items } = Astro.props;
+const n = items.length;
+---
+
+<figure class="rank-g">
+  {title && <figcaption class="rank-g__title">{title}</figcaption>}
+  <ol class="rank-g__list">
+    {
+      items.map((item, i) => (
+        <li style={`--w:${100 - (i * 52) / Math.max(n - 1, 1)}%`}>
+          <span class="rank-g__bar">
+            <span class="rank-g__num">{i + 1}</span>
+            <span class="rank-g__name">{item.title}</span>
+          </span>
+          {item.note && <span class="rank-g__note">{item.note}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</figure>
+
+<style>
+  .rank-g {
+    margin: 2rem 0 2.25rem;
+    padding: 1.4rem;
+    border-radius: 1.5rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  .rank-g__title {
+    margin: 0 0 1rem;
+    font-weight: 900;
+    font-size: 1.12rem;
+    color: var(--navy);
+  }
+  .rank-g__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .rank-g__list li {
+    margin: 0;
+  }
+  .rank-g__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: max(var(--w), 15rem);
+    max-width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgb(25 154 181 / 0.35), var(--teal));
+    color: var(--white);
+    font-weight: 800;
+  }
+  .rank-g__list li:nth-child(n + 4) .rank-g__bar {
+    background: linear-gradient(90deg, rgb(11 26 51 / 0.45), var(--navy-soft));
+  }
+  .rank-g__num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--teal-dark);
+    font-weight: 900;
+  }
+  .rank-g__note {
+    display: block;
+    margin: 0.25rem 0 0.2rem;
+    padding-inline-start: 0.9rem;
+    font-size: 0.92rem;
+    color: var(--navy);
+    opacity: 0.8;
+  }
+</style>

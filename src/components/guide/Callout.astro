@@ -1,0 +1,108 @@
+---
+// תיבה מודגשת בתוך מדריך.
+// type: key (משפט מפתח, ברירת מחדל) | tip (טיפ יישומי) | warn (שימו לב) | quote (ציטוט של נוגה)
+import Icon from '../Icon.astro';
+interface Props {
+  type?: 'key' | 'tip' | 'warn' | 'quote';
+  title?: string;
+}
+const { type = 'key', title } = Astro.props;
+const icon = { key: 'spark', tip: 'bulb', warn: 'warning', quote: 'heart' }[type] as 'spark';
+const defaultTitle = { key: '', tip: 'טיפ יישומי', warn: 'שימו לב', quote: '' }[type];
+const heading = title ?? defaultTitle;
+---
+
+<aside class:list={['co', `co--${type}`]}>
+  <span class="co__icon"><Icon name={icon} size={22} /></span>
+  <div class="co__body">
+    {heading && <p class="co__title">{heading}</p>}
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .co {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin: 2rem 0;
+    padding: 1.25rem 1.4rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, rgb(25 154 181 / 0.1), rgb(25 154 181 / 0.02));
+    border: 1px solid rgb(25 154 181 / 0.25);
+  }
+  .co__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--white);
+  }
+  .co__body {
+    flex: 1;
+    min-width: 0;
+  }
+  .co__title {
+    margin: 0 0 0.3rem;
+    font-weight: 900;
+    color: var(--teal-dark);
+  }
+  .co__body :global(p:last-child),
+  .co__body :global(ul:last-child) {
+    margin-bottom: 0;
+  }
+  .co--key .co__body {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+  .co--tip {
+    background: linear-gradient(135deg, rgb(252 220 109 / 0.28), rgb(252 220 109 / 0.06));
+    border-color: rgb(209 154 74 / 0.45);
+  }
+  .co--tip .co__icon {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .co--tip .co__title {
+    color: #8a5a17;
+  }
+  .co--warn {
+    background: var(--white);
+    border: 2px solid var(--gold-dark);
+  }
+  .co--warn .co__icon {
+    background: var(--navy);
+    color: var(--gold-light);
+  }
+  .co--warn .co__title {
+    color: var(--navy);
+  }
+  .co--quote {
+    position: relative;
+    padding: 1.75rem 1.75rem;
+    color: var(--on-dark);
+    border: 0;
+    background:
+      radial-gradient(18rem 10rem at 100% 0, rgb(25 154 181 / 0.45), transparent 70%),
+      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.3), transparent 70%),
+      var(--navy);
+  }
+  .co--quote .co__icon {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .co--quote .co__body {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.55;
+    color: var(--white);
+  }
+  .co--quote .co__body :global(strong) {
+    color: var(--gold-light);
+  }
+</style>

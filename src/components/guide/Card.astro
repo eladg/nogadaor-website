@@ -1,0 +1,98 @@
+---
+// ריבוע אחד בתוך <Cards>. icon: שם אייקון מ-Icon.astro. num: מספר במקום אייקון.
+import Icon from '../Icon.astro';
+interface Props {
+  title?: string;
+  icon?: string;
+  num?: number | string;
+}
+const { title, icon, num } = Astro.props;
+---
+
+<div class="card-g">
+  {
+    (icon || num !== undefined) && (
+      <span class="card-g__badge">{num !== undefined ? num : <Icon name={icon as 'spark'} size={22} />}</span>
+    )
+  }
+  {title && <p class="card-g__title">{title}</p>}
+  <div class="card-g__text"><slot /></div>
+</div>
+
+<style>
+  .card-g {
+    --a: var(--teal);
+    position: relative;
+    overflow: hidden;
+    padding: 1.3rem 1.25rem 1.2rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(160deg, var(--white) 40%, rgb(25 154 181 / 0.09));
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 36px -30px rgb(11 26 51 / 0.5);
+  }
+  /* מתחלף: כחול, זהב, כחול כהה */
+  .card-g:nth-child(3n + 2) {
+    --a: var(--gold-dark);
+    background: linear-gradient(160deg, var(--white) 40%, rgb(252 220 109 / 0.2));
+  }
+  .card-g:nth-child(3n + 3) {
+    --a: var(--navy);
+    background: linear-gradient(160deg, var(--white) 40%, rgb(11 26 51 / 0.07));
+  }
+  .card-g::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 4px;
+    background: var(--a);
+  }
+  :global(.cards-g--dark) .card-g {
+    color: var(--on-dark);
+    border-color: rgb(255 255 255 / 0.1);
+    background: linear-gradient(160deg, var(--navy-soft), var(--navy));
+  }
+  :global(.cards-g--dark) .card-g:nth-child(3n + 2) {
+    background: linear-gradient(160deg, #173a5a, var(--navy));
+  }
+  :global(.cards-g--dark) .card-g:nth-child(3n + 3) {
+    background: linear-gradient(160deg, #1b2f4f, var(--navy-deep));
+  }
+  :global(.cards-g--dark) .card-g__title {
+    color: var(--white);
+  }
+  .card-g__badge {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.85rem;
+    background: var(--a);
+    color: var(--white);
+    font-weight: 900;
+    font-size: 1.15rem;
+  }
+  .card-g:nth-child(3n + 2) .card-g__badge {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .card-g__title {
+    margin: 0 0 0.35rem;
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1.35;
+    color: var(--navy);
+  }
+  .card-g__text {
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+  .card-g__text :global(p:last-child),
+  .card-g__text :global(ul:last-child) {
+    margin-bottom: 0;
+  }
+  .card-g__text :global(ul) {
+    padding-inline-start: 1.1em;
+  }
+</style>

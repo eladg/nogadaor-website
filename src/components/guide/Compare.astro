@@ -1,0 +1,20 @@
+---
+// השוואה בין שני טורים (למשל: מה AI רואה / מה לא רואה). בתוכו שמים שני <Panel>.
+---
+
+<div class="cmp-g">
+  <slot />
+</div>
+
+<style>
+  .cmp-g {
+    display: grid;
+    gap: 1rem;
+    margin: 1.75rem 0 2.25rem;
+  }
+  @media (min-width: 40rem) {
+    .cmp-g {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

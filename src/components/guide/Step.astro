@@ -1,0 +1,54 @@
+---
+// שלב אחד בתוך <Steps>.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<li class="step-g">
+  <p class="step-g__title">{title}</p>
+  <div class="step-g__text"><slot /></div>
+</li>
+
+<style>
+  .step-g {
+    counter-increment: step;
+    position: relative;
+    margin: 0 0 1rem;
+    padding: 0.9rem 1.2rem 0.9rem 1.2rem;
+    padding-inline-start: 4rem;
+  }
+  .step-g::before {
+    content: counter(step);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55rem;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: var(--white);
+    font-weight: 900;
+    font-size: 1.15rem;
+    box-shadow: 0 0 0 5px var(--white);
+  }
+  .step-g:nth-child(even)::before {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .step-g__title {
+    margin: 0 0 0.2rem;
+    font-weight: 900;
+    font-size: 1.12rem;
+    color: var(--navy);
+  }
+  .step-g__text {
+    line-height: 1.65;
+  }
+  .step-g__text :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

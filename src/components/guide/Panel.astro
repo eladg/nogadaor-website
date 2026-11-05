@@ -1,0 +1,75 @@
+---
+// טור אחד בתוך <Compare>. tone: good (כחול, וי) | bad (כהה, איקס) | neutral (זהב)
+import Icon from '../Icon.astro';
+interface Props {
+  title: string;
+  tone?: 'good' | 'bad' | 'neutral';
+}
+const { title, tone = 'good' } = Astro.props;
+const icon = { good: 'check', bad: 'warning', neutral: 'spark' }[tone] as 'check';
+---
+
+<div class:list={['pnl-g', `pnl-g--${tone}`]}>
+  <p class="pnl-g__title"><span class="pnl-g__icon"><Icon name={icon} size={18} /></span>{title}</p>
+  <div class="pnl-g__body"><slot /></div>
+</div>
+
+<style>
+  .pnl-g {
+    padding: 1.3rem 1.3rem 1.1rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(170deg, rgb(25 154 181 / 0.14), rgb(25 154 181 / 0.03));
+    border: 1px solid rgb(25 154 181 / 0.3);
+  }
+  .pnl-g--bad {
+    color: var(--on-dark);
+    border: 0;
+    background: linear-gradient(170deg, var(--navy-soft), var(--navy));
+  }
+  .pnl-g--neutral {
+    background: linear-gradient(170deg, rgb(252 220 109 / 0.32), rgb(252 220 109 / 0.06));
+    border-color: rgb(209 154 74 / 0.45);
+  }
+  .pnl-g__title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0 0 0.75rem;
+    font-weight: 900;
+    font-size: 1.12rem;
+    color: var(--navy);
+  }
+  .pnl-g--bad .pnl-g__title {
+    color: var(--white);
+  }
+  .pnl-g__icon {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--white);
+  }
+  .pnl-g--bad .pnl-g__icon {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .pnl-g--neutral .pnl-g__icon {
+    background: var(--navy);
+    color: var(--gold-light);
+  }
+  .pnl-g__body :global(ul) {
+    margin: 0;
+    padding-inline-start: 1.1em;
+  }
+  .pnl-g__body :global(li) {
+    margin-bottom: 0.35em;
+  }
+  .pnl-g--bad .pnl-g__body :global(li::marker) {
+    color: var(--gold-light);
+  }
+  .pnl-g__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

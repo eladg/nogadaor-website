@@ -1,0 +1,114 @@
+---
+// אינפוגרפיקה של קרחון: מה שרואים מעל המים (top) ומה שנמצא מתחת (items).
+interface Props {
+  top: string;
+  topNote?: string;
+  items: string[];
+  bottomTitle?: string;
+}
+const { top, topNote, items, bottomTitle } = Astro.props;
+---
+
+<figure class="ice-g">
+  <div class="ice-g__above">
+    <span class="ice-g__tip" aria-hidden="true"></span>
+    <p class="ice-g__top">{top}</p>
+    {topNote && <p class="ice-g__note">{topNote}</p>}
+  </div>
+  <div class="ice-g__below">
+    {bottomTitle && <p class="ice-g__btitle">{bottomTitle}</p>}
+    <ul class="ice-g__list">
+      {items.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</figure>
+
+<style>
+  .ice-g {
+    margin: 2.25rem 0;
+    border-radius: 1.75rem;
+    overflow: hidden;
+    box-shadow: 0 30px 50px -40px rgb(7 17 31 / 0.7);
+  }
+  .ice-g__above {
+    position: relative;
+    padding: 1.6rem 1rem 0;
+    text-align: center;
+    background: linear-gradient(180deg, #e9f5f9, #c9e5ee);
+  }
+  .ice-g__tip {
+    display: block;
+    width: 11rem;
+    height: 5.5rem;
+    margin: 0 auto -1px;
+    background: linear-gradient(115deg, #ffffff 0%, #ffffff 48%, #b9dce8 49%, #9fd0e0 100%);
+    clip-path: polygon(50% 0, 62% 28%, 74% 18%, 100% 100%, 0 100%, 20% 40%, 33% 30%);
+  }
+  .ice-g__top {
+    position: absolute;
+    top: 1.2rem;
+    inset-inline: 0;
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.35rem;
+    color: var(--navy);
+  }
+  .ice-g__note {
+    position: absolute;
+    top: 3.2rem;
+    inset-inline: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .ice-g__above:has(.ice-g__note) .ice-g__tip {
+    margin-top: 2.6rem;
+  }
+  .ice-g__above:not(:has(.ice-g__note)) .ice-g__tip {
+    margin-top: 1.6rem;
+  }
+  .ice-g__below {
+    position: relative;
+    padding: 1.6rem clamp(1rem, 4vw, 2rem) 1.8rem;
+    background:
+      radial-gradient(20rem 10rem at 50% 0, rgb(255 255 255 / 0.25), transparent 70%),
+      linear-gradient(180deg, #3fb3cb, var(--teal) 30%, #0f5d78 75%, var(--navy));
+  }
+  /* קו המים */
+  .ice-g__below::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    height: 3px;
+    background: rgb(255 255 255 / 0.65);
+  }
+  .ice-g__btitle {
+    margin: 0 0 0.9rem;
+    text-align: center;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .ice-g__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+  .ice-g__list li {
+    margin: 0;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.14);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.98rem;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+</style>

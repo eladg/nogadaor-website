@@ -1,0 +1,27 @@
+---
+// תהליך בשלבים (אינפוגרפיקה): מספרים בעיגולים מחוברים בקו. בתוכו שמים <Step>.
+---
+
+<ol class="steps-g">
+  <slot />
+</ol>
+
+<style>
+  .steps-g {
+    counter-reset: step;
+    list-style: none;
+    margin: 2rem 0 2.25rem;
+    padding: 0;
+    position: relative;
+  }
+  /* הקו שמחבר את העיגולים */
+  .steps-g::before {
+    content: '';
+    position: absolute;
+    inset-block: 1.4rem 1.4rem;
+    inset-inline-start: 1.35rem;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--teal), var(--gold-dark));
+  }
+</style>

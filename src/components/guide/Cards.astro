@@ -1,0 +1,27 @@
+---
+// רשת "ריבועים" בתוך מדריך. בתוכה שמים <Card>.
+// cols: כמה עמודות במסך רחב (2-4). tone: light (רקע בהיר) | dark (כרטיסים כהים).
+interface Props {
+  cols?: 2 | 3 | 4;
+  tone?: 'light' | 'dark';
+}
+const { cols = 3, tone = 'light' } = Astro.props;
+---
+
+<div class:list={['cards-g', `cards-g--${tone}`]} style={`--cols:${cols}`}>
+  <slot />
+</div>
+
+<style>
+  .cards-g {
+    display: grid;
+    gap: 1rem;
+    margin: 1.75rem 0 2.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+  }
+  @media (min-width: 48rem) {
+    .cards-g {
+      grid-template-columns: repeat(var(--cols), 1fr);
+    }
+  }
+</style>

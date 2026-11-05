@@ -1,0 +1,104 @@
+---
+// תבנית להעתקה: טקסט שהקורא יכול להעתיק לעצמו (פרומפט, רשימת שאלות, תבנית).
+// כפתור "העתקה" מעתיק את כל הטקסט שבתיבה. בלי JavaScript הכפתור מוסתר והטקסט נשאר לסימון ידני.
+import Icon from '../Icon.astro';
+interface Props {
+  title: string;
+  label?: string; // למשל "פרומפט להעתקה" / "תבנית להעתקה"
+}
+const { title, label = 'להעתקה' } = Astro.props;
+---
+
+<figure class="copy-g" data-copy>
+  <figcaption class="copy-g__bar">
+    <span class="copy-g__label"><Icon name="copy" size={16} /> {label}</span>
+    <span class="copy-g__title">{title}</span>
+    <button class="copy-g__btn" type="button" data-copy-btn hidden>
+      <span data-copy-idle>העתקה</span>
+      <span data-copy-done hidden>הועתק!</span>
+    </button>
+  </figcaption>
+  <div class="copy-g__text" data-copy-text><slot /></div>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy]').forEach((box) => {
+    const btn = box.querySelector<HTMLButtonElement>('[data-copy-btn]');
+    const text = box.querySelector<HTMLElement>('[data-copy-text]');
+    if (!btn || !text || !navigator.clipboard) return;
+    btn.hidden = false;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(text.innerText.trim());
+        btn.querySelector<HTMLElement>('[data-copy-idle]')!.hidden = true;
+        btn.querySelector<HTMLElement>('[data-copy-done]')!.hidden = false;
+        setTimeout(() => {
+          btn.querySelector<HTMLElement>('[data-copy-idle]')!.hidden = false;
+          btn.querySelector<HTMLElement>('[data-copy-done]')!.hidden = true;
+        }, 2200);
+      } catch {
+        /* אם ההעתקה נחסמה, אפשר לסמן ולהעתיק ידנית */
+      }
+    });
+  });
+</script>
+
+<style>
+  .copy-g {
+    margin: 2rem 0 2.25rem;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: var(--white);
+    border: 1.5px dashed rgb(25 154 181 / 0.55);
+    box-shadow: 0 22px 40px -34px rgb(11 26 51 / 0.6);
+  }
+  .copy-g__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+    padding: 0.8rem 1.1rem;
+    background: linear-gradient(90deg, var(--navy), #12416a);
+    color: var(--white);
+  }
+  .copy-g__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.7rem;
+    border-radius: 999px;
+    background: rgb(252 220 109 / 0.18);
+    color: var(--gold-light);
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+  .copy-g__title {
+    flex: 1;
+    font-weight: 800;
+  }
+  .copy-g__btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.4rem 1.1rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+  .copy-g__btn [hidden] {
+    display: none;
+  }
+  .copy-g__text {
+    padding: 1.2rem 1.3rem 0.6rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    background-image: linear-gradient(transparent calc(1.75em - 1px), rgb(25 154 181 / 0.12) 1px);
+    background-size: 100% 1.75em;
+  }
+  .copy-g__text :global(ul),
+  .copy-g__text :global(ol) {
+    padding-inline-start: 1.3em;
+  }
+</style>
