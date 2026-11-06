@@ -9,6 +9,10 @@ export const contact = {
   email: 'nogadaor@gmail.com',
   // קבוצת הוואטסאפ של הקהילה "תודעה עסקית מנצחת" (נוגה, 2026-11-05)
   whatsappGroup: 'https://chat.whatsapp.com/CCIKnR46ukwKcZgjFxB6il',
+  // קביעת פגישת היכרות (נוגה, 2026-11-06): "לוח זמנים לפגישות" ביומן גוגל. 30 דקות, ימי ב' ו-ד' בין 10:00 ל-15:00.
+  // בחשבון גוגל חינמי אפשר סוג פגישה אחד בלבד, ולכן פגישות ארוכות יותר נקבעות בוואטסאפ.
+  booking: 'https://calendar.app.google/ADnVouVbe7Lopnbg9',
+  bookingNote: "30 דקות, בימי ב' ו-ד'. רוצים שעה אחרת? כתבו לי בוואטסאפ",
 };
 
 // icon: שם האייקון ב-src/components/Icon.astro. handle: מה שמוצג מתחת לשם בעמוד צור קשר.

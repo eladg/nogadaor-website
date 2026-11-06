@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import { contact } from '../data/contact';
 ---
 
 <BaseLayout title="בית">
@@ -12,8 +13,8 @@ import YouTubeEmbed from '../components/YouTubeEmbed.astro';
         <!-- TODO: ניסוח המסר המרכזי של האתר (❓ בסעיף 2 ב-REQUIREMENTS.md). נוגה תספק. -->
         <h1>[כאן יופיע המסר המרכזי של האתר]</h1>
         <p class="placeholder">תוכן חסר: משפט פתיחה / הצעת ערך. עדיין לא נקבע.</p>
-        <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר (שלב 5) -->
-        <p><a class="btn" href="/contact/">קביעת שיחת היכרות</a></p>
+        <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
+        <p><a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
       </div>
       <!-- TODO: תמונה ראשית (למשל תמונה של נוגה) – נוגה תבחר מהחומרים -->
       <div class="placeholder-img hero__img" role="img" aria-label="מקום שמור לתמונה ראשית">

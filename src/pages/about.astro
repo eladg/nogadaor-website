@@ -120,9 +120,9 @@ const icons: Record<string, string> = {
         </h1>
         <!-- משפט אחד ברצף, באותו עיצוב (לבקשת נוגה) -->
         <p class="a-hero__title">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה</p>
-        <!-- TODO: לחבר את הכפתור לאמצעי הקשר / היומן שנוגה תבחר -->
-        <a class="btn a-btn" href="/contact/">
-          קביעת שיחת היכרות
+        <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
+        <a class="btn a-btn" href={contact.booking} target="_blank" rel="noopener">
+          קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
         </a>
       </div>

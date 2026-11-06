@@ -1,5 +1,6 @@
 ---
 // אזור קריאה לפעולה כהה, שמופיע בתחתית העמודים.
+import { contact } from '../data/contact';
 interface Props {
   buttonLabel?: string;
 }
@@ -11,14 +12,22 @@ const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
     <!-- TODO: כותרת וטקסט לקריאה לפעולה – נוגה תספק ניסוח. אין להמציא הבטחות שיווקיות. -->
     <h2>[כותרת לקריאה לפעולה]</h2>
     <p class="placeholder">תוכן חסר: משפט או שניים שמזמינים ליצור קשר.</p>
-    <!-- TODO: לחבר לאמצעי הקשר / יומן שנוגה תבחר (שלב 5) -->
-    <p><a class="btn" href="/contact/">{buttonLabel}</a></p>
+    <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
+    <p><a class="btn" href={contact.booking} target="_blank" rel="noopener">{buttonLabel}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+    <p class="cta-band__note"><a href={contact.whatsapp} target="_blank" rel="noopener">{contact.bookingNote}</a></p>
   </div>
 </section>
 
 <style>
   .cta-band {
     text-align: center;
+  }
+  .cta-band__note {
+    margin: -0.25rem 0 0;
+    font-size: 0.95rem;
+  }
+  .cta-band__note a {
+    color: var(--on-dark-soft);
   }
   .cta-band .placeholder {
     max-width: 36rem;
