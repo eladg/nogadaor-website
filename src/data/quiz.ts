@@ -34,7 +34,7 @@ export const quizAreas: QuizArea[] = [
     icon: 'target',
     insight:
       'כשמדברים לכולם, בעצם לא מדברים לאף אחד. מיקוד בקהל יעד ובידול ברור הם הבסיס לכל השאר: למסרים, לשיווק ולמחיר. התחילו בבחירת "גיבור" אחד, נסחו מה מבדל אתכם, ותרגמו את זה לתוכנית עבודה מסודרת לשנה הקרובה.',
-    link: { href: '/guides/hero-journey-avatar/', label: 'לתרגול אפיון קהל היעד' },
+    link: { href: '/guides/target-audience/', label: 'לתרגול אפיון קהל היעד' },
   },
   {
     id: 'offer',

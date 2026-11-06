@@ -8,6 +8,7 @@ import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { quizYear, quizQuestions } from '../../data/quiz';
 import GuideCover from '../../components/guide/GuideCover.astro';
+import ShareBar from '../../components/ShareBar.astro';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 const guides = all.filter((g) => g.data.type === 'guide');
@@ -71,6 +72,7 @@ const articles = all.filter((g) => g.data.type === 'article');
           title="נוגה דיין אור הדרכה חינמית - עסק מקצועי הוא עסק מעוצב"
         />
         <p class="training__caption">הדרכה חינמית: עסק מקצועי הוא עסק מעוצב</p>
+        <ShareBar title="הדרכה חינמית של נוגה דיין אור: עסק מקצועי הוא עסק מעוצב" url="https://youtu.be/QANXfOW_s-Q" print={false} />
       </div>
       <p class="trainings-link">
         מחפשים הרצאה או סדנה לקבוצה או לארגון? <a href="/trainings/">לקטלוג ההדרכות</a>
@@ -106,21 +108,42 @@ const articles = all.filter((g) => g.data.type === 'article');
   .intro {
     margin-bottom: 1.5rem;
   }
-  /* מדף המדריכים: כריכה ומתחתיה הכותרת */
+  /* מדף המדריכים (נוגה, 2026-11-06): שורות מאוזנות, 3 בשורה במחשב (6 = 3+3), 2 בטאבלט, 1 בנייד.
+     אם המספר לא מתחלק, השורה האחרונה ממורכזת. כרטיסים קומפקטיים (כריכה לצד הטקסט), כדי שהאזור יישאר קצר
+     והמבקר ימשיך לגלול. */
   .g-shelf {
+    --cols: 3;
+    --gap: 1.25rem;
     list-style: none;
     margin: 0 0 1.5rem;
     padding: 0;
-    display: grid;
-    gap: 1.5rem 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap);
+  }
+  @media (max-width: 62rem) {
+    .g-shelf {
+      --cols: 2;
+    }
+  }
+  @media (max-width: 36rem) {
+    .g-shelf {
+      --cols: 1;
+    }
+    .g-shelf__item {
+      grid-template-columns: 30% 1fr;
+    }
   }
   .g-shelf__item {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+    display: grid;
+    grid-template-columns: 38% 1fr;
+    gap: 1rem;
+    align-items: center;
     margin: 0;
-    padding: 1rem 1rem 1.1rem;
+    padding: 0.9rem;
     border-radius: 1.25rem;
     background:
       radial-gradient(14rem 9rem at 100% 0, rgb(25 154 181 / 0.14), transparent 70%),
@@ -136,8 +159,13 @@ const articles = all.filter((g) => g.data.type === 'article');
     box-shadow: 0 24px 40px -30px rgb(11 26 51 / 0.6);
   }
   .g-shelf__cover {
-    width: 78%;
-    margin: 0 auto 1rem;
+    width: 100%;
+  }
+  .g-shelf__text {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
   }
   .g-shelf__text h3 {
     margin: 0 0 0.3rem;
@@ -159,7 +187,7 @@ const articles = all.filter((g) => g.data.type === 'article');
     line-height: 1.45;
   }
   .g-shelf__more {
-    margin: auto 0 0;
+    margin: 0.2rem 0 0;
     font-weight: 800;
     color: var(--teal-dark);
   }
@@ -210,6 +238,9 @@ const articles = all.filter((g) => g.data.type === 'article');
   .training__caption {
     margin: 0.5rem 0 0;
     font-weight: 700;
+  }
+  .training :global(.sharebar) {
+    margin-top: 0.75rem;
   }
   .trainings-link {
     margin: 1.5rem 0 0;

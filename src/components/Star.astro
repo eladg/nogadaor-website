@@ -1,0 +1,40 @@
+---
+// הכוכב מהלוגו של נוגה (2026-11-06), משורטט מחדש כ-SVG כדי שיהיה חד בכל גודל.
+// ארבע קרניים ארוכות, ארבע קצרות באלכסון, וכוכב קטן חלול במרכז. מעבר צבע זהב משמאל לימין, כמו במקור.
+// נוגה: להשתמש בכוכב בעוד מקומות באתר "בלי שזה יהפוך לקיטש" – לכן במשורה: לא יותר מכוכב אחד בכל מסך.
+// שימוש: <Star size={24} />  או  <Star size={24} tone="white" />
+interface Props {
+  size?: number;
+  tone?: 'gold' | 'white' | 'navy';
+  class?: string;
+}
+const { size = 24, tone = 'gold', class: className } = Astro.props;
+const gid = `star-g-${Math.random().toString(36).slice(2, 8)}`;
+const fill = tone === 'gold' ? `url(#${gid})` : tone === 'white' ? '#fff' : 'var(--navy)';
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="-340 -340 680 680"
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    tone === 'gold' && (
+      <defs>
+        <linearGradient id={gid} x1="-330" y1="0" x2="330" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#fcdc6d" />
+          <stop offset="0.55" stop-color="#ecc25f" />
+          <stop offset="1" stop-color="#d19a4a" />
+        </linearGradient>
+      </defs>
+    )
+  }
+  <path
+    fill={fill}
+    fill-rule="evenodd"
+    d="M0-322L22-50L113-109L52-21L330 0L52 21L113 110L22 50L0 323L-22 50L-113 110L-52 21L-330 0L-52-21L-113-109L-22-50Z
+       M0-47L11.2-15.4L44.7-14.5L18.1 5.9L27.6 38L0 19L-27.6 38L-18.1 5.9L-44.7-14.5L-11.2-15.4Z"></path>
+</svg>

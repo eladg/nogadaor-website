@@ -25,6 +25,8 @@ const guides = defineCollection({
     gains: z.array(z.string()).default([]),
     // מספר שמשנה מעט את עיצוב הכריכה (סידור הרשת), כדי שכל כריכה תהיה שונה
     coverVariant: z.number().default(0),
+    // קובץ להורדה (למשל שאלון ב-Word), מתוך התיקייה public. מופיע ככפתור ליד "הדפסה" ו"שיתוף".
+    download: z.object({ href: z.string(), label: z.string() }).optional(),
   }),
 });
 

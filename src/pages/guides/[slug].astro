@@ -9,6 +9,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import GuideCover from '../../components/guide/GuideCover.astro';
+import ShareBar from '../../components/ShareBar.astro';
 import Callout from '../../components/guide/Callout.astro';
 import Cards from '../../components/guide/Cards.astro';
 import Card from '../../components/guide/Card.astro';
@@ -59,6 +60,13 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
 ---
 
 <BaseLayout title={d.title} description={description}>
+  <!-- סימן מים להדפסה: המונוגרמה OR עם הכוכב, שקופה מאוד, בכל עמוד מודפס (מוסתרת במסך).
+       נוגה (2026-11-06): שלא ישתמשו במדריך המודפס כאילו הוא שלהם. -->
+  <div class="print-mark" aria-hidden="true"><img src="/images/or-mark.webp" alt="" width="800" height="565" /></div>
+  <div class="print-head" aria-hidden="true">
+    <img src="/images/logo-color-trim.webp" alt="" width="900" height="313" />
+    <span>© נוגה דיין אור · כל הזכויות שמורות</span>
+  </div>
   <!-- 1. פתיח -->
   <header class="g-hero">
     <div class="container g-hero__grid">
@@ -79,6 +87,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
             </p>
           )
         }
+        <ShareBar title={d.title} download={d.download} tone="dark" />
       </div>
       <div class="g-hero__cover">
         <GuideCover title={d.title} subtitle={d.tagline} variant={d.coverVariant} label={typeLabel} />
@@ -128,6 +137,11 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
       }
       <article class:list={['prose', { 'prose--numbered': !isArticle }]}>
         <Content components={components} />
+
+        <div class="g-endbar">
+          <p>אהבתם? שתפו, הדפיסו או שמרו לעצמכם:</p>
+          <ShareBar title={d.title} download={d.download} />
+        </div>
 
         {
           d.keywords.length > 0 && (
@@ -288,6 +302,31 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
   }
   .g-meta :global(svg) {
     color: var(--gold-light);
+  }
+  .g-hero .sharebar {
+    margin-top: 1.25rem;
+  }
+  .prose :global(.g-dl) {
+    margin: 0 0 1.25rem;
+  }
+  .prose :global(.g-dl .btn) {
+    text-decoration: none;
+  }
+  @media print {
+    .prose :global(.g-dl) {
+      display: none;
+    }
+  }
+  .g-endbar {
+    margin-top: 2.5rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1.1rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  .g-endbar p {
+    margin: 0 0 0.6rem;
+    font-weight: 800;
   }
   .g-source {
     margin: 1rem 0 0;

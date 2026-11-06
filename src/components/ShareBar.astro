@@ -1,0 +1,210 @@
+---
+// כפתורי "הדפסה / שמירה כ-PDF", "הורדה" ו"שיתוף" למדריכים, למאמרים ולהרצאות (נוגה, 2026-11-06:
+// "כל עוד התוכן פתוח, שיהיה נוח להשתמש בו").
+// - הדפסה: חלון ההדפסה של הדפדפן. משם אפשר גם לשמור כ-PDF. גרסת ההדפסה מוגדרת ב-global.css (@media print).
+// - הורדה: רק כשיש קובץ אמיתי (למשל שאלון ב-Word), דרך download.
+// - שיתוף: בטלפון נפתח תפריט השיתוף של המכשיר. במחשב נפתח תפריט קטן: וואטסאפ, פייסבוק, לינקדאין, מייל והעתקת קישור.
+//   הכתובת נלקחת מהעמוד עצמו בזמן אמת (או מ-url, למשל קישור ליוטיוב), ולכן השיתוף יעבוד באמת רק כשהאתר יעלה לאוויר.
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string; // מה שנשלח בשיתוף
+  url?: string; // כתובת לשיתוף. בלי ערך: כתובת העמוד הנוכחי
+  print?: boolean;
+  download?: { href: string; label: string };
+  tone?: 'light' | 'dark';
+}
+const { title, url, print = true, download, tone = 'light' } = Astro.props;
+---
+
+<div class:list={['sharebar', `sharebar--${tone}`]} data-title={title} data-url={url}>
+  {
+    print && (
+      <button type="button" class="sharebar__btn" data-print>
+        <Icon name="print" size={18} /> הדפסה / שמירה כ-PDF
+      </button>
+    )
+  }
+  {
+    download && (
+      <a class="sharebar__btn" href={download.href} download>
+        <Icon name="download" size={18} /> {download.label}
+      </a>
+    )
+  }
+  <div class="sharebar__share">
+    <button type="button" class="sharebar__btn" data-share aria-expanded="false">
+      <Icon name="share" size={18} /> שיתוף
+    </button>
+    <div class="sharebar__menu" hidden>
+      <a data-net="whatsapp" target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> וואטסאפ</a>
+      <a data-net="facebook" target="_blank" rel="noopener"><Icon name="facebook" size={18} /> פייסבוק</a>
+      <a data-net="linkedin" target="_blank" rel="noopener"><Icon name="linkedin" size={18} /> לינקדאין</a>
+      <a data-net="mail"><Icon name="mail" size={18} /> מייל</a>
+      <button type="button" data-copy><Icon name="link" size={18} /> <span>העתקת קישור</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function shareUrl(bar: HTMLElement) {
+    return bar.dataset.url || location.href.split('#')[0];
+  }
+  function fillLinks(bar: HTMLElement) {
+    const u = encodeURIComponent(shareUrl(bar));
+    const t = encodeURIComponent(bar.dataset.title ?? '');
+    const links: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${t}%20${u}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+      mail: `mailto:?subject=${t}&body=${t}%0A${u}`,
+    };
+    bar.querySelectorAll<HTMLAnchorElement>('[data-net]').forEach((a) => (a.href = links[a.dataset.net!]));
+  }
+  function closeAll(except?: Element) {
+    document.querySelectorAll<HTMLElement>('.sharebar__menu').forEach((m) => {
+      if (m === except) return;
+      m.hidden = true;
+      m.previousElementSibling?.setAttribute('aria-expanded', 'false');
+    });
+  }
+  document.querySelectorAll<HTMLElement>('.sharebar').forEach(fillLinks);
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target as HTMLElement;
+    const bar = target.closest<HTMLElement>('.sharebar');
+    if (!bar) return closeAll();
+
+    if (target.closest('[data-print]')) return window.print();
+
+    if (target.closest('[data-share]')) {
+      // בטלפון: תפריט השיתוף של המכשיר
+      if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+        try {
+          await navigator.share({ title: bar.dataset.title, url: shareUrl(bar) });
+        } catch {
+          /* המבקר ביטל */
+        }
+        return;
+      }
+      const menu = bar.querySelector<HTMLElement>('.sharebar__menu')!;
+      closeAll(menu);
+      menu.hidden = !menu.hidden;
+      bar.querySelector('[data-share]')!.setAttribute('aria-expanded', String(!menu.hidden));
+      return;
+    }
+
+    const copy = target.closest<HTMLElement>('[data-copy]');
+    if (copy) {
+      const label = copy.querySelector('span')!;
+      try {
+        await navigator.clipboard.writeText(shareUrl(bar));
+        label.textContent = 'הקישור הועתק';
+      } catch {
+        label.textContent = 'לא הצלחתי להעתיק';
+      }
+      setTimeout(() => (label.textContent = 'העתקת קישור'), 2000);
+    }
+  });
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && closeAll());
+</script>
+
+<style>
+  .sharebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .sharebar__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--navy);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+  .sharebar__btn:hover {
+    border-color: var(--teal);
+    background: var(--mist);
+  }
+  .sharebar__btn :global(svg) {
+    color: var(--teal-dark);
+  }
+  .sharebar--dark .sharebar__btn {
+    background: rgb(255 255 255 / 0.08);
+    border-color: rgb(255 255 255 / 0.25);
+    color: var(--on-dark);
+  }
+  .sharebar--dark .sharebar__btn:hover {
+    background: rgb(255 255 255 / 0.16);
+    border-color: var(--gold-light);
+  }
+  .sharebar--dark .sharebar__btn :global(svg) {
+    color: var(--gold-light);
+  }
+  .sharebar__share {
+    position: relative;
+  }
+  .sharebar__menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 0.4rem);
+    inset-inline-start: 0;
+    min-width: 12rem;
+    padding: 0.4rem;
+    border-radius: 0.9rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 40px -18px rgb(11 26 51 / 0.45);
+  }
+  /* בפתיח הכהה (שגולש מוסתר) התפריט נפתח כלפי מעלה, כדי שלא ייחתך */
+  .sharebar--dark .sharebar__menu {
+    top: auto;
+    bottom: calc(100% + 0.4rem);
+  }
+  .sharebar__menu[hidden] {
+    display: none;
+  }
+  .sharebar__menu a,
+  .sharebar__menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 0;
+    border-radius: 0.6rem;
+    background: none;
+    color: var(--navy);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sharebar__menu a:hover,
+  .sharebar__menu button:hover {
+    background: var(--mist);
+  }
+  .sharebar__menu :global(svg) {
+    color: var(--teal-dark);
+  }
+  @media print {
+    .sharebar {
+      display: none !important;
+    }
+  }
+</style>
