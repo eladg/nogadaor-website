@@ -8,7 +8,9 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import GuideCover from '../../components/guide/GuideCover.astro';
+import ContentCover from '../../components/ContentCover.astro';
+import Star from '../../components/Star.astro';
+import { readingMinutes } from '../../utils/readingTime';
 import ShareBar from '../../components/ShareBar.astro';
 import Callout from '../../components/guide/Callout.astro';
 import Cards from '../../components/guide/Cards.astro';
@@ -38,13 +40,9 @@ const isArticle = d.type === 'article';
 const typeLabel = isArticle ? 'מאמר' : 'מדריך';
 const toc = headings.filter((h) => h.depth === 2);
 
-// זמן קריאה משוער: כ-180 מילים בדקה (בלי תגיות הקוד)
-const words = (guide.body ?? '')
-  .replace(/<[^>]+>/g, ' ')
-  .replace(/^import .*$/gm, '')
-  .split(/\s+/)
-  .filter(Boolean).length;
-const minutes = Math.max(2, Math.round(words / 180));
+const minutes = readingMinutes(guide.body);
+// אייקון לכל סוג (נוגה, 2026-11-06): מדריך = רשימה, מאמר = ספר פתוח
+const typeIcon = isArticle ? 'book-open' : 'list';
 
 const publishedText = d.published?.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
 const waText = encodeURIComponent(`היי נוגה, קראתי את ה${typeLabel} "${d.title}" ואשמח לשמוע עוד`);
@@ -77,7 +75,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
         <p class="g-hero__lead">{description}</p>
         <ul class="g-meta">
           <li><Icon name="clock" size={16} /> {minutes} דקות קריאה</li>
-          <li><Icon name={isArticle ? 'book' : 'spark'} size={16} /> {typeLabel}{!isArticle && ' חינמי'}</li>
+          <li><Icon name={typeIcon} size={16} /> {typeLabel}{!isArticle && ' חינמי'}</li>
           {publishedText && <li>{publishedText}</li>}
         </ul>
         {
@@ -90,7 +88,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
         <ShareBar title={d.title} download={d.download} tone="dark" />
       </div>
       <div class="g-hero__cover">
-        <GuideCover title={d.title} subtitle={d.tagline} variant={d.coverVariant} label={typeLabel} />
+        <ContentCover title={d.coverTitle ?? d.title} motif={d.coverMotif} star={d.coverStar} kind={d.type} />
       </div>
     </div>
   </header>
@@ -170,7 +168,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
   <!-- 4. קריאה לפעולה -->
   <section class="g-cta">
     <div class="container g-cta__inner">
-      <h2 class="g-cta__title">רוצים לדבר <span class="hl">על זה?</span></h2>
+      <h2 class="g-cta__title"><Star size={30} class="g-cta__star" /> רוצים לדבר <span class="hl">על זה?</span></h2>
       <!-- הנוסח מתוך המדריכים של נוגה ("מוזמנים לפגישת זום קצרה...") -->
       <p class="g-cta__text">מוזמנים לפגישת זום קצרה, לשדרוג השיווק של העסק שלכם, לגמרי במתנה.</p>
       <div class="g-cta__actions">
@@ -200,7 +198,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
             {related.map((g) => (
               <li class="g-more__item">
                 <div class="g-more__cover">
-                  <GuideCover title={g.data.title} variant={g.data.coverVariant} size="sm" />
+                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
                 </div>
                 <div class="g-more__text">
                   <h3>
@@ -340,7 +338,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
     color: var(--gold-light);
   }
   .g-hero__cover {
-    width: min(100%, 26rem);
+    width: min(100%, 30rem);
     margin-inline: auto;
   }
 
@@ -631,6 +629,10 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
       radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
       var(--navy-deep);
   }
+  .g-cta__title :global(.g-cta__star) {
+    vertical-align: -0.1em;
+    filter: drop-shadow(0 0 8px rgb(252 220 109 / 0.6));
+  }
   .g-cta__title {
     margin: 0 0 0.5rem;
     font-size: clamp(1.8rem, 4.5vw, 2.5rem);
@@ -688,8 +690,8 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
   .g-more__item {
     position: relative;
     display: flex;
-    gap: 1rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.9rem;
     margin: 0;
     padding: 1rem;
     border-radius: 1.25rem;
@@ -704,8 +706,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
     box-shadow: 0 20px 36px -28px rgb(11 26 51 / 0.55);
   }
   .g-more__cover {
-    flex: none;
-    width: 5.5rem;
+    width: 100%;
   }
   .g-more__text h3 {
     margin: 0 0 0.3rem;
@@ -726,7 +727,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
     font-size: 0.92rem;
     line-height: 1.5;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

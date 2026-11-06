@@ -5,8 +5,10 @@ description: "מרגישים שהשיווק האורגני שלכם דורש ה�
 order: 1
 published: 2026-10-12
 sourceName: מגזין BizFinder
+coverTitle: "*מנהיגות*|במקום אלגוריתם"
+coverMotif: growth
+coverStar: end
 sourceUrl: https://bizfinder.co.il/magazine/204/sub/204/article/793
-coverVariant: 7
 keywords:
   - שיווק אורגני
   - מנהיגות עסקית

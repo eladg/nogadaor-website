@@ -1,6 +1,7 @@
 ---
 // סיכום בסוף מדריך: "בקיצור", רשימה עם סימני וי.
-import Icon from '../Icon.astro';
+// הכוכב מהלוגו של נוגה (2026-11-06: "תשים כוכב מדי פעם בדברים").
+import Star from '../Star.astro';
 interface Props {
   title?: string;
 }
@@ -8,7 +9,7 @@ const { title = 'בקיצור' } = Astro.props;
 ---
 
 <section class="tk-g" aria-label={title}>
-  <p class="tk-g__title"><Icon name="star" size={20} /> {title}</p>
+  <p class="tk-g__title"><Star size={24} /> {title}</p>
   <slot />
 </section>
 

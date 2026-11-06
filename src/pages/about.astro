@@ -12,6 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
 import { contact } from '../data/contact';
+import Star from '../components/Star.astro';
 
 // כל התמונות מהתיקייה, לפי המספר שבתחילת שם הקובץ
 const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
@@ -265,7 +266,8 @@ const icons: Record<string, string> = {
       <p class="a-now__big">
         העולם כבר מרחיב את גבולות האפשר. הגיע הזמן להרחיב גם את מה שאתם מרשים לעצמכם.
       </p>
-      <p class="a-now__motto hl">קמים ונהיים ענקיים מהחיים</p>
+      <!-- הכוכב מהלוגו, "מדי פעם" (נוגה, 2026-11-06) -->
+      <p class="a-now__motto hl"><Star size={30} class="a-now__star" /> קמים ונהיים ענקיים מהחיים</p>
       <p class="a-now__sign">שלכם, נוגה</p>
     </div>
   </section>
@@ -734,6 +736,12 @@ const icons: Record<string, string> = {
     font-size: clamp(2rem, 6vw, 3.6rem);
     font-weight: 900;
     line-height: 1.2;
+  }
+  .a-now__motto :global(.a-now__star) {
+    width: 0.7em;
+    height: 0.7em;
+    vertical-align: 0.05em;
+    filter: drop-shadow(0 0 10px rgb(252 220 109 / 0.6));
   }
   .a-now__motto::after {
     content: '';

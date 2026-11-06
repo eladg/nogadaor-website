@@ -1,6 +1,6 @@
 ---
 // שאלון מיקוד פיתוח עסקי, גרסה 3 (2026-11-05): "מבחן אמריקאי עם תובנות".
-// 25 שאלות ב-9 תחומים. כל שאלה בודקת דבר אחד, ו-5 תשובות במדרגות שוות (4 עד 0 נקודות). שאלה אחת בכל מסך.
+// 25 שאלות ב-7 תחומים. כל שאלה בודקת דבר אחד, ו-5 תשובות במדרגות שוות (4 עד 0 נקודות). שאלה אחת בכל מסך.
 // בסוף: אחוז לכל תחום, שלושת התחומים החלשים כמיקודים (עם תובנה וקישור למדריך) ושתי החוזקות.
 // התשובות נשמרות רק בדפדפן של המבקר (localStorage) ולא נשלחות לשום מקום.
 // השאלות, התשובות והתובנות ב-src/data/quiz.ts (טיוטה לאישור נוגה).
@@ -22,18 +22,18 @@ const config = {
 
 <BaseLayout
   title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
-  description={`שאלון אבחון עסקי של ${total} שאלות ב-9 תחומים: אסטרטגיה, הצעת שירות ותמחור, נראות דיגיטלית, שיווק, קהילה, מכירות ושימור, ניהול והתייעלות, כספים ומנהיגות. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.`}
+  description={`שאלון אבחון עסקי של ${total} שאלות ב-${quizAreas.length} תחומים: אסטרטגיה, הצעת שירות ותמחור, נראות דיגיטלית, שיווק יזום, מכירות ושימור, כישורי ניהול והתייעלות, וכספים. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.`}
 >
   <header class="qz-hero">
     <div class="container qz-hero__inner">
       <p class="qz-crumbs"><a href="/guides/">מדריכים והרצאות</a> <span aria-hidden="true">/</span> שאלון</p>
       <h1>שאלון מיקוד פיתוח עסקי לשנת <span class="hl">{quizYear}</span></h1>
       <p class="qz-hero__lead">
-        {total} שאלות קצרות על 9 תחומים בעסק. בכל שאלה בחרו את התשובה שהכי מתארת את המצב היום, גם אם היא לא מושלמת. בסוף תקבלו פרופיל של העסק ושלושה מיקודים לשנה הקרובה.
+        {total} שאלות קצרות על {quizAreas.length} תחומים בעסק. בכל שאלה בחרו את התשובה שהכי מתארת את המצב היום, גם אם היא לא מושלמת. בסוף תקבלו פרופיל של העסק ושלושה מיקודים לשנה הקרובה.
       </p>
       <ul class="qz-meta">
         <li><Icon name="clock" size={16} /> כ-5 דקות</li>
-        <li><Icon name="layers" size={16} /> 9 תחומים</li>
+        <li><Icon name="layers" size={16} /> {quizAreas.length} תחומים</li>
         <li><Icon name="heart" size={16} /> התשובות נשמרות רק במכשיר שלכם</li>
       </ul>
     </div>
@@ -202,8 +202,8 @@ const config = {
       v.forEach(function (val, i) { sums[config.questionAreas[i]] += val || 0; });
       var pct = {};
       config.areas.forEach(function (a) { pct[a.id] = Math.round((sums[a.id] / max[a.id]) * 100); });
-      var all = v.reduce(function (s, x) { return s + (x || 0); }, 0);
-      var overall = Math.round((all / (qs.length * config.perQuestion)) * 100);
+      // הציון הכללי: ממוצע של אחוזי התחומים, כך שכל תחום שוקל אותו דבר, בלי קשר למספר השאלות בו
+      var overall = Math.round(config.areas.reduce(function (s, a) { return s + pct[a.id]; }, 0) / config.areas.length);
 
       document.querySelector('[data-percent]').textContent = overall;
       document.querySelector('[data-ring]').style.setProperty('--p', overall);

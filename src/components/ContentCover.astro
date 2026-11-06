@@ -1,0 +1,223 @@
+---
+// כריכה לתוכן (מדריך / מאמר / הרצאה / שאלון) בסגנון "חפץ זכוכית זוהר" – הסגנון שנוגה בחרה (2026-11-06, סבב 2, אפשרות 1).
+// הכללים של נוגה: בכריכה אין לוגו, אין מספור ואין תמונה שלה. רק ויזואל שמספר על הנושא ושם קצר ומעניין.
+// הכוכב מהלוגו מופיע "מדי פעם" (star), לא בכל כריכה.
+//
+// title: כותרת הכריכה הקצרה. *מילה* = מודגשת בזהב, | = ירידת שורה. למשל: "ה-*AI* ימליץ|דווקא עליך"
+// motif: החפץ שבכריכה. tone: warm (זהב) או cool (כחול). ברירת המחדל: מאמר חם, כל השאר כחולים.
+import Star from './Star.astro';
+
+export type CoverMotif = 'ai' | 'growth' | 'screen' | 'target' | 'gift' | 'iceberg' | 'chat' | 'megaphone' | 'compass';
+
+interface Props {
+  title: string;
+  motif: CoverMotif;
+  kind?: 'guide' | 'article' | 'lecture' | 'quiz';
+  tone?: 'cool' | 'warm';
+  star?: 'start' | 'end' | false;
+  duration?: string; // להרצאה, למשל "53:37"
+  ratio?: '16/10' | '16/9';
+}
+const { title, motif, kind = 'guide', star = false, duration, ratio = '16/10' } = Astro.props;
+const tone = Astro.props.tone ?? (kind === 'article' ? 'warm' : 'cool');
+
+// מזהה יציב לכל כריכה (לשמות המעברים בתוך ה-SVG), בלי אקראיות
+let h = 0;
+for (const ch of title + motif) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+const id = `cv${h.toString(36)}`;
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const titleHtml = esc(title)
+  .replace(/\*(.+?)\*/g, '<em>$1</em>')
+  .replace(/\s*\|\s*/g, '<br />');
+
+const tint = tone === 'warm' ? '#fcdc6d' : '#8fdcec';
+const defs = `<defs>
+  <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".55" stop-color="${tint}" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity=".06"/></linearGradient>
+  <linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="${tint}" stop-opacity=".32"/></linearGradient>
+  <linearGradient id="${id}a" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#d19a4a"/><stop offset="1" stop-color="#fcdc6d"/></linearGradient>
+</defs>`;
+const G = `fill="url(#${id}g)" stroke="url(#${id}r)" stroke-width="2.5"`;
+const A = `url(#${id}a)`;
+
+const motifs: Record<CoverMotif, string> = {
+  // בועת צ'אט עם AI (נראות ב-AI)
+  ai: `<path class="cc__back" d="M96 104h220a44 44 0 0 1 44 44v104a44 44 0 0 1-44 44H190l-58 48v-48h-36a44 44 0 0 1-44-44V148a44 44 0 0 1 44-44Z"/>
+    <path ${G} d="M84 90h220a44 44 0 0 1 44 44v104a44 44 0 0 1-44 44H178l-58 48v-48H84a44 44 0 0 1-44-44V134a44 44 0 0 1 44-44Z"/>
+    <path d="M70 112c20-14 70-18 120-14" stroke="#fff" stroke-opacity=".7" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <text x="194" y="222" text-anchor="middle" font-size="92" font-weight="900" fill="#fff" font-family="Heebo Variable, sans-serif">AI</text>`,
+  // עמודים עולים וחץ (צמיחה)
+  growth: `<g class="cc__back"><rect x="78" y="250" width="62" height="110" rx="14"/><rect x="168" y="196" width="62" height="164" rx="14"/><rect x="258" y="130" width="62" height="230" rx="14"/></g>
+    <g ${G}><rect x="68" y="240" width="62" height="110" rx="14"/><rect x="158" y="186" width="62" height="164" rx="14"/><rect x="248" y="120" width="62" height="230" rx="14"/></g>
+    <path d="M60 214 L180 128 L232 150 L330 64" fill="none" stroke="${A}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M296 56 L338 58 L334 100" fill="none" stroke="#fcdc6d" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>`,
+  // מסך עם כפתור הפעלה (הרצאה)
+  screen: `<rect class="cc__back" x="52" y="96" width="310" height="196" rx="26"/>
+    <rect x="40" y="84" width="310" height="196" rx="26" ${G}/>
+    <path d="M170 300h50l10 34h-70Z" ${G}/>
+    <rect x="124" y="334" width="142" height="12" rx="6" fill="${tint}" fill-opacity=".45"/>
+    <circle cx="195" cy="178" r="44" fill="${A}"/><path d="M182 156v44l36-22Z" fill="#0b1a33"/>
+    <rect x="70" y="250" width="250" height="6" rx="3" fill="#fff" fill-opacity=".25"/><rect x="70" y="250" width="110" height="6" rx="3" fill="#fcdc6d"/>`,
+  // מטרה וחץ (קהל יעד)
+  target: `<circle class="cc__back" cx="206" cy="214" r="140"/>
+    <circle cx="196" cy="204" r="140" ${G}/><circle cx="196" cy="204" r="94" ${G}/><circle cx="196" cy="204" r="48" ${G}/>
+    <circle cx="196" cy="204" r="16" fill="${A}"/>
+    <path d="M352 48 L206 194" stroke="${A}" stroke-width="12" stroke-linecap="round"/>
+    <path d="M352 48 l-6 34 M352 48 l-34 6 M330 70 l-6 34 M330 70 l-34 6" stroke="#fcdc6d" stroke-width="8" stroke-linecap="round"/>`,
+  // מתנה (מדריך מתנה)
+  gift: `<rect class="cc__back" x="100" y="200" width="220" height="150" rx="18"/>
+    <rect x="90" y="190" width="220" height="150" rx="18" ${G}/>
+    <rect x="74" y="146" width="252" height="56" rx="16" ${G}/>
+    <rect x="186" y="146" width="28" height="194" fill="${A}"/>
+    <path d="M200 146c-30-58-96-46-74-8 12 20 54 10 74 8Z M200 146c30-58 96-46 74-8-12 20-54 10-74 8Z" fill="none" stroke="${A}" stroke-width="10" stroke-linejoin="round"/>`,
+  // קרחון: קצה קטן מעל המים, ומסה גדולה מתחת (מנהיגות מתחת לפוסטים)
+  iceberg: `<path d="M150 168 L198 92 L248 168Z" fill="${A}" opacity=".95"/>
+    <path class="cc__back" d="M120 200 L300 200 L332 286 L262 358 L156 358 L98 280Z"/>
+    <path ${G} d="M110 190 L290 190 L322 276 L252 348 L146 348 L88 270Z"/>
+    <path d="M34 182 H366" stroke="${tint}" stroke-width="3" stroke-dasharray="10 9" stroke-linecap="round" opacity=".8"/>
+    <path d="M140 230 L200 214 L262 236 M126 280 L200 262 L282 288" stroke="#fff" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  // חלון צ'אט עם כפתורי שליטה (לנהל את הצ'אט)
+  chat: `<rect class="cc__back" x="62" y="76" width="292" height="250" rx="30"/>
+    <rect x="50" y="64" width="292" height="250" rx="30" ${G}/>
+    <rect x="160" y="98" width="150" height="40" rx="20" fill="${tint}" fill-opacity=".55"/>
+    <rect x="82" y="152" width="190" height="56" rx="22" fill="#fff" fill-opacity=".22"/>
+    <rect x="100" y="168" width="130" height="8" rx="4" fill="#fff" fill-opacity=".7"/><rect x="100" y="184" width="90" height="8" rx="4" fill="#fff" fill-opacity=".5"/>
+    <g stroke="#fff" stroke-opacity=".45" stroke-width="6" stroke-linecap="round"><path d="M84 238H306M84 274H306"/></g>
+    <circle cx="240" cy="238" r="12" fill="${A}"/><circle cx="140" cy="274" r="12" fill="${A}"/>`,
+  // מגפון וגלי קול (שיווק)
+  megaphone: `<path class="cc__back" d="M100 176 L280 104 L280 316 L100 244Z"/>
+    <path ${G} d="M90 166 L270 94 L270 306 L90 234Z"/>
+    <rect x="52" y="164" width="44" height="72" rx="14" ${G}/>
+    <path d="M124 238 L150 312 L190 312 L170 250" ${G}/>
+    <g fill="none" stroke="${A}" stroke-width="10" stroke-linecap="round"><path d="M304 160c22 24 22 56 0 80"/><path d="M334 130c40 42 40 98 0 140"/></g>`,
+  // מצפן (מיקוד ותכנון)
+  compass: `<circle class="cc__back" cx="210" cy="212" r="142"/>
+    <circle cx="200" cy="202" r="142" ${G}/>
+    <circle cx="200" cy="202" r="112" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="3 12"/>
+    <path d="M200 92 L226 202 L200 312 L174 202Z" fill="#fff" fill-opacity=".25"/>
+    <path d="M200 92 L226 202 L174 202Z" fill="${A}"/>
+    <circle cx="200" cy="202" r="14" fill="#0b1a33" stroke="#fcdc6d" stroke-width="5"/>`,
+};
+---
+
+<div class:list={['cc', `cc--${tone}`, `cc--${kind}`]} style={`aspect-ratio: ${ratio.replace('/', ' / ')}`} aria-hidden="true">
+  <div class="cc__text">
+    <p class="cc__title" set:html={titleHtml} />
+  </div>
+  <div class="cc__obj">
+    <svg viewBox="0 0 400 400" set:html={defs + motifs[motif]} />
+    {star && <Star size={40} class={`cc__star cc__star--${star}`} />}
+  </div>
+  {duration && <span class="cc__dur">{duration}</span>}
+</div>
+
+<style>
+  .cc {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    container-type: inline-size;
+    width: 100%;
+    border-radius: clamp(10px, 3.2cqi, 22px);
+    color: #fff;
+    background:
+      radial-gradient(42% 60% at 28% 48%, rgb(25 154 181 / 0.7), transparent 70%),
+      radial-gradient(30% 40% at 10% 100%, rgb(209 154 74 / 0.45), transparent 70%),
+      linear-gradient(150deg, #07111f, #0b1a33 55%, #0f2d50);
+    box-shadow: 0 18px 36px -24px rgb(7 17 31 / 0.6);
+  }
+  .cc--warm {
+    background:
+      radial-gradient(42% 60% at 28% 48%, rgb(209 154 74 / 0.55), transparent 70%),
+      radial-gradient(30% 40% at 10% 100%, rgb(25 154 181 / 0.5), transparent 70%),
+      linear-gradient(150deg, #07111f, #0b1a33 55%, #13284a);
+  }
+  .cc__text {
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    width: 54%;
+    display: flex;
+    align-items: center;
+    padding: 6cqi 7cqi 6cqi 0;
+  }
+  .cc__title {
+    margin: 0;
+    font-size: 8.4cqi;
+    font-weight: 900;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .cc__title :global(em) {
+    font-style: normal;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .cc__obj {
+    position: absolute;
+    left: 3cqi;
+    top: 50%;
+    width: 48%;
+    aspect-ratio: 1;
+    translate: 0 -50%;
+    filter: drop-shadow(0 0 3cqi rgb(143 220 236 / 0.45));
+    animation: cc-float 6s ease-in-out infinite;
+  }
+  .cc--warm .cc__obj {
+    filter: drop-shadow(0 0 3cqi rgb(252 220 109 / 0.35));
+  }
+  .cc__obj svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .cc__obj :global(.cc__back) {
+    fill: rgb(25 154 181 / 0.35);
+  }
+  .cc--warm .cc__obj :global(.cc__back) {
+    fill: rgb(209 154 74 / 0.3);
+  }
+  .cc__obj :global(.cc__star) {
+    position: absolute;
+    top: 4%;
+    width: 13cqi;
+    height: auto;
+    filter: drop-shadow(0 0 2cqi rgb(252 220 109 / 0.8));
+  }
+  .cc__obj :global(.cc__star--end) {
+    left: 4%;
+  }
+  .cc__obj :global(.cc__star--start) {
+    right: 2%;
+  }
+  .cc__dur {
+    position: absolute;
+    bottom: 4cqi;
+    left: 4cqi;
+    padding: 0.6cqi 2cqi;
+    border-radius: 2cqi;
+    background: rgb(7 17 31 / 0.72);
+    font-size: 3cqi;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    direction: ltr;
+  }
+  @keyframes cc-float {
+    50% {
+      translate: 0 calc(-50% - 2.2cqi);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cc__obj {
+      animation: none;
+    }
+  }
+  @media print {
+    .cc__obj {
+      animation: none;
+    }
+  }
+</style>

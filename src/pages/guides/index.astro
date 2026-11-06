@@ -1,14 +1,19 @@
 ---
-// עמוד מרכז "מדריכים והרצאות": מדריכים, הרצאות לצפייה בחינם ומאמרים, לפי הסדר.
+// עמוד מרכז "מדריכים והרצאות": מדריכים, שאלון, הרצאות לצפייה בחינם ומאמרים.
 // כרגע הכל פתוח לצפייה (בלי הורדה ובלי איסוף אימייל).
+// עיצוב (נוגה, 2026-11-06): כריכות בסגנון "חפץ זכוכית זוהר" (src/components/ContentCover.astro), בלי לוגו ובלי מספור.
+// לכל סוג תוכן פריסה משלו באותה שפה: מדריכים בפריסה מדורגת (האמצעי נמוך יותר, מושך לגלול), שאלון בכרטיס רחב,
+// הרצאות בפס כהה, ומאמרים ברשימה עם כריכה בצד. מתחת לכל כריכה: סוג התוכן וזמן הקריאה. הכרטיסים מופיעים בהדרגה בגלילה.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { quizYear, quizQuestions } from '../../data/quiz';
-import GuideCover from '../../components/guide/GuideCover.astro';
+import ContentCover from '../../components/ContentCover.astro';
+import Icon from '../../components/Icon.astro';
 import ShareBar from '../../components/ShareBar.astro';
+import { quizYear, quizQuestions, quizAreas } from '../../data/quiz';
+import { readingMinutes } from '../../utils/readingTime';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 const guides = all.filter((g) => g.data.type === 'guide');
@@ -24,55 +29,65 @@ const articles = all.filter((g) => g.data.type === 'article');
     <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
   </PageHeader>
 
+  <!-- מדריכים -->
   <section class="section">
     <div class="container">
       <h2>מדריכים</h2>
       <p class="intro">כל המדריכים פתוחים לקריאה כאן באתר.</p>
       <!-- הוחלט (2026-11-05): בשלב ראשון הכל פתוח, בלי איסוף אימיילים. לא לבנות שער אימייל עד שנוגה תבקש. -->
-      <!-- כל מדריך מקבל כריכה באותו סגנון (src/components/guide/GuideCover.astro) -->
-      <ul class="g-shelf">
+      <ul class="shelf">
         {
-          guides.map((g) => (
-            <li class="g-shelf__item">
-              <div class="g-shelf__cover">
-                <GuideCover title={g.data.title} variant={g.data.coverVariant} size="sm" />
-              </div>
-              <div class="g-shelf__text">
-                <h3>
-                  <a href={`/guides/${g.id}/`}>{g.data.title}</a>
-                </h3>
-                {g.data.tagline && <p class="g-shelf__tagline">{g.data.tagline}</p>}
-                <p class="g-shelf__more" aria-hidden="true">לקריאה ←</p>
-              </div>
+          guides.map((g, i) => (
+            <li class="item reveal" style={`transition-delay: ${(i % 3) * 0.12}s`}>
+              <a class="item__cover" href={`/guides/${g.id}/`} tabindex="-1" aria-hidden="true">
+                <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} />
+              </a>
+              <p class="meta">
+                <Icon name="list" size={16} /> <span>מדריך</span> · {readingMinutes(g.body)} דק' קריאה
+              </p>
+              <h3 class="item__title">
+                <a href={`/guides/${g.id}/`}>{g.data.title}</a>
+              </h3>
+              {g.data.tagline && <p class="item__sub">{g.data.tagline}</p>}
             </li>
           ))
         }
       </ul>
-      <ul class="cards quiz-row">
-        <li class="card guide-card guide-card--quiz">
-          <p class="guide-card__type">שאלון</p>
-          <h3>
-            <a href="/guides/business-focus-quiz/">שאלון מיקוד פיתוח עסקי לשנת {quizYear}</a>
-          </h3>
-          <p>{quizQuestions.length} שאלות קצרות על 9 תחומים בעסק. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
-          <p class="guide-card__more" aria-hidden="true">למילוי השאלון ←</p>
-        </li>
-      </ul>
     </div>
   </section>
 
-  <!-- הרצאות לצפייה בחינם מהיוטיוב -->
+  <!-- שאלון: כרטיס רחב -->
   <section class="section section--mist">
     <div class="container">
-      <h2>הרצאות לצפייה בחינם</h2>
+      <div class="feature reveal">
+        <a class="feature__cover" href="/guides/business-focus-quiz/" tabindex="-1" aria-hidden="true">
+          <!-- כותרת הכריכה היא הצעה שלי -->
+          <ContentCover title={`לאן ממקדים|את *${quizYear}*?`} motif="compass" kind="quiz" />
+        </a>
+        <div class="feature__text">
+          <p class="meta"><Icon name="check" size={16} /> <span>שאלון</span> · {quizQuestions.length} שאלות</p>
+          <h2 class="feature__title">
+            <a href="/guides/business-focus-quiz/">שאלון מיקוד פיתוח עסקי לשנת {quizYear}</a>
+          </h2>
+          <p>{quizQuestions.length} שאלות קצרות על {quizAreas.length} תחומים בעסק. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
+          <p class="feature__more" aria-hidden="true">למילוי השאלון ←</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- הרצאות לצפייה בחינם: פס כהה. הכריכה שלנו מוצגת במקום התמונה של יוטיוב, והסרטון נטען רק בלחיצה. -->
+  <section class="section section--dark lectures">
+    <div class="container">
+      <h2>הרצאות לצפייה <span class="hl">בחינם</span></h2>
       <!-- TODO: נוגה תבחר אילו עוד הרצאות מהערוץ להציג. כרגע הדרכה אחת, שכותרתה ביוטיוב כוללת "הדרכה חינמית". -->
-      <div class="training">
-        <YouTubeEmbed
-          id="QANXfOW_s-Q"
-          title="נוגה דיין אור הדרכה חינמית - עסק מקצועי הוא עסק מעוצב"
-        />
-        <p class="training__caption">הדרכה חינמית: עסק מקצועי הוא עסק מעוצב</p>
-        <ShareBar title="הדרכה חינמית של נוגה דיין אור: עסק מקצועי הוא עסק מעוצב" url="https://youtu.be/QANXfOW_s-Q" print={false} />
+      <div class="lecture reveal">
+        <YouTubeEmbed id="QANXfOW_s-Q" title="נוגה דיין אור הדרכה חינמית - עסק מקצועי הוא עסק מעוצב">
+          <ContentCover title="עסק מקצועי|הוא *עסק מעוצב*" motif="screen" kind="lecture" duration="53:37" ratio="16/9" />
+        </YouTubeEmbed>
+        <p class="meta meta--dark"><Icon name="mic" size={16} /> <span>הרצאה</span> · 54 דק' צפייה</p>
+        <h3 class="lecture__title">הדרכה חינמית: עסק מקצועי הוא עסק מעוצב</h3>
+        <ShareBar title="הדרכה חינמית של נוגה דיין אור: עסק מקצועי הוא עסק מעוצב" url="https://youtu.be/QANXfOW_s-Q" print={false} tone="dark" />
       </div>
       <p class="trainings-link">
         מחפשים הרצאה או סדנה לקבוצה או לארגון? <a href="/trainings/">לקטלוג ההדרכות</a>
@@ -80,20 +95,26 @@ const articles = all.filter((g) => g.data.type === 'article');
     </div>
   </section>
 
-  <!-- מאמרים -->
+  <!-- מאמרים: רשימה עם כריכה בצד -->
   <section class="section">
     <div class="container">
       <h2>מאמרים</h2>
-      <ul class="cards">
+      <ul class="articles">
         {
           articles.map((a) => (
-            <li class="card guide-card">
-              <p class="guide-card__type">מאמר</p>
-              <h3>
-                <a href={`/guides/${a.id}/`}>{a.data.title}</a>
-              </h3>
-              <p>{a.data.description}</p>
-              <p class="guide-card__more" aria-hidden="true">לקריאה ←</p>
+            <li class="article reveal">
+              <a class="article__cover" href={`/guides/${a.id}/`} tabindex="-1" aria-hidden="true">
+                <ContentCover title={a.data.coverTitle ?? a.data.title} motif={a.data.coverMotif} star={a.data.coverStar} kind="article" />
+              </a>
+              <div>
+                <p class="meta">
+                  <Icon name="book-open" size={16} /> <span>מאמר</span> · {readingMinutes(a.body)} דק' קריאה
+                </p>
+                <h3 class="item__title">
+                  <a href={`/guides/${a.id}/`}>{a.data.title}</a>
+                </h3>
+                <p class="item__sub">{a.data.description}</p>
+              </div>
             </li>
           ))
         }
@@ -106,143 +127,183 @@ const articles = all.filter((g) => g.data.type === 'article');
 
 <style>
   .intro {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
-  /* מדף המדריכים (נוגה, 2026-11-06): שורות מאוזנות, 3 בשורה במחשב (6 = 3+3), 2 בטאבלט, 1 בנייד.
-     אם המספר לא מתחלק, השורה האחרונה ממורכזת. כרטיסים קומפקטיים (כריכה לצד הטקסט), כדי שהאזור יישאר קצר
-     והמבקר ימשיך לגלול. */
-  .g-shelf {
-    --cols: 3;
-    --gap: 1.25rem;
-    list-style: none;
-    margin: 0 0 1.5rem;
-    padding: 0;
+
+  /* שורת סוג וזמן קריאה, מתחת לכל כריכה */
+  .meta {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--gap);
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.85rem 0 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5b73;
+  }
+  .meta span {
+    color: var(--teal-dark);
+    font-weight: 800;
+  }
+  .meta :global(svg) {
+    color: var(--teal-dark);
+  }
+  .meta--dark,
+  .meta--dark :global(svg) {
+    color: var(--on-dark-soft);
+  }
+  .meta--dark span {
+    color: var(--gold-light);
+  }
+
+  /* מדריכים: 3 בשורה במחשב, 2 בטאבלט, 1 בנייד. העמודה האמצעית נמוכה יותר (פריסה מדורגת). */
+  .shelf {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem 1.5rem;
+    align-items: start;
+  }
+  .shelf > li:nth-child(3n + 2) {
+    margin-top: 3rem;
   }
   @media (max-width: 62rem) {
-    .g-shelf {
-      --cols: 2;
+    .shelf {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .shelf > li:nth-child(3n + 2) {
+      margin-top: 0;
+    }
+    .shelf > li:nth-child(2n) {
+      margin-top: 2.5rem;
     }
   }
   @media (max-width: 36rem) {
-    .g-shelf {
-      --cols: 1;
+    .shelf {
+      grid-template-columns: 1fr;
     }
-    .g-shelf__item {
-      grid-template-columns: 30% 1fr;
+    .shelf > li:nth-child(2n) {
+      margin-top: 0;
     }
   }
-  .g-shelf__item {
+  .item {
     position: relative;
-    flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
-    display: grid;
-    grid-template-columns: 38% 1fr;
-    gap: 1rem;
-    align-items: center;
     margin: 0;
-    padding: 0.9rem;
-    border-radius: 1.25rem;
-    background:
-      radial-gradient(14rem 9rem at 100% 0, rgb(25 154 181 / 0.14), transparent 70%),
-      var(--mist);
-    border: 1px solid var(--line);
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
   }
-  .g-shelf__item:hover,
-  .g-shelf__item:focus-within {
+  .item__cover,
+  .feature__cover,
+  .article__cover {
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .item:hover .item__cover,
+  .feature:hover .feature__cover,
+  .article:hover .article__cover {
     transform: translateY(-4px);
-    box-shadow: 0 24px 40px -30px rgb(11 26 51 / 0.6);
   }
-  .g-shelf__cover {
-    width: 100%;
-  }
-  .g-shelf__text {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: center;
-  }
-  .g-shelf__text h3 {
-    margin: 0 0 0.3rem;
-    font-size: 1.1rem;
+  .item__title {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
     line-height: 1.35;
   }
-  .g-shelf__text a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .g-shelf__text a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-  .g-shelf__tagline {
-    margin: 0 0 0.4rem;
-    font-size: 0.92rem;
-    line-height: 1.45;
-  }
-  .g-shelf__more {
-    margin: 0.2rem 0 0;
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  .quiz-row {
-    max-width: 26rem;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .g-shelf__item {
-      transition: none;
-    }
-  }
-  .guide-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  .guide-card--quiz {
-    border-top-color: var(--gold-dark);
-  }
-  .guide-card__type {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--teal-dark);
-    margin-bottom: 0.35rem;
-  }
-  .guide-card h3 a {
+  .item__title a,
+  .feature__title a {
     color: var(--navy);
     text-decoration: none;
   }
   /* כל הכרטיס לחיץ, דרך הקישור שבכותרת */
-  .guide-card h3 a::after {
+  .item__title a::after,
+  .feature__title a::after {
     content: '';
     position: absolute;
     inset: 0;
   }
-  .guide-card:hover {
-    border-color: var(--teal);
-  }
-  .guide-card__more {
-    margin-top: auto;
-    padding-top: 0.5rem;
-    font-weight: 700;
+  .item__title a:hover,
+  .feature__title a:hover {
     color: var(--teal-dark);
   }
-  .training {
-    max-width: 48rem;
+  .item__sub {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #33445c;
   }
-  .training__caption {
-    margin: 0.5rem 0 0;
-    font-weight: 700;
+
+  /* שאלון: כרטיס רחב */
+  .feature {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2rem;
+    align-items: center;
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--line);
   }
-  .training :global(.sharebar) {
-    margin-top: 0.75rem;
+  @media (max-width: 48rem) {
+    .feature {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+  .feature__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .feature__text p:not(.meta) {
+    margin: 0;
+  }
+  .feature__more {
+    margin-top: 0.75rem !important;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* הרצאות: פס כהה */
+  .lecture {
+    max-width: 44rem;
+  }
+  .lecture__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.2rem;
+    color: var(--white);
   }
   .trainings-link {
-    margin: 1.5rem 0 0;
+    margin: 2rem 0 0;
+  }
+  .lectures .trainings-link a {
+    color: var(--gold-light);
+  }
+
+  /* מאמרים: רשימה עם כריכה בצד */
+  .articles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .article {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
+    margin: 0;
+  }
+  @media (max-width: 40rem) {
+    .article {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .item__cover,
+    .feature__cover,
+    .article__cover {
+      transition: none;
+    }
   }
 </style>

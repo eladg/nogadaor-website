@@ -23,8 +23,12 @@ const guides = defineCollection({
     keywords: z.array(z.string()).default([]),
     // "מה תקבלו במדריך": 3 או 4 שורות קצרות, מוצגות בראש העמוד
     gains: z.array(z.string()).default([]),
-    // מספר שמשנה מעט את עיצוב הכריכה (סידור הרשת), כדי שכל כריכה תהיה שונה
-    coverVariant: z.number().default(0),
+    // הכריכה (src/components/ContentCover.astro, הסגנון שנוגה בחרה ב-2026-11-06):
+    // coverTitle: כותרת קצרה ומושכת לכריכה. *מילה* = זהב, | = ירידת שורה. בלי ערך: השם המלא.
+    // coverMotif: החפץ בכריכה. coverStar: איפה הכוכב מהלוגו ("מדי פעם", לא בכל כריכה).
+    coverTitle: z.string().optional(),
+    coverMotif: z.enum(['ai', 'growth', 'screen', 'target', 'gift', 'iceberg', 'chat', 'megaphone', 'compass']).default('growth'),
+    coverStar: z.enum(['start', 'end']).optional(),
     // קובץ להורדה (למשל שאלון ב-Word), מתוך התיקייה public. מופיע ככפתור ליד "הדפסה" ו"שיתוף".
     download: z.object({ href: z.string(), label: z.string() }).optional(),
   }),

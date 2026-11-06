@@ -8,17 +8,23 @@ interface Props {
   vertical?: boolean; // true לסרטון אנכי (Shorts)
 }
 const { id, title, vertical = false } = Astro.props;
+// כריכה משלנו (נוגה, 2026-11-06: "קאבר עיצובי מעל הסרטונים, כדי שהכל יהיה מסונכרן"):
+// אם מעבירים ContentCover בתוך הרכיב, היא מוצגת במקום התמונה של יוטיוב (ובה כבר יש כפתור הפעלה).
+const hasCover = Astro.slots.has('default');
 ---
 
-<div class:list={['yt-embed', { 'yt-embed--vertical': vertical }]} data-id={id} data-title={title}>
+<div class:list={['yt-embed', { 'yt-embed--vertical': vertical, 'yt-embed--cover': hasCover }]} data-id={id} data-title={title}>
   <button type="button" class="yt-embed__btn" aria-label={`הפעלת הסרטון: ${title}`}>
-    <img
-      src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
-      alt=""
-      loading="lazy"
-      decoding="async"
-    />
-    <span class="yt-embed__play" aria-hidden="true"></span>
+    {
+      hasCover ? (
+        <slot />
+      ) : (
+        <>
+          <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" />
+          <span class="yt-embed__play" aria-hidden="true" />
+        </>
+      )
+    }
   </button>
 </div>
 
@@ -48,6 +54,19 @@ const { id, title, vertical = false } = Astro.props;
   }
   .yt-embed--vertical {
     aspect-ratio: 9 / 16;
+  }
+  .yt-embed--cover {
+    border-radius: 22px;
+    font: inherit;
+  }
+  .yt-embed--cover .yt-embed__btn {
+    font: inherit;
+    text-align: start;
+    color: inherit;
+  }
+  .yt-embed--cover .yt-embed__btn > :global(*) {
+    height: 100%;
+    border-radius: 0;
   }
   .yt-embed__btn {
     position: absolute;
