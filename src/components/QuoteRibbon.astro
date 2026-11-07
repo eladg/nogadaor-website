@@ -1,0 +1,128 @@
+---
+// המלצות כטקסט צף שנע לאט (עמוד הבית, נוגה 2026-11-07): בלי קופסאות ובלי עיגולים, ולא רחב מדי.
+// השראה: הפס הנע אצל masha-bar.co.il, בלי להעתיק. ההמלצה מוצגת עד 5 שורות, והטקסט עצמו לא משתנה.
+// נעצר במעבר עכבר או בפוקוס. מי שביקש פחות תנועה רואה שורה שגוללים לצדדים.
+import Star from './Star.astro';
+import type { Review } from '../data/reviews';
+
+interface Props {
+  reviews: Review[];
+}
+const { reviews } = Astro.props;
+---
+
+<div class="qr" tabindex="0" aria-label="המלצות לקוחות, אפשר לגלול הצידה">
+  <div class="qr__track">
+    {
+      [0, 1].map((copy) => (
+        <ul class="qr__set" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {reviews.map((r) => (
+            <li class="qr__item">
+              <figure>
+                <span class="qr__mark" aria-hidden="true">”</span>
+                <blockquote class="qr__text">{r.text}</blockquote>
+                <figcaption class="qr__by">
+                  <strong>{r.name}</strong> · מקור: {r.source}
+                </figcaption>
+              </figure>
+              <Star size={18} class="qr__star" />
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .qr {
+    max-width: 64rem;
+    margin-inline: auto;
+    overflow: hidden;
+    mask-image: linear-gradient(to left, transparent 0, #000 6rem, #000 calc(100% - 6rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 6rem, #000 calc(100% - 6rem), transparent 100%);
+  }
+  .qr__track {
+    display: flex;
+    width: max-content;
+    animation: qr-move 70s linear infinite;
+  }
+  .qr:hover .qr__track,
+  .qr:focus-within .qr__track {
+    animation-play-state: paused;
+  }
+  .qr__set {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+  .qr__item {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 0;
+    padding-inline-end: 2rem;
+  }
+  .qr__item figure {
+    position: relative;
+    width: min(22rem, 78vw);
+    margin: 0;
+    padding-top: 1.4rem;
+  }
+  .qr__mark {
+    position: absolute;
+    top: -0.6rem;
+    inset-inline-start: 0;
+    font-size: 3.6rem;
+    font-weight: 900;
+    line-height: 1;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .qr__text {
+    margin: 0 0 0.75rem;
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.65;
+    color: var(--navy);
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .qr__by {
+    font-size: 0.92rem;
+    color: #4a5b73;
+  }
+  .qr__by strong {
+    color: var(--teal-dark);
+  }
+  .qr__item :global(.qr__star) {
+    flex: none;
+    opacity: 0.85;
+  }
+  @keyframes qr-move {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qr {
+      overflow-x: auto;
+    }
+    .qr__track {
+      animation: none;
+    }
+    .qr__set + .qr__set {
+      display: none;
+    }
+  }
+</style>

@@ -10,8 +10,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import QuizFeature from '../components/QuizFeature.astro';
-import ServiceCards from '../components/ServiceCards.astro';
-import ReviewsCarousel from '../components/ReviewsCarousel.astro';
+import ServiceStrip from '../components/ServiceStrip.astro';
+import QuoteRibbon from '../components/QuoteRibbon.astro';
+import Ribbon from '../components/Ribbon.astro';
 import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
 import { contact } from '../data/contact';
@@ -21,12 +22,12 @@ import { ways, icons } from '../data/principles';
 import { trainings } from '../data/trainings';
 import { quizYear } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
-import heroPhoto from '../assets/about/gallery/17-looking-ahead.jpg';
+// תמונת הפתיח שנוגה בחרה (2026-11-07): על הבמה בבלייזר הלבן, עם הדוכן של "עסקים במקסימום"
+import heroPhoto from '../assets/hero/stage-blazer.jpg';
 import introPhoto from '../assets/about/gallery/05-podium-smile.jpg';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
 import darkLines from '../assets/atmosphere/dark-lines.webp';
 import darkStairs from '../assets/atmosphere/dark-stairs.webp';
-import lightTeam from '../assets/atmosphere/light-team.webp';
 import treasure from '../assets/character/treasure.webp';
 import pointing from '../assets/character/pointing-down.webp';
 // תמונות מהכנסים (נוגה שלחה אותן לאודות). בעמוד הבית: עוד תמונות, לבקשתה (2026-11-07)
@@ -43,7 +44,6 @@ const stagePhotos = [
 
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
-const teamStyle = await atmoStyle(lightTeam, 0.28);
 
 // נוגה: "מקדמים יחד" ואחריו כל הנושאים שמקדמים
 const advances = ['פרויקטים', 'משימות', 'תהליכי עבודה', 'יעדים', 'צוותים', 'מהלכי צמיחה'];
@@ -82,14 +82,15 @@ const index = [
   title="ייעוץ עסקי וארגוני"
   description="נוגה דיין אור: ייעוץ עסקי וארגוני להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית. ייעוץ עסקי, ייעוץ ארגוני, אוטומציות ו-AI, ליווי פיננסי והדרכות."
 >
-  <!-- 1. פתיח. הנוסח של נוגה (2026-11-07). התמונה: נוגה על הבמה, מביטה קדימה. -->
+  <!-- 1. פתיח (נוגה, 2026-11-07): התמונה מימין, כך שהפנים פונות אל הטקסט; רואים גם את הדוכן.
+       הכותרת ממורכזת, והפתיח לא תופס את כל המסך הראשון. "מקדמים יחד" עבר לסרט הנע שמתחת. -->
   <section class="h-hero">
     <div class="h-hero__media">
       <Image
         src={heroPhoto}
-        alt="נוגה דיין אור על הבמה, מביטה אל הקהל בחיוך"
-        widths={[640, 1024, 1600]}
-        sizes="(min-width: 52rem) 60vw, 100vw"
+        alt="נוגה דיין אור מרצה על הבמה בכנס עסקים במקסימום"
+        widths={[640, 1024, 1600, 2000]}
+        sizes="(min-width: 52rem) 58vw, 100vw"
         loading="eager"
         fetchpriority="high"
       />
@@ -99,12 +100,6 @@ const index = [
         <p class="h-hero__kicker">נוגה דיין אור · ייעוץ עסקי וארגוני</p>
         <h1 class="h-hero__title">העולם משתנה בקצב מסחרר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
-        <div class="h-advance">
-          <p class="h-advance__label">מקדמים יחד:</p>
-          <ul class="h-advance__list">
-            {advances.map((a) => <li>{a}</li>)}
-          </ul>
-        </div>
         <div class="h-hero__actions">
           <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
           <a class="btn btn--ghost" href="/services/">לשירותים</a>
@@ -113,22 +108,23 @@ const index = [
     </div>
   </section>
 
+  <!-- 1א. סרט נע: מקדמים יחד (השראה מהפס הנע של מאשה, בלי להעתיק; אופקי, עם הכוכב של נוגה) -->
+  <Ribbon label="מקדמים יחד:" items={advances} />
+
   <!-- 2. שש קוביות השירותים, בלי כותרת (נוגה). כותרת נסתרת רק לקוראי מסך. -->
   <section class="section h-services" aria-labelledby="services-title">
     <div class="container">
       <h2 id="services-title" class="sr-only">השירותים</h2>
-      <ServiceCards />
+      <ServiceStrip />
     </div>
   </section>
 
-  <!-- 3. המלצות: 6 ההמלצות הכי מקצועיות ועסקיות (src/data/reviews.ts, featuredReviews), בשורה אחת, 4 נראות במחשב -->
-  <section class="section section--mist atmo h-reviews" style={teamStyle}>
+  <!-- 3. המלצות: טקסט צף שנע לאט, בלי קופסאות ובלי עיגולים (נוגה, 2026-11-07). src/data/reviews.ts, featuredReviews -->
+  <section class="section section--mist h-reviews">
     <div class="container">
-      <div class="h-reviews__head">
-        <h2 class="sec-title reveal">מה אומרים <span class="hl--mark">הלקוחות</span></h2>
-        <a class="h-more" href="/testimonials/">לכל ההמלצות ←</a>
-      </div>
-      <ReviewsCarousel reviews={featuredReviews} itemWidth="clamp(16rem, calc((100% - 3.75rem) / 4), 23rem)" />
+      <h2 class="sec-title center reveal">מה אומרים <span class="hl--mark">הלקוחות</span></h2>
+      <QuoteRibbon reviews={featuredReviews} />
+      <p class="more center"><a href="/testimonials/">לכל ההמלצות ←</a></p>
     </div>
   </section>
 
@@ -139,10 +135,8 @@ const index = [
       <ul class="moments">
         {
           situations.map((m, i) => (
-            <li class="moment reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
-              <span class="moment__icon">
-                <Icon name={m.icon} size={30} />
-              </span>
+            <li class="moment reveal" style={`transition-delay: ${(i % 2) * 0.1}s`}>
+              <Icon name={m.icon} size={30} class="moment__icon" />
               <p>{m.text}</p>
             </li>
           ))
@@ -274,7 +268,7 @@ const index = [
 </BaseLayout>
 
 <style>
-  /* ---------- 1. פתיח: תמונה בצד שמאל, טקסט בימין על הצללה ---------- */
+  /* ---------- 1. פתיח: התמונה בצד ימין (נוגה פונה אל הטקסט), הטקסט ממורכז משמאל ---------- */
   .h-hero {
     position: relative;
     overflow: hidden;
@@ -283,143 +277,111 @@ const index = [
   }
   .h-hero__media {
     position: relative;
-    height: min(62vw, 20rem);
+    height: min(64vw, 19rem);
   }
   .h-hero__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 25%;
+    /* בנייד: נוגה והדוכן */
+    object-position: 78% 30%;
   }
   .h-hero__media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(7 17 31 / 0.15) 0%, rgb(7 17 31 / 0.1) 55%, var(--navy-deep) 100%);
+    background: linear-gradient(180deg, rgb(7 17 31 / 0.05) 50%, var(--navy-deep) 100%);
   }
   .h-hero__inner {
     position: relative;
-    padding-block: 0.5rem 2.5rem;
+    padding-block: 0.25rem 2.25rem;
+  }
+  .h-hero__text {
+    text-align: center;
   }
   .h-hero__kicker {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.6rem;
     font-weight: 800;
     color: var(--gold-light);
   }
   .h-hero__title {
-    margin: 0 0 1rem;
+    margin: 0 0 0.85rem;
     color: var(--white);
-    font-size: clamp(2rem, 5.2vw, 3.3rem);
+    font-size: clamp(1.8rem, 3.8vw, 2.7rem);
     font-weight: 900;
-    line-height: 1.15;
+    line-height: 1.2;
   }
   .h-hero__title .hl {
     display: block;
+    text-shadow: none;
   }
   .h-hero__lead {
-    max-width: 36rem;
-    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
-    font-weight: 500;
+    max-width: 32rem;
+    margin: 0 auto 1.5rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
     line-height: 1.6;
-    margin-bottom: 1.25rem;
-  }
-  /* מקדמים יחד: כל הנושאים כתגיות */
-  .h-advance {
-    margin-bottom: 1.75rem;
-  }
-  .h-advance__label {
-    margin: 0 0 0.5rem;
-    font-weight: 800;
-    color: var(--white);
-  }
-  .h-advance__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-  }
-  .h-advance__list li {
-    margin: 0;
-    padding: 0.3rem 0.85rem;
-    border-radius: 999px;
-    border: 1px solid rgb(252 220 109 / 0.45);
-    background: rgb(252 220 109 / 0.08);
-    color: var(--gold-light);
-    font-weight: 700;
-    font-size: 0.95rem;
-    text-shadow: none;
   }
   .h-hero__actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.75rem;
   }
   @media (min-width: 52rem) {
     .h-hero {
       display: flex;
       align-items: center;
-      min-height: clamp(30rem, 74vh, 40rem);
+      min-height: clamp(24rem, 54vh, 30rem);
     }
+    /* התמונה בצד ימין, נעלמת לכיוון הטקסט שמשמאל. השקף שמעל מוחשך, הדוכן נראה. */
     .h-hero__media {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 0;
-      width: 60%;
+      right: 0;
+      width: 58%;
       height: auto;
+    }
+    .h-hero__media img {
+      object-position: 82% 32%;
     }
     .h-hero__media::after {
       background:
-        linear-gradient(to left, var(--navy-deep) 0%, rgb(7 17 31 / 0.7) 16%, rgb(7 17 31 / 0) 42%),
-        linear-gradient(to right, rgb(7 17 31 / 0.85) 0%, rgb(7 17 31 / 0) 30%),
-        linear-gradient(0deg, rgb(7 17 31 / 0.7) 0%, rgb(7 17 31 / 0) 28%),
-        rgb(7 17 31 / 0.12);
+        linear-gradient(to right, var(--navy-deep) 0%, rgb(7 17 31 / 0.75) 16%, rgb(7 17 31 / 0) 45%),
+        linear-gradient(to bottom, rgb(7 17 31 / 0.6) 0%, rgb(7 17 31 / 0) 40%),
+        linear-gradient(0deg, rgb(7 17 31 / 0.45) 0%, rgb(7 17 31 / 0) 25%);
     }
     .h-hero__inner {
-      padding-block: 3.5rem;
+      padding-block: 2.75rem;
     }
     .h-hero__text {
-      max-width: min(38rem, 55vw);
+      max-width: min(34rem, 46vw);
+      margin-right: auto;
+      margin-left: 0;
       text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
     }
   }
 
   /* ---------- 2. שירותים ---------- */
   .h-services {
-    padding-block: clamp(2.5rem, 6vw, 4rem);
+    padding-block: clamp(1.75rem, 4vw, 2.75rem);
   }
 
   /* ---------- 3. המלצות ---------- */
-  .h-reviews__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem 1rem;
-    margin-bottom: 0.5rem;
-  }
-  .h-more {
-    font-weight: 800;
-    color: var(--teal-dark);
+  .h-reviews .sec-title {
+    margin-bottom: 1.75rem;
   }
 
-  /* ---------- 4. דווקא עכשיו: 6 מצבים על רקע כהה ---------- */
+  /* ---------- 4. דווקא עכשיו: רשימה בשני טורים, בלי קופסאות, עם קווים מפרידים ---------- */
   .moments {
     list-style: none;
-    margin: 1.5rem 0 0;
+    margin: 1.25rem 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 3rem;
   }
-  @media (max-width: 62rem) {
-    .moments {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
+  @media (max-width: 48rem) {
     .moments {
       grid-template-columns: 1fr;
     }
@@ -429,31 +391,16 @@ const index = [
     align-items: center;
     gap: 1rem;
     margin: 0;
-    padding: 1.25rem 1.35rem;
-    border-radius: 1.25rem;
-    background: linear-gradient(160deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.03));
-    border: 1px solid rgb(255 255 255 / 0.14);
-    transition:
-      opacity 0.7s ease,
-      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-      border-color 0.3s ease;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.14);
   }
-  .moment:hover {
-    border-color: rgb(252 220 109 / 0.55);
-  }
-  .moment__icon {
+  .moment :global(.moment__icon) {
     flex: none;
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
+    color: var(--gold-light);
   }
   .moment p {
     margin: 0;
-    font-size: 1.08rem;
+    font-size: clamp(1.08rem, 2vw, 1.25rem);
     font-weight: 700;
     line-height: 1.45;
     color: var(--white);

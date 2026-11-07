@@ -1,0 +1,117 @@
+---
+// סרט טקסט נע (אופקי), עם כוכב קטן מהלוגו בין הפריטים.
+// השראה: הפס הנע אצל masha-bar.co.il, לבקשת נוגה (2026-11-07). לא העתקה: אופקי, בצבעים ובכוכב של נוגה, בלי אלכסון.
+// נעצר במעבר עכבר. מי שביקש פחות תנועה רואה את הפריטים עומדים, ויכול לגלול אותם לצדדים.
+// שימוש: <Ribbon label="מקדמים יחד" items={['פרויקטים', 'משימות']} />
+import Star from './Star.astro';
+
+interface Props {
+  items: string[];
+  label?: string; // מילה קבועה לפני הפריטים (למשל "מקדמים יחד:")
+  tone?: 'gold' | 'navy';
+}
+const { items, label, tone = 'gold' } = Astro.props;
+---
+
+<div class:list={['ribbon', `ribbon--${tone}`]}>
+  {label && <p class="ribbon__label">{label}</p>}
+  <div class="ribbon__viewport">
+    <span class="sr-only">{items.join(', ')}</span>
+    <div class="ribbon__track" aria-hidden="true">
+      {
+        [0, 1].map(() => (
+          <ul class="ribbon__set">
+            {items.map((it) => (
+              <li>
+                <span>{it}</span>
+                <Star size={16} tone={tone === 'gold' ? 'navy' : 'gold'} class="ribbon__star" />
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .ribbon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-block: 0.85rem;
+  }
+  .ribbon--gold {
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .ribbon--navy {
+    background: var(--navy);
+    color: var(--gold-light);
+  }
+  .ribbon__label {
+    flex: none;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding-inline: 1.25rem 1rem;
+    font-weight: 900;
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+  .ribbon--gold .ribbon__label {
+    background: linear-gradient(to left, #f7cf62 75%, transparent);
+  }
+  .ribbon__viewport {
+    flex: 1;
+    overflow: hidden;
+    mask-image: linear-gradient(to left, transparent 0, #000 4rem, #000 calc(100% - 4rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 4rem, #000 calc(100% - 4rem), transparent 100%);
+  }
+  .ribbon__track {
+    display: flex;
+    width: max-content;
+    animation: ribbon-move 32s linear infinite;
+  }
+  .ribbon:hover .ribbon__track {
+    animation-play-state: paused;
+  }
+  .ribbon__set {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+  .ribbon__set li {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 0;
+    padding-inline-end: 1.25rem;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  /* בעברית הטקסט זורם ימינה: הסרט נע לכיוון ימין */
+  @keyframes ribbon-move {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ribbon__track {
+      animation: none;
+    }
+    .ribbon__viewport {
+      overflow-x: auto;
+    }
+    .ribbon__set + .ribbon__set {
+      display: none;
+    }
+  }
+</style>

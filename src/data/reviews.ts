@@ -107,7 +107,7 @@ const bizReviews: Review[] = [
     text: `נוגה האלופה היא היועצת היחידה שבאמת הביאה לשינוי בעסק שלי. הכלים שהיא נותנת נשארים כי הם כל כך פרקטיים. שירות מעולה!`,
   },
   {
-    name: 'אריאלה פלפל רוזנברג פסיכותרפיסטית',
+    name: 'אריאלה פלפל רוזנברג',
     source: 'BIZMAKEBIZ',
     stars: 5,
     text: `רואים את התשוקה והאנרגיה שאת מעבירה בהרצאה המאוד חשובה הזאת בתקופה ארוכה ומאתגרת. לוקחת איתי אנרגיה סוחפת ותודה שהזכרת את הדברים החשובים. הייתה הרצאה ממוקדת, חשובה וספציפית. תודה`,
@@ -190,7 +190,7 @@ for (let i = 0; i < Math.max(...sources.map((s) => s.length)); i++) {
 
 // המלצה של גילת בנדר (BIZMAKEBIZ). נוגה ביקשה להוסיף אותה לעמוד הבית (2026-11-07). תומללה מצילום מסך, כלשונה.
 const gilat: Review = {
-  name: 'גילת בנדר, עו״ד ונוטריון',
+  name: 'גילת בנדר',
   source: 'BIZMAKEBIZ',
   stars: 5,
   text: `הגעתי לנוגה כי חיפשתי יועצת עסקית, אבל זכיתי בהרבה מעבר לזה. ❤️
@@ -224,7 +224,7 @@ export const featuredReviews: Review[] = [
 // training: ההדרכה שההמלצה מדברת עליה (מוצגת גם בעמוד של ההדרכה).
 export const lectureReviews: (Review & { training?: string })[] = [
   {
-    name: 'נעמי פסטרנק אלוורה פוראוור',
+    name: 'נעמי פסטרנק',
     source: 'BIZMAKEBIZ',
     stars: 5,
     training: 'people-and-ai-recommend-you',
@@ -239,13 +239,13 @@ export const lectureReviews: (Review & { training?: string })[] = [
     text: `הרצאה מעולה מעוררת השראה ומקנה כלים, הייתי שמחה לשמוע עוד להעמיק`,
   },
   {
-    name: 'תקליטנית מירב בוך Dj MB',
+    name: 'מירב בוך',
     source: 'BIZMAKEBIZ',
     stars: 5,
     text: `ההרצאה היתה מעניינת מאד ונתנה לי הרבה ערך. רשמתי לי הרבה נקודות שאני מתכוונת ליישם /לתת עליהם את הדעת. תודה רבה נוגה`,
   },
   {
-    name: 'שני בן נר צי',
+    name: 'שני בן נר',
     source: 'BIZMAKEBIZ',
     stars: 5,
     text: `היתה הרצאה מעניינת מאוד, תרמה לי בפוקוס על המסר שמעניין את הלקוח.
@@ -253,7 +253,7 @@ export const lectureReviews: (Review & { training?: string })[] = [
 תודה רבה 💗`,
   },
   {
-    name: 'שרית זיו הילרית מקשרת ציירת',
+    name: 'שרית זיו',
     source: 'BIZMAKEBIZ',
     stars: 5,
     training: 'people-and-ai-recommend-you',
