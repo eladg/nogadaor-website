@@ -126,6 +126,56 @@ a {
   filter: brightness(1.05);
 }
 
+/* כותרות אזור ושורת פתיחה (עמודי הבית והשירותים, 2026-11-07) */
+.sec-title {
+  font-size: clamp(1.8rem, 4.6vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+.sec-lead {
+  max-width: 46rem;
+  margin-bottom: 2rem;
+  font-size: 1.12rem;
+  line-height: 1.7;
+  color: #33445c;
+}
+.section--dark .sec-lead {
+  color: var(--on-dark-soft);
+}
+.center {
+  text-align: center;
+}
+.center .sec-lead {
+  margin-inline: auto;
+}
+/* כפתור משני על רקע כהה */
+.btn--ghost {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid rgb(255 255 255 / 0.35);
+}
+.btn--ghost:hover {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+  filter: none;
+}
+/* אזור כהה עמוק עם "הילות" טורקיז וזהב */
+.section--deep {
+  color: var(--on-dark);
+  background:
+    radial-gradient(40rem 24rem at 100% 0, rgb(25 154 181 / 0.22), transparent 70%),
+    radial-gradient(34rem 22rem at 0 100%, rgb(209 154 74 / 0.14), transparent 72%),
+    var(--navy-deep);
+}
+.section--deep h2,
+.section--deep h3 {
+  color: var(--white);
+}
+.section--deep .sec-lead {
+  color: var(--on-dark-soft);
+}
+
 /* תיבת תוכן חסר – מסמנת בבירור מקום שנוגה צריכה להשלים */
 .placeholder {
   border: 2px dashed var(--teal);

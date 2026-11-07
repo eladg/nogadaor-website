@@ -1,0 +1,364 @@
+---
+// עמוד השירותים (2026-11-07). התוכן ב-src/data/services.ts. הכול טיוטה לאישור נוגה.
+// הסדר: פתיח עם הבטחה ← ריבועי השירותים (מתהפכים) ← מסתכלים על העסק כולו (8 תחומים) ← איך עובדים (ציר)
+//   ← למי זה מתאים ← מה משתנה (היום / המטרה) ← שאלות נפוצות ← קריאה לפעולה.
+// ההשראות שנוגה בחרה: incentive-group (הבטחה, "לא לכולם", "אחרי", שאלות), yanivless (ריבועים מתהפכים, ציר), pitron10 (שפת צורך).
+// השראה בלבד, לא העתקה. הביקורת והציונים: drafts/critique-2026-11-07.md.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import ServiceCards from '../../components/ServiceCards.astro';
+import Timeline from '../../components/Timeline.astro';
+import Faq from '../../components/Faq.astro';
+import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
+import { areas, steps, fit, beforeAfter, faqs, overviewFaq } from '../../data/services';
+import { contact } from '../../data/contact';
+---
+
+<BaseLayout
+  title="שירותים"
+  description="ייעוץ עסקי, ייעוץ ארגוני, אוטומציות ו-AI לעסקים, ליווי פיננסי, פגישת ייעוץ והדרכות: ייעוץ עסקי וארגוני לעסקים מבוססים להגדלת הכנסות ושיפור רווחיות."
+>
+  <!-- 1. פתיח: ההבטחה -->
+  <section class="s-hero section--deep">
+    <div class="container s-hero__inner">
+      <p class="s-hero__kicker">שירותים</p>
+      <!-- התואר של נוגה -->
+      <h1 class="s-hero__title">ייעוץ עסקי וארגוני להגדלת <span class="hl">הכנסות</span> ושיפור <span class="hl">רווחיות</span></h1>
+      <!-- מתוך "משפטים" ו"במשפט אחד" במסמך העבודה של נוגה -->
+      <p class="s-hero__lead">להרוויח יותר מהפעילות, מהלקוחות ומהמשאבים שכבר קיימים בעסק, בפתרונות פשוטים וממוקדים שמותאמים לעסק שלך.</p>
+      <div class="s-hero__actions">
+        <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a class="btn btn--ghost" href="#services">לכל השירותים</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. השירותים: ריבועים מתהפכים -->
+  <section class="section" id="services">
+    <div class="container">
+      <h2 class="sec-title reveal">במה אני <span class="hl--mark">עוזרת</span></h2>
+      <p class="sec-lead">שישה שירותים, שמתחברים זה לזה לפי מה שהעסק שלך צריך.</p>
+      <ServiceCards />
+    </div>
+  </section>
+
+  <!-- 3. מסתכלים על העסק כולו: הבידול של נוגה (שילוב, ולא נושא מבודד) -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2 class="sec-title reveal">מסתכלים על העסק <span class="hl--mark">כולו</span></h2>
+      <!-- מתוך "הבידול של נוגה" במסמך העבודה -->
+      <p class="sec-lead">שילוב בין ייעוץ עסקי לייעוץ ארגוני, ולא טיפול בנושא מבודד. ראייה מערכתית של העסק, לצד ירידה לפרטים המעשיים.</p>
+      <ul class="areas">
+        {
+          areas.map((a, i) => (
+            <li class="area reveal" style={`transition-delay: ${(i % 4) * 0.08}s`}>
+              <span class="area__icon">
+                <Icon name={a.icon} size={30} />
+              </span>
+              <h3 class="area__title">{a.title}</h3>
+              <p class="area__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. איך עובדים: ציר. בלי המילה "שיטה" (נוגה ביקשה). -->
+  <section class="section section--deep">
+    <div class="container">
+      <h2 class="sec-title reveal">ייעוץ שמתחיל <span class="hl">בהבנה</span>, לא בנוסחה</h2>
+      <p class="sec-lead">אין נוסחה אחת או פתרון קבוע מראש. מתחילים בהיכרות מעמיקה עם העסק, בוחרים את המהלכים בעלי הערך העסקי הגבוה, ומתקדמים ליישום.</p>
+      <Timeline items={steps} tone="dark" />
+      <p class="principle reveal">
+        <Star size={20} />
+        <span>קודם מבינים איפה נמצא פוטנציאל השיפור, ורק אז בוחרים מה לעשות. לא להפך.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 5. למי זה מתאים: שני טורים -->
+  <section class="section">
+    <div class="container">
+      <h2 class="sec-title reveal">הליווי מתאים לעסקים <span class="hl--mark">שכבר בנו משהו</span></h2>
+      <div class="fit">
+        <div class="fit__col fit__col--yes reveal">
+          <h3 class="fit__title">זה בשבילכם אם</h3>
+          <ul>
+            {fit.yes.map((t) => <li><span class="fit__mark" aria-hidden="true"><Icon name="check" size={18} /></span>{t}</li>)}
+          </ul>
+        </div>
+        <div class="fit__col fit__col--no reveal" style="transition-delay: 0.12s">
+          <h3 class="fit__title">זה פחות מתאים אם</h3>
+          <ul>
+            {
+              fit.no.map((t, i) => (
+                <li>
+                  <span class="fit__mark" aria-hidden="true">✕</span>
+                  {i === fit.no.length - 1 ? (
+                    <span>
+                      העסק עוד בשלב ההקמה (בשבילכם יש <a href="/guides/">מדריכים חינמיים</a>)
+                    </span>
+                  ) : (
+                    t
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. מה משתנה: היום מול המטרה. בלי הבטחה לתוצאות. -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2 class="sec-title reveal">מה <span class="hl--mark">משתנה</span> בעסק</h2>
+      <ul class="ba">
+        {
+          beforeAfter.map((row, i) => (
+            <li class="ba__row reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <div class="ba__cell ba__cell--today">
+                <span class="ba__label">היום</span>
+                <p>{row.today}</p>
+              </div>
+              <span class="ba__arrow" aria-hidden="true">←</span>
+              <div class="ba__cell ba__cell--goal">
+                <span class="ba__label">המטרה</span>
+                <p>{row.goal}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. שאלות נפוצות -->
+  <section class="section" id="faq-all">
+    <div class="container">
+      <Faq items={overviewFaq.map((id) => faqs[id])} />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .s-hero {
+    padding-block: clamp(3rem, 8vw, 5.5rem);
+  }
+  .s-hero__inner {
+    max-width: 52rem;
+  }
+  .s-hero__kicker {
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--gold-light);
+  }
+  .s-hero__title {
+    margin: 0 0 1rem;
+    color: var(--white);
+    font-size: clamp(2rem, 5.6vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.15;
+  }
+  .s-hero__lead {
+    max-width: 40rem;
+    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .s-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* ---------- 8 תחומים: 4 בשורה, 2 בטאבלט ובנייד ---------- */
+  .areas {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 62rem) {
+    .areas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .area {
+    margin: 0;
+    padding: 1.5rem 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    text-align: center;
+  }
+  .area__icon {
+    display: inline-block;
+    color: var(--teal-dark);
+    margin-bottom: 0.4rem;
+  }
+  .area:nth-child(even) .area__icon {
+    color: var(--gold-dark);
+  }
+  .area__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+  }
+  .area__text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #33445c;
+  }
+
+  /* ---------- העיקרון ---------- */
+  .principle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 2.5rem 0 0;
+    font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+    font-weight: 800;
+    color: var(--white);
+    text-align: center;
+  }
+
+  /* ---------- למי זה מתאים ---------- */
+  .fit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  @media (max-width: 48rem) {
+    .fit {
+      grid-template-columns: 1fr;
+    }
+  }
+  .fit__col {
+    padding: 1.75rem;
+    border-radius: 1.25rem;
+    border: 1px solid var(--line);
+  }
+  .fit__col--yes {
+    background: linear-gradient(160deg, rgb(25 154 181 / 0.09), transparent 60%), var(--white);
+    border-top: 4px solid var(--teal);
+  }
+  .fit__col--no {
+    background: var(--mist);
+    border-top: 4px solid #b9c6d3;
+  }
+  .fit__title {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+  .fit ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .fit li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    line-height: 1.55;
+  }
+  .fit__mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-top: 0.05rem;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 0.85rem;
+  }
+  .fit__col--yes .fit__mark {
+    background: var(--teal);
+    color: var(--white);
+  }
+  .fit__col--no .fit__mark {
+    background: #dbe3ea;
+    color: #5b6b80;
+  }
+  .fit a {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+
+  /* ---------- היום / המטרה ---------- */
+  .ba {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .ba__row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .ba__cell {
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+  }
+  .ba__cell p {
+    margin: 0.2rem 0 0;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .ba__cell--today {
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: #4a5b73;
+  }
+  .ba__cell--goal {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .ba__label {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .ba__cell--today .ba__label {
+    color: #7a8899;
+  }
+  .ba__cell--goal .ba__label {
+    color: var(--gold-light);
+  }
+  .ba__arrow {
+    align-self: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--gold-dark);
+  }
+  @media (max-width: 40rem) {
+    .ba__row {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+    .ba__arrow {
+      justify-self: center;
+      transform: rotate(-90deg);
+      line-height: 1;
+    }
+  }
+</style>

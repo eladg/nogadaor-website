@@ -1,0 +1,165 @@
+---
+// ריבועי השירותים שמתהפכים (בהשראת yanivless.co.il, לבקשת נוגה, 2026-11-07).
+// מלפנים: אייקון, שם השירות ושורת התועלת. מאחור: משפט קצר וקישור לעמוד השירות.
+// הריבוע כולו קישור. ההיפוך קורה במעבר עכבר או בפוקוס מהמקלדת.
+// במכשירי מגע, או אצל מי שביקש פחות תנועה, אין היפוך: שני הצדדים מוצגים יחד בכרטיס אחד.
+// 6 שירותים: 3 בשורה במחשב, 2 בטאבלט, 1 בנייד (שורות מאוזנות).
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+}
+const { headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+
+<ul class="svc">
+  {
+    services.map((s, i) => (
+      <li class="svc__item reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+        <a class="svc__link" href={s.href}>
+          <span class="svc__inner">
+            <span class="svc__face svc__front">
+              <span class="svc__icon">
+                <Icon name={s.icon} size={34} />
+              </span>
+              <H class="svc__title">{s.title}</H>
+              <span class="svc__lead">{s.lead}</span>
+            </span>
+            <span class="svc__face svc__back" aria-hidden="true">
+              <span class="svc__card">{s.card}</span>
+              <span class="svc__more">לפרטים ←</span>
+            </span>
+          </span>
+          <span class="sr-only">: {s.card}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .svc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .svc {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .svc {
+      grid-template-columns: 1fr;
+    }
+  }
+  .svc__item {
+    margin: 0;
+  }
+  .svc__link {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    perspective: 1200px;
+    border-radius: 1.25rem;
+  }
+  .svc__inner {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: 15rem;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .svc__face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.75rem 1.5rem;
+    border-radius: 1.25rem;
+    text-align: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .svc__front {
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px -18px rgb(11 26 51 / 0.35);
+  }
+  .svc__back {
+    transform: rotateY(180deg);
+    color: var(--on-dark);
+    background:
+      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(16rem 10rem at 0 100%, rgb(209 154 74 / 0.22), transparent 72%),
+      var(--navy);
+  }
+  .svc__icon {
+    color: var(--teal-dark);
+  }
+  .svc__item:nth-child(even) .svc__icon {
+    color: var(--gold-dark);
+  }
+  .svc__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .svc__lead {
+    font-weight: 600;
+    color: #33445c;
+    line-height: 1.45;
+  }
+  .svc__card {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .svc__more {
+    font-weight: 800;
+    color: var(--gold-light);
+  }
+
+  /* היפוך: רק במכשיר עם עכבר, ורק אם לא ביקשו פחות תנועה */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .svc__link:hover .svc__inner,
+    .svc__link:focus-visible .svc__inner {
+      transform: rotateY(180deg);
+    }
+  }
+
+  /* מגע או פחות תנועה: בלי היפוך. שני הצדדים זה מתחת לזה, בכרטיס אחד */
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .svc__inner {
+      min-height: 0;
+      transform: none !important;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .svc__face {
+      position: static;
+      transform: none;
+      backface-visibility: visible;
+      border-radius: 0;
+    }
+    .svc__front {
+      border: 0;
+      box-shadow: none;
+      padding-bottom: 1rem;
+    }
+    .svc__back {
+      padding-block: 1.1rem 1.25rem;
+    }
+  }
+</style>

@@ -3,7 +3,11 @@
 interface Props {
   currentPath: string;
 }
+import { services } from '../data/services';
 const { currentPath } = Astro.props;
+
+// תת-תפריט השירותים: שמות קצרים (נוגה, 2026-11-07: 2-3 מילים, "כמו כולם")
+const serviceLinks = services.map((s) => ({ href: s.href, label: s.menu }));
 
 const links = [
   { href: '/', label: 'בית' },
@@ -39,14 +43,25 @@ const isCurrent = (href: string) =>
       <ul>
         {
           links.map((link) => (
-            <li>
+            <li class:list={[{ 'has-sub': link.href === '/services/' }]}>
               <a
                 href={link.href}
                 class:list={[{ 'is-current': isCurrent(link.href) }]}
-                aria-current={isCurrent(link.href) ? 'page' : undefined}
+                aria-current={currentPath === link.href ? 'page' : undefined}
               >
                 {link.label}
               </a>
+              {link.href === '/services/' && (
+                <ul class="site-nav__sub" aria-label="השירותים">
+                  {serviceLinks.map((sl) => (
+                    <li>
+                      <a href={sl.href} aria-current={currentPath === sl.href ? 'page' : undefined}>
+                        {sl.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))
         }
@@ -148,6 +163,18 @@ const isCurrent = (href: string) =>
     font-weight: 700;
   }
 
+  /* תת-תפריט השירותים. בנייד: מתחת ל"שירותים", מוזח פנימה */
+  .site-nav ul.site-nav__sub {
+    padding: 0 1rem 0.25rem 0;
+    border-inline-start: 2px solid var(--line);
+    margin-inline-start: 0.25rem;
+  }
+  .site-nav__sub a {
+    padding: 0.45rem 0.25rem;
+    font-size: 0.95rem;
+    color: #33445c;
+  }
+
   /* מסך רחב: ניווט אופקי, בלי כפתור */
   @media (min-width: 48rem) {
     .site-header__toggle {
@@ -172,6 +199,37 @@ const isCurrent = (href: string) =>
     }
     .site-nav a.is-current {
       border-bottom-color: var(--gold-dark);
+    }
+    /* תת-תפריט: נפתח במעבר עכבר או בפוקוס מהמקלדת */
+    .has-sub {
+      position: relative;
+    }
+    .site-nav ul.site-nav__sub {
+      display: none;
+      position: absolute;
+      top: 100%;
+      inset-inline-start: -1rem;
+      min-width: 13rem;
+      margin: 0;
+      padding: 0.5rem;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      box-shadow: 0 18px 40px -20px rgb(11 26 51 / 0.45);
+    }
+    .has-sub:hover .site-nav__sub,
+    .has-sub:focus-within .site-nav__sub {
+      display: block;
+    }
+    .site-nav__sub a {
+      display: block;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.6rem;
+      border-bottom: 0;
+      white-space: nowrap;
+    }
+    .site-nav__sub a:hover {
+      background: var(--mist);
     }
   }
 </style>

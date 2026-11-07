@@ -1,0 +1,507 @@
+---
+// עמוד לכל שירות (2026-11-07). התוכן ב-src/data/services.ts (טיוטה לאישור נוגה).
+// הסדר: פתיח (שם השירות, שורת התועלת, תיאור) ← נשמע מוכר? (שפת צורך, בהשראת pitron10) ← מה עושים בפועל
+//   ← (ליווי פיננסי: פס 20 שנה בבנק) ← (AI: ציר התהליך) ← מה משתנה ← שאלות ← משתלב עם שירותים נוספים ← קריאה לפעולה.
+// ההדרכות לא כאן: יש להן עמוד משלהן (/trainings/).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Timeline from '../../components/Timeline.astro';
+import Faq from '../../components/Faq.astro';
+import Icon from '../../components/Icon.astro';
+import { servicePages, serviceBySlug, faqs, type Service } from '../../data/services';
+import { contact } from '../../data/contact';
+
+export function getStaticPaths() {
+  return servicePages.map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
+}
+
+const { service: s } = Astro.props as { service: Service };
+const related = (s.related ?? []).map(serviceBySlug).filter((r): r is Service => Boolean(r));
+const faqItems = (s.faq ?? []).map((id) => faqs[id]).filter(Boolean);
+const waHref = `${contact.whatsapp}?text=${encodeURIComponent(`היי נוגה, אשמח לשמוע על ${s.title}`)}`;
+const isWhatsapp = s.cta === 'whatsapp';
+---
+
+<BaseLayout title={s.title} description={`${s.title}: ${s.lead}. ${s.intro ?? ''}`.trim()}>
+  <!-- 1. פתיח -->
+  <section class="sv-hero section--deep">
+    <div class="container sv-hero__grid">
+      <div>
+        <p class="sv-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+        <h1 class="sv-hero__title">{s.title}</h1>
+        <p class="sv-hero__lead"><span class="hl">{s.lead}</span></p>
+        {s.intro && <p class="sv-hero__intro">{s.intro}</p>}
+        <div class="sv-hero__actions">
+          {
+            isWhatsapp ? (
+              <a class="btn" href={waHref} target="_blank" rel="noopener">
+                לתיאום פגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+              </a>
+            ) : (
+              <a class="btn" href={contact.booking} target="_blank" rel="noopener">
+                קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+              </a>
+            )
+          }
+          <a class="btn btn--ghost" href="/services/">כל השירותים</a>
+        </div>
+      </div>
+      <!-- חפץ זכוכית עם אייקון השירות, באותה שפה של הכריכות באתר -->
+      <div class="sv-glass" aria-hidden="true">
+        <span class="sv-glass__tile"><Icon name={s.icon} size={88} /></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. נשמע מוכר? -->
+  {
+    s.pains && (
+      <section class="section">
+        <div class="container">
+          <h2 class="sec-title reveal">
+            נשמע <span class="hl--mark">מוכר?</span>
+          </h2>
+          <ul class="pains">
+            {s.pains.map((p, i) => (
+              <li class="pain reveal" style={`transition-delay: ${i * 0.1}s`}>
+                <span class="pain__q" aria-hidden="true">”</span>
+                <p>{p}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 3. מה עושים בפועל -->
+  {
+    s.does && (
+      <section class="section section--mist">
+        <div class="container">
+          <h2 class="sec-title reveal">{s.doesTitle ?? 'מה עושים בפועל'}</h2>
+          <ul class="does">
+            {s.does.map((d, i) => (
+              <li class="do reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+                <span class="do__icon">
+                  <Icon name={d.icon} size={28} />
+                </span>
+                <h3 class="do__title">{d.title}</h3>
+                <p class="do__text">{d.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 4. פס הדגשה (ליווי פיננסי: הניסיון בבנק) -->
+  {
+    s.highlight && (
+      <section class="sv-band">
+        <div class="container sv-band__inner reveal">
+          <span class="sv-band__big hl">{s.highlight.big}</span>
+          <span class="sv-band__text">{s.highlight.text}</span>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 5. ציר תהליך (כרגע רק בשירות ה-AI) -->
+  {
+    s.process && (
+      <section class="section">
+        <div class="container">
+          <h2 class="sec-title reveal">
+            איך זה <span class="hl--mark">עובד</span>
+          </h2>
+          <Timeline items={s.process} />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 6. מה משתנה -->
+  {
+    s.changes && (
+      <section class="section section--deep">
+        <div class="container">
+          <h2 class="sec-title reveal">
+            מה <span class="hl">משתנה</span>
+          </h2>
+          <ul class="changes">
+            {s.changes.map((c, i) => (
+              <li class="change reveal" style={`transition-delay: ${i * 0.1}s`}>
+                <span class="change__mark" aria-hidden="true">
+                  <Icon name="check" size={20} />
+                </span>
+                <p>{c}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 7. שאלות -->
+  {
+    faqItems.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <Faq items={faqItems} />
+          <p class="faq-more">
+            <a href="/services/#faq-all">לכל השאלות הנפוצות</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 8. משתלב עם: הבידול של נוגה הוא השילוב בין התחומים -->
+  {
+    related.length > 0 && (
+      <section class="section section--mist">
+        <div class="container">
+          <h2 class="sec-title reveal">משתלב עם</h2>
+          <p class="sec-lead">ברוב העסקים הכול מחובר: הכנסות, אנשים, תהליכים ומספרים. לכן אפשר לשלב כמה תחומים באותו ליווי.</p>
+          <ul class="rel">
+            {related.map((r) => (
+              <li>
+                <a class="rel__card" href={r.href}>
+                  <span class="rel__icon">
+                    <Icon name={r.icon} size={26} />
+                  </span>
+                  <span>
+                    <span class="rel__title">{r.title}</span>
+                    <span class="rel__lead">{r.lead}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 9. קריאה לפעולה. בפגישת ייעוץ: וואטסאפ (היומן מיועד לפגישת היכרות של חצי שעה). -->
+  {
+    isWhatsapp ? (
+      <section class="section section--dark sv-cta">
+        <div class="container">
+          <h2>מוכנים לפצח את האתגר?</h2>
+          <p>כתבו לי בוואטסאפ, ונקבע פגישה.</p>
+          <p>
+            <a class="btn" href={waHref} target="_blank" rel="noopener">
+              לתיאום פגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+            </a>
+          </p>
+        </div>
+      </section>
+    ) : (
+      <CtaBand />
+    )
+  }
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .sv-hero {
+    padding-block: clamp(2.5rem, 7vw, 4.5rem);
+  }
+  .sv-hero__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 52rem) {
+    .sv-hero__grid {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+  .sv-crumbs {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: var(--on-dark-soft);
+  }
+  .sv-crumbs a {
+    color: var(--gold-light);
+  }
+  .sv-hero__title {
+    margin: 0 0 0.5rem;
+    color: var(--white);
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .sv-hero__lead {
+    margin: 0 0 1rem;
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  .sv-hero__intro {
+    max-width: 40rem;
+    font-size: 1.12rem;
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+  }
+  .sv-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  /* חפץ זכוכית: אריח שקוף עם זוהר, ברוח הכריכות (ContentCover) */
+  .sv-glass {
+    display: none;
+  }
+  @media (min-width: 52rem) {
+    .sv-glass {
+      display: grid;
+      place-items: center;
+      position: relative;
+      min-height: 16rem;
+    }
+    .sv-glass::before {
+      content: '';
+      position: absolute;
+      width: 15rem;
+      height: 15rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgb(25 154 181 / 0.45), transparent 65%);
+      filter: blur(10px);
+    }
+    .sv-glass__tile {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 11rem;
+      height: 11rem;
+      border-radius: 2rem;
+      color: var(--gold-light);
+      background: linear-gradient(145deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.03));
+      border: 1px solid rgb(255 255 255 / 0.25);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.35),
+        0 30px 60px -25px rgb(0 0 0 / 0.6);
+      backdrop-filter: blur(8px);
+      transform: rotate(-6deg);
+    }
+  }
+
+  /* ---------- נשמע מוכר ---------- */
+  .pains {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 52rem) {
+    .pains {
+      grid-template-columns: 1fr;
+    }
+  }
+  .pain {
+    position: relative;
+    margin: 0;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--mist);
+    border-radius: 1.25rem;
+    border-inline-start: 4px solid var(--gold-dark);
+  }
+  .pain__q {
+    position: absolute;
+    top: 0.2rem;
+    inset-inline-end: 1rem;
+    font-size: 3rem;
+    line-height: 1;
+    color: rgb(25 154 181 / 0.35);
+    font-weight: 900;
+  }
+  .pain p {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--navy);
+  }
+
+  /* ---------- מה עושים ---------- */
+  .does {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .does {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .does {
+      grid-template-columns: 1fr;
+    }
+  }
+  .do {
+    margin: 0;
+    padding: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+  }
+  .do__icon {
+    display: inline-block;
+    color: var(--teal-dark);
+    margin-bottom: 0.5rem;
+  }
+  .do:nth-child(even) .do__icon {
+    color: var(--gold-dark);
+  }
+  .do__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+  }
+  .do__text {
+    margin: 0;
+    line-height: 1.6;
+    color: #33445c;
+  }
+
+  /* ---------- פס הדגשה ---------- */
+  .sv-band {
+    background: var(--gold-gradient);
+    padding-block: 1.75rem;
+  }
+  .sv-band__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    text-align: center;
+  }
+  .sv-band__big {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 900;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--navy);
+  }
+  .sv-band__text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  /* ---------- מה משתנה ---------- */
+  .changes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 52rem) {
+    .changes {
+      grid-template-columns: 1fr;
+    }
+  }
+  .change {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .change__mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .change p {
+    margin: 0.2rem 0 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--white);
+  }
+
+  .faq-more {
+    margin: 1.25rem 0 0;
+    font-weight: 700;
+  }
+  .faq-more a {
+    color: var(--teal-dark);
+  }
+
+  /* ---------- משתלב עם ---------- */
+  .rel {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+  }
+  .rel li {
+    margin: 0;
+  }
+  .rel__card {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    height: 100%;
+    padding: 1.1rem 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .rel__card:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+  }
+  .rel__icon {
+    flex: none;
+    color: var(--teal-dark);
+  }
+  .rel__title {
+    display: block;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .rel__lead {
+    display: block;
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+
+  .sv-cta {
+    text-align: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rel__card {
+      transition: none;
+    }
+  }
+</style>

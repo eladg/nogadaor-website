@@ -1,73 +1,169 @@
 ---
+// עמוד הבית (2026-11-07). הכול טיוטה לאישור נוגה. הביקורת והציונים: drafts/critique-2026-11-07.md.
+// המסר הראשי (נוגה): "העולם דוהר קדימה, העסק שלך חייב לגדול", אבל רק בצד החיובי והתועלתי.
+// הסדר: פתיח עם הבטחה ← 4 מספרים ← איך יודעים שהעסק מוכן לשלב הבא (6 מצבים) ← השירותים (ריבועים מתהפכים)
+//   ← הגישה ("בכל עסק הכסף נמצא במקום אחר") ← צמיחה היא חלק מהניהול השוטף ← שאלון ← סרטון הכנס ← קריאה לפעולה
+//   ← "כל מה שתמצאו באתר" (רשימה לחיפוש, רק ממה שיש באתר).
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import QuizFeature from '../components/QuizFeature.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import Icon from '../components/Icon.astro';
+import Star from '../components/Star.astro';
 import { contact } from '../data/contact';
+import { services, situations } from '../data/services';
+import { trainings } from '../data/trainings';
+import { quizYear } from '../data/quiz';
+import heroPhoto from '../assets/about/gallery/17-looking-ahead.jpg';
+
+// המספרים שנוגה אישרה (SKILL.md סעיף 6א). 4 בשורה.
+const stats = [
+  { num: '20', label: 'שנה בהנהלה של בנק גדול' },
+  { num: '450', label: 'עסקים בליווי' },
+  { num: '10', label: 'שנות ניסיון בייעוץ עסקי' },
+  { num: '9.4', label: 'ציון ב-4 שנות ייעוץ מטעם משרד הכלכלה' },
+];
+
+// "כל מה שתמצאו באתר": רק עמודים שקיימים (נוגה: "מכל מה שיש באתר ולא דברים שאין")
+const guides = (await getCollection('guides'))
+  .filter((g) => !g.data.comingSoon)
+  .sort((a, b) => (a.data.type === b.data.type ? a.data.order - b.data.order : a.data.type === 'guide' ? -1 : 1));
+const index = [
+  { title: 'שירותים', links: services.map((s) => ({ href: s.href, label: s.title })) },
+  { title: 'הדרכות', links: trainings.map((t) => ({ href: `/trainings/${t.slug}/`, label: t.title })) },
+  { title: 'מדריכים ומאמרים', links: guides.map((g) => ({ href: `/guides/${g.id}/`, label: g.data.title })) },
+  {
+    title: 'עוד באתר',
+    links: [
+      { href: '/guides/business-focus-quiz/', label: `שאלון מיקוד פיתוח עסקי ${quizYear}` },
+      { href: '/about/', label: 'אודות נוגה דיין אור' },
+      { href: '/testimonials/', label: 'המלצות לקוחות' },
+      { href: '/guides/', label: 'הדרכות לצפייה בחינם' },
+      { href: '/contact/', label: 'צור קשר' },
+      { href: '/contact/', label: 'הקהילה: תודעה עסקית מנצחת' },
+    ],
+  },
+];
 ---
 
-<BaseLayout title="בית">
-  <!-- אזור פתיחה: המסר המרכזי וכפתור פעולה -->
-  <section class="hero section">
-    <div class="container hero__inner">
-      <div class="hero__text">
-        <!-- TODO: ניסוח המסר המרכזי של האתר (❓ בסעיף 2 ב-REQUIREMENTS.md). נוגה תספק. -->
-        <h1>[כאן יופיע המסר המרכזי של האתר]</h1>
-        <p class="placeholder">תוכן חסר: משפט פתיחה / הצעת ערך. עדיין לא נקבע.</p>
-        <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
-        <p><a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
-      </div>
-      <!-- TODO: תמונה ראשית (למשל תמונה של נוגה) – נוגה תבחר מהחומרים -->
-      <div class="placeholder-img hero__img" role="img" aria-label="מקום שמור לתמונה ראשית">
-        תמונה חסרה:<br />תמונה ראשית
+<BaseLayout
+  title="ייעוץ עסקי וארגוני"
+  description="נוגה דיין אור: ייעוץ עסקי וארגוני לעסקים מבוססים, להגדלת הכנסות ושיפור רווחיות מתוך מה שכבר קיים בעסק. ייעוץ עסקי, ייעוץ ארגוני, אוטומציות ו-AI, ליווי פיננסי והדרכות."
+>
+  <!-- 1. פתיח: ההבטחה. התמונה: נוגה על הבמה, מביטה קדימה (מתאים למסר) -->
+  <section class="h-hero">
+    <div class="h-hero__media">
+      <Image
+        src={heroPhoto}
+        alt="נוגה דיין אור על הבמה, מביטה אל הקהל בחיוך"
+        widths={[640, 1024, 1600]}
+        sizes="(min-width: 52rem) 60vw, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="container h-hero__inner">
+      <div class="h-hero__text">
+        <p class="h-hero__kicker">נוגה דיין אור · ייעוץ עסקי וארגוני</p>
+        <!-- המסר הראשי: טיוטה שלי לאישור נוגה -->
+        <h1 class="h-hero__title">
+          העולם העסקי זז מהר.{' '}<span class="hl">זה הזמן של העסק שלך לגדול</span>
+        </h1>
+        <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות מתוך מה שכבר קיים בעסק, ולהוביל אותו קדימה בביטחון.</p>
+        <div class="h-hero__actions">
+          <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+          <a class="btn btn--ghost" href="/services/">לשירותים</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- תמצית השירותים, עם קישור לעמוד המלא -->
+  <!-- 2. מספרים -->
+  <section class="h-stats" aria-label="במספרים">
+    <div class="container">
+      <ul class="stats">
+        {
+          stats.map((s, i) => (
+            <li class="stat reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <span class="stat__num">{s.num}</span>
+              <span class="stat__label">{s.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. איך יודעים שהעסק מוכן לשלב הבא (בהשראת תמונה ששלחה נוגה; המצבים מתוך מסמך העבודה שלה) -->
   <section class="section section--mist">
     <div class="container">
-      <h2>במה אני עוזרת</h2>
-      <!-- TODO: להחליף בתמצית של השירותים בפועל, אחרי שנוגה תספק את הרשימה (עמוד שירותים) -->
-      <ul class="cards">
-        <li class="card">
-          <h3>[שירות ראשון]</h3>
-          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
-        </li>
-        <li class="card">
-          <h3>[שירות שני]</h3>
-          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
-        </li>
-        <li class="card">
-          <h3>[שירות שלישי]</h3>
-          <p class="placeholder">תוכן חסר: תיאור קצר.</p>
-        </li>
+      <h2 class="sec-title center reveal">איך יודעים שהעסק מוכן <span class="hl--mark">לשלב הבא?</span></h2>
+      <!-- מתוך מסר 2 של נוגה ("גם עסק מצליח צריך להמשיך להתפתח") -->
+      <p class="sec-lead center">גם עסק מצליח צריך להמשיך להתפתח. אלה הרגעים שבהם כדאי לעצור ולבדוק מה הצעד הבא:</p>
+      <ul class="moments">
+        {
+          situations.map((m, i) => (
+            <li class="moment reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="moment__icon">
+                <Icon name={m.icon} size={40} />
+              </span>
+              <p>{m.text}</p>
+            </li>
+          ))
+        }
       </ul>
-      <p class="more"><a href="/services/">לכל השירותים</a></p>
     </div>
   </section>
 
-  <!-- הגישה: הקשבה, עיבוד ובניית פתרון בזמן אמת (לפי סעיף 1 ב-REQUIREMENTS.md) -->
+  <!-- 4. השירותים -->
   <section class="section">
     <div class="container">
-      <h2>הגישה</h2>
-      <!-- TODO: ניסוח הגישה בקולה של נוגה. לפי המפרט: הקשבה, עיבוד ובניית פתרון בזמן אמת מתוך מה שהלקוח משתף. -->
-      <p class="placeholder">תוכן חסר: תיאור הגישה בניסוח של נוגה.</p>
-      <p class="more"><a href="/about/">עוד עליי</a></p>
+      <h2 class="sec-title reveal">איך אני עוזרת לעסק שלך <span class="hl--mark">לגדול</span></h2>
+      <p class="sec-lead">ייעוץ עסקי וארגוני משולב: הכנסות, אנשים, תהליכים ומספרים, בדרך שמתאימה לעסק שלך.</p>
+      <ServiceCards />
+      <p class="more"><a href="/services/">לכל השירותים ←</a></p>
     </div>
   </section>
 
-  <!-- שאלון המיקוד: עבר לכאן מעמוד המדריכים (נוגה, 2026-11-07). המיקום בעמוד הבית זמני, עד שנבנה את העמוד כולו. -->
+  <!-- 5. הגישה: מסר 1 של נוגה, מקוצר -->
+  <section class="section section--deep">
+    <div class="container h-approach">
+      <div class="h-approach__text reveal">
+        <h2 class="sec-title">בכל עסק הכסף נמצא <span class="hl">במקום אחר</span></h2>
+        <p>אני לא יודעת מראש איפה נמצא הכסף בעסק שלך, עד שאני מכירה ובודקת את העסק לעומק. לא בטוח שצריך עוד לידים, עוד שיווק, עוד עובדים או עוד מערכות.</p>
+        <p>לכן אני בוחנת את הפעילות, התפקידים ותהליכי העבודה, ומחפשת איפה אפשר לעשות סדר ולשפר את התוצאות, בלי להעמיס עוד עבודה והוצאות. הפתרונות צריכים להתאים לעסק, ולא להפך.</p>
+        <p class="more more--dark"><a href="/about/">עוד עליי ←</a></p>
+      </div>
+      <!-- המשפט מתוך "הלמה שלי" של נוגה -->
+      <figure class="h-quote reveal" style="transition-delay: 0.15s">
+        <blockquote>המתנה שלי היא לפתור בעיות עסקיות מורכבות ולמצוא דרכים פשוטות לגרום לדברים גדולים לקרות.</blockquote>
+        <figcaption>נוגה דיין אור</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6. מסר 2 בצד החיובי -->
+  <section class="h-growth">
+    <div class="container reveal">
+      <Star size={28} />
+      <p>צמיחה היא חלק מהניהול השוטף, <span class="hl--mark">לא תגובה למשבר.</span></p>
+    </div>
+  </section>
+
+  <!-- 7. שאלון המיקוד (עבר לכאן מעמוד המדריכים, 2026-11-07) -->
   <section class="section section--mist">
     <div class="container">
       <QuizFeature />
     </div>
   </section>
 
-  <!-- סרטון תדמית מכנס העסקים שנוגה הפיקה, עם המלצות. הכותרת לקוחה מהדף ב-Canva -->
+  <!-- 8. סרטון תדמית מכנס העסקים שנוגה הפיקה, עם המלצות. הכותרת לקוחה מהדף ב-Canva -->
   <section class="section">
     <div class="container">
-      <h2>קצת מכנס העסקים שפתח את השנה</h2>
+      <h2 class="sec-title center">קצת מכנס העסקים שפתח את השנה</h2>
       <div class="conference">
         <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
       </div>
@@ -75,32 +171,318 @@ import { contact } from '../data/contact';
   </section>
 
   <CtaBand />
+
+  <!-- 9. כל מה שתמצאו באתר: רשימה שעונה על הרבה חיפושים, רק ממה שקיים באתר (נוגה, 2026-11-07) -->
+  <section class="h-index" aria-labelledby="index-title">
+    <div class="container">
+      <h2 id="index-title" class="h-index__title">כל מה שתמצאו באתר</h2>
+      <div class="h-index__cols">
+        {
+          index.map((col) => (
+            <div>
+              <h3 class="h-index__col-title">{col.title}</h3>
+              <ul>
+                {col.links.map((l) => (
+                  <li>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .hero__inner {
+  /* ---------- 1. פתיח (באותו מבנה של פתיח האודות: תמונה בצד שמאל, טקסט בימין על הצללה) ---------- */
+  .h-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-deep);
+    color: var(--on-dark);
+  }
+  .h-hero__media {
+    position: relative;
+    height: min(62vw, 20rem);
+  }
+  .h-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 25%;
+  }
+  .h-hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(7 17 31 / 0.15) 0%, rgb(7 17 31 / 0.1) 55%, var(--navy-deep) 100%);
+  }
+  .h-hero__inner {
+    position: relative;
+    padding-block: 0.5rem 2.5rem;
+  }
+  .h-hero__kicker {
+    margin: 0 0 0.75rem;
+    font-weight: 800;
+    color: var(--gold-light);
+  }
+  .h-hero__title {
+    margin: 0 0 1rem;
+    color: var(--white);
+    font-size: clamp(2rem, 5.4vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.15;
+  }
+  .h-hero__title .hl {
+    display: block;
+  }
+  .h-hero__lead {
+    max-width: 34rem;
+    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .h-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  @media (min-width: 52rem) {
+    .h-hero {
+      display: flex;
+      align-items: center;
+      min-height: clamp(28rem, 70vh, 38rem);
+    }
+    .h-hero__media {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 60%;
+      height: auto;
+    }
+    .h-hero__media::after {
+      background:
+        linear-gradient(to left, var(--navy-deep) 0%, rgb(7 17 31 / 0.7) 16%, rgb(7 17 31 / 0) 42%),
+        linear-gradient(to right, rgb(7 17 31 / 0.85) 0%, rgb(7 17 31 / 0) 30%),
+        linear-gradient(0deg, rgb(7 17 31 / 0.7) 0%, rgb(7 17 31 / 0) 28%),
+        rgb(7 17 31 / 0.12);
+    }
+    .h-hero__inner {
+      padding-block: 3.5rem;
+    }
+    .h-hero__text {
+      max-width: min(38rem, 55vw);
+      text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
+    }
+  }
+
+  /* ---------- 2. מספרים ---------- */
+  .h-stats {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    padding-block: 2.25rem;
+  }
+  .stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    text-align: center;
+  }
+  @media (max-width: 48rem) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem 1rem;
+    }
+  }
+  .stat {
+    margin: 0;
+  }
+  .stat__num {
+    display: block;
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--teal-dark);
+  }
+  .stat:nth-child(even) .stat__num {
+    color: var(--gold-dark);
+  }
+  .stat__label {
+    display: block;
+    margin-top: 0.4rem;
+    font-weight: 600;
+    color: #33445c;
+    line-height: 1.4;
+  }
+
+  /* ---------- 3. מצבים: 3 בשורה, 2 בטאבלט, 1 בנייד ---------- */
+  .moments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .moments {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .moments {
+      grid-template-columns: 1fr;
+    }
+  }
+  .moment {
+    margin: 0;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+  }
+  .moment__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 0.75rem;
+    border-radius: 1.25rem;
+    color: var(--gold-light);
+    background:
+      radial-gradient(circle at 30% 20%, rgb(25 154 181 / 0.55), transparent 70%),
+      var(--navy);
+    box-shadow: 0 14px 28px -16px rgb(11 26 51 / 0.6);
+  }
+  .moment p {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  .more {
+    margin: 1.75rem 0 0;
+    font-weight: 800;
+  }
+  .more a {
+    color: var(--teal-dark);
+  }
+  .more--dark a {
+    color: var(--gold-light);
+  }
+
+  /* ---------- 5. הגישה ---------- */
+  .h-approach {
     display: grid;
     gap: 2rem;
     align-items: center;
   }
-  .hero__img {
-    aspect-ratio: 4 / 3;
+  @media (min-width: 52rem) {
+    .h-approach {
+      grid-template-columns: 1.3fr 1fr;
+      gap: 3rem;
+    }
   }
+  .h-approach__text p:not(.more) {
+    font-size: 1.12rem;
+    line-height: 1.75;
+  }
+  .h-quote {
+    margin: 0;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
+    border: 1px solid rgb(255 255 255 / 0.18);
+  }
+  .h-quote blockquote {
+    margin: 0 0 1rem;
+    font-size: clamp(1.3rem, 2.6vw, 1.6rem);
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--white);
+  }
+  .h-quote figcaption {
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  /* ---------- 6. צמיחה ---------- */
+  .h-growth {
+    padding-block: clamp(2.5rem, 6vw, 3.75rem);
+    text-align: center;
+  }
+  .h-growth p {
+    margin: 0.75rem auto 0;
+    max-width: 44rem;
+    font-size: clamp(1.5rem, 3.8vw, 2.3rem);
+    font-weight: 900;
+    line-height: 1.35;
+    color: var(--navy);
+  }
+
   .conference {
     max-width: 48rem;
     margin-inline: auto;
   }
-  .more {
-    margin-top: 1.5rem;
-    margin-bottom: 0;
-    font-weight: 700;
+
+  /* ---------- 9. כל מה שתמצאו באתר ---------- */
+  .h-index {
+    background: var(--mist);
+    padding-block: 2.5rem 3rem;
+    border-top: 1px solid var(--line);
   }
-  @media (min-width: 48rem) {
-    .hero__inner {
-      grid-template-columns: 1.2fr 1fr;
+  .h-index__title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin-bottom: 1.25rem;
+  }
+  .h-index__cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 52rem) {
+    .h-index__cols {
+      grid-template-columns: repeat(2, 1fr);
     }
-    .hero__img {
-      aspect-ratio: 4 / 5;
+  }
+  @media (max-width: 30rem) {
+    .h-index__cols {
+      grid-template-columns: 1fr;
     }
+  }
+  .h-index__col-title {
+    margin: 0 0 0.6rem;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--teal-dark);
+  }
+  .h-index ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .h-index a {
+    color: #33445c;
+    text-decoration: none;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .h-index a:hover {
+    color: var(--teal-dark);
+    text-decoration: underline;
   }
 </style>

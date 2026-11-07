@@ -9,9 +9,9 @@ const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
 
 <section class="section section--dark cta-band">
   <div class="container">
-    <!-- TODO: כותרת וטקסט לקריאה לפעולה – נוגה תספק ניסוח. אין להמציא הבטחות שיווקיות. -->
-    <h2>[כותרת לקריאה לפעולה]</h2>
-    <p class="placeholder">תוכן חסר: משפט או שניים שמזמינים ליצור קשר.</p>
+    <!-- הנוסח מתוך הטיוטות של נוגה ("הנעה לפעולה לדוגמה לפני טופס", drafts/services-background-drafts.md). טיוטה לאישור (2026-11-07). -->
+    <h2>מרגישים שיש בעסק פוטנציאל <span class="hl">שלא מתממש עד הסוף?</span></h2>
+    <p class="cta-band__lead">ביחד הרבה יותר קל לדייק, להחליט ולהניע מהלכים.</p>
     <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
     <p><a class="btn" href={contact.booking} target="_blank" rel="noopener">{buttonLabel}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
     <p class="cta-band__note"><a href={contact.whatsapp} target="_blank" rel="noopener">{contact.bookingNote}</a></p>
@@ -29,9 +29,22 @@ const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
   .cta-band__note a {
     color: var(--on-dark-soft);
   }
-  .cta-band .placeholder {
-    max-width: 36rem;
+  .cta-band {
+    background:
+      radial-gradient(40rem 22rem at 50% 0, rgb(25 154 181 / 0.22), transparent 70%),
+      radial-gradient(30rem 18rem at 50% 100%, rgb(209 154 74 / 0.14), transparent 72%),
+      var(--navy);
+  }
+  .cta-band h2 {
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    font-weight: 900;
+    max-width: 44rem;
     margin-inline: auto;
-    margin-bottom: 1.5rem;
+  }
+  .cta-band__lead {
+    max-width: 36rem;
+    margin: 0 auto 1.5rem;
+    font-size: 1.15rem;
+    color: var(--on-dark);
   }
 </style>
