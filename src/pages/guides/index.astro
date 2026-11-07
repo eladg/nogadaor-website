@@ -40,16 +40,24 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
         {
           items.map((g, i) => {
             const isArticle = g.data.type === 'article';
+            const soon = g.data.comingSoon;
             return (
-              <li class="item reveal" style={`transition-delay: ${(i % 3) * 0.12}s`}>
-                <a class="item__cover" href={`/guides/${g.id}/`} tabindex="-1" aria-hidden="true">
-                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
-                </a>
+              <li class:list={['item reveal', { 'item--soon': soon }]} style={`transition-delay: ${(i % 3) * 0.12}s`}>
+                {soon ? (
+                  <div class="item__cover">
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
+                    <span class="soon-badge">בקרוב</span>
+                  </div>
+                ) : (
+                  <a class="item__cover" href={`/guides/${g.id}/`} tabindex="-1" aria-hidden="true">
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
+                  </a>
+                )}
                 <p class="meta">
-                  <Icon name={isArticle ? 'book-open' : 'list'} size={16} /> <span>{isArticle ? 'מאמר' : 'מדריך'}</span> · {readingMinutes(g.body)} דק' קריאה
+                  <Icon name={isArticle ? 'book-open' : 'list'} size={16} /> <span>{isArticle ? 'מאמר' : 'מדריך'}</span> · {soon ? 'בכתיבה' : `${readingMinutes(g.body)} דק' קריאה`}
                 </p>
                 <h3 class="item__title">
-                  <a href={`/guides/${g.id}/`}>{g.data.title}</a>
+                  {soon ? g.data.title : <a href={`/guides/${g.id}/`}>{g.data.title}</a>}
                 </h3>
                 {g.data.tagline && <p class="item__sub">{g.data.tagline}</p>}
               </li>
@@ -155,6 +163,24 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   }
   .item:hover .item__cover {
     transform: translateY(-4px);
+  }
+  /* מדריך שעוד בכתיבה: בלי קישור, עם תג "בקרוב" */
+  .item--soon .item__cover {
+    position: relative;
+  }
+  .item--soon:hover .item__cover {
+    transform: none;
+  }
+  .soon-badge {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-start: 0.75rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 0.85rem;
+    font-weight: 800;
   }
   .item__title {
     margin: 0 0 0.25rem;

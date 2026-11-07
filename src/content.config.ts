@@ -31,6 +31,8 @@ const guides = defineCollection({
     coverStar: z.enum(['start', 'end']).optional(),
     // קובץ להורדה (למשל שאלון ב-Word), מתוך התיקייה public. מופיע ככפתור ליד "הדפסה" ו"שיתוף".
     download: z.object({ href: z.string(), label: z.string() }).optional(),
+    // comingSoon: מדריך שנוגה רוצה ועוד אין לו תוכן (2026-11-07). מופיע בעמוד המדריכים עם תג "בקרוב", בלי קישור ובלי עמוד משלו.
+    comingSoon: z.boolean().default(false),
   }),
 });
 

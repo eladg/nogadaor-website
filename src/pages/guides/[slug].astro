@@ -29,7 +29,8 @@ import { contact } from '../../data/contact';
 import nogaPhoto from '../../assets/contact/noga-bench.jpg';
 
 export async function getStaticPaths() {
-  const guides = await getCollection('guides');
+  // מדריכים שעוד אין להם תוכן (comingSoon) לא מקבלים עמוד
+  const guides = (await getCollection('guides')).filter((g) => !g.data.comingSoon);
   return guides.map((guide) => ({ params: { slug: guide.id }, props: { guide, all: guides } }));
 }
 
