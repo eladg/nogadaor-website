@@ -4,6 +4,7 @@
 //   ← למי זה מתאים ← מה משתנה (היום / המטרה) ← שאלות נפוצות ← קריאה לפעולה.
 // ההשראות שנוגה בחרה: incentive-group (הבטחה, "לא לכולם", "אחרי", שאלות), yanivless (ריבועים מתהפכים, ציר), pitron10 (שפת צורך).
 // השראה בלבד, לא העתקה. הביקורת והציונים: drafts/critique-2026-11-07.md.
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import ServiceCards from '../../components/ServiceCards.astro';
@@ -13,6 +14,12 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import { areas, steps, fit, beforeAfter, faqs, overviewFaq } from '../../data/services';
 import { contact } from '../../data/contact';
+// תמונות אווירה (AI) והדמות המצוירת, נוגה 2026-11-07
+import stairs from '../../assets/atmosphere/dark-stairs.webp';
+import meeting from '../../assets/atmosphere/light-meeting-table.webp';
+import flipchart from '../../assets/character/flipchart.webp';
+const stairsBg = await getImage({ src: stairs, width: 1800, format: 'webp' });
+const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
 ---
 
 <BaseLayout
@@ -20,13 +27,17 @@ import { contact } from '../../data/contact';
   description="ייעוץ עסקי, ייעוץ ארגוני, אוטומציות ו-AI לעסקים, ליווי פיננסי, פגישת ייעוץ והדרכות: ייעוץ עסקי וארגוני לעסקים מבוססים להגדלת הכנסות ושיפור רווחיות."
 >
   <!-- 1. פתיח: ההבטחה -->
-  <section class="s-hero section--deep">
+  <section class="s-hero section--deep" style={`--bg: url(${stairsBg.src})`}>
     <div class="container s-hero__inner">
       <p class="s-hero__kicker">שירותים</p>
       <!-- התואר של נוגה -->
       <h1 class="s-hero__title">ייעוץ עסקי וארגוני להגדלת <span class="hl">הכנסות</span> ושיפור <span class="hl">רווחיות</span></h1>
       <!-- מתוך "משפטים" ו"במשפט אחד" במסמך העבודה של נוגה -->
       <p class="s-hero__lead">להרוויח יותר מהפעילות, מהלקוחות ומהמשאבים שכבר קיימים בעסק, בפתרונות פשוטים וממוקדים שמותאמים לעסק שלך.</p>
+      <!-- נוגה (2026-11-07): האתר צריך לשדר קידום של פרויקטים, משימות, תהליכי עבודה ויעדים -->
+      <ul class="s-hero__chips" aria-label="מה מקדמים">
+        <li>פרויקטים</li><li>משימות</li><li>תהליכי עבודה</li><li>יעדים</li><li>צוותים</li>
+      </ul>
       <div class="s-hero__actions">
         <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a class="btn btn--ghost" href="#services">לכל השירותים</a>
@@ -37,7 +48,7 @@ import { contact } from '../../data/contact';
   <!-- 2. השירותים: ריבועים מתהפכים -->
   <section class="section" id="services">
     <div class="container">
-      <h2 class="sec-title reveal">במה אני <span class="hl--mark">עוזרת</span></h2>
+      <h2 class="sec-title reveal">במה הליווי <span class="hl--mark">מקדם</span> את העסק</h2>
       <p class="sec-lead">שישה שירותים, שמתחברים זה לזה לפי מה שהעסק שלך צריך.</p>
       <ServiceCards />
     </div>
@@ -66,12 +77,17 @@ import { contact } from '../../data/contact';
   </section>
 
   <!-- 4. תהליך הליווי: שלושת השלבים של נוגה (2026-11-07). הפתיחה מטקסט האתר הקודם שלה ("ההיגיון אומר..."). -->
-  <section class="section section--deep">
+  <section class="section s-process">
     <div class="container">
-      <h2 class="sec-title reveal">הגדלת הכנסות לא מתחילה <span class="hl">בעוד משימות</span></h2>
-      <p class="sec-lead">ההיגיון אומר שכדי להגדיל הכנסות צריך לעשות יותר: עוד רעיונות, עוד מאמץ, עוד שיווק ועוד הוצאות. אבל הגדלת הכנסות מתחילה בהבנה עמוקה של העסק, הלקוחות, ההצעה, המסרים, תהליכי העבודה ושגרות הניהול.</p>
-      <h3 class="process-title">תהליך ליווי עסקי וארגוני להגדלת הכנסות ושיפור הרווחיות</h3>
-      <Timeline items={steps} tone="dark" />
+      <div class="s-process__head">
+        <div>
+          <h2 class="sec-title reveal">הגדלת הכנסות לא מתחילה <span class="hl--mark">בעוד משימות</span></h2>
+          <p class="sec-lead">ההיגיון אומר שכדי להגדיל הכנסות צריך לעשות יותר: עוד רעיונות, עוד מאמץ, עוד שיווק ועוד הוצאות. אבל הגדלת הכנסות מתחילה בהבנה עמוקה של העסק, הלקוחות, ההצעה, המסרים, תהליכי העבודה ושגרות הניהול.</p>
+          <h3 class="process-title">תהליך ליווי עסקי וארגוני להגדלת הכנסות ושיפור הרווחיות</h3>
+        </div>
+        <Image src={flipchart} alt="" widths={[240, 380]} sizes="12rem" class="toon s-process__toon" />
+      </div>
+      <Timeline items={steps} />
       <p class="principle reveal">
         <Star size={20} />
         <span>המטרה: לא רק להבין מה צריך לשנות, אלא לגרום לשינויים לקרות, ולבנות עסק שמנוהל טוב יותר, מרוויח יותר וממשיך לצמוח.</span>
@@ -79,8 +95,8 @@ import { contact } from '../../data/contact';
     </div>
   </section>
 
-  <!-- 5. למי זה מתאים: שני טורים -->
-  <section class="section">
+  <!-- 5. למי זה מתאים: שני טורים, ותמונת אווירה (חדר ישיבות) מאחור בצד שמאל -->
+  <section class="section s-fit" style={`--bg: url(${meetingBg.src})`}>
     <div class="container">
       <h2 class="sec-title reveal">הליווי מתאים לעסקים <span class="hl--mark">שכבר בנו משהו</span></h2>
       <div class="fit">
@@ -116,7 +132,15 @@ import { contact } from '../../data/contact';
   <!-- 6. מה משתנה: היום מול המטרה. בלי הבטחה לתוצאות. -->
   <section class="section section--mist">
     <div class="container">
-      <h2 class="sec-title reveal">מה <span class="hl--mark">משתנה</span> בעסק</h2>
+      <div class="ba-head">
+        <h2 class="sec-title reveal">מה <span class="hl--mark">משתנה</span> בעסק</h2>
+        <!-- מתג: לוחצים ורואים את כל השורות עוברות מ"היום" ל"המטרה". בלי JavaScript מוצגים שני הצדדים. -->
+        <button class="ba-toggle" type="button" aria-pressed="false" hidden>
+          <span class="ba-toggle__opt">היום</span>
+          <span class="ba-toggle__track" aria-hidden="true"><span class="ba-toggle__knob"></span></span>
+          <span class="ba-toggle__opt">המטרה</span>
+        </button>
+      </div>
       <ul class="ba">
         {
           beforeAfter.map((row, i) => (
@@ -148,9 +172,41 @@ import { contact } from '../../data/contact';
 </BaseLayout>
 
 <style>
-  /* ---------- פתיח ---------- */
+  /* ---------- פתיח: מדרגות מוארות (תמונת אווירה) בצד שמאל ---------- */
   .s-hero {
+    position: relative;
+    overflow: hidden;
     padding-block: clamp(3rem, 8vw, 5.5rem);
+  }
+  .s-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg) left center / cover no-repeat;
+    opacity: 0.75;
+    mask-image: linear-gradient(to left, transparent 20%, #000 75%);
+    -webkit-mask-image: linear-gradient(to left, transparent 20%, #000 75%);
+  }
+  .s-hero__inner {
+    position: relative;
+  }
+  .s-hero__chips {
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .s-hero__chips li {
+    margin: 0;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgb(252 220 109 / 0.45);
+    color: var(--gold-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    background: rgb(252 220 109 / 0.06);
   }
   .s-hero__inner {
     max-width: 52rem;
@@ -222,11 +278,139 @@ import { contact } from '../../data/contact';
     color: #33445c;
   }
 
+  /* ---------- תהליך הליווי: בהיר, עם הדמות ליד הלוח ---------- */
+  .s-process {
+    background: linear-gradient(180deg, var(--white), var(--mist));
+  }
+  .s-process__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .s-process__head :global(.s-process__toon) {
+    flex: none;
+    width: clamp(7rem, 15vw, 12rem);
+  }
+  /* בטלפון: הדמות מתחת לטקסט, כדי שהטקסט לא יידחק לעמודה צרה */
+  @media (max-width: 40rem) {
+    .s-process__head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .s-process__head :global(.s-process__toon) {
+      width: 8rem;
+      align-self: flex-end;
+    }
+  }
   .process-title {
-    margin: 0.5rem 0 1.75rem;
-    font-size: 1.2rem;
+    margin: 0;
+    font-size: 1.15rem;
     font-weight: 800;
-    color: var(--gold-light);
+    color: var(--teal-dark);
+  }
+
+  /* ---------- למי זה מתאים: תמונת אווירה מאחור ---------- */
+  .s-fit {
+    position: relative;
+    overflow: hidden;
+  }
+  .s-fit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg) left center / cover no-repeat;
+    opacity: 0.5;
+    mask-image: linear-gradient(to left, transparent 25%, #000 85%);
+    -webkit-mask-image: linear-gradient(to left, transparent 25%, #000 85%);
+  }
+  .s-fit .container {
+    position: relative;
+  }
+
+  /* ---------- מתג היום / המטרה ---------- */
+  .ba-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .ba-head .sec-title {
+    margin: 0;
+  }
+  .ba-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font: inherit;
+    font-weight: 800;
+    color: var(--navy);
+    cursor: pointer;
+  }
+  .ba-toggle[hidden] {
+    display: none;
+  }
+  .ba-toggle__track {
+    position: relative;
+    width: 3rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: #cfd9e3;
+    transition: background 0.3s ease;
+  }
+  .ba-toggle__knob {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+    transition: transform 0.3s ease;
+  }
+  .ba-toggle[aria-pressed='true'] .ba-toggle__track {
+    background: var(--gold-gradient);
+  }
+  .ba-toggle[aria-pressed='true'] .ba-toggle__knob {
+    transform: translateX(-1.4rem);
+  }
+  /* כשהמתג פעיל (יש JavaScript): כל שורה מציגה צד אחד, ומתחלפת בהופעה עדינה */
+  .ba.is-live .ba__row {
+    grid-template-columns: 1fr;
+  }
+  .ba.is-live .ba__arrow,
+  .ba.is-live .ba__cell--goal {
+    display: none;
+  }
+  .ba.is-live.show-goal .ba__cell--goal {
+    display: block;
+    animation: ba-in 0.45s ease both;
+  }
+  .ba.is-live.show-goal .ba__cell--today {
+    display: none;
+  }
+  @keyframes ba-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ba.is-live.show-goal .ba__cell--goal {
+      animation: none;
+    }
+    .ba-toggle__track,
+    .ba-toggle__knob {
+      transition: none;
+    }
   }
 
   /* ---------- העיקרון ---------- */
@@ -370,3 +554,18 @@ import { contact } from '../../data/contact';
     }
   }
 </style>
+
+<script>
+  // מתג "היום / המטרה": מחליף את כל השורות יחד. בלי JavaScript המתג מוסתר ושני הצדדים מוצגים.
+  const toggle = document.querySelector<HTMLButtonElement>('.ba-toggle');
+  const list = document.querySelector<HTMLElement>('.ba');
+  if (toggle && list) {
+    toggle.hidden = false;
+    list.classList.add('is-live');
+    toggle.addEventListener('click', () => {
+      const on = toggle.getAttribute('aria-pressed') !== 'true';
+      toggle.setAttribute('aria-pressed', String(on));
+      list.classList.toggle('show-goal', on);
+    });
+  }
+</script>

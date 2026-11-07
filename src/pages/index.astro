@@ -4,7 +4,7 @@
 // הסדר: פתיח עם הבטחה ← 4 מספרים ← דווקא עכשיו (הטקסט של נוגה) ← איך יודעים שהעסק מוכן לשלב הבא (6 מצבים)
 //   ← השירותים (ריבועים מתהפכים) ← הגישה + נעים להכיר ← שאלון ← סרטון הכנס ← קריאה לפעולה
 //   ← "כל מה שתמצאו באתר" (רשימה לחיפוש, רק ממה שיש באתר).
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -18,14 +18,24 @@ import { services, situations } from '../data/services';
 import { trainings } from '../data/trainings';
 import { quizYear } from '../data/quiz';
 import heroPhoto from '../assets/about/gallery/17-looking-ahead.jpg';
+import introPhoto from '../assets/about/gallery/05-podium-smile.jpg';
+// תמונות אווירה (AI) ששלחה נוגה, 2026-11-07. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
+import darkLines from '../assets/atmosphere/dark-lines.webp';
+import treasure from '../assets/character/treasure.webp';
+import pointing from '../assets/character/pointing-down.webp';
 
-// המספרים שנוגה אישרה (SKILL.md סעיף 6א). 4 בשורה.
+const linesBg = await getImage({ src: darkLines, width: 1600, format: 'webp' });
+
+// המספרים שנוגה אישרה (SKILL.md סעיף 6א). 4 בשורה. הספירה עולה כשמגיעים לאזור.
 const stats = [
-  { num: '20', label: 'שנה בהנהלה של בנק גדול' },
-  { num: '450', label: 'עסקים בליווי' },
-  { num: '10', label: 'שנות ניסיון בייעוץ עסקי' },
-  { num: '9.4', label: 'ציון ב-4 שנות ייעוץ מטעם משרד הכלכלה' },
+  { num: 20, label: 'שנה בהנהלה של בנק גדול' },
+  { num: 450, label: 'עסקים בליווי' },
+  { num: 10, label: 'שנות ניסיון בייעוץ עסקי' },
+  { num: 9.4, label: 'ציון ב-4 שנות ייעוץ מטעם משרד הכלכלה' },
 ];
+
+// נוגה (2026-11-07): האתר צריך לשדר שהיא מקדמת עסקים בפרויקטים, במשימות, בתהליכי עבודה וביעדים
+const advances = ['פרויקטים', 'משימות', 'תהליכי עבודה', 'יעדים', 'צוותים', 'מהלכי צמיחה'];
 
 // "כל מה שתמצאו באתר": רק עמודים שקיימים (נוגה: "מכל מה שיש באתר ולא דברים שאין")
 const guides = (await getCollection('guides'))
@@ -73,6 +83,11 @@ const index = [
           העולם העסקי זז מהר.{' '}<span class="hl">זה הזמן של העסק שלך לגדול</span>
         </h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות מתוך מה שכבר קיים בעסק, ולהוביל אותו קדימה בביטחון.</p>
+        <!-- מילה מתחלפת: מה מקדמים. קוראי מסך מקבלים את כל הרשימה, ומי שביקש פחות תנועה רואה מילה אחת קבועה. -->
+        <p class="h-hero__advance">
+          <span class="sr-only">מקדמים יחד: {advances.join(', ')}</span>
+          <span aria-hidden="true">מקדמים יחד{' '}<span class="rot" data-words={advances.join('|')}><span class="rot__word">{advances[0]}</span></span></span>
+        </p>
         <div class="h-hero__actions">
           <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
           <a class="btn btn--ghost" href="/services/">לשירותים</a>
@@ -88,7 +103,7 @@ const index = [
         {
           stats.map((s, i) => (
             <li class="stat reveal" style={`transition-delay: ${i * 0.08}s`}>
-              <span class="stat__num">{s.num}</span>
+              <span class="stat__num" data-count={s.num}>{s.num}</span>
               <span class="stat__label">{s.label}</span>
             </li>
           ))
@@ -99,8 +114,8 @@ const index = [
 
   <!-- 2א. דווקא עכשיו: מתוך הטקסט שנוגה כתבה (2026-11-07, drafts/strategy-and-products-2026-11-07.md).
        לבקשתה, רק מה שמשדר קידמה ולא קורבנות: "המלחמה שלא נגמרת" לא נכנסה. המשפט האחרון בפסקה השנייה הוא תוספת שלי. -->
-  <section class="section section--deep h-now">
-    <div class="container">
+  <section class="section section--deep h-now" style={`--bg: url(${linesBg.src})`}>
+    <div class="container h-now__inner">
       <h2 class="sec-title reveal">דווקא עכשיו, <span class="hl">הזמן להתקדם</span></h2>
       <p class="sec-lead">עסק צריך להשקיע בפיתוח עסקי באופן שוטף: להיות עם היד על הדופק, להתאים את עצמו למגמות המתפתחות ולבחון איך לייצר יותר ערך והכנסות.</p>
       <p class="h-now__kicker">הגבינה זזה לכולם:</p>
@@ -112,7 +127,7 @@ const index = [
       <p class="h-now__end">מה שעבד בעבר כבר לא תמיד מספיק. וזו בדיוק ההזדמנות לבנות את המהלך הבא.</p>
       <p class="h-now__principle reveal">
         <Star size={24} />
-        <span>צמיחה היא חלק מהניהול השוטף, לא תגובה למשבר.</span>
+        <span>צמיחה היא חלק מהניהול השוטף.</span>
       </p>
     </div>
   </section>
@@ -141,35 +156,54 @@ const index = [
   <!-- 4. השירותים -->
   <section class="section">
     <div class="container">
-      <h2 class="sec-title reveal">איך אני עוזרת לעסק שלך <span class="hl--mark">לגדול</span></h2>
+      <h2 class="sec-title reveal">מה מקדמים <span class="hl--mark">יחד</span></h2>
       <p class="sec-lead">ייעוץ עסקי וארגוני משולב: הכנסות, אנשים, תהליכים ומספרים, בדרך שמתאימה לעסק שלך.</p>
       <ServiceCards />
       <p class="more"><a href="/services/">לכל השירותים ←</a></p>
     </div>
   </section>
 
-  <!-- 5. הגישה: מסר 1 של נוגה, מקוצר -->
-  <section class="section section--deep">
+  <!-- 5. הגישה: מסר 1 של נוגה, מקוצר. באזור בהיר, עם הדמות ותיבת האוצר (הכסף שמסתתר בעסק). -->
+  <section class="section h-approach-sec">
     <div class="container h-approach">
       <div class="h-approach__text reveal">
-        <h2 class="sec-title">בכל עסק הכסף נמצא <span class="hl">במקום אחר</span></h2>
-        <p>אני לא יודעת מראש איפה נמצא הכסף בעסק שלך, עד שאני מכירה ובודקת את העסק לעומק. לא בטוח שצריך עוד לידים, עוד שיווק, עוד עובדים או עוד מערכות.</p>
+        <h2 class="sec-title">בכל עסק הכסף נמצא <span class="hl--mark">במקום אחר</span></h2>
+        <p>אי אפשר לדעת מראש איפה נמצא הכסף בעסק, עד שמכירים ובודקים אותו לעומק. לא בטוח שצריך עוד לידים, עוד שיווק, עוד עובדים או עוד מערכות.</p>
         <!-- מתוך הטקסט שנוגה כתבה (2026-11-07) -->
         <p>פיתוח עסקי לא מתחיל בפתרון מוכן, אלא בלמידת העסק: מה עובד, מה נשחק, ואילו משאבים ונכסים קיימים יכולים לייצר את הזדמנות הצמיחה הבאה. מכאן בונים מהלכים מדויקים, פשוטים וישימים, בלי הוצאות נוספות ופרויקטים מסובכים.</p>
       </div>
-      <!-- נעים להכיר: הפתיח האישי שגובש באסטרטגיה של נוגה, והניסיון במספרים המאושרים (450 עסקים, 20 שנה) -->
-      <div class="h-intro reveal" style="transition-delay: 0.15s">
-        <p class="h-intro__hi">נעים להכיר, <span class="hl">נוגה דיין אור</span></p>
-        <p class="h-intro__voice">חיה ונושמת פיתוח עסקים והגדלת הכנסות! אוהבת להיכנס לעסק, להכיר את האנשים, להבין איך דברים עובדים, לגלות הזדמנויות עסקיות, לחבר בין רעיונות, לעשות סדר ובעיקר לגרום לדברים טובים לקרות.</p>
-        <p class="h-intro__cred">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, עם ניסיון בליווי 450 עסקים ו-20 שנה של תהליכי ניהול, פיתוח עסקי ואסטרטגיה בהנהלה של בנק גדול.</p>
-        <p class="more more--dark"><a href="/about/">עוד עליי ←</a></p>
+      <div class="h-approach__art reveal" style="transition-delay: 0.15s">
+        <Image src={treasure} alt="" widths={[360, 560]} sizes="(min-width: 52rem) 22rem, 70vw" class="toon" />
       </div>
     </div>
   </section>
 
-  <!-- 7. שאלון המיקוד (עבר לכאן מעמוד המדריכים, 2026-11-07) -->
+  <!-- 6. נעים להכיר: תמונה של נוגה כרקע (נוגה מעדיפה תמונה כרקע ולא במסגרת). הפתיח האישי שגובש באסטרטגיה שלה. -->
+  <section class="h-meet">
+    <div class="h-meet__media">
+      <Image src={introPhoto} alt="נוגה דיין אור ליד הדוכן על הבמה, מחייכת" widths={[640, 1024, 1400]} sizes="(min-width: 52rem) 55vw, 100vw" />
+    </div>
+    <div class="container h-meet__inner">
+      <div class="h-meet__text reveal">
+        <h2 class="h-meet__hi">נעים להכיר, <span class="hl">נוגה דיין אור</span></h2>
+        <p class="h-meet__voice">חיה ונושמת פיתוח עסקים והגדלת הכנסות! אוהבת להיכנס לעסק, להכיר את האנשים, להבין איך דברים עובדים, לגלות הזדמנויות עסקיות, לחבר בין רעיונות, לעשות סדר ובעיקר לגרום לדברים טובים לקרות.</p>
+        <p class="h-meet__cred">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, עם ניסיון בליווי 450 עסקים ו-20 שנה של תהליכי ניהול, פיתוח עסקי ואסטרטגיה בהנהלה של בנק גדול.</p>
+        <p class="more more--dark"><a href="/about/">עוד על נוגה ←</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. שאלון המיקוד (עבר לכאן מעמוד המדריכים, 2026-11-07). הדמות מצביעה על השאלון. -->
   <section class="section section--mist">
     <div class="container">
+      <div class="h-quiz-head">
+        <div class="reveal">
+          <!-- הכותרת היא הצעה שלי -->
+          <h2 class="sec-title">איפה העסק שלך <span class="hl--mark">עומד היום?</span></h2>
+          <p class="sec-lead">שאלון קצר שעושה סדר: פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
+        </div>
+        <Image src={pointing} alt="" widths={[220, 340]} sizes="11rem" class="toon h-quiz-head__toon" />
+      </div>
       <QuizFeature />
     </div>
   </section>
@@ -396,48 +430,170 @@ const index = [
     color: var(--gold-light);
   }
 
-  /* ---------- 5. הגישה ---------- */
+  /* ---------- 5. הגישה (בהיר, עם הדמות) ---------- */
+  .h-approach-sec {
+    background: linear-gradient(180deg, var(--white), var(--mist));
+  }
   .h-approach {
     display: grid;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
   }
   @media (min-width: 52rem) {
     .h-approach {
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: 1.4fr 1fr;
       gap: 3rem;
     }
   }
-  .h-approach__text p:not(.more) {
+  .h-approach__text p {
     font-size: 1.12rem;
     line-height: 1.75;
+    color: #33445c;
   }
-  /* נעים להכיר */
-  .h-intro {
-    padding: 2rem;
-    border-radius: 1.5rem;
-    background: linear-gradient(145deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
-    border: 1px solid rgb(255 255 255 / 0.18);
+  .h-approach__art {
+    display: flex;
+    justify-content: center;
   }
-  .h-intro__hi {
-    margin: 0 0 0.75rem;
-    font-size: clamp(1.4rem, 2.8vw, 1.75rem);
+  .h-approach__art :global(.toon) {
+    max-width: 21rem;
+  }
+
+  /* ---------- 6. נעים להכיר: תמונה כרקע ---------- */
+  .h-meet {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-deep);
+    color: var(--on-dark);
+  }
+  .h-meet__media {
+    position: relative;
+    height: min(64vw, 20rem);
+  }
+  .h-meet__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 25%;
+  }
+  .h-meet__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(7 17 31 / 0.1) 50%, var(--navy-deep) 100%);
+  }
+  .h-meet__inner {
+    position: relative;
+    padding-block: 0.5rem 2.75rem;
+  }
+  .h-meet__hi {
+    margin: 0 0 0.85rem;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
     font-weight: 900;
     color: var(--white);
   }
-  .h-intro__voice {
-    font-size: 1.12rem;
+  .h-meet__voice {
+    font-size: 1.15rem;
     font-weight: 600;
     line-height: 1.7;
     color: var(--white);
   }
-  .h-intro__cred {
-    font-size: 1rem;
+  .h-meet__cred {
     line-height: 1.65;
     color: var(--on-dark-soft);
   }
+  @media (min-width: 52rem) {
+    .h-meet {
+      display: flex;
+      align-items: center;
+      min-height: 30rem;
+    }
+    .h-meet__media {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 55%;
+      height: auto;
+    }
+    .h-meet__media::after {
+      background:
+        linear-gradient(to left, var(--navy-deep) 0%, rgb(7 17 31 / 0.6) 18%, rgb(7 17 31 / 0) 45%),
+        linear-gradient(0deg, rgb(7 17 31 / 0.5) 0%, rgb(7 17 31 / 0) 30%);
+    }
+    .h-meet__inner {
+      padding-block: 3.5rem;
+    }
+    .h-meet__text {
+      max-width: min(36rem, 48vw);
+    }
+  }
 
-  /* ---------- דווקא עכשיו ---------- */
+  /* ---------- 7. כותרת השאלון עם הדמות ---------- */
+  .h-quiz-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .h-quiz-head .sec-lead {
+    margin-bottom: 1.25rem;
+  }
+  .h-quiz-head :global(.h-quiz-head__toon) {
+    flex: none;
+    width: clamp(6.5rem, 16vw, 11rem);
+    margin-bottom: -0.5rem;
+  }
+  /* בטלפון: הדמות מתחת לטקסט, ומצביעה על השאלון */
+  @media (max-width: 40rem) {
+    .h-quiz-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .h-quiz-head :global(.h-quiz-head__toon) {
+      width: 7.5rem;
+      align-self: flex-end;
+    }
+  }
+
+  /* ---------- מילה מתחלפת בפתיח ---------- */
+  .h-hero__advance {
+    margin: -0.75rem 0 1.75rem;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-weight: 700;
+    color: var(--on-dark-soft);
+  }
+  .rot {
+    display: inline-block;
+    min-width: 8.5em;
+    color: var(--gold-light);
+    font-weight: 900;
+  }
+  .rot__word {
+    display: inline-block;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
+  }
+  .rot__word.is-out {
+    opacity: 0;
+    transform: translateY(-0.4em);
+  }
+
+  /* ---------- דווקא עכשיו: קווי אור (תמונת אווירה) בצד שמאל, מתחת להצללה ---------- */
+  .h-now {
+    position: relative;
+    overflow: hidden;
+  }
+  .h-now::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg) left center / cover no-repeat;
+    opacity: 0.55;
+    mask-image: linear-gradient(to left, transparent 15%, #000 70%);
+    -webkit-mask-image: linear-gradient(to left, transparent 15%, #000 70%);
+  }
+  .h-now__inner {
+    position: relative;
+  }
   .h-now__kicker {
     margin: 0 0 0.85rem;
     font-weight: 800;
@@ -545,3 +701,49 @@ const index = [
     text-decoration: underline;
   }
 </style>
+
+<script>
+  // מילה מתחלפת בפתיח ("מקדמים יחד ...") וספירה עולה של המספרים.
+  // מי שביקש פחות תנועה רואה מילה אחת קבועה ואת המספרים הסופיים.
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const rot = document.querySelector<HTMLElement>('.rot');
+  const word = rot?.querySelector<HTMLElement>('.rot__word');
+  if (rot && word && !calm) {
+    const words = (rot.dataset.words ?? '').split('|');
+    let i = 0;
+    setInterval(() => {
+      word.classList.add('is-out');
+      setTimeout(() => {
+        i = (i + 1) % words.length;
+        word.textContent = words[i];
+        word.classList.remove('is-out');
+      }, 350);
+    }, 2200);
+  }
+
+  const nums = document.querySelectorAll<HTMLElement>('[data-count]');
+  if (!calm && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          io.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          const target = Number(el.dataset.count);
+          const decimals = String(el.dataset.count).includes('.') ? 1 : 0;
+          const start = performance.now();
+          const step = (t: number) => {
+            const p = Math.min(1, (t - start) / 1400);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = (target * eased).toFixed(decimals);
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      },
+      { threshold: 0.6 },
+    );
+    nums.forEach((n) => io.observe(n));
+  }
+</script>

@@ -149,6 +149,13 @@ a {
 .center .sec-lead {
   margin-inline: auto;
 }
+/* הדמות המצוירת של נוגה (2026-11-07): רקע לבן שנעלם על רקע בהיר (multiply). להשתמש רק באזורים בהירים. */
+.toon {
+  display: block;
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
 /* כפתור משני על רקע כהה */
 .btn--ghost {
   background: transparent;

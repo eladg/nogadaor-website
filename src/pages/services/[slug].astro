@@ -3,6 +3,7 @@
 // הסדר: פתיח (שם השירות, שורת התועלת, תיאור) ← נשמע מוכר? (שפת צורך, בהשראת pitron10) ← מה עושים בפועל
 //   ← (ליווי פיננסי: פס 20 שנה בבנק) ← (AI: ציר התהליך) ← מה משתנה ← שאלות ← משתלב עם שירותים נוספים ← קריאה לפעולה.
 // ההדרכות לא כאן: יש להן עמוד משלהן (/trainings/).
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Timeline from '../../components/Timeline.astro';
@@ -20,11 +21,32 @@ const related = (s.related ?? []).map(serviceBySlug).filter((r): r is Service =>
 const faqItems = (s.faq ?? []).map((id) => faqs[id]).filter(Boolean);
 const waHref = `${contact.whatsapp}?text=${encodeURIComponent(`היי נוגה, אשמח לשמוע על ${s.title}`)}`;
 const isWhatsapp = s.cta === 'whatsapp';
+
+// תמונות אווירה (AI) והדמות המצוירת, נוגה 2026-11-07. לכל שירות תמונה כהה לפתיח,
+// ולצד "נשמע מוכר?" תמונה בהירה או הדמות (הדמות רק בשני שירותים, כדי שלא יהיה יותר מדי).
+import stairs from '../../assets/atmosphere/dark-stairs.webp';
+import road from '../../assets/atmosphere/dark-road.webp';
+import lines from '../../assets/atmosphere/dark-lines.webp';
+import whiteboard from '../../assets/atmosphere/light-whiteboard.webp';
+import team from '../../assets/atmosphere/light-team.webp';
+import desk from '../../assets/atmosphere/light-desk.webp';
+import phoneToon from '../../assets/character/phone-surprised.webp';
+import thinkingToon from '../../assets/character/thinking-gift.webp';
+
+const visuals: Record<string, { hero: ImageMetadata; side: ImageMetadata; toon?: boolean }> = {
+  'business-consulting': { hero: stairs, side: whiteboard },
+  'organizational-consulting': { hero: road, side: team },
+  'ai-automation': { hero: lines, side: phoneToon, toon: true },
+  financial: { hero: stairs, side: desk },
+  'consulting-session': { hero: road, side: thinkingToon, toon: true },
+};
+const v = visuals[s.slug] ?? { hero: stairs, side: desk };
+const heroBg = await getImage({ src: v.hero, width: 1800, format: 'webp' });
 ---
 
 <BaseLayout title={s.title} description={`${s.title}: ${s.lead}. ${s.intro ?? ''}`.trim()}>
   <!-- 1. פתיח -->
-  <section class="sv-hero section--deep">
+  <section class="sv-hero section--deep" style={`--bg: url(${heroBg.src})`}>
     <div class="container sv-hero__grid">
       <div>
         <p class="sv-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
@@ -56,19 +78,24 @@ const isWhatsapp = s.cta === 'whatsapp';
   <!-- 2. נשמע מוכר? -->
   {
     s.pains && (
-      <section class="section">
-        <div class="container">
-          <h2 class="sec-title reveal">
-            נשמע <span class="hl--mark">מוכר?</span>
-          </h2>
-          <ul class="pains">
-            {s.pains.map((p, i) => (
-              <li class="pain reveal" style={`transition-delay: ${i * 0.1}s`}>
-                <span class="pain__q" aria-hidden="true">”</span>
-                <p>{p}</p>
-              </li>
-            ))}
-          </ul>
+      <section class="section sv-pains">
+        <div class="container sv-pains__grid">
+          <div>
+            <h2 class="sec-title reveal">
+              נשמע <span class="hl--mark">מוכר?</span>
+            </h2>
+            <ul class="pains">
+              {s.pains.map((p, i) => (
+                <li class="pain reveal" style={`transition-delay: ${i * 0.1}s`}>
+                  <span class="pain__q" aria-hidden="true">”</span>
+                  <p>{p}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class:list={['sv-pains__art reveal', { 'sv-pains__art--toon': v.toon }]}>
+            <Image src={v.side} alt="" widths={[400, 720]} sizes="(min-width: 52rem) 26rem, 90vw" class:list={[{ toon: v.toon }]} />
+          </div>
         </div>
       </section>
     )
@@ -192,7 +219,7 @@ const isWhatsapp = s.cta === 'whatsapp';
       <section class="section section--dark sv-cta">
         <div class="container">
           <h2>מוכנים לפצח את האתגר?</h2>
-          <p>כתבו לי בוואטסאפ, ונקבע פגישה.</p>
+          <p>כתבו בוואטסאפ, וקובעים פגישה.</p>
           <p>
             <a class="btn" href={waHref} target="_blank" rel="noopener">
               לתיאום פגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
@@ -207,9 +234,23 @@ const isWhatsapp = s.cta === 'whatsapp';
 </BaseLayout>
 
 <style>
-  /* ---------- פתיח ---------- */
+  /* ---------- פתיח: תמונת אווירה כהה בצד שמאל ---------- */
   .sv-hero {
+    position: relative;
+    overflow: hidden;
     padding-block: clamp(2.5rem, 7vw, 4.5rem);
+  }
+  .sv-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg) left center / cover no-repeat;
+    opacity: 0.6;
+    mask-image: linear-gradient(to left, transparent 20%, #000 80%);
+    -webkit-mask-image: linear-gradient(to left, transparent 20%, #000 80%);
+  }
+  .sv-hero__grid {
+    position: relative;
   }
   .sv-hero__grid {
     display: grid;
@@ -291,19 +332,41 @@ const isWhatsapp = s.cta === 'whatsapp';
     }
   }
 
-  /* ---------- נשמע מוכר ---------- */
+  /* ---------- נשמע מוכר: הכאבים ברשימה, ולצדם תמונת אווירה או הדמות ---------- */
+  .sv-pains__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 52rem) {
+    .sv-pains__grid {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+    }
+  }
+  .sv-pains__art :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.5rem;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: left center;
+    box-shadow: 0 24px 50px -30px rgb(11 26 51 / 0.45);
+  }
+  .sv-pains__art--toon :global(img) {
+    aspect-ratio: auto;
+    max-width: min(20rem, 55vw);
+    margin-inline: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
   .pains {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-  }
-  @media (max-width: 52rem) {
-    .pains {
-      grid-template-columns: 1fr;
-    }
+    gap: 1rem;
   }
   .pain {
     position: relative;

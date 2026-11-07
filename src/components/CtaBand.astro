@@ -1,14 +1,18 @@
 ---
 // אזור קריאה לפעולה כהה, שמופיע בתחתית העמודים.
+import { getImage } from 'astro:assets';
 import { contact } from '../data/contact';
+// תמונת אווירה (AI, נוגה 2026-11-07): דרך מוארת אל הזריחה, "העולם דוהר קדימה"
+import road from '../assets/atmosphere/dark-road.webp';
+const roadBg = await getImage({ src: road, width: 1800, format: 'webp' });
 interface Props {
   buttonLabel?: string;
 }
 const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
 ---
 
-<section class="section section--dark cta-band">
-  <div class="container">
+<section class="section section--dark cta-band" style={`--bg: url(${roadBg.src})`}>
+  <div class="container cta-band__inner">
     <!-- הכיוון של נוגה (2026-11-07): "העסק שלך חייב לגדול" + "הצלחה עסקית בדרך שלך" (הסלוגן מהלוגו), עם דחיפות והנעה,
          כשהעולם דוהר קדימה. הניסוח שלי, טיוטה לאישור. -->
     <h2>העסק שלך <span class="hl">חייב לגדול</span></h2>
@@ -31,10 +35,20 @@ const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
     color: var(--on-dark-soft);
   }
   .cta-band {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3.5rem, 9vw, 6rem);
     background:
-      radial-gradient(40rem 22rem at 50% 0, rgb(25 154 181 / 0.22), transparent 70%),
-      radial-gradient(30rem 18rem at 50% 100%, rgb(209 154 74 / 0.14), transparent 72%),
+      linear-gradient(180deg, rgb(11 26 51 / 0.85) 0%, rgb(11 26 51 / 0.55) 45%, rgb(11 26 51 / 0.8) 100%),
+      var(--bg) center 62% / cover no-repeat,
       var(--navy);
+  }
+  .cta-band__inner {
+    position: relative;
+    text-shadow: 0 2px 16px rgb(7 17 31 / 0.7);
+  }
+  .cta-band__inner :global(.hl) {
+    text-shadow: none;
   }
   .cta-band h2 {
     font-size: clamp(1.7rem, 4.4vw, 2.5rem);
