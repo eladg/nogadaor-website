@@ -3,6 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
 import { atmoStyle } from '../../utils/atmo';
+import { lectureReviews } from '../../data/reviews';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
 import audience from '../../assets/atmosphere/light-audience.webp';
 import road from '../../assets/atmosphere/dark-road.webp';
@@ -19,6 +20,8 @@ const others = trainings.filter((t) => t.slug !== training.slug);
 // תמונות אווירה (2026-11-07): כיתה ריקה וקהל, לסירוגין בין ההדרכות
 const heroImage = trainings.indexOf(training) % 2 === 0 ? audience : chairs;
 const roadStyle = await atmoStyle(road, 0.45);
+// המלצות משתתפים על ההדרכה הזו (אם יש)
+const myReviews = lectureReviews.filter((r) => r.training === training.slug);
 ---
 
 <BaseLayout title={training.title} description={training.lead.join(' ')}>
@@ -48,6 +51,29 @@ const roadStyle = await atmoStyle(road, 0.45);
       <p class="placeholder">תוכן חסר: למי ההדרכה מתאימה.</p>
     </div>
   </section>
+
+  {
+    myReviews.length > 0 && (
+      <section class="section section--mist">
+        <div class="container">
+          <h2 class="t-rev-title">מה אמרו משתתפים</h2>
+          <ul class="t-reviews">
+            {myReviews.map((r) => (
+              <li class="t-review">
+                <p class="t-review__stars" role="img" aria-label={`דירוג ${r.stars} מתוך 5`}>
+                  {'★'.repeat(r.stars)}
+                </p>
+                <blockquote>{r.text}</blockquote>
+                <p class="t-review__by">
+                  <strong>{r.name}</strong> · מקור: {r.source}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 
   <section class="section section--dark t-cta atmo atmo--full" style={roadStyle}>
     <div class="container">
@@ -158,6 +184,44 @@ const roadStyle = await atmoStyle(road, 0.45);
   .t-cta a:not(.btn) {
     color: var(--gold-light);
   }
+  /* המלצות משתתפים על ההדרכה */
+  .t-rev-title {
+    color: var(--teal-dark);
+    margin-bottom: 1rem;
+  }
+  .t-reviews {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1rem;
+  }
+  .t-review {
+    margin: 0;
+    padding: 1.35rem;
+    border-radius: 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold-dark);
+  }
+  .t-review__stars {
+    margin: 0 0 0.5rem;
+    color: var(--gold-dark);
+    letter-spacing: 0.1em;
+  }
+  .t-review blockquote {
+    margin: 0 0 0.75rem;
+    line-height: 1.65;
+    white-space: pre-line;
+    color: #33445c;
+  }
+  .t-review__by {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #4a5b73;
+  }
+
   /* הדרכות נוספות: תגיות לחיצות */
   .others {
     list-style: none;

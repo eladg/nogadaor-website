@@ -6,6 +6,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
 import ContentCover from '../../components/ContentCover.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import ReviewsCarousel from '../../components/ReviewsCarousel.astro';
+import { lectureReviews } from '../../data/reviews';
+import darkLines from '../../assets/atmosphere/dark-lines.webp';
 import { trainings, trainingCategories } from '../../data/trainings';
 import { contact } from '../../data/contact';
 import { atmoStyle } from '../../utils/atmo';
@@ -14,6 +18,7 @@ import road from '../../assets/atmosphere/dark-road.webp';
 
 const waText = encodeURIComponent('היי נוגה, אשמח לפרטים על ההדרכות');
 const roadStyle = await atmoStyle(road, 0.45);
+const linesStyle = await atmoStyle(darkLines, 0.5);
 
 const groups = trainingCategories
   .filter((c) => !('soon' in c && c.soon))
@@ -80,6 +85,27 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
       </section>
     ))
   }
+
+  <!-- על הבמה: סרטון כנס העסקים שנוגה הפיקה. מופיע בשני מקומות באתר: כאן ובעמוד הבית (2026-11-07). -->
+  <section class="section section--deep atmo stage" style={linesStyle}>
+    <div class="container stage__grid">
+      <div class="reveal">
+        <h2 class="sec-title">נוגה <span class="hl">על הבמה</span></h2>
+        <p class="sec-lead">קצת מכנס העסקים שנוגה הפיקה, עם משתתפים שמספרים על החוויה.</p>
+      </div>
+      <div class="stage__video reveal">
+        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
+      </div>
+    </div>
+  </section>
+
+  <!-- מה אמרו משתתפים: המלצות על הרצאות שעוד לא היו באתר (src/data/reviews.ts, lectureReviews) -->
+  <section class="section section--mist">
+    <div class="container">
+      <h2 class="sec-title reveal">מה אמרו <span class="hl--mark">משתתפים</span></h2>
+      <ReviewsCarousel reviews={lectureReviews} label="המלצות משתתפים על ההרצאות" itemWidth="clamp(16rem, calc((100% - 2.5rem) / 3), 24rem)" />
+    </div>
+  </section>
 
   <!-- בקרוב -->
   <section class="section soon-sec">
@@ -270,6 +296,19 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     font-size: 1.2rem;
     font-weight: 900;
     color: #4a5b73;
+  }
+
+  /* ---------- על הבמה ---------- */
+  .stage__grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 56rem) {
+    .stage__grid {
+      grid-template-columns: 1fr 1.6fr;
+      gap: 3rem;
+    }
   }
 
   .trainings-cta {

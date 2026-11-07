@@ -29,6 +29,17 @@ import darkStairs from '../assets/atmosphere/dark-stairs.webp';
 import lightTeam from '../assets/atmosphere/light-team.webp';
 import treasure from '../assets/character/treasure.webp';
 import pointing from '../assets/character/pointing-down.webp';
+// תמונות מהכנסים (נוגה שלחה אותן לאודות). בעמוד הבית: עוד תמונות, לבקשתה (2026-11-07)
+import pAudience from '../assets/about/gallery/14-audience.jpg';
+import pStage from '../assets/about/gallery/16-stage-participants.jpg';
+import pGroup from '../assets/about/gallery/07-group-five.jpg';
+import pAmong from '../assets/about/gallery/19-among-audience.jpg';
+const stagePhotos = [
+  { src: pAudience, alt: 'קהל המשתתפים באולם הכנס' },
+  { src: pStage, alt: 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"' },
+  { src: pGroup, alt: 'נוגה עם משתתפות בכנס' },
+  { src: pAmong, alt: 'נוגה בין המשתתפים בזמן שאלה מהקהל' },
+];
 
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
@@ -215,13 +226,24 @@ const index = [
     </div>
   </section>
 
-  <!-- 9. סרטון תדמית מכנס העסקים שנוגה הפיקה, עם המלצות. הכותרת לקוחה מהדף ב-Canva -->
-  <section class="section">
+  <!-- 9. סרטון הכנס שנוגה הפיקה, ותמונות מהשטח. הסרטון מופיע בשני מקומות: כאן ובעמוד ההדרכות (2026-11-07).
+       הכותרת לקוחה מהדף ב-Canva. -->
+  <section class="section h-stage">
     <div class="container">
-      <h2 class="sec-title center">קצת מכנס העסקים שפתח את השנה</h2>
-      <div class="conference">
+      <h2 class="sec-title center reveal">קצת מכנס העסקים <span class="hl--mark">שפתח את השנה</span></h2>
+      <div class="conference reveal">
         <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
       </div>
+      <ul class="stage-photos">
+        {
+          stagePhotos.map((ph, i) => (
+            <li class="reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <Image src={ph.src} alt={ph.alt} widths={[320, 520]} sizes="(min-width: 52rem) 25vw, 50vw" />
+            </li>
+          ))
+        }
+      </ul>
+      <p class="more center"><a href="/about/#moments-title">לעוד רגעים מהכנסים ←</a></p>
     </div>
   </section>
 
@@ -656,8 +678,43 @@ const index = [
     color: var(--gold-light);
   }
   .conference {
-    max-width: 48rem;
+    max-width: 52rem;
     margin-inline: auto;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -35px rgb(11 26 51 / 0.55);
+  }
+  /* תמונות מהשטח מתחת לסרטון: 4 בשורה, 2 בנייד. האמצעיות מוזחות מעט (פריסה מדורגת). */
+  .stage-photos {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 48rem) {
+    .stage-photos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .stage-photos li {
+    margin: 0;
+  }
+  @media (min-width: 48rem) {
+    .stage-photos li:nth-child(even) {
+      transform: translateY(1.25rem);
+    }
+  }
+  .stage-photos :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+  .h-stage {
+    padding-bottom: clamp(3.5rem, 8vw, 5.5rem);
   }
 
   /* ---------- 10. כל מה שתמצאו באתר ---------- */
