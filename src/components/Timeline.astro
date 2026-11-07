@@ -3,7 +3,7 @@
 // במחשב: שלבים בשורה אחת עם קו זהב שמחבר ביניהם. בנייד: אחד מתחת לשני, עם קו אנכי.
 // tone="dark" לשימוש על רקע כחול כהה.
 interface Props {
-  items: { title: string; text: string }[];
+  items: { title: string; text: string; gets?: string }[];
   tone?: 'light' | 'dark';
 }
 const { items, tone = 'light' } = Astro.props;
@@ -16,6 +16,11 @@ const { items, tone = 'light' } = Astro.props;
         <span class="tl__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
         <h3 class="tl__title">{item.title}</h3>
         <p class="tl__text">{item.text}</p>
+        {item.gets && (
+          <p class="tl__gets">
+            <strong>מה מקבלים?</strong> {item.gets}
+          </p>
+        )}
       </li>
     ))
   }
@@ -68,6 +73,21 @@ const { items, tone = 'light' } = Astro.props;
     margin: 0;
     line-height: 1.6;
     color: #33445c;
+  }
+  .tl__gets {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    background: rgb(209 154 74 / 0.12);
+    border-inline-start: 3px solid var(--gold-dark);
+    line-height: 1.55;
+    font-size: 0.97rem;
+  }
+  .tl--dark .tl__gets {
+    color: var(--on-dark);
+  }
+  .tl--dark .tl__gets strong {
+    color: var(--gold-light);
   }
   .tl--dark .tl__title {
     color: var(--white);

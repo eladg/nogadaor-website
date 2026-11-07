@@ -9,9 +9,10 @@ const { buttonLabel = 'קביעת שיחת היכרות' } = Astro.props;
 
 <section class="section section--dark cta-band">
   <div class="container">
-    <!-- הנוסח מתוך הטיוטות של נוגה ("הנעה לפעולה לדוגמה לפני טופס", drafts/services-background-drafts.md). טיוטה לאישור (2026-11-07). -->
-    <h2>מרגישים שיש בעסק פוטנציאל <span class="hl">שלא מתממש עד הסוף?</span></h2>
-    <p class="cta-band__lead">ביחד הרבה יותר קל לדייק, להחליט ולהניע מהלכים.</p>
+    <!-- הכיוון של נוגה (2026-11-07): "העסק שלך חייב לגדול" + "הצלחה עסקית בדרך שלך" (הסלוגן מהלוגו), עם דחיפות והנעה,
+         כשהעולם דוהר קדימה. הניסוח שלי, טיוטה לאישור. -->
+    <h2>העסק שלך <span class="hl">חייב לגדול</span></h2>
+    <p class="cta-band__lead">העולם דוהר קדימה, וזה הזמן להתקדם איתו. ביחד נדאג שתהיה לך <strong>הצלחה עסקית בדרך שלך.</strong></p>
     <!-- הכפתור פותח את דף קביעת הפגישות ביומן גוגל (contact.booking) -->
     <p><a class="btn" href={contact.booking} target="_blank" rel="noopener">{buttonLabel}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
     <p class="cta-band__note"><a href={contact.whatsapp} target="_blank" rel="noopener">{contact.bookingNote}</a></p>
