@@ -8,13 +8,14 @@ import type { Review } from '../data/reviews';
 interface Props {
   reviews: Review[];
   label?: string;
+  itemWidth?: string; // רוחב כל כרטיס (בעמוד הבית: 4 נראות במחשב)
 }
-const { reviews, label = 'המלצות לקוחות' } = Astro.props;
+const { reviews, label = 'המלצות לקוחות', itemWidth = 'min(86%, 23rem)' } = Astro.props;
 // האות הראשונה של השם, לעיגול שליד השם
 const initial = (name: string) => name.trim().charAt(0);
 ---
 
-<Carousel label={label} auto itemWidth="min(86%, 23rem)">
+<Carousel label={label} auto itemWidth={itemWidth}>
   {
     reviews.map((r) => (
       <li class="review">
