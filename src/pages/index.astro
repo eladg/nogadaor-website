@@ -1,8 +1,9 @@
 ---
-// עמוד הבית. הסדר שנוגה קבעה (2026-11-07):
-//   פתיח ("מקדמים יחד" עם כל הנושאים) ← 6 קוביות השירותים, בלי כותרת ← 6 המלצות בקרוסלה (4 נראות)
-//   ← "דווקא עכשיו חייבים להתקדם": 6 מצבים, בלי הסברים ← "בכל עסק הכסף נמצא במקום אחר" + 3 שלבי התהליך ומה יוצא מכל אחד
-//   ← 6 עקרונות הליווי (כמו באודות) ← שאלון ← נעים להכיר (עם MBA והמספרים) ← סרטון הכנס ← קריאה לפעולה ← "כל מה שתמצאו באתר".
+// עמוד הבית. הסדר שנוגה קבעה (2026-11-07, סבב 3):
+//   פתיח ← סרט נע בטורקיז (כ-20 נושאים שמקדמים) ← שירותים בשורה אחת ← המלצות (רק על ליווי, צר, 6 בבת אחת, בלי כותרת)
+//   ← עקרונות הליווי (עלו שני שלבים) ← תהליך הליווי (3 שלבים, "מה מקבלים" עם כוכבים) ← "מתי נכון לבוא לייעוץ עסקי" (ריבועים)
+//   ← שאלון ← נעים להכיר ← סרטון הכנס ← קריאה לפעולה ← "כל מה שתמצאו באתר".
+//   "בכל עסק הכסף נמצא במקום אחר" הוסר מהבית (נוגה). כל הכותרות ממורכזות.
 // בלי גוף ראשון. הביקורת והציונים: drafts/critique-2026-11-07.md.
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
@@ -11,7 +12,7 @@ import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import QuizFeature from '../components/QuizFeature.astro';
 import ServiceStrip from '../components/ServiceStrip.astro';
-import QuoteRibbon from '../components/QuoteRibbon.astro';
+import QuoteGrid from '../components/QuoteGrid.astro';
 import Ribbon from '../components/Ribbon.astro';
 import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
@@ -24,11 +25,11 @@ import { quizYear } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח שנוגה בחרה (2026-11-07): על הבמה בבלייזר הלבן, עם הדוכן של "עסקים במקסימום"
 import heroPhoto from '../assets/hero/stage-blazer.jpg';
-import introPhoto from '../assets/about/gallery/05-podium-smile.jpg';
+// "נעים להכיר": אחת משתי התמונות שנוגה שלחה (2026-11-07). השנייה (על הספסל) כבר בעמוד צור קשר.
+import introPhoto from '../assets/hero/headshot.webp';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
 import darkLines from '../assets/atmosphere/dark-lines.webp';
 import darkStairs from '../assets/atmosphere/dark-stairs.webp';
-import treasure from '../assets/character/treasure.webp';
 import pointing from '../assets/character/pointing-down.webp';
 // תמונות מהכנסים (נוגה שלחה אותן לאודות). בעמוד הבית: עוד תמונות, לבקשתה (2026-11-07)
 import pAudience from '../assets/about/gallery/14-audience.jpg';
@@ -45,8 +46,12 @@ const stagePhotos = [
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
 
-// נוגה: "מקדמים יחד" ואחריו כל הנושאים שמקדמים
-const advances = ['פרויקטים', 'משימות', 'תהליכי עבודה', 'יעדים', 'צוותים', 'מהלכי צמיחה'];
+// הסרט הנע: מה מקדמים יחד (נוגה, 2026-11-07: כ-20 מילים, בלי לחזור על אותן מילים, בלי הכיתוב "מקדמים יחד")
+const advances = [
+  'יעדים', 'מטרות', 'אסטרטגיה', 'שיווק', 'התייעלות', 'בינה מלאכותית', 'חדשנות', 'פרויקטים',
+  'משימות', 'תהליכי עבודה', 'צוותים', 'מכירות', 'רווחיות', 'תמחור', 'תזרים', 'מנהיגות',
+  'קבלת החלטות', 'שירות לקוחות', 'הצעות ערך', 'אוטומציות', 'שגרות ניהול', 'מהלכי צמיחה',
+];
 
 // המספרים שנוגה אישרה (SKILL.md סעיף 6א). עולים בספירה כשמגיעים אליהם.
 const stats = [
@@ -98,7 +103,7 @@ const index = [
     <div class="container h-hero__inner">
       <div class="h-hero__text">
         <p class="h-hero__kicker">נוגה דיין אור · ייעוץ עסקי וארגוני</p>
-        <h1 class="h-hero__title">העולם משתנה בקצב מסחרר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
+        <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
         <div class="h-hero__actions">
           <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -108,8 +113,8 @@ const index = [
     </div>
   </section>
 
-  <!-- 1א. סרט נע: מקדמים יחד (השראה מהפס הנע של מאשה, בלי להעתיק; אופקי, עם הכוכב של נוגה) -->
-  <Ribbon label="מקדמים יחד:" items={advances} />
+  <!-- 1א. סרט נע בטורקיז: מה מקדמים יחד (השראה מהפס הנע של מאשה, בלי להעתיק; אופקי, עם הכוכב של נוגה) -->
+  <Ribbon items={advances} tone="teal" />
 
   <!-- 2. שש קוביות השירותים, בלי כותרת (נוגה). כותרת נסתרת רק לקוראי מסך. -->
   <section class="section h-services" aria-labelledby="services-title">
@@ -119,51 +124,22 @@ const index = [
     </div>
   </section>
 
-  <!-- 3. המלצות: טקסט צף שנע לאט, בלי קופסאות ובלי עיגולים (נוגה, 2026-11-07). src/data/reviews.ts, featuredReviews -->
-  <section class="section section--mist h-reviews">
+  <!-- 3. המלצות: רק על ליווי, צר, 6 בבת אחת, באותו גובה, ההתחלה ו"קרא עוד". בלי כותרת (נוגה: "הכותרת ממש מתייתרת"). -->
+  <section class="section section--mist h-reviews" aria-labelledby="reviews-title">
     <div class="container">
-      <h2 class="sec-title center reveal">מה אומרים <span class="hl--mark">הלקוחות</span></h2>
-      <QuoteRibbon reviews={featuredReviews} />
+      <h2 id="reviews-title" class="sr-only">מה אומרים הלקוחות</h2>
+      <QuoteGrid reviews={featuredReviews} />
       <p class="more center"><a href="/testimonials/">לכל ההמלצות ←</a></p>
     </div>
   </section>
 
-  <!-- 4. דווקא עכשיו חייבים להתקדם: 6 מצבים שבהם לוקחים ייעוץ עסקי, בלי הסברים נוספים (נוגה) -->
-  <section class="section section--deep atmo h-now" style={linesStyle}>
-    <div class="container">
-      <h2 class="sec-title reveal">דווקא עכשיו, <span class="hl">חייבים להתקדם</span></h2>
-      <ul class="moments">
-        {
-          situations.map((m, i) => (
-            <li class="moment reveal" style={`transition-delay: ${(i % 2) * 0.1}s`}>
-              <Icon name={m.icon} size={30} class="moment__icon" />
-              <p>{m.text}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 5. בכל עסק הכסף נמצא במקום אחר + שלושת שלבי התהליך ומה יוצא מכל אחד (src/data/services.ts, steps) -->
-  <section class="section h-approach-sec">
-    <div class="container">
-      <div class="h-approach">
-        <div class="reveal">
-          <h2 class="sec-title">בכל עסק הכסף נמצא <span class="hl--mark">במקום אחר</span></h2>
-          <p class="sec-lead">אי אפשר לדעת מראש איפה נמצא הכסף בעסק, עד שמכירים ובודקים אותו לעומק. לא בטוח שצריך עוד לידים, עוד שיווק, עוד עובדים או עוד מערכות.</p>
-        </div>
-        <Image src={treasure} alt="" widths={[300, 480]} sizes="(min-width: 52rem) 15rem, 40vw" class="toon h-approach__toon" />
-      </div>
-      <Timeline items={steps} />
-      <p class="more"><a href="/services/">לפרטים על השירותים ←</a></p>
-    </div>
-  </section>
-
-  <!-- 6. עקרונות הליווי: שש הקוביות מהאודות (נוגה: "צריכים להופיע גם במסך הבית"). src/data/principles.ts -->
+  <!-- 4. עקרונות הליווי: שש הקוביות מהאודות (עלו שני שלבים, נוגה 2026-11-07). src/data/principles.ts -->
   <section class="section section--deep atmo h-ways" style={stairsStyle}>
     <div class="container">
-      <h2 class="sec-title reveal">עקרונות <span class="hl">הליווי</span></h2>
+      <div class="h-head reveal">
+        <p class="eyebrow">איך עובדים</p>
+        <h2 class="h-title">עקרונות <span class="hl">הליווי</span></h2>
+      </div>
       <ul class="ways">
         {
           ways.map((w, i) => (
@@ -180,14 +156,51 @@ const index = [
     </div>
   </section>
 
+  <!-- 5. תהליך הליווי: שלושה שלבים, ו"מה מקבלים" באותו גובה בכל שלב, עם הכוכב כתבליט (src/data/services.ts, steps) -->
+  <section class="section h-process">
+    <div class="container">
+      <div class="h-head reveal">
+        <p class="eyebrow">שלב אחר שלב</p>
+        <h2 class="h-title">תהליך ליווי <span class="hl--mark">עסקי וארגוני</span></h2>
+        <p class="h-sub">להגדלת הכנסות ושיפור הרווחיות</p>
+      </div>
+      <Timeline items={steps} />
+      <!-- המשפט של נוגה מתוך "תהליך ליווי עסקי וארגוני" -->
+      <p class="h-goal reveal">המטרה: לא רק להבין מה צריך לשנות, אלא לגרום לשינויים לקרות, ולבנות עסק שמנוהל טוב יותר, מרוויח יותר וממשיך לצמוח.</p>
+    </div>
+  </section>
+
+  <!-- 6. מתי נכון לבוא לייעוץ עסקי: 6 מצבים בריבועים בולטים (נוגה, 2026-11-07) -->
+  <section class="section section--deep atmo h-when" style={linesStyle}>
+    <div class="container">
+      <div class="h-head reveal">
+        <p class="eyebrow">הזמן הנכון</p>
+        <h2 class="h-title">מתי נכון לבוא <span class="hl">לייעוץ עסקי?</span></h2>
+      </div>
+      <ul class="moments">
+        {
+          situations.map((m, i) => (
+            <li class="moment reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="moment__icon" aria-hidden="true">
+                <Icon name={m.icon} size={28} />
+              </span>
+              <p>{m.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
   <!-- 7. שאלון המיקוד. הדמות מצביעה על השאלון. -->
   <section class="section section--mist">
     <div class="container">
       <div class="h-quiz-head">
-        <div class="reveal">
+        <div class="h-head reveal">
           <!-- הכותרת היא הצעה שלי -->
-          <h2 class="sec-title">איפה העסק שלך <span class="hl--mark">עומד היום?</span></h2>
-          <p class="sec-lead">שאלון קצר שעושה סדר: פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
+          <p class="eyebrow">שאלון חינמי</p>
+          <h2 class="h-title">איפה העסק שלך <span class="hl--mark">עומד היום?</span></h2>
+          <p class="h-sub">שאלון קצר שעושה סדר: פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
         </div>
         <Image src={pointing} alt="" widths={[220, 340]} sizes="11rem" class="toon h-quiz-head__toon" />
       </div>
@@ -198,7 +211,7 @@ const index = [
   <!-- 8. נעים להכיר: תמונה של נוגה כרקע (נוגה מעדיפה תמונה כרקע ולא במסגרת). הפתיח האישי מהאסטרטגיה שלה, עם MBA והמספרים. -->
   <section class="h-meet">
     <div class="h-meet__media">
-      <Image src={introPhoto} alt="נוגה דיין אור ליד הדוכן על הבמה, מחייכת" widths={[640, 1024, 1400]} sizes="(min-width: 52rem) 55vw, 100vw" />
+      <Image src={introPhoto} alt="נוגה דיין אור מחייכת" widths={[600]} sizes="(min-width: 52rem) 52vw, 100vw" />
     </div>
     <div class="container h-meet__inner">
       <div class="h-meet__text reveal">
@@ -224,7 +237,10 @@ const index = [
        הכותרת לקוחה מהדף ב-Canva. -->
   <section class="section h-stage">
     <div class="container">
-      <h2 class="sec-title center reveal">קצת מכנס העסקים <span class="hl--mark">שפתח את השנה</span></h2>
+      <div class="h-head reveal">
+        <p class="eyebrow">מהשטח</p>
+        <h2 class="h-title">קצת מכנס העסקים <span class="hl--mark">שפתח את השנה</span></h2>
+      </div>
       <div class="conference reveal">
         <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
       </div>
@@ -367,72 +383,123 @@ const index = [
     padding-block: clamp(1.75rem, 4vw, 2.75rem);
   }
 
-  /* ---------- 3. המלצות ---------- */
-  .h-reviews .sec-title {
-    margin-bottom: 1.75rem;
+  /* ---------- כותרות ממורכזות ומושכות (נוגה, 2026-11-07) ---------- */
+  .h-head {
+    max-width: 46rem;
+    margin: 0 auto 2rem;
+    text-align: center;
+  }
+  /* תווית קטנה מעל הכותרת, עם קווים קצרים משני הצדדים */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--teal-dark);
+  }
+  .eyebrow::before,
+  .eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+  .section--deep .eyebrow {
+    color: var(--gold-light);
+  }
+  .h-title {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .h-sub {
+    margin: 0.75rem auto 0;
+    max-width: 36rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #33445c;
+  }
+  .section--deep .h-sub {
+    color: var(--on-dark-soft);
   }
 
-  /* ---------- 4. דווקא עכשיו: רשימה בשני טורים, בלי קופסאות, עם קווים מפרידים ---------- */
+  /* ---------- 3. המלצות ---------- */
+  .h-reviews .more {
+    margin-top: 2rem;
+  }
+
+  /* ---------- 5. תהליך ---------- */
+  .h-process {
+    background: linear-gradient(180deg, var(--white), var(--mist));
+  }
+  .h-goal {
+    max-width: 44rem;
+    margin: 2.5rem auto 0;
+    text-align: center;
+    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+    font-weight: 800;
+    line-height: 1.55;
+    color: var(--navy);
+  }
+
+  /* ---------- 6. מתי נכון לבוא לייעוץ עסקי: ריבועים בולטים ---------- */
   .moments {
     list-style: none;
-    margin: 1.25rem 0 0;
+    margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 3rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
   }
-  @media (max-width: 48rem) {
+  @media (max-width: 62rem) {
+    .moments {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
     .moments {
       grid-template-columns: 1fr;
     }
   }
   .moment {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 1rem;
     margin: 0;
-    padding-block: 1.15rem;
-    border-bottom: 1px solid rgb(255 255 255 / 0.14);
+    padding: 1.6rem 1.5rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(160deg, rgb(255 255 255 / 0.11), rgb(255 255 255 / 0.03));
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-top: 3px solid var(--gold-light);
+    transition:
+      opacity 0.7s ease,
+      transform 0.35s ease,
+      border-color 0.3s ease;
   }
-  .moment :global(.moment__icon) {
-    flex: none;
-    color: var(--gold-light);
+  .moment:hover {
+    transform: translateY(-4px);
+    border-color: rgb(252 220 109 / 0.6);
+  }
+  .moment__icon {
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.9rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
   }
   .moment p {
     margin: 0;
-    font-size: clamp(1.08rem, 2vw, 1.25rem);
-    font-weight: 700;
-    line-height: 1.45;
+    font-size: clamp(1.12rem, 2vw, 1.3rem);
+    font-weight: 800;
+    line-height: 1.4;
     color: var(--white);
-  }
-
-  /* ---------- 5. בכל עסק הכסף נמצא במקום אחר + תהליך ---------- */
-  .h-approach-sec {
-    background: linear-gradient(180deg, var(--white), var(--mist));
-  }
-  .h-approach {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .h-approach .sec-lead {
-    margin-bottom: 0.5rem;
-  }
-  .h-approach :global(.h-approach__toon) {
-    flex: none;
-    width: clamp(8rem, 18vw, 15rem);
-  }
-  @media (max-width: 40rem) {
-    .h-approach {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .h-approach :global(.h-approach__toon) {
-      width: 9rem;
-      align-self: flex-end;
-    }
   }
 
   /* ---------- 6. עקרונות הליווי (כמו באודות) ---------- */
@@ -491,27 +558,23 @@ const index = [
 
   /* ---------- 7. שאלון ---------- */
   .h-quiz-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
+    position: relative;
   }
-  .h-quiz-head .sec-lead {
-    margin-bottom: 1.25rem;
+  .h-quiz-head .h-head {
+    margin-bottom: 1.5rem;
   }
   .h-quiz-head :global(.h-quiz-head__toon) {
-    flex: none;
-    width: clamp(6.5rem, 16vw, 11rem);
-    margin-bottom: -0.5rem;
+    width: 7.5rem;
+    margin: -1rem auto 0.5rem;
   }
-  @media (max-width: 40rem) {
-    .h-quiz-head {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  /* במחשב: הדמות בצד שמאל של הכותרת, מצביעה על השאלון */
+  @media (min-width: 52rem) {
     .h-quiz-head :global(.h-quiz-head__toon) {
-      width: 7.5rem;
-      align-self: flex-end;
+      position: absolute;
+      left: 0;
+      bottom: -0.5rem;
+      width: 10rem;
+      margin: 0;
     }
   }
 
@@ -530,7 +593,7 @@ const index = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 25%;
+    object-position: 50% 30%;
   }
   .h-meet__media::after {
     content: '';

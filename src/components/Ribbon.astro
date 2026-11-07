@@ -8,7 +8,7 @@ import Star from './Star.astro';
 interface Props {
   items: string[];
   label?: string; // מילה קבועה לפני הפריטים (למשל "מקדמים יחד:")
-  tone?: 'gold' | 'navy';
+  tone?: 'gold' | 'navy' | 'teal';
 }
 const { items, label, tone = 'gold' } = Astro.props;
 ---
@@ -46,6 +46,11 @@ const { items, label, tone = 'gold' } = Astro.props;
     background: var(--gold-gradient);
     color: var(--navy);
   }
+  /* טורקיז (נוגה, 2026-11-07: "פתאום העמוד כתום לי מדי") */
+  .ribbon--teal {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: var(--white);
+  }
   .ribbon--navy {
     background: var(--navy);
     color: var(--gold-light);
@@ -72,7 +77,7 @@ const { items, label, tone = 'gold' } = Astro.props;
   .ribbon__track {
     display: flex;
     width: max-content;
-    animation: ribbon-move 32s linear infinite;
+    animation: ribbon-move 60s linear infinite;
   }
   .ribbon:hover .ribbon__track {
     animation-play-state: paused;
