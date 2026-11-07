@@ -1,11 +1,12 @@
 ---
-// עמוד מרכז ההדרכות: כרטיס לכל הדרכה מהקטלוג, וקישור לעמוד שלה.
-// הנתונים ב-src/data/trainings.ts
-// עיצוב (2026-11-07, "קו רציף בכל האתר"): פתיח בהיר עם תמונת אווירה (כיתה ריקה), כרטיסים ממוספרים
-// (4 בשורה, שורות מאוזנות), ואזור הזמנה כהה עם תמונת הדרך המוארת, כמו בתחתית שאר העמודים.
+// עמוד מרכז ההדרכות. הנתונים ב-src/data/trainings.ts
+// נוגה (2026-11-07): העמוד מחולק לנושאים, והנושאים מופיעים למעלה. לכל הדרכה: כריכה מתאימה, כותרת ומשפט הסבר אחד.
+// בלי משך, בלי פירוט הסדנה ובלי מספור בכרטיסים (הפירוט נמצא בעמוד של כל הדרכה).
+// "הרצאות לארגונים" ו"הרצאות העצמה, מנהיגות ומוטיבציה" יהיו בקרוב.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
-import { trainings } from '../../data/trainings';
+import ContentCover from '../../components/ContentCover.astro';
+import { trainings, trainingCategories } from '../../data/trainings';
 import { contact } from '../../data/contact';
 import { atmoStyle } from '../../utils/atmo';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
@@ -13,42 +14,88 @@ import road from '../../assets/atmosphere/dark-road.webp';
 
 const waText = encodeURIComponent('היי נוגה, אשמח לפרטים על ההדרכות');
 const roadStyle = await atmoStyle(road, 0.45);
+
+const groups = trainingCategories
+  .filter((c) => !('soon' in c && c.soon))
+  .map((c) => ({ ...c, items: trainings.filter((t) => t.category === c.id) }))
+  .filter((g) => g.items.length > 0);
+const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
 ---
 
 <BaseLayout
   title="הדרכות"
-  description="קטלוג ההדרכות של נוגה דיין אור: שיווק, תוכן, קהילה בוואטסאפ, AI, מנהיגות, נטוורקינג וקבלת החלטות. כל הדרכה ניתנת כהרצאה או כסדנה יישומית."
+  description="הדרכות והרצאות של נוגה דיין אור: בינה מלאכותית לעסקים, שיווק לעצמאים, קהילה בוואטסאפ, כתיבה שיווקית, מנהיגות עסקית, נטוורקינג וקבלת החלטות. כל הדרכה ניתנת כהרצאה או כסדנה יישומית."
 >
   <LightHero image={chairs} title="קטלוג הדרכות" kicker="הרצאות וסדנאות">
     <!-- הפתיח נלקח מעמוד השער של הקטלוג -->
     <p>יועצת עסקית, ניסיון של שני עשורים בתהליכי ניהול ופיתוח עסקי, מכורה לפיתוח והגשמת חלומות עסקים.</p>
-    <ul class="pillars" aria-label="הגישה">
-      <li>חשיבה הוליסטית אסטרטגית</li>
-      <li>התייעלות פרקטית להגדלת הכנסות</li>
-      <li>מחויבות אישית לתוצאות משותפות</li>
-    </ul>
+    <p>כל הדרכה ניתנת כהרצאה, ואפשר להפוך אותה לסדנה יישומית.</p>
   </LightHero>
 
-  <section class="section">
+  <!-- הנושאים למעלה: קישורים לאזורים בעמוד. נושאים שעוד אין בהם הדרכות מסומנים "בקרוב". -->
+  <nav class="topics-nav" aria-label="נושאי ההדרכות">
     <div class="container">
-      <h2 class="sec-title reveal">ההדרכות</h2>
-      <p class="sec-lead">כל הדרכה ניתנת כהרצאה, ואפשר להפוך אותה לסדנה יישומית.</p>
-      <ul class="tcards">
+      <ul>
         {
-          trainings.map((t, i) => (
-            <li class="tcard reveal" style={`transition-delay: ${(i % 4) * 0.08}s`}>
-              <span class="tcard__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <h3 class="tcard__title">
-                <a href={`/trainings/${t.slug}/`}>{t.title}</a>
-              </h3>
-              <p class="tcard__lead">{t.lead[0]}</p>
-              <p class="tcard__format">{t.format}</p>
-              <span class="tcard__more" aria-hidden="true">לפרטים ←</span>
+          groups.map((g) => (
+            <li>
+              <a href={`#${g.id}`}>
+                {g.title} <span class="topics-nav__count">{g.items.length}</span>
+              </a>
+            </li>
+          ))
+        }
+        {
+          soon.map((c) => (
+            <li>
+              <span class="topics-nav__soon">
+                {c.title} <span class="badge">בקרוב</span>
+              </span>
             </li>
           ))
         }
       </ul>
-      <!-- TODO: לפי העץ באתר אמורות להיות כ-12 הרצאות. בקטלוג 8. נוגה תשלים. -->
+    </div>
+  </nav>
+
+  {
+    groups.map((g, gi) => (
+      <section class:list={['section', 'topic', { 'section--mist': gi % 2 === 1 }]} id={g.id}>
+        <div class="container">
+          <h2 class="sec-title reveal">{g.title}</h2>
+          <ul class="tgrid">
+            {g.items.map((t, i) => (
+              <li class="tcard reveal" style={`transition-delay: ${(i % 4) * 0.08}s`}>
+                <a class="tcard__cover" href={`/trainings/${t.slug}/`} tabindex="-1" aria-hidden="true">
+                  <ContentCover title={t.coverTitle} motif={t.coverMotif} />
+                </a>
+                <h3 class="tcard__title">
+                  <a href={`/trainings/${t.slug}/`}>{t.title}</a>
+                </h3>
+                <p class="tcard__short">{t.short}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ))
+  }
+
+  <!-- בקרוב -->
+  <section class="section soon-sec">
+    <div class="container">
+      <h2 class="sec-title reveal">בקרוב</h2>
+      <ul class="soon-list">
+        {
+          soon.map((c) => (
+            <li class="reveal">
+              <span class="badge">בקרוב</span>
+              <h3>{c.title}</h3>
+            </li>
+          ))
+        }
+      </ul>
+      <!-- TODO: לפי העץ באתר אמורות להיות כ-12 הרצאות. כרגע 8. נוגה תשלים, כולל ההרצאות לארגונים וההרצאות בנושא העצמה. -->
     </div>
   </section>
 
@@ -66,76 +113,114 @@ const roadStyle = await atmoStyle(road, 0.45);
 </BaseLayout>
 
 <style>
-  .pillars {
-    list-style: none;
-    padding: 0;
-    margin: 1.25rem 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  /* ---------- הנושאים למעלה: פס דביק מתחת לכותרת האתר ---------- */
+  .topics-nav {
+    position: sticky;
+    top: var(--header-h, 3.8rem);
+    z-index: 20;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
   }
-  .pillars li {
-    background: var(--white);
-    border: 1px solid var(--line);
+  .topics-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 0;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .topics-nav ul::-webkit-scrollbar {
+    display: none;
+  }
+  .topics-nav li {
+    flex: none;
+    margin: 0;
+  }
+  .topics-nav a,
+  .topics-nav__soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1rem;
     border-radius: 999px;
-    padding: 0.35em 1em;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.95rem;
-    color: var(--teal-dark);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .topics-nav a {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .topics-nav a:hover {
+    background: var(--teal-dark);
+  }
+  .topics-nav__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 0.8rem;
+  }
+  .topics-nav__soon {
+    border: 1px dashed #b9c6d3;
+    color: #5b6b80;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 0.75rem;
+    font-weight: 900;
   }
 
-  /* כרטיסים ממוספרים: 4 בשורה במחשב, 2 בטאבלט, 1 בנייד (8 הדרכות = שורות מאוזנות) */
-  .tcards {
+  /* מעבר לאזור: שהכותרת לא תוסתר מתחת לפסים הדביקים */
+  .topic {
+    scroll-margin-top: 7.5rem;
+  }
+
+  /* ---------- כרטיסים: 3 בשורה במחשב (6 = 3+3), 2 בטאבלט, 1 בנייד. שורה לא מלאה ממורכזת ---------- */
+  .tgrid {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
-  }
-  @media (max-width: 68rem) {
-    .tcards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
-    .tcards {
-      grid-template-columns: 1fr;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.75rem 1.5rem;
   }
   .tcard {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    flex: 0 1 calc((100% - 2 * 1.5rem) / 3);
     margin: 0;
-    padding: 1.5rem 1.35rem 1.25rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 1.25rem;
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease,
-      border-color 0.25s ease;
   }
-  .tcard:hover {
+  @media (max-width: 62rem) {
+    .tcard {
+      flex-basis: calc((100% - 1.5rem) / 2);
+    }
+  }
+  @media (max-width: 36rem) {
+    .tcard {
+      flex-basis: 100%;
+    }
+  }
+  .tcard__cover {
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .tcard:hover .tcard__cover {
     transform: translateY(-4px);
-    border-color: var(--teal);
-    box-shadow: 0 18px 40px -26px rgb(11 26 51 / 0.45);
-  }
-  .tcard__num {
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    margin-bottom: 0.85rem;
-    border-radius: 50%;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-weight: 900;
   }
   .tcard__title {
-    margin: 0 0 0.5rem;
-    font-size: 1.12rem;
+    margin: 0.85rem 0 0.35rem;
+    font-size: 1.1rem;
     font-weight: 900;
     line-height: 1.35;
   }
@@ -149,21 +234,42 @@ const roadStyle = await atmoStyle(road, 0.45);
     position: absolute;
     inset: 0;
   }
-  .tcard__lead {
-    margin: 0 0 0.75rem;
+  .tcard__title a:hover {
+    color: var(--teal-dark);
+  }
+  .tcard__short {
+    margin: 0;
     font-size: 0.97rem;
     line-height: 1.55;
     color: #33445c;
   }
-  .tcard__format {
-    margin: auto 0 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--teal-dark);
+
+  /* ---------- בקרוב ---------- */
+  .soon-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
-  .tcard__more {
-    font-weight: 800;
-    color: var(--gold-dark);
+  @media (max-width: 40rem) {
+    .soon-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .soon-list li {
+    margin: 0;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 2px dashed #c9d5e0;
+    background: var(--mist);
+  }
+  .soon-list h3 {
+    margin: 0.6rem 0 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #4a5b73;
   }
 
   .trainings-cta {
@@ -182,7 +288,7 @@ const roadStyle = await atmoStyle(road, 0.45);
     color: var(--gold-light);
   }
   @media (prefers-reduced-motion: reduce) {
-    .tcard {
+    .tcard__cover {
       transition: none;
     }
   }

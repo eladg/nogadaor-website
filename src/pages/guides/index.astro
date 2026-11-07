@@ -11,8 +11,8 @@ import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import ContentCover from '../../components/ContentCover.astro';
 import Icon from '../../components/Icon.astro';
-import ShareBar from '../../components/ShareBar.astro';
 import { readingMinutes } from '../../utils/readingTime';
+import { lectures, minutesOf } from '../../data/lectures';
 import { atmoStyle } from '../../utils/atmo';
 import stairs from '../../assets/atmosphere/dark-stairs.webp';
 import darkLines from '../../assets/atmosphere/dark-lines.webp';
@@ -27,10 +27,8 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   title="מדריכים והרצאות"
   description="מדריכים, מאמרים והדרכות לצפייה בחינם לבעלי עסקים, מאת נוגה דיין אור."
 >
-  <PageHeader title="מדריכים והרצאות" kicker="תוכן חינמי לבעלי עסקים" image={stairs}>
-    <!-- TODO: משפט פתיחה קצר לעמוד – נוגה תספק -->
-    <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
-  </PageHeader>
+  <!-- בלי משפט פתיחה (נוגה, 2026-11-07: "לא צריך משפט פתיחה") -->
+  <PageHeader title="מדריכים והרצאות" kicker="תוכן חינמי לבעלי עסקים" image={stairs} />
 
   <!-- חלק 1: מדריכים ומאמרים יחד (נוגה, 2026-11-07: "שהמאמר לא יהיה לבד"). קודם המדריכים, אחריהם המאמרים.
        לכל כרטיס סוג משלו מתחת לכריכה (מדריך = רשימה, מאמר = ספר פתוח). -->
@@ -77,15 +75,23 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   <section class="section section--dark lectures atmo" style={linesStyle}>
     <div class="container">
       <h2>הדרכות לצפייה <span class="hl">בחינם</span></h2>
-      <!-- TODO: נוגה תביא עוד הדרכות מהערוץ (2026-11-07). כרגע הדרכה אחת. -->
-      <div class="lecture reveal">
-        <YouTubeEmbed id="QANXfOW_s-Q" title="נוגה דיין אור הדרכה חינמית - עסק מקצועי הוא עסק מעוצב">
-          <ContentCover title="עסק מקצועי|הוא *עסק מעוצב*" motif="screen" kind="lecture" duration="53:37" ratio="16/9" />
-        </YouTubeEmbed>
-        <p class="meta meta--dark"><Icon name="mic" size={16} /> <span>הרצאה</span> · 54 דק' צפייה</p>
-        <h3 class="lecture__title">הדרכה חינמית: עסק מקצועי הוא עסק מעוצב</h3>
-        <ShareBar title="הדרכה חינמית של נוגה דיין אור: עסק מקצועי הוא עסק מעוצב" url="https://youtu.be/QANXfOW_s-Q" print={false} tone="dark" />
-      </div>
+      <!-- ההרצאות שנוגה בחרה (src/data/lectures.ts): 6 = 3 בשורה במחשב, 2 בטאבלט, 1 בנייד -->
+      <ul class="lecture-grid">
+        {
+          lectures.map((l, i) => (
+            <li class="lecture reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <YouTubeEmbed id={l.id} title={l.title}>
+                <ContentCover title={l.coverTitle} motif={l.motif} kind="lecture" duration={l.duration} ratio="16/9" />
+              </YouTubeEmbed>
+              <p class="meta meta--dark">
+                <Icon name="mic" size={16} /> <span>הרצאה</span> · {minutesOf(l.duration)} דק' צפייה
+              </p>
+              <h3 class="lecture__title">{l.title}</h3>
+              <p class="lecture__short">{l.short}</p>
+            </li>
+          ))
+        }
+      </ul>
       <p class="trainings-link">
         מחפשים הרצאה או סדנה לקבוצה או לארגון? <a href="/trainings/">לקטלוג ההדרכות</a>
       </p>
@@ -212,13 +218,39 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   }
 
   /* הרצאות: פס כהה */
+  .lecture-grid {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 1.5rem;
+  }
+  @media (max-width: 62rem) {
+    .lecture-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .lecture-grid {
+      grid-template-columns: 1fr;
+    }
+  }
   .lecture {
-    max-width: 44rem;
+    margin: 0;
   }
   .lecture__title {
-    margin: 0 0 0.75rem;
-    font-size: 1.2rem;
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.35;
     color: var(--white);
+  }
+  .lecture__short {
+    margin: 0;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
   }
   .trainings-link {
     margin: 2rem 0 0;
