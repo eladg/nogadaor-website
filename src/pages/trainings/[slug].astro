@@ -1,6 +1,11 @@
 ---
 // עמוד הדרכה בודדת. הנתונים ב-src/data/trainings.ts
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import LightHero from '../../components/LightHero.astro';
+import { atmoStyle } from '../../utils/atmo';
+import chairs from '../../assets/atmosphere/light-chairs.webp';
+import audience from '../../assets/atmosphere/light-audience.webp';
+import road from '../../assets/atmosphere/dark-road.webp';
 import { trainings, type Training } from '../../data/trainings';
 import { contact } from '../../data/contact';
 
@@ -11,16 +16,15 @@ export function getStaticPaths() {
 const { training } = Astro.props as { training: Training };
 const waText = encodeURIComponent(`היי נוגה, אשמח לפרטים על ההדרכה "${training.title}"`);
 const others = trainings.filter((t) => t.slug !== training.slug);
+// תמונות אווירה (2026-11-07): כיתה ריקה וקהל, לסירוגין בין ההדרכות
+const heroImage = trainings.indexOf(training) % 2 === 0 ? audience : chairs;
+const roadStyle = await atmoStyle(road, 0.45);
 ---
 
 <BaseLayout title={training.title} description={training.lead.join(' ')}>
-  <section class="t-hero section section--mist">
-    <div class="container t-hero__inner">
-      <p class="t-hero__kicker"><a href="/trainings/">קטלוג הדרכות</a> / הדרכה</p>
-      <h1>{training.title}</h1>
-      {training.lead.map((p) => <p class="t-hero__lead">{p}</p>)}
-    </div>
-  </section>
+  <LightHero image={heroImage} title={training.title} crumbs={{ href: '/trainings/', label: 'קטלוג הדרכות', current: 'הדרכה' }}>
+    {training.lead.map((p) => <p>{p}</p>)}
+  </LightHero>
 
   <section class="section">
     <div class="container t-body">
@@ -45,7 +49,7 @@ const others = trainings.filter((t) => t.slug !== training.slug);
     </div>
   </section>
 
-  <section class="section section--dark t-cta">
+  <section class="section section--dark t-cta atmo atmo--full" style={roadStyle}>
     <div class="container">
       <h2>להזמין את ההדרכה כהרצאה או כסדנה</h2>
       <p class="t-cta__actions">
@@ -107,20 +111,41 @@ const others = trainings.filter((t) => t.slug !== training.slug);
     margin: 0;
     display: grid;
     gap: 0.75rem;
+    counter-reset: topic;
   }
   .topics li {
-    border: 1px solid var(--line);
-    border-inline-start: 5px solid var(--teal);
-    border-radius: var(--radius);
-    padding: 0.9rem 1.2rem;
+    position: relative;
     display: grid;
     gap: 0.15rem;
+    padding: 1rem 1.2rem 1rem 1.2rem;
+    padding-inline-start: 3.6rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    counter-increment: topic;
+  }
+  /* מספר בעיגול זהב, כמו בצירים ובכרטיסים באתר */
+  .topics li::before {
+    content: counter(topic, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: 0.95rem;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 0.8rem;
+    font-weight: 900;
   }
   .format {
     font-weight: 700;
   }
   .t-cta {
     text-align: center;
+    padding-block: clamp(3.5rem, 9vw, 5.5rem);
   }
   .t-cta__actions {
     display: flex;
@@ -133,14 +158,30 @@ const others = trainings.filter((t) => t.slug !== training.slug);
   .t-cta a:not(.btn) {
     color: var(--gold-light);
   }
+  /* הדרכות נוספות: תגיות לחיצות */
   .others {
-    columns: 2 18rem;
-    column-gap: 2rem;
-    padding-inline-start: 1.2em;
+    list-style: none;
+    padding: 0;
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
   }
   .others li {
-    margin-bottom: 0.5rem;
-    break-inside: avoid;
+    margin: 0;
+  }
+  .others a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: var(--navy);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .others a:hover {
+    border-color: var(--teal);
+    color: var(--teal-dark);
   }
 </style>

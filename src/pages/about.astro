@@ -95,6 +95,10 @@ const icons: Record<string, string> = {
   together: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15.5 14.6c2.6.4 4.5 2.6 4.5 5.4"/>',
   flag: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>',
 };
+// תמונת אווירה (2026-11-07, קו רציף בכל האתר): מדרגות מוארות, עדין, מאחורי "עקרונות הליווי"
+import { atmoStyle } from '../utils/atmo';
+import stairsAtmo from '../assets/atmosphere/dark-stairs.webp';
+const stairsStyle = await atmoStyle(stairsAtmo, 0.35);
 ---
 
 <BaseLayout
@@ -199,7 +203,7 @@ const icons: Record<string, string> = {
   </section>
 
   <!-- 4. עקרונות הליווי שלי: שש קוביות על רקע כחול. בגוף יחיד: זה האתר של נוגה -->
-  <section class="a-ways">
+  <section class="a-ways atmo" style={stairsStyle}>
     <div class="container">
       <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת בגוף יחיד שמתאימה לתוכן הקוביות -->
       <h2 class="a-ways__title reveal">עקרונות <span class="hl">הליווי שלי</span></h2>

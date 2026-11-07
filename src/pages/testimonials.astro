@@ -8,6 +8,10 @@ import Carousel from '../components/Carousel.astro';
 import ReviewsCarousel from '../components/ReviewsCarousel.astro';
 import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
+// תמונת אווירה (2026-11-07, קו רציף בכל האתר): צוות סביב שולחן, מאחורי ההמלצות הכתובות
+import { atmoStyle } from '../utils/atmo';
+import teamAtmo from '../assets/atmosphere/light-team.webp';
+const teamStyle = await atmoStyle(teamAtmo, 0.32);
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
@@ -65,7 +69,7 @@ import { allReviews } from '../data/reviews';
   </section>
 
   <!-- המלצות כתובות: קרוסלה, מתעדכנת ידנית ב-src/data/reviews.ts -->
-  <section class="section section--mist t-reviews" id="reviews">
+  <section class="section section--mist t-reviews atmo" id="reviews" style={teamStyle}>
     <div class="container">
       <h2 class="t-title">מה אומרים עליי</h2>
       <ReviewsCarousel reviews={allReviews} label="המלצות לקוחות בכתב" />

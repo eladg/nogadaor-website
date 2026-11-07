@@ -1,13 +1,22 @@
 ---
-// פתיח אחיד לראש עמוד פנימי: כותרת ראשית ושורת הסבר אופציונלית.
+// פתיח אחיד לראש עמוד פנימי: כותרת ראשית ושורת הסבר.
+// 2026-11-07 ("קו רציף בכל האתר"): כהה, עם תמונת אווירה (AI) בצד שמאל, כמו בפתיח עמוד השירותים.
+// image: תמונה כהה מ-src/assets/atmosphere (ברירת מחדל: קווי האור).
+import { atmoStyle } from '../utils/atmo';
+import darkLines from '../assets/atmosphere/dark-lines.webp';
+
 interface Props {
   title: string;
+  kicker?: string;
+  image?: ImageMetadata;
 }
-const { title } = Astro.props;
+const { title, kicker, image = darkLines } = Astro.props;
+const bg = await atmoStyle(image, 0.7);
 ---
 
-<section class="page-header section section--mist">
+<section class="page-header section--deep atmo" style={bg}>
   <div class="container">
+    {kicker && <p class="page-header__kicker">{kicker}</p>}
     <h1>{title}</h1>
     <div class="page-header__lead"><slot /></div>
   </div>
@@ -15,11 +24,23 @@ const { title } = Astro.props;
 
 <style>
   .page-header {
-    padding-block: clamp(2rem, 5vw, 3.5rem);
-    border-bottom: 1px solid var(--line);
+    padding-block: clamp(2.75rem, 7vw, 4.5rem);
+  }
+  .page-header__kicker {
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    color: var(--gold-light);
   }
   .page-header h1 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--white);
+    font-size: clamp(2.1rem, 5.6vw, 3.4rem);
+    font-weight: 900;
+  }
+  .page-header__lead {
+    max-width: 40rem;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.65;
   }
   .page-header__lead :global(p:last-child) {
     margin-bottom: 0;

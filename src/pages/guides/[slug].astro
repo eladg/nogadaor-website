@@ -27,6 +27,9 @@ import Ranking from '../../components/guide/Ranking.astro';
 import Takeaways from '../../components/guide/Takeaways.astro';
 import { contact } from '../../data/contact';
 import nogaPhoto from '../../assets/contact/noga-bench.jpg';
+import { atmoStyle } from '../../utils/atmo';
+import road from '../../assets/atmosphere/dark-road.webp';
+const roadStyle = await atmoStyle(road, 0.4);
 
 export async function getStaticPaths() {
   // מדריכים שעוד אין להם תוכן (comingSoon) לא מקבלים עמוד
@@ -167,7 +170,7 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
   </div>
 
   <!-- 4. קריאה לפעולה -->
-  <section class="g-cta">
+  <section class="g-cta atmo atmo--full" style={roadStyle}>
     <div class="container g-cta__inner">
       <h2 class="g-cta__title"><Star size={30} class="g-cta__star" /> רוצים לדבר <span class="hl">על זה?</span></h2>
       <!-- הנוסח מתוך המדריכים של נוגה ("מוזמנים לפגישת זום קצרה...") -->

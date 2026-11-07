@@ -13,6 +13,10 @@ import ContentCover from '../../components/ContentCover.astro';
 import Icon from '../../components/Icon.astro';
 import ShareBar from '../../components/ShareBar.astro';
 import { readingMinutes } from '../../utils/readingTime';
+import { atmoStyle } from '../../utils/atmo';
+import stairs from '../../assets/atmosphere/dark-stairs.webp';
+import darkLines from '../../assets/atmosphere/dark-lines.webp';
+const linesStyle = await atmoStyle(darkLines, 0.4);
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 // קודם המדריכים ואחריהם המאמרים, כל קבוצה לפי order
@@ -23,7 +27,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   title="מדריכים והרצאות"
   description="מדריכים, מאמרים והדרכות לצפייה בחינם לבעלי עסקים, מאת נוגה דיין אור."
 >
-  <PageHeader title="מדריכים והרצאות">
+  <PageHeader title="מדריכים והרצאות" kicker="תוכן חינמי לבעלי עסקים" image={stairs}>
     <!-- TODO: משפט פתיחה קצר לעמוד – נוגה תספק -->
     <p class="placeholder">תוכן חסר: משפט פתיחה קצר.</p>
   </PageHeader>
@@ -70,7 +74,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
 
   <!-- חלק 2: הדרכות מהיוטיוב, לצפייה בחינם. פס כהה. הכריכה שלנו מוצגת במקום התמונה של יוטיוב, והסרטון נטען רק בלחיצה.
        השאלון עבר לעמוד הבית (נוגה, 2026-11-07). -->
-  <section class="section section--dark lectures">
+  <section class="section section--dark lectures atmo" style={linesStyle}>
     <div class="container">
       <h2>הדרכות לצפייה <span class="hl">בחינם</span></h2>
       <!-- TODO: נוגה תביא עוד הדרכות מהערוץ (2026-11-07). כרגע הדרכה אחת. -->

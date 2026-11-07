@@ -18,13 +18,17 @@ const config = {
   levels: quizLevels,
   whatsapp: contact.whatsapp,
 };
+// תמונת אווירה בפתיח (2026-11-07, קו רציף בכל האתר)
+import { atmoStyle } from '../../utils/atmo';
+import darkLinesQz from '../../assets/atmosphere/dark-lines.webp';
+const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 ---
 
 <BaseLayout
   title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
   description={`שאלון אבחון עסקי של ${total} שאלות ב-${quizAreas.length} תחומים: אסטרטגיה, הצעת שירות ותמחור, נראות דיגיטלית, שיווק יזום, מכירות ושימור, כישורי ניהול והתייעלות, וכספים. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.`}
 >
-  <header class="qz-hero">
+  <header class="qz-hero atmo" style={linesStyle}>
     <div class="container qz-hero__inner">
       <p class="qz-crumbs"><a href="/">בית</a> <span aria-hidden="true">/</span> שאלון</p>
       <h1>שאלון מיקוד פיתוח עסקי לשנת <span class="hl">{quizYear}</span></h1>

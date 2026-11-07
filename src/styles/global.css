@@ -183,6 +183,36 @@ a {
   color: var(--on-dark-soft);
 }
 
+/* תמונת אווירה כרקע (src/utils/atmo.ts). התמונה בצד שמאל, ונעלמת בהדרגה לכיוון הטקסט בימין.
+   --atmo-o: שקיפות (ברירת מחדל 0.55). עובד על אזורים כהים ובהירים. */
+.atmo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.atmo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--bg) left center / cover no-repeat;
+  opacity: var(--atmo-o, 0.55);
+  mask-image: linear-gradient(to left, transparent 20%, #000 78%);
+  -webkit-mask-image: linear-gradient(to left, transparent 20%, #000 78%);
+}
+/* תמונה על כל הרוחב (לאזורי קריאה לפעולה עם טקסט במרכז) */
+.atmo--full::after {
+  mask-image: none;
+  -webkit-mask-image: none;
+  background-position: center 62%;
+}
+.section--deep .placeholder {
+  background: transparent;
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
 /* תיבת תוכן חסר – מסמנת בבירור מקום שנוגה צריכה להשלים */
 .placeholder {
   border: 2px dashed var(--teal);

@@ -26,6 +26,12 @@ const ways = [
 ] as const;
 
 const [featuredPost, ...morePosts] = instagramPosts;
+// תמונות אווירה (2026-11-07, קו רציף בכל האתר): קווי אור באזור הקהילה, ושולחן עבודה מאחורי הטפסים
+import { atmoStyle } from '../utils/atmo';
+import linesAtmo from '../assets/atmosphere/dark-lines.webp';
+import deskAtmo from '../assets/atmosphere/light-desk.webp';
+const linesStyle = await atmoStyle(linesAtmo, 0.4);
+const deskStyle = await atmoStyle(deskAtmo, 0.35);
 ---
 
 <BaseLayout title="צור קשר" description="כל הדרכים להתחבר לנוגה דיין אור: וואטסאפ, טלפון, אימייל, רשתות חברתיות, קהילת העסקים תודעה עסקית מנצחת והרשמה לתכנים במייל.">
@@ -75,7 +81,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
   </section>
 
   <!-- 3. הקהילה: קבוצת הוואטסאפ "תודעה עסקית מנצחת" (הטקסטים של נוגה, src/data/community.ts) -->
-  <section class="c-community reveal" aria-labelledby="community-title">
+  <section class="c-community reveal atmo" aria-labelledby="community-title" style={linesStyle}>
     <div class="container c-community__grid">
       <div class="c-community__info">
         <p class="c-eyebrow c-eyebrow--dark"><Icon name="users" size={16} /> הקהילה שלי</p>
@@ -159,7 +165,7 @@ const [featuredPost, ...morePosts] = instagramPosts;
     </div>
   </section>
   <!-- 5. טופס פנייה, ולצדו הרשמה לתכנים במייל -->
-  <section class="section section--mist c-forms reveal">
+  <section class="section section--mist c-forms reveal atmo" style={deskStyle}>
     <div class="container c-forms__grid">
       <!-- TODO: לחבר את הטופס לשירות טפסים (Formspree / Netlify Forms וכד'). כרגע הוא לא שולח דבר. -->
       <form class="c-form js-demo-form" method="post" novalidate aria-labelledby="form-title">
