@@ -1,0 +1,97 @@
+---
+// כרטיס רחב שמזמין למלא את שאלון המיקוד. היה בעמוד המדריכים, ולבקשת נוגה (2026-11-07) עבר לעמוד הבית.
+// השאלון עצמו נשאר בכתובת /guides/business-focus-quiz/.
+import ContentCover from './ContentCover.astro';
+import Icon from './Icon.astro';
+import { quizYear, quizQuestions, quizAreas } from '../data/quiz';
+
+const href = '/guides/business-focus-quiz/';
+---
+
+<div class="feature reveal">
+  <a class="feature__cover" href={href} tabindex="-1" aria-hidden="true">
+    <!-- כותרת הכריכה היא הצעה שלי -->
+    <ContentCover title={`לאן ממקדים|את *${quizYear}*?`} motif="compass" kind="quiz" />
+  </a>
+  <div class="feature__text">
+    <p class="meta"><Icon name="check" size={16} /> <span>שאלון</span> · {quizQuestions.length} שאלות</p>
+    <h2 class="feature__title">
+      <a href={href}>שאלון מיקוד פיתוח עסקי לשנת {quizYear}</a>
+    </h2>
+    <p>{quizQuestions.length} שאלות קצרות על {quizAreas.length} תחומים בעסק. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
+    <p class="feature__more" aria-hidden="true">למילוי השאלון ←</p>
+  </div>
+</div>
+
+<style>
+  .feature {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2rem;
+    align-items: center;
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 48rem) {
+    .feature {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+  .feature__cover {
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .feature:hover .feature__cover {
+    transform: translateY(-4px);
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.85rem 0 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5b73;
+  }
+  .meta span,
+  .meta :global(svg) {
+    color: var(--teal-dark);
+  }
+  .meta span {
+    font-weight: 800;
+  }
+  .feature__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .feature__title a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  /* כל הכרטיס לחיץ, דרך הקישור שבכותרת */
+  .feature__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .feature__title a:hover {
+    color: var(--teal-dark);
+  }
+  .feature__text p:not(.meta) {
+    margin: 0;
+  }
+  .feature__more {
+    margin-top: 0.75rem !important;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .feature__cover {
+      transition: none;
+    }
+  }
+</style>
