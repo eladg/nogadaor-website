@@ -11,6 +11,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
+import { launch } from '../data/launch';
 import { contact } from '../data/contact';
 import Star from '../components/Star.astro';
 
@@ -183,7 +184,9 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
     </div>
   </section>
 
-  <!-- 5. שותפים מקצועיים: מומחים שנוגה עובדת איתם (אינם חלק מהארגון). הרשימה ב-src/data/experts.ts -->
+  <!-- 5. שותפים מקצועיים: מומחים שנוגה עובדת איתם (אינם חלק מהארגון). הרשימה ב-src/data/experts.ts
+       כרגע מוסתר (נוגה, 2026-11-08). מחזירים ב-src/data/launch.ts (aboutPartners) -->
+  {launch.aboutPartners && (
   <section class="section">
     <div class="container">
       <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת מקצועית יותר מ"מומחים שאני עובדת איתם" -->
@@ -203,6 +206,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
       </ul>
     </div>
   </section>
+  )}
 
   <!-- 6. התפיסה שלי (לשעבר "מה מניע אותי"; הנוסח של נוגה) -->
   <section class="section section--mist a-drive">

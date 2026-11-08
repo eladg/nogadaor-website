@@ -6,4 +6,6 @@ export const launch = {
   fullSiteIndex: false,
   // המילה "לפרטים ←" בכרטיסי השירותים (בבית ובעמוד השירותים)
   servicePagesLive: false,
+  // "שותפים מקצועיים" בעמוד האודות (נוגה, 2026-11-08: כרגע להסתיר)
+  aboutPartners: false,
 };

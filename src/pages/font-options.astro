@@ -1,0 +1,89 @@
+---
+// עמוד עבודה זמני (2026-11-08): השוואת גופנים רכים ועגולים לפתק בכתב יד בעמוד ההמלצות.
+// לא בתפריט ומוסתר מגוגל. למחוק אחרי שנוגה בוחרת.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const options = [
+  { id: 'א', name: 'Fredoka', family: "'Fredoka Variable'", weight: 400, size: '1.3rem', note: 'עגול, רך ומתוק. אותיות דפוס עגולות' },
+  { id: 'ב', name: 'Varela Round', family: "'Varela Round'", weight: 400, size: '1.28rem', note: 'עגול ונקי, עדין יותר' },
+  { id: 'ג', name: 'M PLUS Rounded', family: "'M PLUS Rounded 1c'", weight: 500, size: '1.25rem', note: 'עגול, מעט "ילדותי"' },
+  { id: 'ד', name: 'Playpen Sans (דק)', family: "'Playpen Sans Hebrew Variable'", weight: 300, size: '1.25rem', note: 'כתב יד, בגרסה דקה ורכה יותר מהקודמת' },
+  { id: 'ה', name: 'גברת לוין (הנוכחי)', family: "'Gveret Levin'", weight: 400, size: '1.5rem', note: 'כתב יד רהוט, לשם השוואה' },
+];
+---
+
+<BaseLayout title="השוואת גופנים" noindex>
+  <Fragment slot="head">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fredoka@5.2.10/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/varela-round@5.2.8/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/m-plus-rounded-1c@5.2.10/hebrew-500.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/playpen-sans-hebrew@5.2.4/index.css" />
+  </Fragment>
+  <section class="section section--mist">
+    <div class="container">
+      <h1>איזה כתב יד הכי רך ומתוק?</h1>
+      <p>אותו פתק מעמוד ההמלצות, בחמישה גופנים. בחרי אות.</p>
+      <div class="opts">
+        {
+          options.map((o) => (
+            <figure class="opt">
+              <figcaption>
+                <strong>{o.id}</strong> {o.name} · <span>{o.note}</span>
+              </figcaption>
+              <blockquote class="note" style={`font-family: ${o.family}, var(--font); font-weight: ${o.weight}; font-size: ${o.size}`}>
+                <p>תודה ללקוחות המהממים שלי על האמון, על הדרך המשותפת ועל המילים שמרגשות אותי כל כך. לעולם לא אפסיק להודות ולהעריך בחזרה ❤️</p>
+                <p class="note__sign">נוגה</p>
+              </blockquote>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+  .opt {
+    margin: 0;
+  }
+  .opt figcaption {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+  }
+  .opt figcaption strong {
+    display: inline-grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 0.5rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .opt figcaption span {
+    color: #5b6b82;
+  }
+  .note {
+    margin: 0;
+    padding: 1.4rem 1.5rem 1rem;
+    background: var(--white);
+    border-radius: 1.25rem;
+    box-shadow: 0 18px 40px -22px rgb(11 26 51 / 0.35);
+    line-height: 1.75;
+    color: var(--navy);
+    rotate: -0.6deg;
+  }
+  .note p {
+    margin: 0 0 0.6em;
+  }
+  .note__sign {
+    text-align: end;
+    font-size: 1.2em;
+    color: var(--teal-dark);
+  }
+</style>

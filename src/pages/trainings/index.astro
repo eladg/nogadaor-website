@@ -12,6 +12,7 @@ import { lectureReviews } from '../../data/reviews';
 import darkLines from '../../assets/atmosphere/dark-lines.webp';
 import { trainings, trainingCategories } from '../../data/trainings';
 import { contact } from '../../data/contact';
+import Icon from '../../components/Icon.astro';
 import { atmoStyle } from '../../utils/atmo';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
 import road from '../../assets/atmosphere/dark-road.webp';
@@ -20,11 +21,15 @@ const waText = encodeURIComponent('היי נוגה, אשמח לפרטים על �
 const roadStyle = await atmoStyle(road, 0.45);
 const linesStyle = await atmoStyle(darkLines, 0.5);
 
+// כל ההדרכות ברשת אחת, בלי הפרדה בתצוגה בין הנושאים (נוגה, 2026-11-08). הסדר: לפי סדר הנושאים, ובתוך כל נושא לפי הרשימה.
 const groups = trainingCategories
   .filter((c) => !('soon' in c && c.soon))
   .map((c) => ({ ...c, items: trainings.filter((t) => t.category === c.id) }))
   .filter((g) => g.items.length > 0);
+const allTrainings = groups.flatMap((g) => g.items);
 const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
+// "להזמנת ההדרכה": וואטסאפ עם שם ההדרכה בהודעה
+const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURIComponent(`היי נוגה, אשמח לפרטים על הזמנת ההדרכה "${title}"`)}`;
 ---
 
 <BaseLayout
@@ -37,17 +42,20 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     <p>ההדרכות מותאמות לקהל, לארגון, למטרות המפגש ולאתגרים של המשתתפים, ומשלבות אסטרטגיה, שיווק, דוגמאות מהשטח וחשיבה מעשית. כל הדרכה ניתנת כהרצאה, ואפשר להפוך אותה לסדנה יישומית.</p>
   </LightHero>
 
-  <!-- הנושאים למעלה: קישורים לאזורים בעמוד. נושאים שעוד אין בהם הדרכות מסומנים "בקרוב".
-       בלי מספר ההדרכות ליד כל נושא (נוגה, 2026-11-08). -->
+  <!-- הנושאים למעלה (נוגה אוהבת אותם, וגם את ה"בקרוב"). בלי מספרים. כפתורי סינון: "כל ההדרכות" מסומן כברירת מחדל,
+       ולחיצה על נושא מציגה רק את ההדרכות שלו, באותה רשת. בלי JavaScript מוצגות כל ההדרכות. -->
   <nav class="topics-nav" aria-label="נושאי ההדרכות">
     <div class="container">
       <ul>
+        <li>
+          <button type="button" class="topics-nav__btn" data-topic="all" aria-pressed="true">כל ההדרכות</button>
+        </li>
         {
           groups.map((g) => (
             <li>
-              <a href={`#${g.id}`}>
+              <button type="button" class="topics-nav__btn" data-topic={g.id} aria-pressed="false">
                 {g.title}
-              </a>
+              </button>
             </li>
           ))
         }
@@ -64,28 +72,29 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     </div>
   </nav>
 
-  {
-    groups.map((g, gi) => (
-      <section class:list={['section', 'topic', { 'section--mist': gi % 2 === 1 }]} id={g.id}>
-        <div class="container">
-          <h2 class="sec-title reveal">{g.title}</h2>
-          <ul class="tgrid">
-            {g.items.map((t, i) => (
-              <li class="tcard reveal" style={`transition-delay: ${(i % 4) * 0.08}s`}>
-                <a class="tcard__cover" href={`/trainings/${t.slug}/`} tabindex="-1" aria-hidden="true">
-                  <ContentCover title={t.coverTitle} motif={t.coverMotif} />
-                </a>
-                <h3 class="tcard__title">
-                  <a href={`/trainings/${t.slug}/`}>{t.title}</a>
-                </h3>
-                <p class="tcard__short">{t.short}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    ))
-  }
+  <!-- כל ההדרכות ברשת אחת. בכל שורה התמונה, הכותרת, ההסבר והקישור להזמנה באותו גובה (subgrid, נוגה 2026-11-08). -->
+  <section class="section topic" id="trainings">
+    <div class="container">
+      <h2 class="sr-only">כל ההדרכות</h2>
+      <ul class="tgrid">
+        {allTrainings.map((t, i) => (
+          <li class="tcard reveal" data-topic={t.category} style={`transition-delay: ${(i % 3) * 0.08}s`}>
+            <a class="tcard__cover" href={`/trainings/${t.slug}/`} tabindex="-1" aria-hidden="true">
+              <ContentCover title={t.coverTitle} motif={t.coverMotif} />
+            </a>
+            <h3 class="tcard__title">
+              <a href={`/trainings/${t.slug}/`}>{t.title}</a>
+            </h3>
+            <p class="tcard__short">{t.short}</p>
+            <a class="tcard__order" href={orderHref(t.title)} target="_blank" rel="noopener">
+              <Icon name="whatsapp" size={16} />
+              להזמנת ההדרכה<span class="sr-only"> "{t.title}" בוואטסאפ (נפתח בלשונית חדשה)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 
   <!-- על הבמה: סרטון כנס העסקים שנוגה הפיקה. מופיע בשני מקומות באתר: כאן ובעמוד הבית (2026-11-07).
        אותה כריכה כמו בעמוד הבית (נוגה, 2026-11-08), מהרכיב המשותף ConferenceVideo. -->
@@ -108,23 +117,7 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     <QuoteMarquee reviews={lectureReviews} rows={2} />
   </section>
 
-  <!-- בקרוב -->
-  <section class="section soon-sec">
-    <div class="container">
-      <h2 class="sec-title reveal">בקרוב</h2>
-      <ul class="soon-list">
-        {
-          soon.map((c) => (
-            <li class="reveal">
-              <span class="badge">בקרוב</span>
-              <h3>{c.title}</h3>
-            </li>
-          ))
-        }
-      </ul>
-      <!-- TODO: לפי העץ באתר אמורות להיות כ-12 הרצאות. כרגע 8. נוגה תשלים, כולל ההרצאות לארגונים וההרצאות בנושא העצמה. -->
-    </div>
-  </section>
+  <!-- אזור "בקרוב" בתחתית הוסר (נוגה, 2026-11-08). ה"בקרוב" נשאר רק בנושאים למעלה. -->
 
   <section class="section section--dark trainings-cta atmo atmo--full" style={roadStyle}>
     <div class="container">
@@ -138,6 +131,22 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // סינון לפי נושא: מציג רק את ההדרכות של הנושא שנבחר, באותה רשת
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.topics-nav__btn');
+  const cards = document.querySelectorAll<HTMLElement>('.tcard');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const topic = btn.dataset.topic;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((c) => {
+        c.hidden = topic !== 'all' && c.dataset.topic !== topic;
+      });
+      document.getElementById('trainings')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+  );
+</script>
 
 <style>
   /* ---------- הנושאים למעלה: פס דביק מתחת לכותרת האתר ---------- */
@@ -165,7 +174,7 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     flex: none;
     margin: 0;
   }
-  .topics-nav a,
+  .topics-nav__btn,
   .topics-nav__soon {
     display: inline-flex;
     align-items: center;
@@ -177,12 +186,22 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     white-space: nowrap;
     text-decoration: none;
   }
-  .topics-nav a {
-    background: var(--navy);
-    color: var(--white);
+  .topics-nav__btn {
+    border: 1px solid var(--navy);
+    background: var(--white);
+    color: var(--navy);
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
-  .topics-nav a:hover {
-    background: var(--teal-dark);
+  .topics-nav__btn:hover {
+    border-color: var(--teal-dark);
+    color: var(--teal-dark);
+  }
+  .topics-nav__btn[aria-pressed='true'] {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
   }
   .topics-nav__soon {
     border: 1px dashed #b9c6d3;
@@ -203,30 +222,55 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     scroll-margin-top: 7.5rem;
   }
 
-  /* ---------- כרטיסים: 3 בשורה במחשב (6 = 3+3), 2 בטאבלט, 1 בנייד. שורה לא מלאה ממורכזת ---------- */
+  /* ---------- כרטיסים: 3 בשורה במחשב, 2 בטאבלט, 1 בנייד. שורה אחרונה לא מלאה ממורכזת ----------
+     רשת של 6 טורים (כל כרטיס 2), ו-subgrid: התמונה, הכותרת, ההסבר והקישור להזמנה באותו גובה בכל שורה. */
   .tgrid {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     /* יותר מרווח בין ההדרכות (נוגה, 2026-11-08) */
-    gap: 3.25rem 2.75rem;
+    gap: 0 2.75rem;
   }
   .tcard {
     position: relative;
-    flex: 0 1 calc((100% - 2 * 2.75rem) / 3);
-    margin: 0;
+    grid-column: span 2;
+    grid-row: span 4;
+    display: grid;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    margin: 0 0 3.25rem;
+  }
+  .tcard[hidden] {
+    display: none;
+  }
+  /* שורה אחרונה עם 2 כרטיסים: ממורכזת. עם כרטיס 1: באמצע (בכל רוחב לפי מספר הטורים שלו) */
+  @media (min-width: 62.01rem) {
+    .tcard:nth-child(3n + 1 of :not([hidden])):nth-last-child(2 of :not([hidden])) {
+      grid-column: 2 / span 2;
+    }
+    .tcard:nth-child(3n + 1 of :not([hidden])):nth-last-child(1 of :not([hidden])) {
+      grid-column: 3 / span 2;
+    }
   }
   @media (max-width: 62rem) {
-    .tcard {
-      flex-basis: calc((100% - 2.75rem) / 2);
+    .tgrid {
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 2rem;
+    }
+  }
+  @media (max-width: 62rem) and (min-width: 36.01rem) {
+    .tcard:nth-child(2n + 1 of :not([hidden])):nth-last-child(1 of :not([hidden])) {
+      grid-column: 2 / span 2;
     }
   }
   @media (max-width: 36rem) {
+    .tgrid {
+      grid-template-columns: 1fr;
+    }
     .tcard {
-      flex-basis: 100%;
+      grid-column: 1;
     }
   }
   .tcard__cover {
@@ -237,7 +281,8 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     transform: translateY(-4px);
   }
   .tcard__title {
-    margin: 0.85rem 0 0.35rem;
+    align-self: start;
+    margin: 0.85rem 0 0.4rem;
     font-size: 1.1rem;
     font-weight: 900;
     line-height: 1.35;
@@ -256,42 +301,31 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     color: var(--teal-dark);
   }
   .tcard__short {
+    align-self: start;
     margin: 0;
     font-size: 0.97rem;
     line-height: 1.65;
     color: #33445c;
   }
 
-  /* ---------- בקרוב ---------- */
-  .soon-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+  /* "להזמנת ההדרכה": קישור עדין מתחת לכל הדרכה, מעל הקישור של כל הכרטיס */
+  .tcard__order {
+    position: relative;
+    z-index: 1;
+    justify-self: start;
+    align-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--teal-dark);
+    text-decoration: none;
   }
-  @media (max-width: 40rem) {
-    .soon-list {
-      grid-template-columns: 1fr;
-    }
-  }
-  .soon-list li {
-    margin: 0;
-    padding: 1.5rem;
-    border-radius: 1.25rem;
-    border: 2px dashed #c9d5e0;
-    background: var(--mist);
-  }
-  .soon-list h3 {
-    margin: 0.6rem 0 0;
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: #4a5b73;
-  }
-
-  .t-rev-title {
-    margin-bottom: 1.75rem;
+  .tcard__order:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   /* ---------- על הבמה ---------- */
