@@ -1,0 +1,66 @@
+---
+// עמוד 404: מי שמגיע לכתובת שלא קיימת (בדיקת SEO, 2026-11-08, פריט 13).
+// בעיצוב האתר, עם דרכים להמשיך, כדי שהגולש יישאר באתר. לא מופיע בגוגל (noindex).
+// רוב חברות האירוח (Netlify, Vercel, GitHub Pages) מציגות את dist/404.html אוטומטית.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { contact } from '../data/contact';
+
+const links = [
+  { href: '/', label: 'לעמוד הבית' },
+  { href: '/services/', label: 'לשירותים' },
+  { href: '/guides/', label: 'למרכז הידע' },
+  { href: '/trainings/', label: 'לקטלוג ההדרכות' },
+];
+---
+
+<BaseLayout title="העמוד לא נמצא" description="העמוד שחיפשתם לא נמצא באתר של נוגה דיין אור." noindex>
+  <PageHeader title="העמוד לא נמצא">
+    <p>ייתכן שהכתובת השתנתה או שנפלה בה טעות. אפשר להמשיך מכאן.</p>
+  </PageHeader>
+  <section class="section nf">
+    <div class="container">
+      <ul class="nf__links">
+        {links.map((l) => <li><a class="btn" href={l.href}>{l.label}</a></li>)}
+      </ul>
+      <p class="nf__help">
+        מחפשים משהו מסוים? <a href={contact.whatsapp} target="_blank" rel="noopener">אפשר לכתוב בוואטסאפ</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    text-align: center;
+  }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  /* בטלפון: טור אחד, כל הכפתורים באותו רוחב (שורות מאוזנות, נוגה 2026-11-06) */
+  @media (max-width: 40rem) {
+    .nf__links {
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 17rem;
+      margin-inline: auto;
+    }
+    .nf__links .btn {
+      display: block;
+    }
+  }
+  .nf__help {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  .nf__help a {
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+</style>

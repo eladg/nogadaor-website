@@ -54,9 +54,14 @@ import { ways, icons } from '../data/principles';
 import { atmoStyle } from '../utils/atmo';
 import stairsAtmo from '../assets/atmosphere/dark-stairs.webp';
 const stairsStyle = await atmoStyle(stairsAtmo, 0.35);
+// נתונים מובנים: עמוד "אודות" על נוגה (src/utils/schema.ts)
+import { personSchema } from '../utils/schema';
+const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין אור', inLanguage: 'he' }, personSchema(Astro.site)];
 ---
 
 <BaseLayout
+  schema={schema}
+  crumbs={[{ name: 'בית', path: '/' }, { name: 'אודות', path: '/about/' }]}
   title="אודות"
   description="נעים להכיר, נוגה דיין אור: יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה."
 >

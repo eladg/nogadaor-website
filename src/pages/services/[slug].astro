@@ -42,9 +42,20 @@ const visuals: Record<string, { hero: ImageMetadata; side: ImageMetadata; toon?:
 };
 const v = visuals[s.slug] ?? { hero: stairs, side: desk };
 const heroBg = await getImage({ src: v.hero, width: 1800, format: 'webp' });
+
+// נתונים מובנים: השירות, ושביל ניווט (src/utils/schema.ts)
+import { serviceSchema } from '../../utils/schema';
+const pageDescription = `${s.title}: ${s.lead}. ${s.intro ?? ''}`.trim();
+const path = `/services/${s.slug}/`;
+const schema = [serviceSchema(Astro.site, { name: s.title, description: pageDescription, path })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'שירותים', path: '/services/' },
+  { name: s.title, path },
+];
 ---
 
-<BaseLayout title={s.title} description={`${s.title}: ${s.lead}. ${s.intro ?? ''}`.trim()}>
+<BaseLayout title={s.title} description={pageDescription} schema={schema} crumbs={crumbs}>
   <!-- 1. פתיח -->
   <section class="sv-hero section--deep" style={`--bg: url(${heroBg.src})`}>
     <div class="container sv-hero__grid">

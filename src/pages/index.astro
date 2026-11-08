@@ -54,9 +54,15 @@ const stats = [
 const guides = (await getCollection('guides'))
   .filter((g) => !g.data.comingSoon && g.data.type === 'guide')
   .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);---
+  .slice(0, 4);
+
+// נתונים מובנים לגוגל ול-AI: מי נוגה, מה העסק ומה האתר (src/utils/schema.ts)
+import { personSchema, businessSchema, websiteSchema } from '../utils/schema';
+const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSchema(Astro.site)];
+---
 
 <BaseLayout
+  schema={schema}
   title="ייעוץ עסקי וארגוני"
   description="נוגה דיין אור: ייעוץ עסקי וארגוני להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית. אסטרטגיה ושיווק, ייעוץ ארגוני, ייעול תהליכים עם AI, ליווי פיננסי והדרכות."
 >

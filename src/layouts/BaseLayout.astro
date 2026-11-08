@@ -4,15 +4,29 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SiteIndex from '../components/SiteIndex.astro';
+import { graph, breadcrumbSchema, type Schema } from '../utils/schema';
+// טעינה מוקדמת של הגופן (בדיקת SEO, 2026-11-08): בלי זה הטקסט מוצג קודם בגופן אחר, ואז מתחלף ל-Heebo,
+// הכותרת בפתיח של הבית יורדת שורה וכל העמוד "קופץ" (CLS 0.257 במחשב). אלה אותם קבצים שה-CSS טוען.
+import heeboHebrew from '@fontsource-variable/heebo/files/heebo-hebrew-wght-normal.woff2?url';
+import heeboLatin from '@fontsource-variable/heebo/files/heebo-latin-wght-normal.woff2?url';
 
 interface Props {
   title: string;
   description?: string;
+  /** עמוד שלא צריך להופיע בגוגל (למשל עמוד מדיניות שעוד בהכנה) */
+  noindex?: boolean;
+  /** נתונים מובנים לעמוד (src/utils/schema.ts) */
+  schema?: Schema[];
+  /** שביל ניווט לנתונים המובנים, מהבית ועד העמוד. נכתב רק כשיש site. */
+  crumbs?: { name: string; path: string }[];
 }
 
-const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך' } = Astro.props;
-// TODO: להשלים כתובת קנונית ותמונת שיתוף (Open Graph) כשיהיה דומיין ותמונה – שלב 6 (SEO)
+const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [] } = Astro.props;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
+// כתובת קנונית: רק כשמוגדר site ב-astro.config.mjs (כשיהיה דומיין). אז היא מופיעה לבד בכל העמודים.
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+// TODO: תמונת שיתוף (og:image, 1200×630) ו-twitter:card כשתעוצב תמונה – בדיקת SEO, פריט 5
+const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as Schema[];
 ---
 
 <!doctype html>
@@ -21,14 +35,24 @@ const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="preload" href={heeboHebrew} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={heeboLatin} as="font" type="font/woff2" crossorigin />
+    <!-- תוספות לראש העמוד מעמוד מסוים (למשל טעינה מוקדמת של גופן שמשמש רק בו) -->
+    <slot name="head" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="נוגה דיין אור" />
     <meta property="og:locale" content="he_IL" />
     <meta property="og:type" content="website" />
+    {canonical && <meta property="og:url" content={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <title>{fullTitle}</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {ld.length > 0 && <script type="application/ld+json" set:html={graph(ld)} />}
     <!-- מסמן שיש JavaScript, כדי שאפקט ההופעה בגלילה (.reveal) יפעל רק כשאפשר -->
     <script is:inline>
       if ('IntersectionObserver' in window) document.documentElement.classList.add('js');

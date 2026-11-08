@@ -12,9 +12,17 @@ import { allReviews } from '../data/reviews';
 import { atmoStyle } from '../utils/atmo';
 import teamAtmo from '../assets/atmosphere/light-team.webp';
 const teamStyle = await atmoStyle(teamAtmo, 0.32);
+// הפתק בכתב יד בפתיח: טעינה מוקדמת של גופן כתב היד (בדיקת SEO, 2026-11-08). בלי זה הגופן מגיע בחלקים,
+// הטקסט בפתק עולה שורה ויורד בחזרה, וכל הפתיח "קופץ" בטלפון (CLS 0.29).
+import playpenHebrew from '@fontsource-variable/playpen-sans-hebrew/files/playpen-sans-hebrew-hebrew-wght-normal.woff2?url';
+import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen-sans-hebrew-latin-wght-normal.woff2?url';
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
+  <Fragment slot="head">
+    <link rel="preload" href={playpenHebrew} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={playpenLatin} as="font" type="font/woff2" crossorigin />
+  </Fragment>
   <section class="t-hero">
     <div class="container t-hero__grid">
       <div class="t-hero__text">

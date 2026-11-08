@@ -59,9 +59,19 @@ const related = all
 const description = d.description;
 const components = { Callout, Cards, Card, Steps, Step, Compare, Panel, CopyBox, Checklist, Band, Iceberg, Ranking, Takeaways };
 const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
+
+// נתונים מובנים: מאמר שנוגה כתבה, ושביל ניווט (src/utils/schema.ts)
+import { articleSchema } from '../../utils/schema';
+const path = `/guides/${guide.id}/`;
+const schema = [articleSchema(Astro.site, { title: d.title, description, path, published: d.published, keywords: d.keywords })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'מרכז הידע', path: '/guides/' },
+  { name: d.title, path },
+];
 ---
 
-<BaseLayout title={d.title} description={description}>
+<BaseLayout title={d.title} description={description} schema={schema} crumbs={crumbs}>
   <!-- סימן מים להדפסה: המונוגרמה OR עם הכוכב, שקופה מאוד, בכל עמוד מודפס (מוסתרת במסך).
        נוגה (2026-11-06): שלא ישתמשו במדריך המודפס כאילו הוא שלהם. -->
   <div class="print-mark" aria-hidden="true"><img src="/images/or-mark.webp" alt="" width="800" height="565" /></div>
