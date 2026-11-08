@@ -2,7 +2,6 @@
 // עמוד הדרכה בודדת. הנתונים ב-src/data/trainings.ts
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
-import FreeLectures from '../../components/FreeLectures.astro';
 import { atmoStyle } from '../../utils/atmo';
 import { lectureReviews } from '../../data/reviews';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
@@ -153,12 +152,9 @@ const crumbs = [
         <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
       </p>
-    </div>
-  </section>
 
-  <section class="section section--mist">
-    <div class="container">
-      <h2 class="center">הדרכות נוספות</h2>
+      <!-- הדרכות נוספות והקישור להרצאות החינמיות: באותו אזור כמו ההזמנה (נוגה, 2026-11-08: לאחד) -->
+      <h3 class="t-cta__more">הדרכות נוספות</h3>
       <ul class="others">
         {
           others.map((t) => (
@@ -168,11 +164,11 @@ const crumbs = [
           ))
         }
       </ul>
+      <p class="t-cta__free">
+        <a href="/guides/#lectures">לרעיונות וכלים נוספים לשיווק העסק, מוזמנים להציץ בהרצאות החינמיות במרכז הידע</a>
+      </p>
     </div>
   </section>
-
-  <!-- הזמנה להרצאות החינמיות במרכז הידע (נוגה, 2026-11-08) -->
-  <FreeLectures />
 </BaseLayout>
 
 <style>
@@ -326,6 +322,23 @@ const crumbs = [
   .t-cta a:not(.btn) {
     color: var(--gold-light);
   }
+  /* הדרכות נוספות, באותו אזור כהה: קו זהב דק מפריד, ותגיות שקופות */
+  .t-cta__more {
+    margin: clamp(2.5rem, 6vw, 3.5rem) auto 1rem;
+    padding-top: clamp(2rem, 5vw, 2.75rem);
+    max-width: 46rem;
+    border-top: 1px solid rgb(252 220 109 / 0.3);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--on-dark-soft);
+  }
+  .t-cta__free {
+    margin: 1.75rem 0 0;
+    font-size: 1.02rem;
+  }
+  .t-cta__free a {
+    text-underline-offset: 0.25em;
+  }
   /* המלצות משתתפים על ההדרכה */
   .t-rev-title {
     text-align: center;
@@ -379,18 +392,19 @@ const crumbs = [
   .others li {
     margin: 0;
   }
-  .others a {
+  .t-cta .others a {
     display: inline-block;
     padding: 0.5rem 1rem;
     border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    color: var(--navy);
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.25);
+    color: var(--white);
     font-weight: 700;
     text-decoration: none;
+    backdrop-filter: blur(4px);
   }
-  .others a:hover {
-    border-color: var(--teal);
-    color: var(--teal-dark);
+  .t-cta .others a:hover {
+    border-color: var(--gold-light);
+    color: var(--gold-light);
   }
 </style>

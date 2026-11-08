@@ -13,7 +13,6 @@ import darkLines from '../../assets/atmosphere/dark-lines.webp';
 import { trainings, trainingCategories } from '../../data/trainings';
 import { contact } from '../../data/contact';
 import Icon from '../../components/Icon.astro';
-import FreeLectures from '../../components/FreeLectures.astro';
 import { atmoStyle } from '../../utils/atmo';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
 import road from '../../assets/atmosphere/dark-road.webp';
@@ -129,11 +128,12 @@ const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURICompon
         <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
       </p>
+      <!-- קישור להרצאות החינמיות במרכז הידע, באותו אזור כמו ההזמנה (נוגה, 2026-11-08) -->
+      <p class="trainings-cta__free">
+        <a href="/guides/#lectures">לרעיונות וכלים נוספים לשיווק העסק, מוזמנים להציץ בהרצאות החינמיות במרכז הידע</a>
+      </p>
     </div>
   </section>
-
-  <!-- הזמנה להרצאות החינמיות במרכז הידע (נוגה, 2026-11-08) -->
-  <FreeLectures />
 </BaseLayout>
 
 <script>
@@ -360,6 +360,16 @@ const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURICompon
     justify-content: center;
     align-items: center;
     margin: 1.5rem 0 0;
+  }
+  .trainings-cta__free {
+    margin: 2rem auto 0;
+    padding-top: 1.5rem;
+    max-width: 40rem;
+    border-top: 1px solid rgb(252 220 109 / 0.3);
+    font-size: 1.02rem;
+  }
+  .trainings-cta__free a {
+    text-underline-offset: 0.25em;
   }
   .trainings-cta a:not(.btn) {
     color: var(--gold-light);
