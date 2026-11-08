@@ -33,8 +33,8 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     <div class="container s-hero__inner">
       <!-- התואר של נוגה -->
       <h1 class="s-hero__title">ייעוץ עסקי וארגוני <span class="s-hero__gold">להגדלת הכנסות ושיפור רווחיות</span></h1>
-      <!-- מתוך "משפטים" ו"במשפט אחד" במסמך העבודה של נוגה -->
-      <p class="s-hero__lead">להרוויח יותר מהפעילות, מהלקוחות ומהמשאבים שכבר קיימים בעסק, בפתרונות פשוטים וממוקדים שמותאמים לעסק שלך.</p>
+      <!-- נוגה (2026-11-08): רחב ומקצועי יותר, ישים ופרקטי, חדשני ויצירתי, מסתכל קדימה על המגמות, "מקדם מטרות ותוכניות גדולות". הניסוח שלי, ממתין לאישור. -->
+      <p class="s-hero__lead">ליווי מקצועי שמקדם מטרות ותוכניות גדולות, בפתרונות ישימים, חדשניים ויצירתיים, שממצים את הפוטנציאל הקיים בעסק ומסתכלים קדימה אל המגמות של השוק.</p>
       <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </section>
@@ -68,9 +68,8 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   <!-- 3. מסתכלים על העסק כולו: הבידול של נוגה (שילוב, ולא נושא מבודד) -->
   <section class="section section--mist">
     <div class="container">
-      <h2 class="sec-title reveal">מסתכלים על העסק <span class="hl--mark">כולו</span></h2>
-      <!-- מתוך "הבידול של נוגה" במסמך העבודה -->
-      <p class="sec-lead">שילוב בין ייעוץ עסקי לייעוץ ארגוני, ולא טיפול בנושא מבודד. ראייה מערכתית של העסק, לצד ירידה לפרטים המעשיים.</p>
+      <!-- הכותרת של נוגה (2026-11-08), מתוך "הבידול של נוגה" במסמך העבודה. שאר המילים סביבה הוסרו. -->
+      <h2 class="sec-title center s-split reveal">ראייה מערכתית של העסק,{' '}<span class="hl--mark">לצד ירידה לפרטים המעשיים</span></h2>
       <ul class="areas">
         {
           areas.map((a, i) => (
@@ -300,6 +299,12 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     font-size: 0.92rem;
     font-weight: 800;
     color: var(--teal-dark);
+  }
+
+  /* כותרת בשתי שורות: החלק המודגש בשורה משלו, ברוחב המילים בלבד */
+  .s-split .hl--mark {
+    display: table;
+    margin-inline: auto;
   }
 
   /* ---------- 8 תחומים: 4 בשורה, 2 בטאבלט ובנייד ---------- */
