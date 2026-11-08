@@ -20,7 +20,8 @@ import { contact } from '../data/contact';
 import { services, situations, steps } from '../data/services';
 import { homeReviews } from '../data/reviews';
 import { ways, icons } from '../data/principles';
-import { trainings } from '../data/trainings';
+import ContentCover from '../components/ContentCover.astro';
+import Star from '../components/Star.astro';
 import { quizYear, quizAreas } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח: התמונה החלופית שנוגה הכינה (2026-11-08, בלי השקעים), עם מסך המקרן מוכהה לכחול כהה.
@@ -32,9 +33,10 @@ import introPhoto from '../assets/hero/headshot.webp';
 import darkLines from '../assets/atmosphere/dark-lines.webp';
 import darkStairs from '../assets/atmosphere/dark-stairs.webp';
 // הדמות חתוכה מתחת לידיים (נוגה, 2026-11-08: "לחתוך את החלק של הרגליים")
-import pointing from '../assets/character/pointing-down-bust.webp';
-// כריכת סרטון הכנס (נוגה, 2026-11-08): נוגה על הבמה מגבה, מול כל הקהל
-import conferenceCover from '../assets/about/gallery/15-facing-audience.jpg';
+// הדמות בלי רקע (שקופה), כדי שתעמוד על הרקע הכהה של השאלון
+import pointing from '../assets/character/pointing-down-bust-clear.webp';
+// כריכת סרטון הכנס (נוגה, 2026-11-08): נוגה על הבמה מגבה, מול כל הקהל. חתוכה בלי הכיסאות הריקים והתקרה.
+import conferenceCover from '../assets/hero/conference-cover.jpg';
 // כל התמונות מהכנסים, כמו באודות, וגם שלוש התמונות שבאודות יושבות ליד הסיפור (23, 08, 12)
 const momentRows = [
   ['07', '14', '05', '23', '22', '18', '09', '21', '06', '17'],
@@ -57,27 +59,11 @@ const stats = [
   { num: 10, label: 'שנות ניסיון בייעוץ עסקי' },
 ];
 
-// "כל מה שתמצאו באתר": רק עמודים שקיימים (נוגה: "מכל מה שיש באתר ולא דברים שאין")
+// שורת מדריכים חינמיים בסוף העמוד (נוגה, 2026-11-08: במקום "כל מה שתמצאו באתר", שנראה כמו פוטר מיותר)
 const guides = (await getCollection('guides'))
-  .filter((g) => !g.data.comingSoon)
-  .sort((a, b) => (a.data.type === b.data.type ? a.data.order - b.data.order : a.data.type === 'guide' ? -1 : 1));
-const index = [
-  { title: 'שירותים', links: services.map((s) => ({ href: s.href, label: s.title })) },
-  { title: 'הדרכות', links: trainings.map((t) => ({ href: `/trainings/${t.slug}/`, label: t.title })) },
-  { title: 'מדריכים ומאמרים', links: guides.map((g) => ({ href: `/guides/${g.id}/`, label: g.data.title })) },
-  {
-    title: 'עוד באתר',
-    links: [
-      { href: '/guides/business-focus-quiz/', label: `שאלון מיקוד פיתוח עסקי ${quizYear}` },
-      { href: '/about/', label: 'אודות נוגה דיין אור' },
-      { href: '/testimonials/', label: 'המלצות לקוחות' },
-      { href: '/guides/', label: 'מרכז הידע: הרצאות לצפייה בחינם' },
-      { href: '/contact/', label: 'צור קשר' },
-      { href: '/contact/', label: 'הקהילה: תודעה עסקית מנצחת' },
-    ],
-  },
-];
----
+  .filter((g) => !g.data.comingSoon && g.data.type === 'guide')
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);---
 
 <BaseLayout
   title="ייעוץ עסקי וארגוני"
@@ -237,7 +223,7 @@ const index = [
       <div class="conference reveal">
         <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום">
           <span class="stage-cover">
-            <Image src={conferenceCover} alt="" widths={[640, 1024, 1400]} sizes="(min-width: 56rem) 52rem, 100vw" />
+            <Image src={conferenceCover} alt="" widths={[640, 960, 1300]} sizes="(min-width: 44rem) 40rem, 100vw" />
             <span class="stage-cover__play" aria-hidden="true"></span>
             <span class="stage-cover__label">עסקים במקסימום</span>
           </span>
@@ -249,41 +235,49 @@ const index = [
     </div>
   </section>
 
-  <!-- 7. השאלון: אזור אחד בצבע אחיד, בלי באנר נפרד (נוגה, 2026-11-08). הדמות ממורכזת מעל הכותרת וחתוכה מתחת לידיים.
-       בלי מספר שאלות (הוא עשוי להשתנות). מספר המסלולים נלקח מהנתונים. הכותרת והמשפט הם הצעה שלי, ממתינים לאישור. -->
+  <!-- 7. השאלון: הדבר הכי מרשים באתר, כי הוא מביא לידים (נוגה, 2026-11-08). אזור כהה בכחול של האתר עם זוהר טורקיז וזהב,
+       כרטיס עם מסגרת זוהרת, הדמות (בלי רקע) ממורכזת מעל הכותרת, וכפתור זהב גדול. בלי מספר שאלות (עשוי להשתנות).
+       מספר המסלולים נלקח מהנתונים. הכותרת והמשפט הם הצעה שלי, ממתינים לאישור. -->
   <section class="h-quiz" aria-labelledby="quiz-title">
-    <!-- בלי reveal על העטיפה: אפקט ההופעה מבודד את הדמות, והרקע הלבן שלה נראה כריבוע -->
-    <div class="container h-quiz__inner">
-      <Image src={pointing} alt="" widths={[240, 400]} sizes="12rem" class="toon h-quiz__toon" />
-      <h2 id="quiz-title" class="h-title h-title--split reveal">כמה העסק שלך מוכן{' '}<span class="hl--mark">לקפיצה הבאה?</span></h2>
-      <p class="h-quiz__text reveal">שאלון קצר ב-{quizAreas.length} מסלולים שבודק את העסק, ומראה איפה הוא חזק, איפה כדאי להתמקד ומה הצעדים הבאים לשנת {quizYear}.</p>
-      <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק ←</a>
+    <div class="container">
+      <div class="h-quiz__card">
+        <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
+        <p class="h-quiz__tag reveal"><Star size={16} /> שאלון חינמי</p>
+        <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">כמה העסק שלך מוכן{' '}<span class="hl">לקפיצה הבאה?</span></h2>
+        <p class="h-quiz__text reveal">שאלון קצר ב-{quizAreas.length} מסלולים שבודק את העסק, ומראה איפה הוא חזק, איפה כדאי להתמקד ומה הצעדים הבאים לשנת {quizYear}.</p>
+        <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
+      </div>
     </div>
   </section>
 
   <CtaBand />
 
-  <!-- 10. כל מה שתמצאו באתר: רשימה שעונה על הרבה חיפושים, רק ממה שקיים באתר (נוגה, 2026-11-07) -->
-  <section class="h-index" aria-labelledby="index-title">
+  <!-- 10. מדריכים חינמיים: שורה אחת והפניה למרכז הידע, ובסוף משפט סיום, ואז הפוטר (נוגה, 2026-11-08).
+       במקום "כל מה שתמצאו באתר". -->
+  <section class="section h-guides" aria-labelledby="guides-title">
     <div class="container">
-      <h2 id="index-title" class="h-index__title">כל מה שתמצאו באתר</h2>
-      <div class="h-index__cols">
+      <div class="h-head reveal">
+        <h2 id="guides-title" class="h-title">מדריכים <span class="hl--mark">חינמיים</span></h2>
+        <p class="h-sub"><a href="/guides/">לכל המדריכים וההרצאות במרכז הידע ←</a></p>
+      </div>
+      <ul class="guides-row">
         {
-          index.map((col) => (
-            <div>
-              <h3 class="h-index__col-title">{col.title}</h3>
-              <ul>
-                {col.links.map((l) => (
-                  <li>
-                    <a href={l.href}>{l.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          guides.map((g, i) => (
+            <li class="guide-card reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <a href={`/guides/${g.id}/`}>
+                <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
+                <span class="guide-card__title">{g.data.title}</span>
+              </a>
+            </li>
           ))
         }
-      </div>
+      </ul>
     </div>
+  </section>
+
+  <!-- משפט הסיום: הסיסמה שחותמת כל פוסט של נוגה, באותו גופן של האתר ומודגשת (לא בכתב יד) -->
+  <section class="h-sign" aria-label="סיום">
+    <p class="h-sign__motto reveal">קמים ונהיים ענקיים מהחיים <Star size={26} /></p>
   </section>
 </BaseLayout>
 
@@ -610,44 +604,107 @@ const index = [
     line-height: 1.65;
   }
 
-  /* ---------- 7. שאלון: אזור אחד בצבע זהב בהיר אחיד, הכול ממורכז (נוגה, 2026-11-08) ---------- */
+  /* ---------- 7. שאלון: הדבר הכי מרשים באתר (נוגה, 2026-11-08) ---------- */
   .h-quiz {
-    padding-block: clamp(2.5rem, 6vw, 3.75rem);
-    background: #fdf4d8;
+    padding-block: clamp(3rem, 7vw, 5rem);
+    background:
+      radial-gradient(40rem 26rem at 15% 20%, rgb(25 154 181 / 0.32), transparent 70%),
+      radial-gradient(36rem 24rem at 85% 90%, rgb(252 220 109 / 0.2), transparent 70%),
+      var(--navy);
+    color: var(--on-dark);
     text-align: center;
   }
-  .h-quiz__inner {
-    max-width: 44rem;
+  /* כרטיס עם מסגרת זוהרת בטורקיז וזהב */
+  .h-quiz__card {
+    position: relative;
+    max-width: 50rem;
+    margin-inline: auto;
+    padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.25rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem);
+    border-radius: 2rem;
+    background: linear-gradient(160deg, rgb(19 40 74 / 0.95), rgb(11 26 51 / 0.95));
+    box-shadow:
+      0 0 0 1px rgb(252 220 109 / 0.35),
+      0 30px 80px -30px rgb(25 154 181 / 0.55),
+      0 0 60px -20px rgb(252 220 109 / 0.35);
   }
-  /* הדמות מעל הכותרת, ממורכזת, חתוכה מתחת לידיים (רקע לבן, ולכן רק על רקע בהיר: .toon) */
   .h-quiz :global(.h-quiz__toon) {
     display: block;
-    width: clamp(8rem, 18vw, 11rem);
-    margin: 0 auto 0.75rem;
+    width: clamp(9rem, 20vw, 13rem);
+    height: auto;
+    margin: calc(-1 * clamp(3.5rem, 8vw, 5.5rem)) auto 0.5rem;
+    filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.45));
+  }
+  .h-quiz__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(252 220 109 / 0.12);
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+  .h-quiz__title {
+    margin: 0;
+    color: var(--white);
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    font-weight: 900;
+    line-height: 1.2;
   }
   .h-quiz__text {
     max-width: 36rem;
-    margin: 0.9rem auto 1.5rem;
-    font-size: clamp(1.05rem, 1.9vw, 1.18rem);
+    margin: 1rem auto 1.75rem;
+    font-size: clamp(1.05rem, 1.9vw, 1.2rem);
     line-height: 1.7;
-    color: #33445c;
+    color: var(--on-dark-soft);
   }
+  /* כפתור זהב גדול עם ברק שעובר עליו */
   .h-quiz__btn {
-    display: inline-block;
-    padding: 0.8em 1.9em;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    overflow: hidden;
+    padding: 1em 2.6em;
     border-radius: 999px;
-    background: var(--navy);
-    color: var(--white);
-    font-weight: 800;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    font-weight: 900;
     text-decoration: none;
-    box-shadow: 0 14px 28px -16px rgb(11 26 51 / 0.6);
+    box-shadow: 0 16px 40px -14px rgb(252 220 109 / 0.7);
     transition:
       transform 0.25s ease,
-      background-color 0.25s ease;
+      box-shadow 0.25s ease;
+  }
+  .h-quiz__btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
+    transform: translateX(-120%);
+    animation: quiz-shine 3.6s ease-in-out infinite;
   }
   .h-quiz__btn:hover {
-    background: var(--teal-dark);
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 22px 50px -14px rgb(252 220 109 / 0.85);
+  }
+  @keyframes quiz-shine {
+    0%,
+    55% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(120%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .h-quiz__btn::after {
+      animation: none;
+      display: none;
+    }
   }
 
   /* ---------- 3א. נעים להכיר: אזור בהיר, התמונה קטנה כרקע בצד ימין ונעלמת אל הטקסט (נוגה, 2026-11-08) ---------- */
@@ -731,24 +788,24 @@ const index = [
       align-items: center;
       min-height: 26rem;
     }
-    /* התמונה בצד ימין, צרה (בערך שליש), ונעלמת לכיוון הטקסט */
+    /* התמונה בצד שמאל (נוגה, 2026-11-08), צרה (בערך שליש), ונעלמת לכיוון הטקסט */
     .h-meet__media {
       position: absolute;
-      inset: 0 0 0 auto;
+      inset: 0 auto 0 0;
       width: 34%;
       height: auto;
     }
     .h-meet__media::after {
-      background: linear-gradient(to right, var(--white) 0%, rgb(255 255 255 / 0.7) 22%, rgb(255 255 255 / 0) 55%);
+      background: linear-gradient(to left, var(--white) 0%, rgb(255 255 255 / 0.7) 22%, rgb(255 255 255 / 0) 55%);
     }
     .h-meet__inner {
       padding-block: 3.25rem;
     }
     .h-meet__text {
       max-width: min(40rem, 58vw);
-      /* הטקסט בצד שמאל, כי התמונה בימין */
-      margin-right: auto;
-      margin-left: 0;
+      /* הטקסט בצד ימין, כי התמונה בשמאל */
+      margin-right: 0;
+      margin-left: auto;
     }
   }
 
@@ -763,7 +820,8 @@ const index = [
     color: var(--gold-light);
   }
   .conference {
-    max-width: 52rem;
+    /* קטן יותר (נוגה, 2026-11-08: "זה עצום") */
+    max-width: 40rem;
     margin-inline: auto;
     border-radius: 1.25rem;
     overflow: hidden;
@@ -833,54 +891,72 @@ const index = [
     padding-bottom: clamp(3.5rem, 8vw, 5.5rem);
   }
 
-  /* ---------- 10. כל מה שתמצאו באתר ---------- */
-  .h-index {
+  /* ---------- 10. מדריכים חינמיים: שורה אחת (בנייד גוללים לצדדים) ---------- */
+  .h-guides {
     background: var(--mist);
-    padding-block: 2.5rem 3rem;
-    border-top: 1px solid var(--line);
   }
-  .h-index__title {
-    font-size: 1.35rem;
-    font-weight: 900;
-    margin-bottom: 1.25rem;
+  .h-guides .h-head {
+    margin-bottom: 1.75rem;
   }
-  .h-index__cols {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-  }
-  @media (max-width: 52rem) {
-    .h-index__cols {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 30rem) {
-    .h-index__cols {
-      grid-template-columns: 1fr;
-    }
-  }
-  .h-index__col-title {
-    margin: 0 0 0.6rem;
-    font-size: 1.05rem;
-    font-weight: 900;
-    color: var(--teal-dark);
-  }
-  .h-index ul {
+  .guides-row {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.4rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
   }
-  .h-index a {
-    color: #33445c;
+  @media (max-width: 64rem) {
+    .guides-row {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.5rem;
+    }
+    .guide-card {
+      flex: 0 0 15rem;
+      scroll-snap-align: start;
+    }
+  }
+  .guide-card {
+    margin: 0;
+  }
+  .guide-card a {
+    display: block;
+    color: var(--navy);
     text-decoration: none;
-    font-size: 0.95rem;
-    line-height: 1.45;
   }
-  .h-index a:hover {
+  .guide-card :global(.cc) {
+    transition: transform 0.3s ease;
+  }
+  .guide-card a:hover :global(.cc) {
+    transform: translateY(-4px);
+  }
+  .guide-card__title {
+    display: block;
+    margin-top: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+  .guide-card a:hover .guide-card__title {
     color: var(--teal-dark);
-    text-decoration: underline;
+  }
+
+  /* ---------- סיום: הסיסמה של נוגה ---------- */
+  .h-sign {
+    padding-block: clamp(2.5rem, 6vw, 3.75rem);
+    background: var(--white);
+    text-align: center;
+  }
+  .h-sign__motto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--navy);
   }
 </style>
 

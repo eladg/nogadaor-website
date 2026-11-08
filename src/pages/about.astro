@@ -13,7 +13,6 @@ import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
 import { contact } from '../data/contact';
 import Star from '../components/Star.astro';
-import MomentsReel from '../components/MomentsReel.astro';
 
 // כל התמונות מהתיקייה, לפי המספר שבתחילת שם הקובץ
 const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
@@ -47,11 +46,7 @@ const alts: Record<string, string> = {
 };
 // שתי שורות שזזות לכיוונים הפוכים. הסדר מעורבב בכוונה, כדי שלא יהיו כמה תמונות במה ברצף.
 // תמונות 23, 08 ו-12 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
-// (הגלריה עצמה ברכיב MomentsReel, משותפת לאודות ולעמוד הבית)
-const momentRows = [
-  ['07', '14', '05', '22', '18', '09', '21', '06', '17'],
-  ['19', '13', '10', '15', '20', '03', '11', '16'],
-];
+
 
 // שש הקוביות ואייקוניהן: src/data/principles.ts (משותף לאודות ולעמוד הבית)
 import { ways, icons } from '../data/principles';
@@ -239,12 +234,8 @@ const stairsStyle = await atmoStyle(stairsAtmo, 0.35);
   <!-- 8. רגעים מהכנסים: שתי שורות תמונות שזזות לכיוונים הפוכים, בסוף העמוד (לבקשת נוגה).
        נעצרות במעבר עכבר. אצל מי שביקש פחות תנועה הן עומדות, ואפשר לגלול אותן לצדדים.
        בעמוד הזה אין את אזור הקריאה לפעולה הכללי: נוגה אמרה שהרצף הזה מספיק. -->
-  <section class="a-moments" aria-labelledby="moments-title">
-    <div class="container">
-      <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
-      <h2 id="moments-title" class="a-title reveal">רגעים <span class="hl--mark">מהכנסים</span></h2>
-    </div>
-    <MomentsReel rows={momentRows} />
+  <section class="a-moments" aria-label="צור קשר">
+    <!-- גלריית הכנסים הוסרה מכאן (נוגה, 2026-11-08): היא בעמוד הבית, ובאודות יש מספיק תמונות. -->
 
     <!-- 9. צור קשר: כפתור לוואטסאפ בסוף העמוד (לבקשת נוגה) -->
     <div class="container a-contact">
