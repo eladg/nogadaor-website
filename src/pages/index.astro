@@ -14,6 +14,7 @@ import ServiceCards from '../components/ServiceCards.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
 import Ribbon from '../components/Ribbon.astro';
 import { advances } from '../data/advances';
+import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
 import { contact } from '../data/contact';
 import { services, situations, steps } from '../data/services';
@@ -169,23 +170,14 @@ const guides = (await getCollection('guides'))
     </div>
   </section>
 
-  <!-- 5. תהליך הליווי, גרסה מקוצרת (נוגה, 2026-11-08): שלושת השלבים בשורה אחת, בלי "מה מקבלים".
-       הפירוט המלא בעמוד השירותים (/services/#process). -->
+  <!-- 5. תהליך הליווי: שלושת השלבים עם הטקסט, בלי "מה מקבלים" (נוגה, 2026-11-08). הפירוט המלא בעמוד השירותים. -->
   <section class="section h-process">
     <div class="container">
       <div class="h-head reveal">
         <h2 class="h-title">תהליך ליווי <span class="hl--mark">עסקי וארגוני</span></h2>
       </div>
-      <ol class="steps-strip">
-        {
-          steps.map((s, i) => (
-            <li class="steps-strip__item reveal" style={`transition-delay: ${i * 0.1}s`}>
-              <span class="steps-strip__num" aria-hidden="true">{i + 1}</span>
-              <span class="steps-strip__title">{s.title}</span>
-            </li>
-          ))
-        }
-      </ol>
+      <!-- נוגה (2026-11-08): "קיצצת מדי". השלבים עם הטקסט, בלי "מה מקבלים" -->
+      <Timeline items={steps.map(({ gets, ...s }) => s)} />
       <!-- משפט הסיום של נוגה (2026-11-08) -->
       <p class="h-goal reveal">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
       <p class="more center"><a href="/services/#process">לפירוט תהליך הליווי ←</a></p>
@@ -491,52 +483,6 @@ const guides = (await getCollection('guides'))
   /* ---------- 5. תהליך ---------- */
   .h-process {
     background: linear-gradient(180deg, var(--white), var(--mist));
-  }
-  /* שלושת השלבים בשורה אחת, עם קו מחבר */
-  .steps-strip {
-    list-style: none;
-    margin: 0 auto;
-    padding: 0;
-    max-width: 52rem;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    position: relative;
-  }
-  .steps-strip::before {
-    content: '';
-    position: absolute;
-    top: 1.6rem;
-    right: 16%;
-    left: 16%;
-    height: 2px;
-    background: linear-gradient(to left, var(--teal), var(--gold-light));
-  }
-  .steps-strip__item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0;
-    text-align: center;
-  }
-  .steps-strip__num {
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-size: 1.3rem;
-    font-weight: 900;
-    box-shadow: 0 10px 24px -14px rgb(11 26 51 / 0.6);
-  }
-  .steps-strip__title {
-    font-size: clamp(1.05rem, 2vw, 1.3rem);
-    font-weight: 900;
-    color: var(--navy);
   }
   .h-goal {
     max-width: 44rem;
