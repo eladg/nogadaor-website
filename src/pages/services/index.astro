@@ -89,6 +89,8 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
         <Image src={flipchart} alt="" widths={[240, 380]} sizes="12rem" class="toon s-process__toon" />
       </div>
       <Timeline items={steps} />
+      <!-- מתוך הצעת הליווי של נוגה (2026-11-08), כללי ולא מתחייב -->
+      <p class="s-process__note reveal">הליווי מותאם אישית לצורכי העסק ולממצאים שעולים במהלך העבודה, ותחומי העבודה, עומק הבדיקה וסדרי העדיפויות נקבעים במשותף.</p>
       <!-- משפט הסיום של נוגה, כמו בעמוד הבית (2026-11-08). במקום "המטרה...". -->
       <p class="principle reveal">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
     </div>
@@ -443,12 +445,19 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   }
 
   /* ---------- העיקרון ---------- */
+  .s-process__note {
+    max-width: 44rem;
+    margin: 2.25rem auto 0;
+    text-align: center;
+    line-height: 1.7;
+    color: #4a5b73;
+  }
   .principle {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    margin: 2.5rem 0 0;
+    margin: 1rem 0 0;
     font-size: clamp(1.1rem, 2.2vw, 1.3rem);
     font-weight: 500;
     color: var(--teal-dark);
