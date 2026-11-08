@@ -1,21 +1,50 @@
 ---
-// פוטר האתר.
+// פוטר האתר (נוגה, 2026-11-08): הלוגו הצבעוני (עם השורה הלבנה, כמו בהאדר), אייקונים של כל דרכי הקשר והרשתות,
+// וקישורים לעמודי המדיניות. עמודי המדיניות עוד בהכנה: את הטקסט המשפטי צריך לכתוב עם איש מקצוע.
+// האייקונים בריבועים מעוגלים ולא בעיגולים (נוגה לא אוהבת עיגולים בעיצוב).
+import Icon from './Icon.astro';
 import { contact, socials } from '../data/contact';
 const year = new Date().getFullYear();
+
+const channels = [
+  { name: 'וואטסאפ', icon: 'whatsapp', href: contact.whatsapp, external: true },
+  { name: 'טלפון', icon: 'phone', href: contact.phoneHref, external: false },
+  { name: 'אימייל', icon: 'mail', href: `mailto:${contact.email}`, external: false },
+  ...socials.map((s) => ({ name: s.name, icon: s.icon, href: s.href, external: true })),
+] as const;
+
+// TODO: לכתוב את שלושת העמודים עם איש מקצוע. בינתיים כל עמוד מציג הודעה שהוא בהכנה.
+const policies = [
+  { href: '/privacy/', label: 'מדיניות פרטיות' },
+  { href: '/terms/', label: 'תנאי שימוש' },
+  { href: '/accessibility/', label: 'הצהרת נגישות' },
+];
 ---
 
 <footer class="site-footer">
   <div class="container">
-    <p class="site-footer__name">נוגה דיין אור</p>
-    <p class="site-footer__tagline">הצלחה עסקית בדרך שלך</p>
-    <ul class="site-footer__links">
-      <li><a href={contact.whatsapp} target="_blank" rel="noopener">וואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
-      <li><a href={contact.phoneHref}>טלפון</a></li>
-      <li><a href={`mailto:${contact.email}`}>אימייל</a></li>
-      {socials.map((s) => (
-        <li><a href={s.href} target="_blank" rel="noopener">{s.name}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
+    <a class="site-footer__logo" href="/" aria-label="נוגה דיין אור – לעמוד הבית">
+      <img src="/images/logo-color-on-dark.webp" alt="נוגה דיין אור – הצלחה עסקית בדרך שלך" width="900" height="313" loading="lazy" />
+    </a>
+
+    <ul class="site-footer__icons" aria-label="דרכים ליצירת קשר ורשתות חברתיות">
+      {
+        channels.map((c) => (
+          <li>
+            <a href={c.href} target={c.external ? '_blank' : undefined} rel={c.external ? 'noopener' : undefined} aria-label={c.external ? `${c.name} (נפתח בלשונית חדשה)` : c.name} title={c.name}>
+              <Icon name={c.icon} size={20} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <ul class="site-footer__policies">
+      {policies.map((p) => (
+        <li><a href={p.href}>{p.label}</a></li>
       ))}
     </ul>
+
     <p class="site-footer__copy">© {year} נוגה דיין אור. כל הזכויות שמורות.</p>
   </div>
 </footer>
@@ -23,41 +52,69 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     background: var(--navy);
-    color: var(--white);
-    padding-block: 2.5rem;
+    color: var(--on-dark);
+    padding-block: 2.75rem 2rem;
     text-align: center;
   }
-  .site-footer p {
-    margin: 0 0 0.25rem;
-  }
-  .site-footer__name {
-    font-size: 1.25rem;
-    font-weight: 700;
-    background: var(--gold-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .site-footer__logo {
     display: inline-block;
   }
-  .site-footer__links {
+  .site-footer__logo img {
+    display: block;
+    width: 12rem;
+    height: auto;
+  }
+  .site-footer__icons {
     list-style: none;
+    margin: 1.5rem 0 0;
     padding: 0;
-    margin: 1rem 0 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.5rem 1.25rem;
+    gap: 0.6rem;
   }
-  .site-footer__links a {
+  .site-footer__icons a {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(255 255 255 / 0.12);
     color: var(--white);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .site-footer__icons a:hover,
+  .site-footer__icons a:focus-visible {
+    background: var(--gold-gradient);
+    color: var(--navy);
+    transform: translateY(-2px);
+  }
+  .site-footer__policies {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  .site-footer__policies a {
+    color: var(--on-dark-soft);
+    text-decoration: none;
+  }
+  .site-footer__policies a:hover {
+    color: var(--gold-light);
     text-decoration: underline;
   }
-  .site-footer__links a:hover {
-    color: var(--gold-light);
-  }
   .site-footer__copy {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    opacity: 0.8;
+    margin: 0.9rem 0 0;
+    font-size: 0.85rem;
+    color: var(--on-dark-soft);
   }
 </style>
