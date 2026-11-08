@@ -13,10 +13,7 @@ import ContentCover from '../../components/ContentCover.astro';
 import Icon from '../../components/Icon.astro';
 import { readingMinutes } from '../../utils/readingTime';
 import { lectures, minutesOf } from '../../data/lectures';
-import { atmoStyle } from '../../utils/atmo';
 import stairs from '../../assets/atmosphere/dark-stairs.webp';
-import darkLines from '../../assets/atmosphere/dark-lines.webp';
-const linesStyle = await atmoStyle(darkLines, 0.4);
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 // קודם המדריכים ואחריהם המאמרים, כל קבוצה לפי order
@@ -70,13 +67,17 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     </div>
   </section>
 
-  <!-- חלק 2: הדרכות מהיוטיוב, לצפייה בחינם. פס כהה. הכריכה שלנו מוצגת במקום התמונה של יוטיוב, והסרטון נטען רק בלחיצה.
-       השאלון עבר לעמוד הבית (נוגה, 2026-11-07). -->
-  <section class="section section--dark lectures atmo" id="lectures" style={linesStyle}>
+  <!-- חלק 2: הרצאות מהיוטיוב, לצפייה בחינם. הכריכה שלנו מוצגת במקום התמונה של יוטיוב, והסרטון נטען רק בלחיצה.
+       השאלון עבר לעמוד הבית (נוגה, 2026-11-07).
+       אזור בהיר עם כרטיסים כהים סגורים (נוגה, 2026-11-08: "הכל כהה, לא ברור מה מתחיל ומה נגמר"). קודם האזור היה כהה,
+       ונדבק לפס התחתון ולפוטר, שגם הם כהים, והכרטיסים לא היו תחומים. -->
+  <section class="section section--mist lectures" id="lectures">
     <div class="container">
-      <h2>הרצאות לצפייה <span class="hl">בחינם</span></h2>
+      <h2>הרצאות לצפייה <span class="hl--mark">בחינם</span></h2>
+      <p class="intro">הרצאות מלאות, לצפייה כאן באתר.</p>
       <!-- ההרצאות שנוגה בחרה (src/data/lectures.ts): 6 = 3 בשורה במחשב, 2 בטאבלט, 1 בנייד.
-           כל כרטיס תופס 4 שורות ברשת (subgrid), כך שהכריכות, השורה הקטנה, השמות וההסברים מתחילים באותו גובה בכל שורה.
+           כל כרטיס הוא קופסה כהה אחת (כריכה, סוג ומשך, שם, הסבר), ותופס 4 שורות ברשת (subgrid),
+           כך שהשמות וההסברים מתחילים באותו גובה בכל שורה.
            צבעים: שם ההרצאה בזהב כדי שיבלוט, ההסבר בלבן רך. בלי ציטוטים (נוגה, 2026-11-08: היו רק בשתי הרצאות). -->
       <ul class="lecture-grid">
         {
@@ -85,7 +86,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
               <YouTubeEmbed id={l.id} title={l.title}>
                 <ContentCover title={l.coverTitle} motif={l.motif} kind="lecture" duration={l.duration} ratio="16/9" size="wide" />
               </YouTubeEmbed>
-              <p class="meta meta--dark">
+              <p class="meta meta--dark lecture__meta">
                 <Icon name="mic" size={16} /> <span>הרצאה</span> · {minutesOf(l.duration)} דק' צפייה
               </p>
               <h3 class="lecture__title">{l.title}</h3>
@@ -223,14 +224,14 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     color: #33445c;
   }
 
-  /* הרצאות: פס כהה */
+  /* הרצאות: אזור בהיר, כל הרצאה בכרטיס כהה סגור */
   .lecture-grid {
     list-style: none;
-    margin: 1.5rem 0 0;
+    margin: 2rem 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3.5rem 2.75rem;
+    gap: 2.5rem 2.25rem;
   }
   @media (max-width: 62rem) {
     .lecture-grid {
@@ -250,9 +251,37 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     grid-template-rows: subgrid;
     row-gap: 0;
     align-content: start;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(165deg, #0f2d50, var(--navy) 45%);
+    border: 1px solid rgb(25 154 181 / 0.25);
+    box-shadow: 0 22px 40px -28px rgb(7 17 31 / 0.55);
+    /* כולל את ההופעה בגלילה (.reveal), כדי לא לדרוס אותה */
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+      translate 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
   }
-  .lecture .meta--dark {
-    margin: 1rem 0 0.4rem;
+  .lecture:hover,
+  .lecture:focus-within {
+    translate: 0 -4px;
+    border-color: rgb(252 220 109 / 0.55);
+    box-shadow: 0 28px 48px -28px rgb(7 17 31 / 0.7);
+  }
+  /* הכריכה צמודה לראש הכרטיס, בלי פינות עגולות משלה למטה */
+  .lecture :global(.yt-embed) {
+    border-radius: 0;
+  }
+  .lecture__meta,
+  .lecture__title,
+  .lecture__short {
+    padding-inline: 1.4rem;
+  }
+  .lecture .lecture__meta {
+    margin: 0;
+    padding-block: 1.1rem 0.45rem;
   }
   .lecture__title {
     margin: 0 0 0.5rem;
@@ -264,6 +293,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   }
   .lecture__short {
     margin: 0;
+    padding-bottom: 1.5rem;
     font-size: 0.97rem;
     line-height: 1.6;
     color: var(--on-dark-soft);
@@ -271,13 +301,18 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
   .trainings-link {
     margin: 2rem 0 0;
   }
-  .lectures .trainings-link a {
-    color: var(--gold-light);
+  .lectures .trainings-link {
+    text-align: center;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .item__cover {
+    .item__cover,
+    .lecture {
       transition: none;
+    }
+    .lecture:hover,
+    .lecture:focus-within {
+      translate: none;
     }
   }
 </style>
