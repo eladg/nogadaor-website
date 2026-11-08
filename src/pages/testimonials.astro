@@ -1,5 +1,5 @@
 ---
-// עמוד ההמלצות: פתיח עם לקט ההמלצות, קרוסלת סרטונים, קרוסלת המלצות כתובות, וסיפורי מקרה.
+// עמוד ההמלצות: פתיח עם לקט ההמלצות, קרוסלת סרטונים וקרוסלת המלצות כתובות.
 // הסרטונים ב-src/data/testimonials.ts, ההמלצות הכתובות ב-src/data/reviews.ts
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -79,19 +79,13 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
   <!-- המלצות כתובות: קרוסלה, מתעדכנת ידנית ב-src/data/reviews.ts -->
   <section class="section section--mist t-reviews atmo" id="reviews" style={teamStyle}>
     <div class="container">
-      <h2 class="t-title">מה אומרים עליי</h2>
+      <!-- הכותרת כמו בעמוד הבית (נוגה, 2026-11-08, במקום "מה אומרים עליי", שהיה בגוף ראשון) -->
+      <h2 class="t-title">לקוחות משתפים</h2>
       <ReviewsCarousel reviews={allReviews} label="המלצות לקוחות בכתב" />
     </div>
   </section>
 
-  <!-- סיפורי מקרה -->
-  <section class="section">
-    <div class="container">
-      <h2 class="t-title">סיפורי מקרה</h2>
-      <!-- TODO: נוגה תספק סיפורי מקרה. אין להמציא. לפני פרסום שם של לקוח לוודא שאישר. -->
-      <p class="placeholder">תוכן חסר: סיפורי מקרה. יתווספו אחרי שנוגה תספק אותם.</p>
-    </div>
-  </section>
+  <!-- סיפורי מקרה: בינתיים לא יהיו (נוגה, 2026-11-08). האזור הוסר. אם יחזרו: לא להמציא, ולוודא שכל לקוח אישר את שמו. -->
 
   <CtaBand />
 </BaseLayout>
