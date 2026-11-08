@@ -3,7 +3,8 @@
 // כולל הקהילה (אין עמוד קהילה נפרד). אווירה שמחה וקלילה, מלא אייקונים, מקצועי ומזמין.
 // הסיסמה ומשפט ההשראה בפתיח: נוגה אישרה (2026-11-05). התמונה בפתיח: נוגה שלחה אותה לעמוד הזה.
 // הסדר (נוגה, 2026-11-05): פתיח ← קרוסלת "כל הדרכים להתחבר" ← הקהילה ← מהאינסטגרם ← טופס פנייה והרשמה לתכנים.
-// שני הטפסים (פנייה והרשמה לתכנים) יוצרים איש קשר בסמוב דרך netlify/functions/smoove-contact.mjs (2026-11-08).
+// בעמוד טופס אחד בלבד: הרשמה מרצון לרשימת הדיוור (שם, טלפון, אימייל ואישור), שיוצרת איש קשר בסמוב
+// דרך netlify/functions/smoove-contact.mjs. פניות רק בוואטסאפ, בלי טופס פנייה (נוגה, 2026-11-08).
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
@@ -163,60 +164,23 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
       </ul>
     </div>
   </section>
-  <!-- 5. טופס פנייה, ולצדו הרשמה לתכנים במייל -->
+  <!-- 5. הרשמה מרצון לרשימת הדיוור (נוגה, 2026-11-08: רק הטופס הזה. פניות רק בוואטסאפ, בלי טופס פנייה) -->
   <section class="section section--mist c-forms reveal atmo" style={deskStyle}>
     <div class="container c-forms__grid">
-      <!-- הטופס יוצר איש קשר בסמוב דרך הפונקציה netlify/functions/smoove-contact.mjs (2026-11-08) -->
-      <form class="c-form js-smoove-form" data-form="contact" method="post" novalidate aria-labelledby="form-title">
-        <h2 id="form-title" class="c-title">השאירו <span class="hl--mark">פרטים</span></h2>
-        <!-- משפט ההשראה (נוגה אישרה) עבר לכאן מהפתיח, כדי לפזר את הסיסמאות בעמוד -->
-        <p class="c-form__note">בואו נבדוק יחד איך עושים סדר ומוצאים כסף גם בעסק שלך</p>
-        <p class="c-form__direct">
-          <a class="c-quick" href={contact.phoneHref}>
-            <span class="c-quick__icon"><Icon name="phone" size={18} /></span>
-            <span dir="ltr">{contact.phoneDisplay}</span>
-          </a>
-          <a class="c-quick" href={`mailto:${contact.email}`}>
-            <span class="c-quick__icon"><Icon name="mail" size={18} /></span>
-            <span dir="ltr">{contact.email}</span>
-          </a>
-        </p>
-        <div class="c-form__row">
-          <label>
-            <span>שם מלא</span>
-            <input type="text" name="name" autocomplete="name" required />
-          </label>
-          <label>
-            <span>טלפון</span>
-            <input type="tel" name="phone" autocomplete="tel" dir="ltr" required />
-          </label>
-        </div>
-        <label>
-          <span>אימייל</span>
-          <input type="email" name="email" autocomplete="email" dir="ltr" />
-        </label>
-        <label>
-          <span>במה אפשר לעזור?</span>
-          <textarea name="message" rows="2"></textarea>
-        </label>
-        <!-- מלכודת לרובוטים: שדה מוסתר שגולש אמיתי לא רואה ולא ממלא -->
-        <div class="c-hp" aria-hidden="true">
-          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-        </div>
-        <button class="btn" type="submit">שליחה</button>
-        <p class="c-form__status" role="status" aria-live="polite"></p>
-      </form>
-
-      <!-- ההרשמה יוצרת איש קשר בסמוב (עם הסכמה לדיוור) דרך netlify/functions/smoove-contact.mjs -->
+      <!-- ההרשמה יוצרת איש קשר ברשימת הדיוור בסמוב דרך netlify/functions/smoove-contact.mjs -->
       <div class="c-news">
         <span class="c-news__icon" aria-hidden="true"><Icon name="mail" size={28} /></span>
         <h2 id="news-title" class="c-news__title">הרשמה <span class="hl">לתכנים במייל</span></h2>
         <!-- הצעה שלי, לאישור נוגה -->
         <p class="c-news__text">תכנים ועדכונים ישירות לתיבת המייל.</p>
-        <form class="c-news__form js-smoove-form" data-form="newsletter" method="post" novalidate aria-labelledby="news-title">
+        <form class="c-news__form js-smoove-form" method="post" novalidate aria-labelledby="news-title">
           <label>
             <span class="sr-only">שם</span>
             <input type="text" name="name" autocomplete="name" placeholder="שם" />
+          </label>
+          <label>
+            <span class="sr-only">טלפון</span>
+            <input type="tel" name="phone" autocomplete="tel" placeholder="טלפון" dir="ltr" required />
           </label>
           <label>
             <span class="sr-only">אימייל</span>
@@ -239,11 +203,10 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
 
 </BaseLayout>
 
-<!-- שליחת הטפסים לפונקציה /api/contact, שיוצרת איש קשר בסמוב. המפתח שמור רק בשרת (Netlify). -->
+<!-- שליחת ההרשמה לפונקציה /api/contact, שיוצרת איש קשר בסמוב. המפתח שמור רק בשרת (Netlify). -->
 <script is:inline define:vars={{ whatsapp: contact.whatsapp }}>
   var messages = {
-    contact: 'תודה, הפרטים התקבלו. חוזרים אליך בהקדם.',
-    newsletter: 'תודה, ההרשמה התקבלה.',
+    ok: 'תודה, ההרשמה התקבלה.',
     error: 'משהו השתבש בשליחה. אפשר לנסות שוב, או לכתוב ישירות ',
   };
 
@@ -267,7 +230,6 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
       if (!form.reportValidity()) return;
 
       var data = Object.fromEntries(new FormData(form));
-      data.form = form.dataset.form;
       data.consent = data.consent === 'on';
 
       button.disabled = true;
@@ -286,7 +248,7 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
         })
         .then(function (result) {
           if (!result.ok) throw new Error(result.error || 'failed');
-          status.textContent = messages[form.dataset.form] || messages.contact;
+          status.textContent = messages.ok;
           status.dataset.state = 'ok';
           form.reset();
         })
@@ -346,26 +308,6 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
   }
   .c-eyebrow--dark :global(svg) {
     color: var(--gold-light);
-  }
-  .c-quick {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .c-quick:hover span:last-child {
-    text-decoration: underline;
-  }
-  .c-quick__icon {
-    display: grid;
-    place-items: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 50%;
-    background: var(--mist);
-    color: var(--teal-dark);
   }
   .c-btn {
     display: inline-flex;
@@ -521,48 +463,11 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
     overflow-wrap: anywhere;
   }
 
-  /* ---------- 3. טופס והרשמה ---------- */
+  /* ---------- 5. הרשמה לרשימת הדיוור (הטופס היחיד בעמוד) ---------- */
   .c-forms__grid {
-    display: grid;
-    gap: 1.5rem;
-    align-items: start;
+    max-width: 38rem;
   }
-  @media (min-width: 52rem) {
-    .c-forms__grid {
-      grid-template-columns: 1.6fr 1fr;
-    }
-  }
-  .c-form {
-    display: grid;
-    gap: 1rem;
-    padding: clamp(1.5rem, 4vw, 2.25rem);
-    border-radius: 1.5rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-    box-shadow: 0 30px 60px -40px rgb(11 26 51 / 0.45);
-  }
-  .c-form__note {
-    margin: 0 0 0.25rem;
-    color: var(--teal-dark);
-    font-weight: 700;
-  }
-  .c-form__row {
-    display: grid;
-    gap: 1rem;
-  }
-  @media (min-width: 36rem) {
-    .c-form__row {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  .c-form label {
-    display: grid;
-    gap: 0.35rem;
-    font-weight: 700;
-    font-size: 1rem;
-  }
-  input,
-  textarea {
+  input {
     width: 100%;
     font: inherit;
     font-weight: 400;
@@ -579,18 +484,12 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
   input[dir='ltr'] {
     text-align: right;
   }
-  input:focus,
-  textarea:focus {
+  input:focus {
     outline: none;
     border-color: var(--teal);
     background: var(--white);
     box-shadow: 0 0 0 3px rgb(25 154 181 / 0.22);
   }
-  textarea {
-    resize: vertical;
-    min-height: 3.6rem;
-  }
-  .c-form .btn,
   .c-news .btn {
     justify-self: start;
     padding-inline: 2.4em;
@@ -641,6 +540,7 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
     gap: 0.75rem;
   }
   .c-news input[type='text'],
+  .c-news input[type='tel'],
   .c-news input[type='email'] {
     background: rgb(255 255 255 / 0.08);
     border-color: rgb(255 255 255 / 0.2);
@@ -907,10 +807,4 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
     }
   }
 
-  .c-form__direct {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.5rem;
-    margin: 0 0 0.5rem;
-  }
 </style>

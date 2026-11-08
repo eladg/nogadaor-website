@@ -1,14 +1,13 @@
-// פונקציה של Netlify שרצה בשרת (לא בדפדפן): מקבלת את הטפסים מעמוד צור קשר
-// ויוצרת איש קשר חדש בסמוב (Smoove). כך מפתח ה-API לא נחשף לגולשים.
+// פונקציה של Netlify שרצה בשרת (לא בדפדפן): מקבלת את טופס ההרשמה מרצון לרשימת הדיוור
+// בעמוד צור קשר, ויוצרת איש קשר חדש בסמוב (Smoove). כך מפתח ה-API לא נחשף לגולשים.
+// זה הטופס היחיד באתר שמתחבר לסמוב. פניות מתקבלות רק בוואטסאפ (נוגה, 2026-11-08).
 //
 // משתני סביבה (מגדירים ב-Netlify: Site configuration > Environment variables):
 //   SMOOVE_API_KEY             חובה. מפתח ה-API של סמוב.
-//   SMOOVE_NEWSLETTER_LIST_ID  לא חובה. מספר הרשימה בסמוב שאליה נכנסים הנרשמים לתכנים במייל
+//   SMOOVE_NEWSLETTER_LIST_ID  לא חובה. מספר הרשימה בסמוב שאליה נכנסים הנרשמים
 //                              (אפשר כמה, מופרדים בפסיק).
-//   SMOOVE_CONTACT_LIST_ID     לא חובה. מספר הרשימה בסמוב למי שהשאיר פרטים בטופס הפנייה.
-//   SMOOVE_MESSAGE_FIELD       לא חובה. המפתח של שדה מותאם אישית בסמוב (למשל i5) שבו תישמר
-//                              ההודעה מטופס הפנייה. בלי השדה הזה ההודעה לא נשמרת בסמוב.
 //
+// הפונקציה לא משנה שום הגדרה בסמוב. היא רק שולחת את הפרטים שהגולש מילא.
 // תיעוד ה-API: https://rest.smoove.io (POST /v1/Contacts, הרשאה: Authorization: Bearer <key>)
 
 const SMOOVE_URL = 'https://rest.smoove.io/v1/Contacts';
@@ -38,46 +37,29 @@ function json(status, body) {
   });
 }
 
-// בונה את איש הקשר לפי סוג הטופס. מחזיר { error } אם חסר שדה חובה.
+// בונה את איש הקשר מהטופס. מחזיר { error } אם חסר שדה חובה.
 export function buildContact(data) {
-  const form = data.form === 'newsletter' ? 'newsletter' : 'contact';
   const name = clean(data.name, 100);
   const email = clean(data.email, 200).toLowerCase();
   const phone = clean(data.phone, 30);
-  const message = clean(data.message, 2000);
   const consent = data.consent === true || data.consent === 'on';
 
-  if (email && !EMAIL_RE.test(email)) return { error: 'invalid_email' };
-
-  if (form === 'newsletter') {
-    if (!email) return { error: 'missing_email' };
-    if (!consent) return { error: 'missing_consent' };
-  } else {
-    if (!name) return { error: 'missing_name' };
-    if (!phone) return { error: 'missing_phone' };
-  }
+  if (!email) return { error: 'missing_email' };
+  if (!EMAIL_RE.test(email)) return { error: 'invalid_email' };
+  if (!phone) return { error: 'missing_phone' };
+  if (!consent) return { error: 'missing_consent' };
 
   const [firstName, ...rest] = name.split(/\s+/).filter(Boolean);
   const contact = {
     firstName: firstName || undefined,
     lastName: rest.join(' ') || undefined,
-    email: email || undefined,
-    cellPhone: phone || undefined,
-    // דיוור רק למי שסימן הסכמה בטופס ההרשמה. בטופס הפנייה אין תיבת הסכמה.
-    canReceiveEmails: form === 'newsletter' ? consent : false,
-    // אף טופס לא מבקש הסכמה ל-SMS או לוואטסאפ, ובסמוב ברירת המחדל היא "כן"
-    canReceiveSmsMessages: false,
-    canReceiveWhatsappMessages: false,
-    campaignSource: form === 'newsletter' ? 'אתר: הרשמה לתכנים במייל' : 'אתר: טופס פנייה',
+    email,
+    cellPhone: phone,
+    campaignSource: 'אתר: הרשמה לרשימת הדיוור',
   };
 
-  const lists = listIds(form === 'newsletter' ? 'SMOOVE_NEWSLETTER_LIST_ID' : 'SMOOVE_CONTACT_LIST_ID');
+  const lists = listIds('SMOOVE_NEWSLETTER_LIST_ID');
   if (lists.length) contact.lists_ToSubscribe = lists;
-
-  const messageField = env('SMOOVE_MESSAGE_FIELD');
-  if (form === 'contact' && message && messageField) {
-    contact.customFields = { [messageField]: message };
-  }
 
   return { contact };
 }
@@ -119,17 +101,11 @@ export default async (req) => {
   if (error) return json(400, { ok: false, error });
 
   try {
-    let res = await sendToSmoove(contact, apiKey);
+    const res = await sendToSmoove(contact, apiKey);
 
-    // איש הקשר כבר קיים בסמוב: מנסים לעדכן (למשל כדי לצרף אותו לרשימה).
-    // אם למפתח אין הרשאת עדכון, הפנייה עדיין נחשבת הצלחה מבחינת הגולש.
+    // איש הקשר כבר קיים בסמוב: מעדכנים את הפרטים שמילא (למשל כדי לצרף אותו לרשימה).
     if (res.status === 409) {
-      // בעדכון לא משנים הסכמה לדיוור שכבר ניתנה, אלא אם הגולש סימן עכשיו הסכמה
-      const updateContact = { ...contact };
-      if (!updateContact.canReceiveEmails) delete updateContact.canReceiveEmails;
-      delete updateContact.canReceiveSmsMessages;
-      delete updateContact.canReceiveWhatsappMessages;
-      const update = await sendToSmoove(updateContact, apiKey, '?updateIfExists=true');
+      const update = await sendToSmoove(contact, apiKey, '?updateIfExists=true');
       if (!update.ok) {
         console.warn('Smoove update of existing contact failed', update.status, await update.text());
       }
