@@ -1,5 +1,6 @@
 ---
-// המלצות בעמוד הבית (נוגה, 2026-11-08): שתי שורות של כרטיסים צרים שזזות לאט לכיוונים הפוכים, כך שרואים הרבה המלצות בבת אחת.
+// המלצות בעמוד הבית (נוגה, 2026-11-08): שורה אחת של כרטיסים צרים שזזה לאט, כך שרואים הרבה המלצות בבת אחת.
+// (סבב 2: שורה אחת במקום שתיים, כרטיסים צרים יותר, טקסט רגיל ולא מודגש, שורת המקור קטנה.)
 // בכל כרטיס: גרש זהב מבריק, ההתחלה של ההמלצה (4 שורות), "קרא עוד" ושם הממליץ, תמיד באותו גובה בכל הכרטיסים.
 // "קרא עוד" פותח חלון עם ההמלצה המלאה. התנועה נעצרת כשהעכבר או המקלדת על ההמלצות, ולא פועלת למי שביקש פחות תנועה.
 // הטקסט של ההמלצה לא משתנה: הוא רק נחתך בתצוגה.
@@ -9,14 +10,14 @@ interface Props {
   reviews: Review[];
 }
 const { reviews } = Astro.props;
-const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i % 2 === 1)];
+const rows = [reviews];
 ---
 
 <div class="qm">
   {
     rows.map((row, ri) => (
       <div class:list={['qm__row', { 'qm__row--rev': ri === 1 }]}>
-        <ul class="qm__track" style={`--dur: ${row.length * 9}s`}>
+        <ul class="qm__track" style={`--dur: ${row.length * 6}s`}>
           {[...row, ...row].map((r, i) => {
             const dup = i >= row.length;
             return (
@@ -110,9 +111,9 @@ const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i 
   .qm__card {
     display: grid;
     grid-template-rows: auto auto auto 1fr;
-    width: 17.5rem;
-    margin: 0 0 0 1.1rem;
-    padding: 1.1rem 1.25rem 1rem;
+    width: 14.5rem;
+    margin: 0 0 0 1rem;
+    padding: 1rem 1.1rem 0.9rem;
     background: var(--white);
     border: 1px solid var(--line);
     border-radius: 1.1rem;
@@ -133,8 +134,8 @@ const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i 
   }
   .qm__text {
     margin: 0;
-    font-size: 0.97rem;
-    font-weight: 600;
+    font-size: 0.94rem;
+    font-weight: 400;
     line-height: 1.6;
     color: var(--navy);
     white-space: pre-line;
@@ -170,11 +171,12 @@ const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i 
     margin: 0.75rem 0 0;
     padding-top: 0.7rem;
     border-top: 1px solid var(--line);
-    font-size: 0.88rem;
-    color: #4a5b73;
+    font-size: 0.76rem;
+    color: #5b6b82;
   }
   .qm__by strong {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    font-weight: 700;
     color: var(--teal-dark);
   }
 
@@ -194,8 +196,8 @@ const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i 
   }
   .qm__dtext {
     margin: 0;
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: 1.02rem;
+    font-weight: 400;
     line-height: 1.75;
     white-space: pre-line;
   }
@@ -216,7 +218,7 @@ const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i 
 
   @media (max-width: 36rem) {
     .qm__card {
-      width: 15.5rem;
+      width: 13.5rem;
     }
   }
 

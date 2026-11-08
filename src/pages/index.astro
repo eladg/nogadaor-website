@@ -11,7 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import QuizFeature from '../components/QuizFeature.astro';
-import ServiceStrip from '../components/ServiceStrip.astro';
+import ServiceCards from '../components/ServiceCards.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
 import Ribbon from '../components/Ribbon.astro';
 import Timeline from '../components/Timeline.astro';
@@ -23,8 +23,9 @@ import { ways, icons } from '../data/principles';
 import { trainings } from '../data/trainings';
 import { quizYear } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
-// תמונת הפתיח שנוגה בחרה (2026-11-07): על הבמה בבלייזר הלבן, עם הדוכן של "עסקים במקסימום"
-import heroPhoto from '../assets/hero/stage-blazer-dark.jpg';
+// תמונת הפתיח: התמונה החלופית שנוגה הכינה (2026-11-08, בלי השקעים), עם מסך המקרן מוכהה לכחול כהה.
+// המקור: "חומרים גרפיים לאתר/תמונות לפתיח הבית 2026-11-07/noga-replacement-2026-11-08.webp"
+import heroPhoto from '../assets/hero/stage-noga.jpg';
 // "נעים להכיר": אחת משתי התמונות שנוגה שלחה (2026-11-07). השנייה (על הספסל) כבר בעמוד צור קשר.
 import introPhoto from '../assets/hero/headshot.webp';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
@@ -130,28 +131,28 @@ const index = [
   <section class="section h-services" aria-labelledby="services-title">
     <div class="container">
       <h2 id="services-title" class="sr-only">השירותים</h2>
-      <ServiceStrip />
+      <ServiceCards variant="row" />
     </div>
   </section>
 
-  <!-- 3. המלצות: רק על ליווי. שתי שורות של כרטיסים צרים שזזות לאט לכיוונים הפוכים, הרבה המלצות בכל שורה,
-       "קרא עוד" והשם באותו גובה בכל הכרטיסים (נוגה, 2026-11-08). בלי כותרת (נוגה: "הכותרת ממש מתייתרת"). -->
+  <!-- 3. המלצות: רק על ליווי. שורה אחת של כרטיסים צרים שזזה לאט, "קרא עוד" והשם באותו גובה בכל הכרטיסים.
+       הכותרת "לקוחות משתפים" והקישור לכל ההמלצות למעלה, כדי שהקישור לא ייתקע מעל הכותרת הבאה (נוגה, 2026-11-08). -->
   <section class="section section--mist h-reviews" aria-labelledby="reviews-title">
-    <h2 id="reviews-title" class="sr-only">מה אומרים הלקוחות</h2>
-    <QuoteMarquee reviews={homeReviews} />
     <div class="container">
-      <p class="more center"><a href="/testimonials/">לכל ההמלצות ←</a></p>
+      <div class="h-head reveal">
+        <h2 id="reviews-title" class="h-title">לקוחות <span class="hl--mark">משתפים</span></h2>
+        <p class="h-sub"><a href="/testimonials/">לכל ההמלצות ←</a></p>
+      </div>
     </div>
+    <QuoteMarquee reviews={homeReviews} />
   </section>
 
-  <!-- 4. עקרונות הליווי: שש הקוביות מהאודות (עלו שני שלבים, נוגה 2026-11-07). src/data/principles.ts -->
+  <!-- 4. שש הקוביות של עקרונות הליווי (src/data/principles.ts, משותף לאודות).
+       הכותרת של נוגה (2026-11-08) מחליפה את "איך עובדים / עקרונות הליווי". שורת המשנה על "נוסחאות מוכנות" הוסרה, כי היא חוזרת על הכותרת. -->
   <section class="section section--deep atmo h-ways" style={stairsStyle}>
     <div class="container">
       <div class="h-head reveal">
-        <p class="eyebrow">איך עובדים</p>
-        <h2 class="h-title">עקרונות <span class="hl">הליווי</span></h2>
-        <!-- מתוך הפוסט של נוגה "אז אמרו לכם שצריך" (2026-11-08), בלי גוף ראשון -->
-        <p class="h-sub">במקום נוסחאות מוכנות, כל עסק מגלה את הנוסחה הייחודית שלו.</p>
+        <h2 class="h-title h-title--split">הצלחה עסקית בדרך שלך{' '}<span class="hl">עם נוסחה מיוחדת משלך</span></h2>
       </div>
       <ul class="ways">
         {
@@ -402,6 +403,11 @@ const index = [
       transform: translateX(-3%);
       text-shadow: 0 2px 18px rgb(11 26 51 / 0.6);
     }
+  }
+
+  /* כותרת בשתי שורות: החלק המודגש תמיד בשורה משלו, כדי שלא תישאר מילה צבועה בסוף השורה הראשונה (נוגה, 2026-11-08) */
+  .h-title--split .hl {
+    display: block;
   }
 
   /* ---------- 1ב. פסקת הפתיחה ---------- */
