@@ -26,12 +26,19 @@ interface Props {
   ogType?: 'website' | 'article';
 }
 
-const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image, ogType = 'website' } = Astro.props;
+// תמונת השיתוף הכללית (נוגה בחרה, 2026-11-08): לכל עמוד שאין לו כריכה משלו (בית, אודות, שירותים וכו').
+// נוצרה מתמונת הפתיח (src/assets/hero/stage-noga-2.jpg) עם הלוגו והתואר. העמוד שממנו צולמה: drafts/share-image-options/options.html
+const defaultImage = {
+  src: '/images/share-default.jpg',
+  alt: 'נוגה דיין אור, יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, מרצה על הבמה בכנס',
+  width: 1200,
+  height: 630,
+};
+const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image = defaultImage, ogType = 'website' } = Astro.props;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
 // כתובת קנונית: רק כשמוגדר site ב-astro.config.mjs (כשיהיה דומיין). אז היא מופיעה לבד בכל העמודים.
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 // תמונת שיתוף: הרשתות דורשות כתובת מלאה, ולכן גם היא נכתבת רק כשיש site.
-// TODO: תמונת שיתוף כללית לעמודים בלי כריכה (בית, אודות, שירותים וכו') – בדיקת SEO, פריט 5
 const ogImage = image && Astro.site ? new URL(image.src, Astro.site).href : undefined;
 const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as Schema[];
 ---
