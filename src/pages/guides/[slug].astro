@@ -62,8 +62,11 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
 
 // נתונים מובנים: מאמר שנוגה כתבה, ושביל ניווט (src/utils/schema.ts)
 import { articleSchema } from '../../utils/schema';
+import { coverImage } from '../../utils/coverImages';
 const path = `/guides/${guide.id}/`;
-const schema = [articleSchema(Astro.site, { title: d.title, description, path, published: d.published, keywords: d.keywords })];
+// הכריכה כקובץ תמונה: תמונת השיתוף של העמוד ותמונת המאמר בגוגל
+const cover = coverImage({ group: d.type, slug: guide.id, pageTitle: d.title, coverTitle: d.coverTitle ?? d.title, motif: d.coverMotif, star: d.coverStar });
+const schema = [articleSchema(Astro.site, { title: d.title, description, path, published: d.published, keywords: d.keywords, image: cover.src })];
 const crumbs = [
   { name: 'בית', path: '/' },
   { name: 'מרכז הידע', path: '/guides/' },
@@ -71,7 +74,7 @@ const crumbs = [
 ];
 ---
 
-<BaseLayout title={d.title} description={description} schema={schema} crumbs={crumbs}>
+<BaseLayout title={d.title} description={description} schema={schema} crumbs={crumbs} image={cover} ogType="article">
   <!-- סימן מים להדפסה: המונוגרמה OR עם הכוכב, שקופה מאוד, בכל עמוד מודפס (מוסתרת במסך).
        נוגה (2026-11-06): שלא ישתמשו במדריך המודפס כאילו הוא שלהם. -->
   <div class="print-mark" aria-hidden="true"><img src="/images/or-mark.webp" alt="" width="800" height="565" /></div>

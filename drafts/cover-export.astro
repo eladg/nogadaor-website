@@ -1,0 +1,86 @@
+---
+// עמוד עבודה לייצוא הכריכות כתמונות (ראו src/utils/coverImages.ts). לא עולה לאתר:
+// מעתיקים ל-src/pages/cover-export.astro רק בזמן הייצוא, ומוחקים אחרי.
+// כל כריכה מוצגת ברוחב 1200 פיקסלים, בלי פינות מעוגלות, צל ותנועה, כדי שהצילום יהיה נקי.
+import { getCollection } from 'astro:content';
+import ContentCover from '../components/ContentCover.astro';
+import { trainings } from '../data/trainings';
+import { lectures } from '../data/lectures';
+import { coverImage, type CoverInput } from '../utils/coverImages';
+import '../styles/global.css';
+
+const guides = (await getCollection('guides')).filter((g) => !g.data.comingSoon);
+const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: string })[] = [
+  ...guides.map((g) => ({
+    group: g.data.type,
+    kind: g.data.type,
+    slug: g.id,
+    pageTitle: g.data.title,
+    coverTitle: g.data.coverTitle ?? g.data.title,
+    motif: g.data.coverMotif,
+    star: g.data.coverStar,
+  })),
+  ...trainings.map((t) => ({
+    group: 'training' as const,
+    kind: 'guide' as const, // בקטלוג ההדרכות הכריכה מוצגת בברירת המחדל (כחול)
+    slug: t.slug,
+    pageTitle: t.title,
+    coverTitle: t.coverTitle,
+    motif: t.coverMotif,
+  })),
+  ...lectures.map((l) => ({
+    group: 'lecture' as const,
+    kind: 'lecture' as const,
+    slug: l.id,
+    pageTitle: l.title,
+    coverTitle: l.coverTitle,
+    motif: l.motif,
+    duration: l.duration,
+  })),
+];
+---
+
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>ייצוא כריכות</title>
+  </head>
+  <body>
+    {
+      items.map((it) => {
+        const img = coverImage(it);
+        return (
+          <div class="shot" data-file={img.src} data-alt={img.alt} style={`width:${img.width}px;height:${img.height}px`}>
+            <ContentCover
+              title={it.coverTitle}
+              motif={it.motif}
+              kind={it.kind}
+              star={it.star}
+              duration={it.duration}
+              ratio={it.group === 'lecture' ? '16/9' : '16/10'}
+            />
+          </div>
+        );
+      })
+    }
+  </body>
+</html>
+
+<style is:global>
+  body {
+    margin: 0;
+    background: #0b1a33;
+  }
+  .shot {
+    overflow: hidden;
+  }
+  .shot .cc {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .shot .cc__obj {
+    animation: none !important;
+  }
+</style>

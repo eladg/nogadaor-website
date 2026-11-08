@@ -20,12 +20,18 @@ interface Props {
   /** שביל ניווט לנתונים המובנים, מהבית ועד העמוד. נכתב רק כשיש site. */
   crumbs?: { name: string; path: string }[];
 }
+  /** תמונת שיתוף לעמוד (וואטסאפ, פייסבוק, לינקדאין), למשל הכריכה כתמונה – src/utils/coverImages.ts */
+  image?: { src: string; alt: string; width: number; height: number };
+  /** article למדריכים ולמאמרים, website לכל השאר */
+  ogType?: 'website' | 'article';
 
-const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [] } = Astro.props;
+const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image, ogType = 'website' } = Astro.props;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
 // כתובת קנונית: רק כשמוגדר site ב-astro.config.mjs (כשיהיה דומיין). אז היא מופיעה לבד בכל העמודים.
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
-// TODO: תמונת שיתוף (og:image, 1200×630) ו-twitter:card כשתעוצב תמונה – בדיקת SEO, פריט 5
+// תמונת שיתוף: הרשתות דורשות כתובת מלאה, ולכן גם היא נכתבת רק כשיש site.
+// TODO: תמונת שיתוף כללית לעמודים בלי כריכה (בית, אודות, שירותים וכו') – בדיקת SEO, פריט 5
+const ogImage = image && Astro.site ? new URL(image.src, Astro.site).href : undefined;
 const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as Schema[];
 ---
 
@@ -47,9 +53,21 @@ const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as 
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="נוגה דיין אור" />
     <meta property="og:locale" content="he_IL" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     {canonical && <meta property="og:url" content={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {
+      ogImage && image && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content={String(image.width)} />
+          <meta property="og:image:height" content={String(image.height)} />
+          <meta property="og:image:alt" content={image.alt} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:image:alt" content={image.alt} />
+        </>
+      )
+    }
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {ld.length > 0 && <script type="application/ld+json" set:html={graph(ld)} />}

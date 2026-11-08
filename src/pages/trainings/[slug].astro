@@ -25,9 +25,12 @@ const myReviews = lectureReviews.filter((r) => r.training === training.slug);
 
 // נתונים מובנים: ההדרכה כשירות (הרצאה או סדנה), ושביל ניווט (src/utils/schema.ts)
 import { serviceSchema } from '../../utils/schema';
+import { coverImage } from '../../utils/coverImages';
 const pageDescription = training.lead.join(' ');
 const path = `/trainings/${training.slug}/`;
-const schema = [serviceSchema(Astro.site, { name: training.title, description: pageDescription, path })];
+// הכריכה מקטלוג ההדרכות כקובץ תמונה: תמונת השיתוף של העמוד
+const cover = coverImage({ group: 'training', slug: training.slug, pageTitle: training.title, coverTitle: training.coverTitle, motif: training.coverMotif });
+const schema = [serviceSchema(Astro.site, { name: training.title, description: pageDescription, path, image: cover.src })];
 const crumbs = [
   { name: 'בית', path: '/' },
   { name: 'קטלוג הדרכות', path: '/trainings/' },
@@ -35,7 +38,7 @@ const crumbs = [
 ];
 ---
 
-<BaseLayout title={training.title} description={pageDescription} schema={schema} crumbs={crumbs}>
+<BaseLayout title={training.title} description={pageDescription} schema={schema} crumbs={crumbs} image={cover}>
   <LightHero image={heroImage} title={training.title} crumbs={{ href: '/trainings/', label: 'קטלוג הדרכות', current: 'הדרכה' }}>
     {training.lead.map((p) => <p>{p}</p>)}
   </LightHero>

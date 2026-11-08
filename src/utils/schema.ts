@@ -68,12 +68,13 @@ function author(site: URL | undefined): Schema {
 
 export function articleSchema(
   site: URL | undefined,
-  a: { title: string; description: string; path: string; published?: Date; keywords?: string[] },
+  a: { title: string; description: string; path: string; published?: Date; keywords?: string[]; image?: string },
 ): Schema {
   return {
     '@type': 'Article',
     headline: a.title,
     description: a.description,
+    image: a.image ? abs(site, a.image) : undefined,
     inLanguage: 'he',
     url: abs(site, a.path),
     mainEntityOfPage: abs(site, a.path),
@@ -86,13 +87,14 @@ export function articleSchema(
 
 export function serviceSchema(
   site: URL | undefined,
-  s: { name: string; description: string; path: string },
+  s: { name: string; description: string; path: string; image?: string },
 ): Schema {
   return {
     '@type': 'Service',
     name: s.name,
     serviceType: s.name,
     description: s.description,
+    image: s.image ? abs(site, s.image) : undefined,
     url: abs(site, s.path),
     areaServed: { '@type': 'Country', name: 'ישראל' },
     provider: id(site, '#business') ? { '@id': id(site, '#business') } : { '@type': 'ProfessionalService', name: PERSON_NAME },
