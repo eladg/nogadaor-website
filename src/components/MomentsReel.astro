@@ -1,0 +1,153 @@
+---
+// "רגעים מהכנסים": שתי שורות תמונות שזזות לכיוונים הפוכים. היה רק באודות, ועכשיו גם בעמוד הבית מתחת לסרטון הכנס
+// (נוגה, 2026-11-08: "הסרטון של הכנס וכל התמונות שכרגע מופיעות באודות").
+// נעצרות במעבר עכבר. אצל מי שביקש פחות תנועה הן עומדות, ואפשר לגלול אותן לצדדים.
+// התמונות: נוגה שלחה אותן. המקור ב"חומרים גרפיים לאתר/תמונות מכנסים", והגרסאות באתר ב-src/assets/about/gallery.
+import { Image } from 'astro:assets';
+
+interface Props {
+  rows: string[][]; // מספרי התמונות בכל שורה (המספר שבתחילת שם הקובץ)
+}
+const { rows: rowNums } = Astro.props;
+
+const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
+const pic = (num: string) => {
+  const key = Object.keys(files).find((k) => k.split('/').pop()!.startsWith(`${num}-`));
+  if (!key) throw new Error(`חסרה תמונה ${num} ב-src/assets/about/gallery`);
+  return files[key];
+};
+
+// תיאורי התמונות (לקוראי מסך)
+const alts: Record<string, string> = {
+  '03': 'נוגה יושבת על ספסל בגינה ומחייכת',
+  '05': 'נוגה ליד הדוכן על הבמה, מחייכת למצלמה',
+  '06': 'משתתפים נרשמים בעמדת הקבלה של הכנס',
+  '07': 'נוגה עם משתתפות בכנס',
+  '08': 'נוגה מחבקת משתתפת בכנס',
+  '09': 'נוגה עם משתתפים בכנס',
+  '10': 'נוגה עם משתתפים בכנס',
+  '11': 'נוגה עם שני משתתפים בכנס',
+  '12': 'נוגה עם משתתפות בכנס',
+  '13': 'נוגה מרצה על הבמה',
+  '14': 'קהל המשתתפים באולם הכנס',
+  '15': 'נוגה על הבמה מול קהל המשתתפים',
+  '16': 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"',
+  '17': 'נוגה על הבמה מביטה אל הקהל בחיוך',
+  '18': 'נוגה מרצה בכנס "מנהיגות במקסימום"',
+  '19': 'נוגה בין המשתתפים בזמן שאלה מהקהל',
+  '20': 'נוגה בשיחה על הבמה עם מרצה נוספת',
+  '21': 'רול-אפ של הכנס "מנהיגות במקסימום" עם התמונה של נוגה',
+  '22': 'מחברות ועטים שהוכנו למשתתפי הכנס',
+  '23': 'נוגה מדברת אל הקהל',
+};
+const rows = rowNums.map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] ?? 'מהכנסים של נוגה' })));
+---
+
+{
+  rows.map((row, r) => (
+    <div class={`reel reel--${r % 2 ? 'b' : 'a'}`}>
+      <div class="reel__track">
+        {[0, 1].map((copy) => (
+          <ul class="reel__set" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {row.map((p) => (
+              <li class="reel__item">
+                <Image src={p.src} alt={copy === 1 ? '' : p.alt} widths={[400, 700]} sizes="22rem" />
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  ))
+}
+
+<style>
+  .reel {
+    --h: clamp(10rem, 22vw, 15rem);
+    /* כיוון שמאל-ימין רק לצורך התנועה */
+    direction: ltr;
+    /* הקצוות נמוגים בעדינות */
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .reel + .reel {
+    margin-top: 1rem;
+  }
+  .reel__track {
+    display: flex;
+    width: max-content;
+    animation: reel-a 80s linear infinite;
+  }
+  .reel--b .reel__track {
+    animation-name: reel-b;
+    animation-duration: 95s;
+  }
+  .reel:hover .reel__track {
+    animation-play-state: paused;
+  }
+  .reel__set {
+    display: flex;
+    gap: 1rem;
+    padding: 0.6rem 1rem 0.6rem 0;
+    margin: 0;
+    list-style: none;
+  }
+  .reel__item {
+    height: var(--h);
+    flex: none;
+    overflow: hidden;
+    border-radius: 1.1rem;
+    background: var(--navy-soft);
+    box-shadow: 0 18px 36px -20px rgb(0 0 0 / 0.7);
+  }
+  /* תמונות לסירוגין קצת למעלה וקצת למטה, כדי שהשורה לא תהיה קשיחה */
+  .reel__item:nth-child(even) {
+    translate: 0 0.6rem;
+  }
+  .reel__item:nth-child(odd) {
+    translate: 0 -0.6rem;
+  }
+  .reel__item :global(img) {
+    display: block;
+    height: 100%;
+    width: auto;
+    transition: transform 0.6s ease;
+  }
+  .reel__item:hover :global(img) {
+    transform: scale(1.05);
+  }
+  @keyframes reel-a {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes reel-b {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  /* מי שביקש פחות תנועה: התמונות עומדות, ואפשר לגלול לצדדים */
+  @media (prefers-reduced-motion: reduce) {
+    .reel {
+      overflow-x: auto;
+      mask-image: none;
+    }
+    .reel__track {
+      animation: none;
+    }
+    .reel__set[aria-hidden='true'] {
+      display: none;
+    }
+    .reel__item :global(img) {
+      transition: none;
+    }
+    .reel__item:hover :global(img) {
+      transform: none;
+    }
+  }
+</style>

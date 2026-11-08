@@ -13,6 +13,7 @@ import nogaStage from '../assets/noga-stage.jpg';
 import { experts } from '../data/experts';
 import { contact } from '../data/contact';
 import Star from '../components/Star.astro';
+import MomentsReel from '../components/MomentsReel.astro';
 
 // כל התמונות מהתיקייה, לפי המספר שבתחילת שם הקובץ
 const files = import.meta.glob<ImageMetadata>('../assets/about/gallery/*.jpg', { eager: true, import: 'default' });
@@ -46,10 +47,11 @@ const alts: Record<string, string> = {
 };
 // שתי שורות שזזות לכיוונים הפוכים. הסדר מעורבב בכוונה, כדי שלא יהיו כמה תמונות במה ברצף.
 // תמונות 23, 08 ו-12 מופיעות לצד הסיפור, ולכן לא חוזרות כאן.
-const rows = [
+// (הגלריה עצמה ברכיב MomentsReel, משותפת לאודות ולעמוד הבית)
+const momentRows = [
   ['07', '14', '05', '22', '18', '09', '21', '06', '17'],
   ['19', '13', '10', '15', '20', '03', '11', '16'],
-].map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] })));
+];
 
 // שש הקוביות ואייקוניהן: src/data/principles.ts (משותף לאודות ולעמוד הבית)
 import { ways, icons } from '../data/principles';
@@ -242,23 +244,7 @@ const stairsStyle = await atmoStyle(stairsAtmo, 0.35);
       <!-- TODO: הכותרת "רגעים מהכנסים" היא הצעה. נוגה יכולה לשנות -->
       <h2 id="moments-title" class="a-title reveal">רגעים <span class="hl--mark">מהכנסים</span></h2>
     </div>
-    {
-      rows.map((row, r) => (
-        <div class={`reel reel--${r % 2 ? 'b' : 'a'}`}>
-          <div class="reel__track">
-            {[0, 1].map((copy) => (
-              <ul class="reel__set" aria-hidden={copy === 1 ? 'true' : undefined}>
-                {row.map((p) => (
-                  <li class="reel__item">
-                    <Image src={p.src} alt={copy === 1 ? '' : p.alt} widths={[400, 700]} sizes="22rem" />
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
-        </div>
-      ))
-    }
+    <MomentsReel rows={momentRows} />
 
     <!-- 9. צור קשר: כפתור לוואטסאפ בסוף העמוד (לבקשת נוגה) -->
     <div class="container a-contact">
@@ -601,95 +587,6 @@ const stairsStyle = await atmoStyle(stairsAtmo, 0.35);
   .a-moments .a-title {
     margin-bottom: 1.25rem;
   }
-  .reel {
-    --h: clamp(10rem, 22vw, 15rem);
-    /* כיוון שמאל-ימין רק לצורך התנועה */
-    direction: ltr;
-    /* הקצוות נמוגים בעדינות */
-    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  }
-  .reel + .reel {
-    margin-top: 1rem;
-  }
-  .reel__track {
-    display: flex;
-    width: max-content;
-    animation: reel-a 80s linear infinite;
-  }
-  .reel--b .reel__track {
-    animation-name: reel-b;
-    animation-duration: 95s;
-  }
-  .reel:hover .reel__track {
-    animation-play-state: paused;
-  }
-  .reel__set {
-    display: flex;
-    gap: 1rem;
-    padding: 0.6rem 1rem 0.6rem 0;
-    margin: 0;
-    list-style: none;
-  }
-  .reel__item {
-    height: var(--h);
-    flex: none;
-    overflow: hidden;
-    border-radius: 1.1rem;
-    background: var(--navy-soft);
-    box-shadow: 0 18px 36px -20px rgb(0 0 0 / 0.7);
-  }
-  /* תמונות לסירוגין קצת למעלה וקצת למטה, כדי שהשורה לא תהיה קשיחה */
-  .reel__item:nth-child(even) {
-    translate: 0 0.6rem;
-  }
-  .reel__item:nth-child(odd) {
-    translate: 0 -0.6rem;
-  }
-  .reel__item :global(img) {
-    display: block;
-    height: 100%;
-    width: auto;
-    transition: transform 0.6s ease;
-  }
-  .reel__item:hover :global(img) {
-    transform: scale(1.05);
-  }
-  @keyframes reel-a {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  @keyframes reel-b {
-    from {
-      transform: translateX(-50%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-  /* מי שביקש פחות תנועה: התמונות עומדות, ואפשר לגלול לצדדים */
-  @media (prefers-reduced-motion: reduce) {
-    .reel {
-      overflow-x: auto;
-      mask-image: none;
-    }
-    .reel__track {
-      animation: none;
-    }
-    .reel__set[aria-hidden='true'] {
-      display: none;
-    }
-    .reel__item :global(img) {
-      transition: none;
-    }
-    .reel__item:hover :global(img) {
-      transform: none;
-    }
-  }
-
   /* הסיסמה בסוף "דווקא עכשיו": גדולה ובזהב, באותו גופן של האתר */
   .a-now .a-now__motto {
     display: block;

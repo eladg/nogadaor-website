@@ -10,7 +10,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
-import QuizFeature from '../components/QuizFeature.astro';
+import MomentsReel from '../components/MomentsReel.astro';
 import ServiceCards from '../components/ServiceCards.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
 import Ribbon from '../components/Ribbon.astro';
@@ -21,7 +21,7 @@ import { services, situations, steps } from '../data/services';
 import { homeReviews } from '../data/reviews';
 import { ways, icons } from '../data/principles';
 import { trainings } from '../data/trainings';
-import { quizYear } from '../data/quiz';
+import { quizYear, quizAreas } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח: התמונה החלופית שנוגה הכינה (2026-11-08, בלי השקעים), עם מסך המקרן מוכהה לכחול כהה.
 // המקור: "חומרים גרפיים לאתר/תמונות לפתיח הבית 2026-11-07/noga-replacement-2026-11-08.webp"
@@ -31,19 +31,15 @@ import introPhoto from '../assets/hero/headshot.webp';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
 import darkLines from '../assets/atmosphere/dark-lines.webp';
 import darkStairs from '../assets/atmosphere/dark-stairs.webp';
-import pointing from '../assets/character/pointing-down.webp';
-// תמונות מהכנסים (נוגה שלחה אותן לאודות). בעמוד הבית: עוד תמונות, לבקשתה (2026-11-07)
-import pAudience from '../assets/about/gallery/14-audience.jpg';
-import pStage from '../assets/about/gallery/16-stage-participants.jpg';
-import pGroup from '../assets/about/gallery/07-group-five.jpg';
-import pAmong from '../assets/about/gallery/19-among-audience.jpg';
-const stagePhotos = [
-  { src: pAudience, alt: 'קהל המשתתפים באולם הכנס' },
-  { src: pStage, alt: 'נוגה עם משתתפים על הבמה בכנס "עסקים במקסימום"' },
-  { src: pGroup, alt: 'נוגה עם משתתפות בכנס' },
-  { src: pAmong, alt: 'נוגה בין המשתתפים בזמן שאלה מהקהל' },
+// הדמות חתוכה מתחת לידיים (נוגה, 2026-11-08: "לחתוך את החלק של הרגליים")
+import pointing from '../assets/character/pointing-down-bust.webp';
+// כריכת סרטון הכנס (נוגה, 2026-11-08): נוגה על הבמה מגבה, מול כל הקהל
+import conferenceCover from '../assets/about/gallery/15-facing-audience.jpg';
+// כל התמונות מהכנסים, כמו באודות, וגם שלוש התמונות שבאודות יושבות ליד הסיפור (23, 08, 12)
+const momentRows = [
+  ['07', '14', '05', '23', '22', '18', '09', '21', '06', '17'],
+  ['19', '13', '08', '10', '15', '20', '12', '03', '11', '16'],
 ];
-
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
 
@@ -231,43 +227,37 @@ const index = [
     </div>
   </section>
 
-  <!-- 7. שאלון המיקוד. הדמות מצביעה על השאלון. -->
-  <section class="section section--mist">
-    <div class="container">
-      <div class="h-quiz-head">
-        <div class="h-head reveal">
-          <!-- הכותרת היא הצעה שלי -->
-          <p class="eyebrow">שאלון חינמי</p>
-          <h2 class="h-title">איפה העסק שלך <span class="hl--mark">עומד היום?</span></h2>
-          <p class="h-sub">שאלון קצר שעושה סדר: פרופיל של העסק ושלושה מיקודים לשנה הקרובה.</p>
-        </div>
-        <Image src={pointing} alt="" widths={[220, 340]} sizes="11rem" class="toon h-quiz-head__toon" />
-      </div>
-      <QuizFeature />
-    </div>
-  </section>
-
-  <!-- 9. סרטון הכנס שנוגה הפיקה, ותמונות מהשטח. הסרטון מופיע בשני מקומות: כאן ובעמוד ההדרכות (2026-11-07).
-       הכותרת לקוחה מהדף ב-Canva. -->
+  <!-- 6א. סרטון הכנס וכל התמונות מהכנסים, מיד אחרי "מתקדמים עם נוגה" (נוגה, 2026-11-08).
+       הכריכה: תמונה של נוגה מגבה מול כל הקהל, במקום התמונה של יוטיוב. הסרטון מופיע גם בעמוד ההדרכות. -->
   <section class="section h-stage">
     <div class="container">
       <div class="h-head reveal">
-        <p class="eyebrow">מהשטח</p>
-        <h2 class="h-title">קצת מכנס העסקים <span class="hl--mark">שפתח את השנה</span></h2>
+        <h2 class="h-title h-title--split">קצת מכנס העסקים{' '}<span class="hl--mark">שפתח את השנה</span></h2>
       </div>
       <div class="conference reveal">
-        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
+        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום">
+          <span class="stage-cover">
+            <Image src={conferenceCover} alt="" widths={[640, 1024, 1400]} sizes="(min-width: 56rem) 52rem, 100vw" />
+            <span class="stage-cover__play" aria-hidden="true"></span>
+            <span class="stage-cover__label">עסקים במקסימום</span>
+          </span>
+        </YouTubeEmbed>
       </div>
-      <ul class="stage-photos">
-        {
-          stagePhotos.map((ph, i) => (
-            <li class="reveal" style={`transition-delay: ${i * 0.08}s`}>
-              <Image src={ph.src} alt={ph.alt} widths={[320, 520]} sizes="(min-width: 52rem) 25vw, 50vw" />
-            </li>
-          ))
-        }
-      </ul>
-      <p class="more center"><a href="/about/#moments-title">לעוד רגעים מהכנסים ←</a></p>
+    </div>
+    <div class="h-moments">
+      <MomentsReel rows={momentRows} />
+    </div>
+  </section>
+
+  <!-- 7. השאלון: אזור אחד בצבע אחיד, בלי באנר נפרד (נוגה, 2026-11-08). הדמות ממורכזת מעל הכותרת וחתוכה מתחת לידיים.
+       בלי מספר שאלות (הוא עשוי להשתנות). מספר המסלולים נלקח מהנתונים. הכותרת והמשפט הם הצעה שלי, ממתינים לאישור. -->
+  <section class="h-quiz" aria-labelledby="quiz-title">
+    <!-- בלי reveal על העטיפה: אפקט ההופעה מבודד את הדמות, והרקע הלבן שלה נראה כריבוע -->
+    <div class="container h-quiz__inner">
+      <Image src={pointing} alt="" widths={[240, 400]} sizes="12rem" class="toon h-quiz__toon" />
+      <h2 id="quiz-title" class="h-title h-title--split reveal">כמה העסק שלך מוכן{' '}<span class="hl--mark">לקפיצה הבאה?</span></h2>
+      <p class="h-quiz__text reveal">שאלון קצר ב-{quizAreas.length} מסלולים שבודק את העסק, ומראה איפה הוא חזק, איפה כדאי להתמקד ומה הצעדים הבאים לשנת {quizYear}.</p>
+      <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק ←</a>
     </div>
   </section>
 
@@ -408,6 +398,11 @@ const index = [
   /* כותרת בשתי שורות: החלק המודגש תמיד בשורה משלו, כדי שלא תישאר מילה צבועה בסוף השורה הראשונה (נוגה, 2026-11-08) */
   .h-title--split .hl {
     display: block;
+  }
+  /* עם הקו הזהב: שורה משלו, אבל ברוחב המילים בלבד, כדי שהקו לא יימתח על כל הרוחב */
+  .h-title--split .hl--mark {
+    display: table;
+    margin-inline: auto;
   }
 
   /* ---------- 1ב. פסקת הפתיחה ---------- */
@@ -615,26 +610,44 @@ const index = [
     line-height: 1.65;
   }
 
-  /* ---------- 7. שאלון ---------- */
-  .h-quiz-head {
-    position: relative;
+  /* ---------- 7. שאלון: אזור אחד בצבע זהב בהיר אחיד, הכול ממורכז (נוגה, 2026-11-08) ---------- */
+  .h-quiz {
+    padding-block: clamp(2.5rem, 6vw, 3.75rem);
+    background: #fdf4d8;
+    text-align: center;
   }
-  .h-quiz-head .h-head {
-    margin-bottom: 1.5rem;
+  .h-quiz__inner {
+    max-width: 44rem;
   }
-  .h-quiz-head :global(.h-quiz-head__toon) {
-    width: 7.5rem;
-    margin: -1rem auto 0.5rem;
+  /* הדמות מעל הכותרת, ממורכזת, חתוכה מתחת לידיים (רקע לבן, ולכן רק על רקע בהיר: .toon) */
+  .h-quiz :global(.h-quiz__toon) {
+    display: block;
+    width: clamp(8rem, 18vw, 11rem);
+    margin: 0 auto 0.75rem;
   }
-  /* במחשב: הדמות בצד שמאל של הכותרת, מצביעה על השאלון */
-  @media (min-width: 52rem) {
-    .h-quiz-head :global(.h-quiz-head__toon) {
-      position: absolute;
-      left: 0;
-      bottom: -0.5rem;
-      width: 10rem;
-      margin: 0;
-    }
+  .h-quiz__text {
+    max-width: 36rem;
+    margin: 0.9rem auto 1.5rem;
+    font-size: clamp(1.05rem, 1.9vw, 1.18rem);
+    line-height: 1.7;
+    color: #33445c;
+  }
+  .h-quiz__btn {
+    display: inline-block;
+    padding: 0.8em 1.9em;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 14px 28px -16px rgb(11 26 51 / 0.6);
+    transition:
+      transform 0.25s ease,
+      background-color 0.25s ease;
+  }
+  .h-quiz__btn:hover {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
   }
 
   /* ---------- 3א. נעים להכיר: אזור בהיר, התמונה קטנה כרקע בצד ימין ונעלמת אל הטקסט (נוגה, 2026-11-08) ---------- */
@@ -756,34 +769,65 @@ const index = [
     overflow: hidden;
     box-shadow: 0 30px 60px -35px rgb(11 26 51 / 0.55);
   }
-  /* תמונות מהשטח מתחת לסרטון: 4 בשורה, 2 בנייד. האמצעיות מוזחות מעט (פריסה מדורגת). */
-  .stage-photos {
-    list-style: none;
-    margin: 1.75rem 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 48rem) {
-    .stage-photos {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  .stage-photos li {
-    margin: 0;
-  }
-  @media (min-width: 48rem) {
-    .stage-photos li:nth-child(even) {
-      transform: translateY(1.25rem);
-    }
-  }
-  .stage-photos :global(img) {
+  /* כריכת הסרטון: תמונה מהכנס עם כפתור הפעלה */
+  .stage-cover {
+    position: relative;
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 100%;
+  }
+  .stage-cover :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 1rem;
+    object-position: 50% 45%;
+  }
+  .stage-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgb(11 26 51 / 0.7) 0%, rgb(11 26 51 / 0) 45%);
+  }
+  .stage-cover__play {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+    box-shadow: 0 12px 30px -8px rgb(0 0 0 / 0.6);
+    transform: translate(-50%, -50%);
+    transition: transform 0.25s ease;
+  }
+  .stage-cover__play::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    border-style: solid;
+    border-width: 0.75rem 0 0.75rem 1.2rem;
+    border-color: transparent transparent transparent var(--navy);
+    transform: translate(-50%, -50%);
+  }
+  .conference:hover .stage-cover__play {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  .stage-cover__label {
+    position: absolute;
+    z-index: 1;
+    bottom: 1rem;
+    right: 1.25rem;
+    color: var(--white);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 800;
+  }
+  /* כל התמונות מהכנסים, מתחת לסרטון */
+  .h-moments {
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+    overflow: hidden;
   }
   .h-stage {
     padding-bottom: clamp(3.5rem, 8vw, 5.5rem);
