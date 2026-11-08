@@ -43,8 +43,9 @@ export const services: Service[] = [
   {
     slug: 'business-consulting',
     href: '/services/business-consulting/',
-    menu: 'ייעוץ עסקי',
-    title: 'ייעוץ עסקי',
+    // נוגה (2026-11-08): השם הוא "אסטרטגיה ושיווק" (במקום "ייעוץ עסקי"). הכתובת לא השתנתה.
+    menu: 'אסטרטגיה ושיווק',
+    title: 'אסטרטגיה ושיווק',
     // הדוגמה של נוגה עצמה (2026-11-07)
     lead: 'הגדלת הכנסות עם אסטרטגיה ושיווק',
     icon: 'chart',
