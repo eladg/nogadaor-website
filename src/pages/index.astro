@@ -106,7 +106,7 @@ const index = [
         <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
         <div class="h-hero__actions">
-          <a class="btn" href={contact.booking} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+          <a class="btn" href={contact.booking} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
           <a class="btn btn--ghost" href="/services/">לשירותים</a>
         </div>
       </div>
@@ -295,7 +295,8 @@ const index = [
   }
   .h-hero__media {
     position: relative;
-    height: min(64vw, 19rem);
+    /* ההאדר השקוף יושב מעל החלק העליון של התמונה */
+    height: calc(min(64vw, 19rem) + var(--header-h));
   }
   .h-hero__media img {
     width: 100%;
@@ -308,7 +309,7 @@ const index = [
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(7 17 31 / 0.05) 50%, var(--navy-deep) 100%);
+    background: linear-gradient(180deg, rgb(7 17 31 / 0.75) 0%, rgb(7 17 31 / 0.05) 32%, rgb(7 17 31 / 0.05) 55%, var(--navy-deep) 100%);
   }
   .h-hero__inner {
     position: relative;
@@ -343,39 +344,48 @@ const index = [
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
+  }
+  /* כפתורים קטנים יותר (נוגה, 2026-11-08) */
+  .h-hero__actions .btn {
+    padding: 0.6em 1.35em;
+    font-size: 0.95rem;
   }
   @media (min-width: 52rem) {
     .h-hero {
       display: flex;
       align-items: center;
-      min-height: clamp(24rem, 54vh, 30rem);
+      min-height: calc(clamp(24rem, 54vh, 30rem) + var(--header-h));
+      padding-top: var(--header-h);
     }
-    /* התמונה בצד ימין, נעלמת לכיוון הטקסט שמשמאל. השקף שמעל מוחשך, הדוכן נראה. */
+    /* התמונה בצד ימין, נעלמת לכיוון הטקסט שמשמאל. הוזזה ימינה (נוגה, 2026-11-08) כדי שהכותרת תהיה קרובה למרכז:
+       התמונה נדחפת מעט מעבר לקצה הימני, והרווח שנפתח משמאל שלה נבלע במעבר לכחול. */
     .h-hero__media {
       position: absolute;
       top: 0;
       bottom: 0;
       right: 0;
-      width: 58%;
+      width: 52%;
       height: auto;
     }
     .h-hero__media img {
-      object-position: 82% 32%;
+      object-position: right -5rem top 32%;
     }
     .h-hero__media::after {
       background:
         linear-gradient(to right, var(--navy-deep) 0%, rgb(7 17 31 / 0.75) 16%, rgb(7 17 31 / 0) 45%),
-        linear-gradient(to bottom, rgb(7 17 31 / 0.6) 0%, rgb(7 17 31 / 0) 40%),
+        linear-gradient(to bottom, rgb(7 17 31 / 0.82) 0%, rgb(7 17 31 / 0.55) 12%, rgb(7 17 31 / 0) 38%),
         linear-gradient(0deg, rgb(7 17 31 / 0.45) 0%, rgb(7 17 31 / 0) 25%);
     }
+    /* יותר מרווח בין ההאדר לכותרת (נוגה, 2026-11-08) */
     .h-hero__inner {
-      padding-block: 2.75rem;
+      padding-block: 4rem 2.75rem;
     }
+    /* הטקסט קרוב למרכז העמוד ככל האפשר, בלי לעלות על הפנים */
     .h-hero__text {
-      max-width: min(34rem, 46vw);
-      margin-right: auto;
-      margin-left: 0;
+      max-width: min(35rem, 46vw);
+      margin-inline: auto;
+      transform: translateX(-8%);
       text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
     }
   }
