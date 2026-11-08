@@ -81,7 +81,8 @@ const { tone = 'dark', kicker } = Astro.props;
   .band-g__text :global(p:last-child) {
     margin-bottom: 0;
   }
-  .band-g__text :global(strong) {
+  /* .band-g לפני: כדי לגבור על הצבע הכללי של strong במדריך (.prose), שהפך את ההדגשה לכחול כהה על כהה */
+  .band-g .band-g__text :global(strong) {
     color: var(--gold-light);
   }
   .band-g--gold .band-g__text :global(strong) {
