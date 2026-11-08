@@ -27,7 +27,8 @@ const { tone = 'dark', kicker } = Astro.props;
       radial-gradient(20rem 12rem at 0 100%, rgb(209 154 74 / 0.35), transparent 70%),
       linear-gradient(135deg, var(--navy-deep), var(--navy) 60%, #12335a);
   }
-  @media (min-width: 64rem) {
+  /* חורג מעט לצדדים רק כשיש מספיק מקום (רוחב התוכן 72rem + שוליים), אחרת נוצרה גלילה לרוחב ב-1024px */
+  @media (min-width: 78rem) {
     .band-g {
       margin-inline: -2.5rem;
     }
