@@ -1,0 +1,235 @@
+---
+// המלצות בעמוד הבית (נוגה, 2026-11-08): שתי שורות של כרטיסים צרים שזזות לאט לכיוונים הפוכים, כך שרואים הרבה המלצות בבת אחת.
+// בכל כרטיס: גרש זהב מבריק, ההתחלה של ההמלצה (4 שורות), "קרא עוד" ושם הממליץ, תמיד באותו גובה בכל הכרטיסים.
+// "קרא עוד" פותח חלון עם ההמלצה המלאה. התנועה נעצרת כשהעכבר או המקלדת על ההמלצות, ולא פועלת למי שביקש פחות תנועה.
+// הטקסט של ההמלצה לא משתנה: הוא רק נחתך בתצוגה.
+import type { Review } from '../data/reviews';
+
+interface Props {
+  reviews: Review[];
+}
+const { reviews } = Astro.props;
+const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i % 2 === 1)];
+---
+
+<div class="qm">
+  {
+    rows.map((row, ri) => (
+      <div class:list={['qm__row', { 'qm__row--rev': ri === 1 }]}>
+        <ul class="qm__track" style={`--dur: ${row.length * 9}s`}>
+          {[...row, ...row].map((r, i) => {
+            const dup = i >= row.length;
+            return (
+              <li class:list={['qm__card', { 'qm__card--dup': dup }]} aria-hidden={dup ? 'true' : undefined}>
+                <span class="qm__mark" aria-hidden="true">”</span>
+                <blockquote class="qm__text">{r.text}</blockquote>
+                <button type="button" class="qm__more" tabindex={dup ? -1 : undefined}>
+                  קרא עוד<span class="sr-only"> – ההמלצה של {r.name}</span>
+                </button>
+                <p class="qm__by">
+                  <strong>{r.name}</strong>
+                  <span>מקור: {r.source}</span>
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))
+  }
+
+  <dialog class="qm__dialog" aria-labelledby="qm-dialog-name">
+    <button type="button" class="qm__close" aria-label="סגירה">×</button>
+    <span class="qm__mark" aria-hidden="true">”</span>
+    <p class="qm__dtext"></p>
+    <p class="qm__by">
+      <strong id="qm-dialog-name"></strong>
+      <span class="qm__dsrc"></span>
+    </p>
+  </dialog>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.qm');
+  const dialog = root?.querySelector<HTMLDialogElement>('.qm__dialog');
+  root?.querySelectorAll<HTMLElement>('.qm__card').forEach((card) => {
+    const text = card.querySelector<HTMLElement>('.qm__text');
+    const btn = card.querySelector<HTMLButtonElement>('.qm__more');
+    if (!text || !btn) return;
+    // "קרא עוד" מופיע רק כשההמלצה נחתכה, אבל המקום שלו שמור תמיד, כדי שהשם יישאר באותו גובה
+    if (text.scrollHeight <= text.clientHeight + 2) btn.classList.add('is-empty');
+    btn.addEventListener('click', () => {
+      if (!dialog) return;
+      dialog.querySelector('.qm__dtext')!.textContent = text.textContent;
+      dialog.querySelector('#qm-dialog-name')!.textContent = card.querySelector('.qm__by strong')?.textContent ?? '';
+      dialog.querySelector('.qm__dsrc')!.textContent = card.querySelector('.qm__by span')?.textContent ?? '';
+      dialog.showModal();
+    });
+  });
+  dialog?.querySelector('.qm__close')?.addEventListener('click', () => dialog.close());
+  // לחיצה מחוץ לחלון סוגרת אותו
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>
+
+<style>
+  .qm {
+    display: grid;
+    gap: 1.25rem;
+    /* הכרטיסים נעלמים בעדינות בקצוות */
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(to left, transparent, #000 6%, #000 94%, transparent);
+  }
+  .qm__row {
+    overflow: hidden;
+  }
+  .qm__track {
+    display: flex;
+    width: max-content;
+    margin: 0;
+    padding: 0.25rem 0;
+    list-style: none;
+    animation: qm-scroll var(--dur, 90s) linear infinite;
+  }
+  .qm__row--rev .qm__track {
+    animation-direction: reverse;
+  }
+  .qm:hover .qm__track,
+  .qm:focus-within .qm__track {
+    animation-play-state: paused;
+  }
+  /* שני עותקים זהים של השורה: הזזה בחצי מהרוחב מחזירה לנקודת ההתחלה בלי קפיצה */
+  @keyframes qm-scroll {
+    to {
+      transform: translateX(50%);
+    }
+  }
+
+  /* כרטיס: ארבע שורות קבועות, כך ש"קרא עוד" והשם באותו גובה בכל הכרטיסים */
+  .qm__card {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    width: 17.5rem;
+    margin: 0 0 0 1.1rem;
+    padding: 1.1rem 1.25rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 1.1rem;
+    box-shadow: 0 12px 28px -22px rgb(11 26 51 / 0.45);
+  }
+  /* גרש זהב מבריק (נוגה, 2026-11-08: לא חום-כתום) */
+  .qm__mark {
+    display: block;
+    height: 1.7rem;
+    font-size: 3.1rem;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(160deg, #fff4bf 0%, #fcdc6d 30%, #f2c443 55%, #fff1a6 72%, #e9b73c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 1px 0 rgb(209 154 74 / 0.35));
+  }
+  .qm__text {
+    margin: 0;
+    font-size: 0.97rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--navy);
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: calc(1.6em * 4);
+  }
+  .qm__more {
+    justify-self: start;
+    margin-top: 0.4rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+    cursor: pointer;
+  }
+  .qm__more:hover {
+    text-decoration: underline;
+  }
+  .qm__more.is-empty {
+    visibility: hidden;
+  }
+  .qm__by {
+    align-self: end;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin: 0.75rem 0 0;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.88rem;
+    color: #4a5b73;
+  }
+  .qm__by strong {
+    font-size: 0.95rem;
+    color: var(--teal-dark);
+  }
+
+  /* החלון עם ההמלצה המלאה */
+  .qm__dialog {
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: min(80vh, 40rem);
+    padding: 1.75rem 1.75rem 1.5rem;
+    border: 0;
+    border-radius: 1.25rem;
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: 0 30px 60px -20px rgb(11 26 51 / 0.6);
+  }
+  .qm__dialog::backdrop {
+    background: rgb(11 26 51 / 0.55);
+  }
+  .qm__dtext {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.75;
+    white-space: pre-line;
+  }
+  .qm__close {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-end: 0.85rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 0.6rem;
+    background: var(--mist);
+    color: var(--navy);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  @media (max-width: 36rem) {
+    .qm__card {
+      width: 15.5rem;
+    }
+  }
+
+  /* מי שביקש פחות תנועה: בלי תנועה, גוללים את השורות ביד */
+  @media (prefers-reduced-motion: reduce) {
+    .qm__track {
+      animation: none;
+    }
+    .qm__row {
+      overflow-x: auto;
+    }
+    .qm__card--dup {
+      display: none;
+    }
+  }
+</style>

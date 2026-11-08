@@ -12,19 +12,19 @@ import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import QuizFeature from '../components/QuizFeature.astro';
 import ServiceStrip from '../components/ServiceStrip.astro';
-import QuoteGrid from '../components/QuoteGrid.astro';
+import QuoteMarquee from '../components/QuoteMarquee.astro';
 import Ribbon from '../components/Ribbon.astro';
 import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
 import { contact } from '../data/contact';
 import { services, situations, steps } from '../data/services';
-import { featuredReviews } from '../data/reviews';
+import { homeReviews } from '../data/reviews';
 import { ways, icons } from '../data/principles';
 import { trainings } from '../data/trainings';
 import { quizYear } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח שנוגה בחרה (2026-11-07): על הבמה בבלייזר הלבן, עם הדוכן של "עסקים במקסימום"
-import heroPhoto from '../assets/hero/stage-blazer.jpg';
+import heroPhoto from '../assets/hero/stage-blazer-dark.jpg';
 // "נעים להכיר": אחת משתי התמונות שנוגה שלחה (2026-11-07). השנייה (על הספסל) כבר בעמוד צור קשר.
 import introPhoto from '../assets/hero/headshot.webp';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
@@ -85,7 +85,7 @@ const index = [
 
 <BaseLayout
   title="ייעוץ עסקי וארגוני"
-  description="נוגה דיין אור: ייעוץ עסקי וארגוני להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית. ייעוץ עסקי, ייעוץ ארגוני, אוטומציות ו-AI, ליווי פיננסי והדרכות."
+  description="נוגה דיין אור: ייעוץ עסקי וארגוני להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית. ייעוץ עסקי, ייעוץ ארגוני, ייעול תהליכים עם AI, ליווי פיננסי והדרכות."
 >
   <!-- 1. פתיח (נוגה, 2026-11-07): התמונה מימין, כך שהפנים פונות אל הטקסט; רואים גם את הדוכן.
        הכותרת ממורכזת, והפתיח לא תופס את כל המסך הראשון. "מקדמים יחד" עבר לסרט הנע שמתחת. -->
@@ -116,12 +116,13 @@ const index = [
   <!-- 1א. סרט נע בטורקיז: מה מקדמים יחד (השראה מהפס הנע של מאשה, בלי להעתיק; אופקי, עם הכוכב של נוגה) -->
   <Ribbon items={advances} tone="teal" />
 
-  <!-- 1ב. פסקת פתיחה שמסבירה את הכותרת (נוגה, 2026-11-08). בנויה מהמילים של נוגה; הניסוח שלי, ממתין לאישור.
-       ממורכזת, מעצימה, בלי גוף ראשון, בלי קורבנות, לכל העסקים ולא רק לעצמאים. -->
+  <!-- 1ב. פסקת פתיחה שמסבירה את הכותרת (נוגה, 2026-11-08, סבב 2). המסר של נוגה: חייבים לגדול, כל עסק מיוחד,
+       ומתוך הקיים מוצאים את הדרך שלו להצלחה עסקית. הניסוח שלי מהמילים שלה, ממתין לאישור. בלי גוף ראשון.
+       המשפט הראשון כולו בצבע אחד, כדי שלא תהיה שבירה באמצע שורה (נוגה). -->
   <section class="h-intro" aria-label="על הליווי">
     <div class="container">
-      <p class="h-intro__lead reveal"><strong>העסק שלך חייב לגדול ולחשוב קדימה כל הזמן,</strong>{' '}במיוחד בתקופה שבה הטכנולוגיה משנה את העולם בקצב מסחרר.</p>
-      <p class="h-intro__text reveal">הגדלת הכנסות לא מתחילה בעוד משימות ועוד הוצאות, אלא בהבנה עמוקה של העסק: תהליכי העבודה, הצרכים המשתנים של הלקוחות, הצעת ערך מנצחת, מסרים שיווקיים מדויקים וצוות מונע ומחובר למטרה. ביחד מזהים את ההזדמנויות שכבר קיימות בעסק, בונים תוכנית ברורה ומקדמים אותה צעד אחר צעד, עד שהצמיחה הופכת לחלק מהניהול השוטף.</p>
+      <p class="h-intro__lead reveal">העסק שלך חייב לגדול ולחשוב קדימה כל הזמן, במיוחד בתקופה שבה הטכנולוגיה משנה את העולם בקצב מסחרר.</p>
+      <p class="h-intro__text reveal">כל עסק הוא שונה ומיוחד, עם מטרות, תהליכי עבודה, חוזקות ומשאבים משלו. לכן הליווי מתחיל בלמידה של המצב הקיים ושל מה שרוצים להשיג, ומתוך מה שכבר יש בעסק מוצאים את הדרך שלו להצלחה עסקית: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.</p>
     </div>
   </section>
 
@@ -133,11 +134,12 @@ const index = [
     </div>
   </section>
 
-  <!-- 3. המלצות: רק על ליווי, צר, 6 בבת אחת, באותו גובה, ההתחלה ו"קרא עוד". בלי כותרת (נוגה: "הכותרת ממש מתייתרת"). -->
+  <!-- 3. המלצות: רק על ליווי. שתי שורות של כרטיסים צרים שזזות לאט לכיוונים הפוכים, הרבה המלצות בכל שורה,
+       "קרא עוד" והשם באותו גובה בכל הכרטיסים (נוגה, 2026-11-08). בלי כותרת (נוגה: "הכותרת ממש מתייתרת"). -->
   <section class="section section--mist h-reviews" aria-labelledby="reviews-title">
+    <h2 id="reviews-title" class="sr-only">מה אומרים הלקוחות</h2>
+    <QuoteMarquee reviews={homeReviews} />
     <div class="container">
-      <h2 id="reviews-title" class="sr-only">מה אומרים הלקוחות</h2>
-      <QuoteGrid reviews={featuredReviews} />
       <p class="more center"><a href="/testimonials/">לכל ההמלצות ←</a></p>
     </div>
   </section>
@@ -407,16 +409,13 @@ const index = [
     padding-block: clamp(2.5rem, 6vw, 3.75rem) 0;
     text-align: center;
   }
+  /* המשפט הראשון כולו בטורקיז כהה, בלי שבירת צבע באמצע שורה (נוגה, 2026-11-08) */
   .h-intro__lead {
     max-width: 44rem;
     margin: 0 auto 1rem;
     font-size: clamp(1.3rem, 2.6vw, 1.65rem);
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.45;
-    color: var(--navy);
-  }
-  .h-intro__lead strong {
-    font-weight: 900;
     color: var(--teal-dark);
   }
   .h-intro__text {

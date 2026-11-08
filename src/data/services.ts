@@ -134,8 +134,9 @@ export const services: Service[] = [
   {
     slug: 'ai-automation',
     href: '/services/ai-automation/',
-    menu: 'אוטומציות ו-AI',
-    title: 'אוטומציות ו-AI לעסקים',
+    // השם שנוגה בחרה (2026-11-08), במקום "אוטומציות ו-AI"
+    menu: 'ייעול תהליכים עם AI',
+    title: 'ייעול תהליכים עם AI',
     // מסר פלייר 6
     lead: 'AI שעובד בשביל העסק שלך',
     icon: 'robot',
