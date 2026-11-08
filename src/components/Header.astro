@@ -24,8 +24,8 @@ const links = [
 ];
 
 // כפתור הפגישה: מוביל לעמוד הפגישות בתשלום, ושם יהיה גם קישור לשיחת ההיכרות (נוגה, 2026-11-08).
-// היעד אושר (נוגה, 2026-11-08): עמוד פגישת הייעוץ, שמכיל את כל נושאי הייעוץ. TODO: הנוסח על הכפתור ממתין לנוגה.
-const cta = { href: '/services/consulting-session/', label: 'לפגישה אישית' };
+// נוגה, 2026-11-08: היעד הוא עמוד פגישת הייעוץ (מכיל את כל נושאי הייעוץ), והנוסח "לפגישת ייעוץ".
+const cta = { href: '/services/consulting-session/', label: 'לפגישת ייעוץ' };
 
 const isCurrent = (href: string) =>
   href === '/' ? currentPath === '/' : currentPath.startsWith(href);

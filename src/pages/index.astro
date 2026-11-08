@@ -59,7 +59,6 @@ const stats = [
   { num: 20, label: 'שנה בהנהלה של בנק גדול' },
   { num: 450, label: 'עסקים בליווי' },
   { num: 10, label: 'שנות ניסיון בייעוץ עסקי' },
-  { num: 9.4, label: 'ציון ב-4 שנות ייעוץ מטעם משרד הכלכלה' },
 ];
 
 // "כל מה שתמצאו באתר": רק עמודים שקיימים (נוגה: "מכל מה שיש באתר ולא דברים שאין")
@@ -147,6 +146,34 @@ const index = [
     <QuoteMarquee reviews={homeReviews} />
   </section>
 
+  <!-- 3א. נעים להכיר: מיד אחרי "לקוחות משתפים" (נוגה, 2026-11-08). אזור בהיר, התמונה קטנה יותר כרקע בצד (נוגה מעדיפה תמונה כרקע ולא במסגרת,
+       ו"לא באה לדגמן"). בלי 9.4 במספרים, בלי סוגריים ל-MBA, ובלי משפט המספרים שחזר על עצמו. -->
+  <section class="h-meet">
+    <div class="h-meet__media">
+      <Image src={introPhoto} alt="נוגה דיין אור מחייכת" widths={[600]} sizes="(min-width: 52rem) 34vw, 100vw" />
+    </div>
+    <div class="container h-meet__inner">
+      <div class="h-meet__text reveal">
+        <h2 class="h-meet__hi">נעים להכיר, <span class="hl--mark">נוגה דיין אור</span></h2>
+        <p class="h-meet__voice">חיה ונושמת פיתוח עסקים והגדלת הכנסות! אוהבת להיכנס לעסק, להכיר את האנשים, להבין איך דברים עובדים, לגלות הזדמנויות עסקיות, לחבר בין רעיונות, לעשות סדר ובעיקר לגרום לדברים טובים לקרות.</p>
+        <p class="h-meet__cred">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, בעלת תואר שני במנהל עסקים.</p>
+        <!-- מתוך המילים של נוגה (2026-11-08), בלי גוף ראשון ובלי שפה "קואצ'רית". הניסוח שלי, ממתין לאישור. -->
+        <p class="h-meet__belief">כל עסק וכל בעל עסק הם מיוחדים, ולכן ייעוץ טוב לא מחלק מתכונים להצלחה. הוא מלטש את היהלום של כל עסק, כדי שיבלוט, יתחבר ללקוחות עם הצעות מדויקות ויפרוץ תקרות של הכנסות וצמיחה.</p>
+        <ul class="stats">
+          {
+            stats.map((s) => (
+              <li class="stat">
+                <span class="stat__num" data-count={s.num}>{s.num}</span>
+                <span class="stat__label">{s.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="more"><a href="/about/">עוד על נוגה ←</a></p>
+      </div>
+    </div>
+  </section>
+
   <!-- 4. שש הקוביות של עקרונות הליווי (src/data/principles.ts, משותף לאודות).
        הכותרת של נוגה (2026-11-08) מחליפה את "איך עובדים / עקרונות הליווי". שורת המשנה על "נוסחאות מוכנות" הוסרה, כי היא חוזרת על הכותרת. -->
   <section class="section section--deep atmo h-ways" style={stairsStyle}>
@@ -217,31 +244,6 @@ const index = [
         <Image src={pointing} alt="" widths={[220, 340]} sizes="11rem" class="toon h-quiz-head__toon" />
       </div>
       <QuizFeature />
-    </div>
-  </section>
-
-  <!-- 8. נעים להכיר: תמונה של נוגה כרקע (נוגה מעדיפה תמונה כרקע ולא במסגרת). הפתיח האישי מהאסטרטגיה שלה, עם MBA והמספרים. -->
-  <section class="h-meet">
-    <div class="h-meet__media">
-      <Image src={introPhoto} alt="נוגה דיין אור מחייכת" widths={[600]} sizes="(min-width: 52rem) 52vw, 100vw" />
-    </div>
-    <div class="container h-meet__inner">
-      <div class="h-meet__text reveal">
-        <h2 class="h-meet__hi">נעים להכיר, <span class="hl">נוגה דיין אור</span></h2>
-        <p class="h-meet__voice">חיה ונושמת פיתוח עסקים והגדלת הכנסות! אוהבת להיכנס לעסק, להכיר את האנשים, להבין איך דברים עובדים, לגלות הזדמנויות עסקיות, לחבר בין רעיונות, לעשות סדר ובעיקר לגרום לדברים טובים לקרות.</p>
-        <p class="h-meet__cred">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, בעלת תואר שני במנהל עסקים (MBA), עם ניסיון בליווי 450 עסקים ו-20 שנה של תהליכי ניהול, פיתוח עסקי ואסטרטגיה בהנהלה של בנק גדול.</p>
-        <ul class="stats">
-          {
-            stats.map((s) => (
-              <li class="stat">
-                <span class="stat__num" data-count={s.num}>{s.num}</span>
-                <span class="stat__label">{s.label}</span>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="more more--dark"><a href="/about/">עוד על נוגה ←</a></p>
-      </div>
     </div>
   </section>
 
@@ -635,28 +637,28 @@ const index = [
     }
   }
 
-  /* ---------- 8. נעים להכיר: תמונה כרקע, עם המספרים ---------- */
+  /* ---------- 3א. נעים להכיר: אזור בהיר, התמונה קטנה כרקע בצד ימין ונעלמת אל הטקסט (נוגה, 2026-11-08) ---------- */
   .h-meet {
     position: relative;
     overflow: hidden;
-    background: var(--navy-deep);
-    color: var(--on-dark);
+    background: var(--white);
+    color: var(--navy);
   }
   .h-meet__media {
     position: relative;
-    height: min(64vw, 20rem);
+    height: min(56vw, 15rem);
   }
   .h-meet__media :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 30%;
+    object-position: 50% 28%;
   }
   .h-meet__media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(7 17 31 / 0.1) 50%, var(--navy-deep) 100%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0) 55%, var(--white) 100%);
   }
   .h-meet__inner {
     position: relative;
@@ -666,71 +668,74 @@ const index = [
     margin: 0 0 0.85rem;
     font-size: clamp(1.7rem, 4vw, 2.4rem);
     font-weight: 900;
-    color: var(--white);
+    color: var(--navy);
   }
   .h-meet__voice {
-    font-size: 1.15rem;
-    font-weight: 600;
+    margin: 0 0 0.75rem;
+    font-size: 1.12rem;
     line-height: 1.7;
-    color: var(--white);
+    color: var(--navy);
   }
   .h-meet__cred {
-    line-height: 1.65;
-    color: var(--on-dark-soft);
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .h-meet__belief {
+    margin: 0;
+    line-height: 1.75;
+    color: #33445c;
   }
   .stats {
     list-style: none;
     margin: 1.5rem 0 0.5rem;
     padding: 1.25rem 0 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    border-top: 1px solid rgb(255 255 255 / 0.15);
-  }
-  @media (max-width: 40rem) {
-    .stats {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    border-top: 1px solid var(--line);
   }
   .stat {
     margin: 0;
   }
   .stat__num {
     display: block;
-    font-size: clamp(2rem, 4.5vw, 2.7rem);
+    font-size: clamp(2rem, 4.5vw, 2.6rem);
     font-weight: 900;
     line-height: 1;
-    color: var(--gold-light);
+    color: var(--teal-dark);
   }
   .stat__label {
     display: block;
     margin-top: 0.35rem;
     font-size: 0.9rem;
     line-height: 1.35;
-    color: var(--on-dark-soft);
+    color: #4a5b73;
   }
   @media (min-width: 52rem) {
     .h-meet {
       display: flex;
       align-items: center;
-      min-height: 32rem;
+      min-height: 26rem;
     }
+    /* התמונה בצד ימין, צרה (בערך שליש), ונעלמת לכיוון הטקסט */
     .h-meet__media {
       position: absolute;
-      inset: 0 auto 0 0;
-      width: 52%;
+      inset: 0 0 0 auto;
+      width: 34%;
       height: auto;
     }
     .h-meet__media::after {
-      background:
-        linear-gradient(to left, var(--navy-deep) 0%, rgb(7 17 31 / 0.6) 18%, rgb(7 17 31 / 0) 45%),
-        linear-gradient(0deg, rgb(7 17 31 / 0.5) 0%, rgb(7 17 31 / 0) 30%);
+      background: linear-gradient(to right, var(--white) 0%, rgb(255 255 255 / 0.7) 22%, rgb(255 255 255 / 0) 55%);
     }
     .h-meet__inner {
-      padding-block: 3.5rem;
+      padding-block: 3.25rem;
     }
     .h-meet__text {
-      max-width: min(38rem, 50vw);
+      max-width: min(40rem, 58vw);
+      /* הטקסט בצד שמאל, כי התמונה בימין */
+      margin-right: auto;
+      margin-left: 0;
     }
   }
 
