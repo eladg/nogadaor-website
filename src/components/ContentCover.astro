@@ -18,6 +18,9 @@ interface Props {
   duration?: string; // להרצאה, למשל "53:37"
   ratio?: '16/10' | '16/9';
   fit?: boolean; // להקטין את הכתב בשם ארוך (בכריכות ההדרכות)
+  // גודל כתב קבוע, כדי שכל הכריכות בקבוצה יהיו באותו גודל. wide: אזור טקסט רחב יותר וחפץ קטן יותר,
+  // לשמות מלאים וארוכים (ההרצאות, נוגה 2026-11-08: השם בכריכה כמו בשקף הפתיחה של המצגת)
+  size?: 'l' | 'xl' | 'wide';
 }
 const { title, motif, kind = 'guide', star = false, duration, ratio = '16/10' } = Astro.props;
 const tone = Astro.props.tone ?? (kind === 'article' ? 'warm' : 'cool');
@@ -33,7 +36,7 @@ const titleHtml = esc(title)
   .replace(/\s*\|\s*/g, '<br />');
 // fit: שם ארוך (בהדרכות הכריכה מציגה את השם המלא, נוגה 2026-11-08): כתב קטן יותר, כדי שלא יישבר להרבה שורות צפופות
 const plainLength = title.replace(/[*|]/g, '').length;
-const size = !Astro.props.fit ? '' : plainLength > 24 ? 'xl' : plainLength > 17 ? 'l' : '';
+const size = Astro.props.size ?? (!Astro.props.fit ? '' : plainLength > 24 ? 'xl' : plainLength > 17 ? 'l' : '');
 
 const tint = tone === 'warm' ? '#fcdc6d' : '#8fdcec';
 const defs = `<defs>
@@ -157,6 +160,16 @@ const motifs: Record<CoverMotif, string> = {
   }
   .cc__title--xl {
     font-size: 6.4cqi;
+  }
+  .cc__title--wide {
+    font-size: 6cqi;
+  }
+  .cc:has(.cc__title--wide) .cc__text {
+    width: 64%;
+    padding-inline: 5cqi 4cqi;
+  }
+  .cc:has(.cc__title--wide) .cc__obj {
+    width: 38%;
   }
   .cc__title :global(em) {
     font-style: normal;

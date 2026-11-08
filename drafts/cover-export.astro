@@ -10,7 +10,7 @@ import { coverImage, type CoverInput } from '../utils/coverImages';
 import '../styles/global.css';
 
 const guides = (await getCollection('guides')).filter((g) => !g.data.comingSoon);
-const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: string; fit?: boolean })[] = [
+const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: string; fit?: boolean; size?: 'wide' })[] = [
   ...guides.map((g) => ({
     group: g.data.type,
     kind: g.data.type,
@@ -37,6 +37,7 @@ const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: s
     coverTitle: l.coverTitle,
     motif: l.motif,
     duration: l.duration,
+    size: 'wide' as const, // כמו במרכז הידע: השם המלא, כל ההרצאות באותו גודל כתב
   })),
 ];
 ---
@@ -61,6 +62,7 @@ const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: s
               star={it.star}
               duration={it.duration}
               fit={it.fit}
+              size={it.size}
               ratio={it.group === 'lecture' ? '16/9' : '16/10'}
             />
           </div>
