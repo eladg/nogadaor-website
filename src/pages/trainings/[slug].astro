@@ -31,6 +31,18 @@ const myReviews = lectureReviews.filter((r) => r.training === training.slug);
 
   <section class="section">
     <div class="container t-body">
+      {
+        training.keyLines && (
+          <>
+            <h2>משפטי מפתח מההדרכה</h2>
+            <ul class="keylines">
+              {training.keyLines.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </>
+        )
+      }
       <h2>מה נלמד בהדרכה</h2>
       <ul class="topics">
         {
@@ -168,6 +180,22 @@ const myReviews = lectureReviews.filter((r) => r.training === training.slug);
   }
   .format {
     font-weight: 700;
+  }
+  /* משפטי מפתח מההדרכה: טקסט צף עם פס זהב, בלי קופסאות */
+  .keylines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .keylines li {
+    padding-inline-start: 1rem;
+    border-inline-start: 3px solid var(--gold-dark);
+    font-size: clamp(1.08rem, 2vw, 1.2rem);
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--navy);
   }
   .t-cta {
     text-align: center;

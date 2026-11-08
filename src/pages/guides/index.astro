@@ -87,6 +87,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
                 <Icon name="mic" size={16} /> <span>הרצאה</span> · {minutesOf(l.duration)} דק' צפייה
               </p>
               <h3 class="lecture__title">{l.title}</h3>
+              {l.quote && <p class="lecture__quote">"{l.quote}"</p>}
               <p class="lecture__short">{l.short}</p>
             </li>
           ))
@@ -245,6 +246,13 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     font-weight: 800;
     line-height: 1.35;
     color: var(--white);
+  }
+  /* משפט מפתח מתוך ההרצאה */
+  .lecture__quote {
+    margin: 0 0 0.4rem;
+    font-weight: 800;
+    line-height: 1.45;
+    color: var(--gold-light);
   }
   .lecture__short {
     margin: 0;
