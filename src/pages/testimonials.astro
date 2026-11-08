@@ -84,11 +84,10 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
   </section>
 
   <!-- תמונות מהכנס, בסגנון קיר פולארויד (נוגה, 2026-11-08: "למטה, בצורה מדליקה קצת").
-       הכותרת והשורה בכתב יד הן הצעה שלי, ממתינות לאישור נוגה -->
+       הכותרת: משפט על קהילת הלקוחות שנבנית לאורך השנים (נוגה ביקשה, 2026-11-08). הניסוח שלי. בלי שורה בכתב יד מתחת (נוגה: "לא צריך") -->
   <section class="section t-moments" id="moments">
     <div class="container">
-      <h2 class="t-title t-title--center">רגעים משותפים מהכנס</h2>
-      <p class="t-moments__hand">עסקים במקסימום, והאנשים שעושים אותו</p>
+      <h2 class="t-title t-title--center">קהילת לקוחות שנבנית לאורך השנים</h2>
       <PhotoWall />
     </div>
   </section>
@@ -239,15 +238,11 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
   .t-title--center {
     text-align: center;
   }
+  .t-title--center {
+    margin-bottom: 2.25rem;
+    text-wrap: balance;
+  }
   .t-title--center::after {
     margin-inline: auto;
-  }
-  .t-moments__hand {
-    margin: 0.6rem 0 2.25rem;
-    text-align: center;
-    font-family: var(--font-hand);
-    font-size: 1.3rem;
-    color: var(--teal-dark);
-    text-wrap: balance;
   }
 </style>
