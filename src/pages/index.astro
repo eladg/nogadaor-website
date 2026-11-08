@@ -174,13 +174,10 @@ const index = [
   <section class="section h-process">
     <div class="container">
       <div class="h-head reveal">
-        <p class="eyebrow">שלב אחר שלב</p>
         <h2 class="h-title">תהליך ליווי <span class="hl--mark">עסקי וארגוני</span></h2>
-        <p class="h-sub">להגדלת הכנסות ושיפור הרווחיות</p>
       </div>
       <Timeline items={steps} />
-      <!-- המשפט של נוגה מתוך "תהליך ליווי עסקי וארגוני" -->
-      <p class="h-goal reveal">המטרה: לא רק להבין מה צריך לשנות, אלא לגרום לשינויים לקרות, ולבנות עסק שמנוהל טוב יותר, מרוויח יותר וממשיך לצמוח.</p>
+      <!-- משפט הסיום "המטרה: ..." הוסר (נוגה, 2026-11-08). הצעות למשפט חדש ממתינות לבחירה שלה. -->
     </div>
   </section>
 
@@ -188,7 +185,6 @@ const index = [
   <section class="section section--deep atmo h-when" style={linesStyle}>
     <div class="container">
       <div class="h-head reveal">
-        <p class="eyebrow">הזמן הנכון</p>
         <h2 class="h-title">מתי נכון לבוא <span class="hl">לייעוץ עסקי?</span></h2>
       </div>
       <ul class="moments">
@@ -435,6 +431,10 @@ const index = [
   /* ---------- 2. שירותים ---------- */
   .h-services {
     padding-block: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  /* הכרטיסים קצת יותר רחבים מהתוכן הרגיל (נוגה, 2026-11-08) */
+  .h-services .container {
+    width: min(100% - 2rem, 80rem);
   }
 
   /* ---------- כותרות ממורכזות ומושכות (נוגה, 2026-11-07) ---------- */
