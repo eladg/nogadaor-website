@@ -1,0 +1,108 @@
+---
+// "כל מה שתמצאו באתר": רשימה שעונה על הרבה מילות חיפוש, רק ממה שבאמת יש באתר (נוגה, 2026-11-07).
+// נוגה (2026-11-08): לא בעמוד הבית, אבל כן בתחתית כל שאר העמודים, מעל הפוטר. מוצג מ-BaseLayout.
+// בלי נקודתיים בטקסטים (נוגה, 2026-11-08).
+import { getCollection } from 'astro:content';
+import { services } from '../data/services';
+import { trainings } from '../data/trainings';
+import { quizYear } from '../data/quiz';
+
+const guides = (await getCollection('guides'))
+  .filter((g) => !g.data.comingSoon)
+  .sort((a, b) => (a.data.type === b.data.type ? a.data.order - b.data.order : a.data.type === 'guide' ? -1 : 1));
+
+const columns = [
+  { title: 'שירותים', links: services.map((s) => ({ href: s.href, label: s.title })) },
+  { title: 'הדרכות', links: trainings.map((t) => ({ href: `/trainings/${t.slug}/`, label: t.title })) },
+  { title: 'מדריכים ומאמרים', links: guides.map((g) => ({ href: `/guides/${g.id}/`, label: g.data.title })) },
+  {
+    title: 'עוד באתר',
+    links: [
+      { href: '/guides/business-focus-quiz/', label: `שאלון מיקוד פיתוח עסקי ${quizYear}` },
+      { href: '/about/', label: 'אודות נוגה דיין אור' },
+      { href: '/testimonials/', label: 'המלצות לקוחות' },
+      { href: '/guides/', label: 'הרצאות לצפייה בחינם במרכז הידע' },
+      { href: '/contact/', label: 'צור קשר' },
+      { href: '/contact/', label: 'קהילת "תודעה עסקית מנצחת"' },
+    ],
+  },
+];
+---
+
+<section class="site-index" aria-labelledby="site-index-title">
+  <div class="container">
+    <h2 id="site-index-title" class="site-index__title">כל מה שתמצאו באתר</h2>
+    <div class="site-index__cols">
+      {
+        columns.map((col) => (
+          <div>
+            <h3 class="site-index__col-title">{col.title}</h3>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-index {
+    background: var(--mist);
+    padding-block: 2.5rem 3rem;
+    border-top: 1px solid var(--line);
+  }
+  .site-index__title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin: 0 0 1.25rem;
+  }
+  .site-index__cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 52rem) {
+    .site-index__cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 30rem) {
+    .site-index__cols {
+      grid-template-columns: 1fr;
+    }
+  }
+  .site-index__col-title {
+    margin: 0 0 0.6rem;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--teal-dark);
+  }
+  .site-index ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .site-index a {
+    color: #33445c;
+    text-decoration: none;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .site-index a:hover {
+    color: var(--teal-dark);
+    text-decoration: underline;
+  }
+  @media print {
+    .site-index {
+      display: none;
+    }
+  }
+</style>
