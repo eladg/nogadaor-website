@@ -9,11 +9,12 @@ interface Props {
   title: string;
   kicker?: string;
   crumbs?: { href: string; label: string; current?: string };
+  center?: boolean; // טקסט ממורכז, והתמונה רקע עדין לכל הרוחב (עמודי ההדרכות, נוגה 2026-11-08)
 }
-const { image, title, kicker, crumbs } = Astro.props;
+const { image, title, kicker, crumbs, center = false } = Astro.props;
 ---
 
-<section class="lh">
+<section class:list={['lh', center && 'lh--center']}>
   <div class="lh__media" aria-hidden="true">
     <Image src={image} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 52rem) 62vw, 100vw" loading="eager" />
   </div>
@@ -122,6 +123,29 @@ const { image, title, kicker, crumbs } = Astro.props;
     }
     .lh__text {
       max-width: min(36rem, 50vw);
+    }
+  }
+
+  /* ממורכז: הטקסט באמצע, והתמונה ברקע מאחורי שכבה לבנה כך שהטקסט תמיד קריא */
+  .lh--center {
+    text-align: center;
+  }
+  .lh--center .lh__text {
+    margin-inline: auto;
+  }
+  @media (min-width: 52rem) {
+    .lh--center .lh__media {
+      inset: 0;
+      width: 100%;
+    }
+    .lh--center .lh__media :global(img) {
+      object-position: center;
+    }
+    .lh--center .lh__media::after {
+      background: radial-gradient(ellipse 58% 80% at 50% 50%, rgb(255 255 255 / 0.95) 35%, rgb(255 255 255 / 0.78) 70%, rgb(255 255 255 / 0.55) 100%);
+    }
+    .lh--center .lh__text {
+      max-width: 46rem;
     }
   }
 </style>
