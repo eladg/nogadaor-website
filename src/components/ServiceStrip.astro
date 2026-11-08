@@ -86,8 +86,9 @@ import { services } from '../data/services';
     width: 2.8rem;
     height: 2.8rem;
     border-radius: 0.8rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
+    /* טורקיז, כדי שהסרט הנע שמעל לא ייראה תלוש (נוגה, 2026-11-08) */
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: var(--white);
   }
   .strip__title {
     margin: 0;

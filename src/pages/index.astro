@@ -116,6 +116,15 @@ const index = [
   <!-- 1א. סרט נע בטורקיז: מה מקדמים יחד (השראה מהפס הנע של מאשה, בלי להעתיק; אופקי, עם הכוכב של נוגה) -->
   <Ribbon items={advances} tone="teal" />
 
+  <!-- 1ב. פסקת פתיחה שמסבירה את הכותרת (נוגה, 2026-11-08). בנויה מהמילים של נוגה; הניסוח שלי, ממתין לאישור.
+       ממורכזת, מעצימה, בלי גוף ראשון, בלי קורבנות, לכל העסקים ולא רק לעצמאים. -->
+  <section class="h-intro" aria-label="על הליווי">
+    <div class="container">
+      <p class="h-intro__lead reveal"><strong>העסק שלך חייב לגדול ולחשוב קדימה כל הזמן,</strong>{' '}במיוחד בתקופה שבה הטכנולוגיה משנה את העולם בקצב מסחרר.</p>
+      <p class="h-intro__text reveal">הגדלת הכנסות לא מתחילה בעוד משימות ועוד הוצאות, אלא בהבנה עמוקה של העסק: תהליכי העבודה, הצרכים המשתנים של הלקוחות, הצעת ערך מנצחת, מסרים שיווקיים מדויקים וצוות מונע ומחובר למטרה. ביחד מזהים את ההזדמנויות שכבר קיימות בעסק, בונים תוכנית ברורה ומקדמים אותה צעד אחר צעד, עד שהצמיחה הופכת לחלק מהניהול השוטף.</p>
+    </div>
+  </section>
+
   <!-- 2. שש קוביות השירותים, בלי כותרת (נוגה). כותרת נסתרת רק לקוראי מסך. -->
   <section class="section h-services" aria-labelledby="services-title">
     <div class="container">
@@ -290,7 +299,10 @@ const index = [
   .h-hero {
     position: relative;
     overflow: hidden;
-    background: var(--navy-deep);
+    /* הכחול הכהה של האתר (לא שחור, נוגה 2026-11-08), עם הילת טורקיז עדינה מאחורי הטקסט */
+    background:
+      radial-gradient(36rem 22rem at 30% 45%, rgb(25 154 181 / 0.16), transparent 70%),
+      var(--navy);
     color: var(--on-dark);
   }
   .h-hero__media {
@@ -309,7 +321,7 @@ const index = [
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(7 17 31 / 0.75) 0%, rgb(7 17 31 / 0.05) 32%, rgb(7 17 31 / 0.05) 55%, var(--navy-deep) 100%);
+    background: linear-gradient(180deg, rgb(11 26 51 / 0.75) 0%, rgb(11 26 51 / 0.05) 32%, rgb(11 26 51 / 0.05) 55%, var(--navy) 100%);
   }
   .h-hero__inner {
     position: relative;
@@ -319,26 +331,26 @@ const index = [
     text-align: center;
   }
   .h-hero__kicker {
-    margin: 0 0 0.6rem;
+    margin: 0 0 1rem;
     font-weight: 800;
     color: var(--gold-light);
   }
   .h-hero__title {
-    margin: 0 0 0.85rem;
+    margin: 0 0 1.15rem;
     color: var(--white);
     font-size: clamp(1.8rem, 3.8vw, 2.7rem);
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.28;
   }
   .h-hero__title .hl {
     display: block;
     text-shadow: none;
   }
   .h-hero__lead {
-    max-width: 32rem;
-    margin: 0 auto 1.5rem;
+    max-width: 29rem;
+    margin: 0 auto 1.9rem;
     font-size: clamp(1.05rem, 1.8vw, 1.2rem);
-    line-height: 1.6;
+    line-height: 1.7;
   }
   .h-hero__actions {
     display: flex;
@@ -369,25 +381,50 @@ const index = [
       height: auto;
     }
     .h-hero__media img {
-      object-position: right -5rem top 32%;
+      object-position: right -6rem top 32%;
     }
     .h-hero__media::after {
       background:
-        linear-gradient(to right, var(--navy-deep) 0%, rgb(7 17 31 / 0.75) 16%, rgb(7 17 31 / 0) 45%),
-        linear-gradient(to bottom, rgb(7 17 31 / 0.82) 0%, rgb(7 17 31 / 0.55) 12%, rgb(7 17 31 / 0) 38%),
-        linear-gradient(0deg, rgb(7 17 31 / 0.45) 0%, rgb(7 17 31 / 0) 25%);
+        linear-gradient(to right, var(--navy) 0%, rgb(11 26 51 / 0.75) 16%, rgb(11 26 51 / 0) 45%),
+        linear-gradient(to bottom, rgb(11 26 51 / 0.82) 0%, rgb(11 26 51 / 0.55) 12%, rgb(11 26 51 / 0) 38%),
+        linear-gradient(0deg, rgb(11 26 51 / 0.45) 0%, rgb(11 26 51 / 0) 25%);
     }
-    /* יותר מרווח בין ההאדר לכותרת (נוגה, 2026-11-08) */
+    /* מרווח שווה מעל ומתחת, כך שהטקסט ממורכז גם לגובה (נוגה, 2026-11-08) */
     .h-hero__inner {
-      padding-block: 4rem 2.75rem;
+      padding-block: 3.75rem;
     }
-    /* הטקסט קרוב למרכז העמוד ככל האפשר, בלי לעלות על הפנים */
+    /* הטקסט במרכז העמוד. מסך המקרן בתמונה הוכהה, ולכן הרקע מאחורי הטקסט אחיד */
     .h-hero__text {
-      max-width: min(35rem, 46vw);
+      max-width: min(34rem, 46vw);
       margin-inline: auto;
-      transform: translateX(-8%);
-      text-shadow: 0 2px 18px rgb(7 17 31 / 0.6);
+      transform: translateX(-3%);
+      text-shadow: 0 2px 18px rgb(11 26 51 / 0.6);
     }
+  }
+
+  /* ---------- 1ב. פסקת הפתיחה ---------- */
+  .h-intro {
+    padding-block: clamp(2.5rem, 6vw, 3.75rem) 0;
+    text-align: center;
+  }
+  .h-intro__lead {
+    max-width: 44rem;
+    margin: 0 auto 1rem;
+    font-size: clamp(1.3rem, 2.6vw, 1.65rem);
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--navy);
+  }
+  .h-intro__lead strong {
+    font-weight: 900;
+    color: var(--teal-dark);
+  }
+  .h-intro__text {
+    max-width: 46rem;
+    margin: 0 auto;
+    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
+    line-height: 1.85;
+    color: #33445c;
   }
 
   /* ---------- 2. שירותים ---------- */
