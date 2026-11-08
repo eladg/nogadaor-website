@@ -7,12 +7,13 @@
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import ServiceCards from '../../components/ServiceCards.astro';
+import Ribbon from '../../components/Ribbon.astro';
 import Timeline from '../../components/Timeline.astro';
 import Faq from '../../components/Faq.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
-import { areas, steps, fit, beforeAfter, faqs, overviewFaq } from '../../data/services';
+import { services, areas, steps, fit, beforeAfter, faqs, overviewFaq } from '../../data/services';
+import { advances } from '../../data/advances';
 import { contact } from '../../data/contact';
 // תמונות אווירה (AI) והדמות המצוירת, נוגה 2026-11-07
 import stairs from '../../assets/atmosphere/dark-stairs.webp';
@@ -26,31 +27,41 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   title="שירותים"
   description="ייעוץ עסקי, ייעוץ ארגוני, ייעול תהליכים עם AI, ליווי פיננסי, פגישת ייעוץ והדרכות: ייעוץ עסקי וארגוני לעסקים מבוססים להגדלת הכנסות ושיפור רווחיות."
 >
-  <!-- 1. פתיח: ההבטחה -->
+  <!-- 1. פתיח קצר שמרים לשירותים (נוגה, 2026-11-08): בלי תווית, בלי תגיות ובלי כפתור "לכל השירותים".
+       "להגדלת הכנסות ושיפור רווחיות" בזהב, בשורה משלה, ובטלפון בלי מעבר שורה. -->
   <section class="s-hero section--deep" style={`--bg: url(${stairsBg.src})`}>
     <div class="container s-hero__inner">
-      <p class="s-hero__kicker">שירותים</p>
       <!-- התואר של נוגה -->
-      <h1 class="s-hero__title">ייעוץ עסקי וארגוני להגדלת <span class="hl">הכנסות</span> ושיפור <span class="hl">רווחיות</span></h1>
+      <h1 class="s-hero__title">ייעוץ עסקי וארגוני <span class="s-hero__gold">להגדלת הכנסות ושיפור רווחיות</span></h1>
       <!-- מתוך "משפטים" ו"במשפט אחד" במסמך העבודה של נוגה -->
       <p class="s-hero__lead">להרוויח יותר מהפעילות, מהלקוחות ומהמשאבים שכבר קיימים בעסק, בפתרונות פשוטים וממוקדים שמותאמים לעסק שלך.</p>
-      <!-- נוגה (2026-11-07): האתר צריך לשדר קידום של פרויקטים, משימות, תהליכי עבודה ויעדים -->
-      <ul class="s-hero__chips" aria-label="מה מקדמים">
-        <li>פרויקטים</li><li>משימות</li><li>תהליכי עבודה</li><li>יעדים</li><li>צוותים</li>
-      </ul>
-      <div class="s-hero__actions">
-        <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">קביעת שיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-        <a class="btn btn--ghost" href="#services">לכל השירותים</a>
-      </div>
+      <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </section>
 
-  <!-- 2. השירותים: ריבועים מתהפכים -->
-  <section class="section" id="services">
+  <!-- 1א. הסרט הנע, הפעם בזהב (נוגה, 2026-11-08) -->
+  <Ribbon items={advances} tone="gold" />
+
+  <!-- 2. השירותים: בעמוד הבית הם כרטיסים כהים שמתהפכים, וכאן רשימה מפורטת יותר, כדי לא לחזור על אותו עיצוב
+       (נוגה, 2026-11-08). הכותרת היא הצעה שלי. -->
+  <section class="section s-list" id="services">
     <div class="container">
-      <h2 class="sec-title reveal">במה הליווי <span class="hl--mark">מקדם</span> את העסק</h2>
-      <p class="sec-lead">שישה שירותים, שמתחברים זה לזה לפי מה שהעסק שלך צריך.</p>
-      <ServiceCards />
+      <h2 class="sec-title center reveal">כל מה שהעסק שלך צריך <span class="hl--mark">כדי לצמוח</span></h2>
+      <ul class="svc-list">
+        {
+          services.map((s, i) => (
+            <li class="svc-row reveal" style={`transition-delay: ${(i % 2) * 0.08}s`}>
+              <span class="svc-row__icon" aria-hidden="true"><Icon name={s.icon} size={26} /></span>
+              <div class="svc-row__body">
+                <h3 class="svc-row__title"><a href={s.href}>{s.title}</a></h3>
+                <p class="svc-row__lead">{s.lead}</p>
+                <p class="svc-row__text">{s.card}</p>
+                <span class="svc-row__more" aria-hidden="true">לפרטים ←</span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
@@ -190,50 +201,105 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   .s-hero__inner {
     position: relative;
   }
-  .s-hero__chips {
-    list-style: none;
-    margin: 0 0 1.75rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .s-hero__chips li {
-    margin: 0;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    border: 1px solid rgb(252 220 109 / 0.45);
-    color: var(--gold-light);
-    font-weight: 700;
-    font-size: 0.95rem;
-    background: rgb(252 220 109 / 0.06);
-  }
   .s-hero__inner {
     max-width: 52rem;
-  }
-  .s-hero__kicker {
-    margin: 0 0 0.5rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    color: var(--gold-light);
   }
   .s-hero__title {
     margin: 0 0 1rem;
     color: var(--white);
-    font-size: clamp(2rem, 5.6vw, 3.4rem);
+    font-size: clamp(1.9rem, 5.2vw, 3.2rem);
     font-weight: 900;
-    line-height: 1.15;
+    line-height: 1.2;
+  }
+  /* בשורה משלה, בזהב, ובלי מעבר שורה גם בטלפון: הגודל מתכווץ לפי רוחב המסך */
+  .s-hero__gold {
+    display: block;
+    width: fit-content;
+    white-space: nowrap;
+    font-size: min(0.9em, 6.6vw);
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .s-hero__lead {
     max-width: 40rem;
-    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+    font-size: clamp(1.1rem, 2.2vw, 1.25rem);
     line-height: 1.6;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
   }
-  .s-hero__actions {
+
+  /* ---------- השירותים: רשימה מפורטת, שני טורים במחשב, בלי קופסאות ---------- */
+  .svc-list {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 3rem;
+  }
+  @media (max-width: 52rem) {
+    .svc-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .svc-row {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1.1rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 1.4rem 0.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .svc-row__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.9rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    transition: transform 0.3s ease;
+  }
+  .svc-row:hover .svc-row__icon {
+    transform: translateY(-3px) rotate(-4deg);
+  }
+  .svc-row__title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+  .svc-row__title a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  /* כל השורה לחיצה, דרך הקישור שבכותרת */
+  .svc-row__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .svc-row:hover .svc-row__title a {
+    color: var(--teal-dark);
+  }
+  .svc-row__lead {
+    margin: 0.2rem 0 0.4rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .svc-row__text {
+    margin: 0;
+    line-height: 1.65;
+    color: #33445c;
+  }
+  .svc-row__more {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--teal-dark);
   }
 
   /* ---------- 8 תחומים: 4 בשורה, 2 בטאבלט ובנייד ---------- */

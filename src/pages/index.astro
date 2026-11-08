@@ -13,6 +13,7 @@ import MomentsReel from '../components/MomentsReel.astro';
 import ServiceCards from '../components/ServiceCards.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
 import Ribbon from '../components/Ribbon.astro';
+import { advances } from '../data/advances';
 import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
 import { contact } from '../data/contact';
@@ -41,13 +42,6 @@ import conferenceCover from '../assets/hero/conference-cover.jpg';
 const momentRows = [['07', '19', '09', '16', '10', '13', '11', '06']];
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
-
-// הסרט הנע: מה מקדמים יחד (נוגה, 2026-11-07: כ-20 מילים, בלי לחזור על אותן מילים, בלי הכיתוב "מקדמים יחד")
-const advances = [
-  'יעדים', 'מטרות', 'אסטרטגיה', 'שיווק', 'התייעלות', 'בינה מלאכותית', 'חדשנות', 'פרויקטים',
-  'משימות', 'תהליכי עבודה', 'צוותים', 'מכירות', 'רווחיות', 'תמחור', 'תזרים', 'מנהיגות',
-  'קבלת החלטות', 'שירות לקוחות', 'הצעות ערך', 'אוטומציות', 'שגרות ניהול', 'מהלכי צמיחה',
-];
 
 // המספרים שנוגה אישרה (SKILL.md סעיף 6א). עולים בספירה כשמגיעים אליהם.
 const stats = [
