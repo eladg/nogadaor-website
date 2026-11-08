@@ -13,6 +13,7 @@ import darkLines from '../../assets/atmosphere/dark-lines.webp';
 import { trainings, trainingCategories } from '../../data/trainings';
 import { contact } from '../../data/contact';
 import Icon from '../../components/Icon.astro';
+import FreeLectures from '../../components/FreeLectures.astro';
 import { atmoStyle } from '../../utils/atmo';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
 import road from '../../assets/atmosphere/dark-road.webp';
@@ -130,6 +131,9 @@ const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURICompon
       </p>
     </div>
   </section>
+
+  <!-- הזמנה להרצאות החינמיות במרכז הידע (נוגה, 2026-11-08) -->
+  <FreeLectures />
 </BaseLayout>
 
 <script>

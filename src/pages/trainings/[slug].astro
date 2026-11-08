@@ -2,6 +2,7 @@
 // עמוד הדרכה בודדת. הנתונים ב-src/data/trainings.ts
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
+import FreeLectures from '../../components/FreeLectures.astro';
 import { atmoStyle } from '../../utils/atmo';
 import { lectureReviews } from '../../data/reviews';
 import chairs from '../../assets/atmosphere/light-chairs.webp';
@@ -169,6 +170,9 @@ const crumbs = [
       </ul>
     </div>
   </section>
+
+  <!-- הזמנה להרצאות החינמיות במרכז הידע (נוגה, 2026-11-08) -->
+  <FreeLectures />
 </BaseLayout>
 
 <style>

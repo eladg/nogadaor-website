@@ -72,9 +72,9 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
 
   <!-- חלק 2: הדרכות מהיוטיוב, לצפייה בחינם. פס כהה. הכריכה שלנו מוצגת במקום התמונה של יוטיוב, והסרטון נטען רק בלחיצה.
        השאלון עבר לעמוד הבית (נוגה, 2026-11-07). -->
-  <section class="section section--dark lectures atmo" style={linesStyle}>
+  <section class="section section--dark lectures atmo" id="lectures" style={linesStyle}>
     <div class="container">
-      <h2>הדרכות לצפייה <span class="hl">בחינם</span></h2>
+      <h2>הרצאות לצפייה <span class="hl">בחינם</span></h2>
       <!-- ההרצאות שנוגה בחרה (src/data/lectures.ts): 6 = 3 בשורה במחשב, 2 בטאבלט, 1 בנייד -->
       <ul class="lecture-grid">
         {
@@ -103,6 +103,10 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
 </BaseLayout>
 
 <style>
+  /* קישור ישיר להרצאות (/guides/#lectures) מגיע מתחת לכותרת הדביקה */
+  #lectures {
+    scroll-margin-top: var(--header-h);
+  }
   .intro {
     margin-bottom: 1.75rem;
   }
