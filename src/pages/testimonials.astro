@@ -10,8 +10,8 @@ import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
 // הפתק בכתב יד בפתיח: טעינה מוקדמת של גופן כתב היד (בדיקת SEO, 2026-11-08). בלי זה הגופן מגיע בחלקים,
 // הטקסט בפתק עולה שורה ויורד בחזרה, וכל הפתיח "קופץ" בטלפון (CLS 0.29).
-import handHebrew from '@fontsource/gveret-levin/files/gveret-levin-hebrew-400-normal.woff2?url';
-import handLatin from '@fontsource/gveret-levin/files/gveret-levin-latin-400-normal.woff2?url';
+import handHebrew from '@fontsource-variable/fredoka/files/fredoka-hebrew-wght-normal.woff2?url';
+import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2?url';
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
@@ -132,8 +132,8 @@ import handLatin from '@fontsource/gveret-levin/files/gveret-levin-latin-400-nor
     border-radius: 1.25rem;
     box-shadow: 0 18px 40px -22px rgb(11 26 51 / 0.35);
     font-family: var(--font-hand);
-    /* "גברת לוין" קטן יותר מגופנים אחרים באותו גודל, ולכן מוגדל */
-    font-size: 1.5rem;
+    /* Fredoka: עגול, רך ומתוק (נוגה בחרה, 2026-11-08) */
+    font-size: 1.3rem;
     line-height: 1.75;
     color: var(--navy);
     rotate: -0.6deg;
@@ -158,7 +158,7 @@ import handLatin from '@fontsource/gveret-levin/files/gveret-levin-latin-400-nor
   }
   .t-note__sign {
     text-align: end;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--teal-dark);
   }
