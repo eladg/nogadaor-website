@@ -17,6 +17,7 @@ interface Props {
   star?: 'start' | 'end' | false;
   duration?: string; // להרצאה, למשל "53:37"
   ratio?: '16/10' | '16/9';
+  fit?: boolean; // להקטין את הכתב בשם ארוך (בכריכות ההדרכות)
 }
 const { title, motif, kind = 'guide', star = false, duration, ratio = '16/10' } = Astro.props;
 const tone = Astro.props.tone ?? (kind === 'article' ? 'warm' : 'cool');
@@ -30,6 +31,9 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const titleHtml = esc(title)
   .replace(/\*(.+?)\*/g, '<em>$1</em>')
   .replace(/\s*\|\s*/g, '<br />');
+// fit: שם ארוך (בהדרכות הכריכה מציגה את השם המלא, נוגה 2026-11-08): כתב קטן יותר, כדי שלא יישבר להרבה שורות צפופות
+const plainLength = title.replace(/[*|]/g, '').length;
+const size = !Astro.props.fit ? '' : plainLength > 24 ? 'xl' : plainLength > 17 ? 'l' : '';
 
 const tint = tone === 'warm' ? '#fcdc6d' : '#8fdcec';
 const defs = `<defs>
@@ -102,7 +106,7 @@ const motifs: Record<CoverMotif, string> = {
 
 <div class:list={['cc', `cc--${tone}`, `cc--${kind}`]} style={`aspect-ratio: ${ratio.replace('/', ' / ')}`} aria-hidden="true">
   <div class="cc__text">
-    <p class="cc__title" set:html={titleHtml} />
+    <p class:list={['cc__title', size && `cc__title--${size}`]} set:html={titleHtml} />
   </div>
   <div class="cc__obj">
     <svg viewBox="0 0 400 400" set:html={defs + motifs[motif]} />
@@ -147,6 +151,12 @@ const motifs: Record<CoverMotif, string> = {
     font-weight: 900;
     line-height: 1.1;
     text-wrap: balance;
+  }
+  .cc__title--l {
+    font-size: 7.2cqi;
+  }
+  .cc__title--xl {
+    font-size: 6.4cqi;
   }
   .cc__title :global(em) {
     font-style: normal;

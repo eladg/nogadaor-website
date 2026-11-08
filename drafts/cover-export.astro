@@ -10,7 +10,7 @@ import { coverImage, type CoverInput } from '../utils/coverImages';
 import '../styles/global.css';
 
 const guides = (await getCollection('guides')).filter((g) => !g.data.comingSoon);
-const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: string })[] = [
+const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: string; fit?: boolean })[] = [
   ...guides.map((g) => ({
     group: g.data.type,
     kind: g.data.type,
@@ -27,6 +27,7 @@ const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: s
     pageTitle: t.title,
     coverTitle: t.coverTitle,
     motif: t.coverMotif,
+    fit: true, // כמו בקטלוג: כתב קטן יותר לשם ארוך
   })),
   ...lectures.map((l) => ({
     group: 'lecture' as const,
@@ -59,6 +60,7 @@ const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: s
               kind={it.kind}
               star={it.star}
               duration={it.duration}
+              fit={it.fit}
               ratio={it.group === 'lecture' ? '16/9' : '16/10'}
             />
           </div>
@@ -69,6 +71,10 @@ const items: (CoverInput & { kind: 'guide' | 'article' | 'lecture'; duration?: s
 </html>
 
 <style is:global>
+  /* כשמייצאים משרת הפיתוח: להסתיר את סרגל הכלים של Astro, שלא ייכנס לצילום */
+  astro-dev-toolbar {
+    display: none !important;
+  }
   body {
     margin: 0;
     background: #0b1a33;
