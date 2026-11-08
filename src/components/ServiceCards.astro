@@ -8,6 +8,7 @@
 // בטאבלט ובנייד: שורה אחת שגוללים לצדדים.
 import Icon from './Icon.astro';
 import { services } from '../data/services';
+import { launch } from '../data/launch';
 
 interface Props {
   headingLevel?: 'h2' | 'h3';
@@ -33,7 +34,7 @@ const H = headingLevel;
             </span>
             <span class="svc__face svc__back" aria-hidden="true">
               <span class="svc__card">{s.card}</span>
-              <span class="svc__more">לפרטים ←</span>
+              {launch.servicePagesLive && <span class="svc__more">לפרטים ←</span>}
             </span>
           </span>
           <span class="sr-only">: {s.card}</span>

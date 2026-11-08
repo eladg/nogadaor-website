@@ -45,6 +45,19 @@ const crumbs = [
 
   <section class="section">
     <div class="container t-body">
+      <!-- על ההדרכה (נוגה, 2026-11-08: לעבות את עמודי ההדרכות). הטקסט ב-trainings.ts, טיוטה לאישור נוגה -->
+      {
+        training.about && (
+          <>
+            <h2>על ההדרכה</h2>
+            <div class="about">
+              {training.about.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+          </>
+        )
+      }
       {
         training.keyLines && (
           <>
@@ -57,7 +70,7 @@ const crumbs = [
           </>
         )
       }
-      <h2>מה נלמד בהדרכה</h2>
+      <h2>מה לומדים בהדרכה</h2>
       <ul class="topics">
         {
           training.topics.map((topic) => (
@@ -69,12 +82,30 @@ const crumbs = [
         }
       </ul>
 
-      <h2>משך ופורמט</h2>
-      <p class="format">{training.format}</p>
+      {
+        training.takeaways && (
+          <>
+            <h2>יוצאים מההדרכה עם</h2>
+            <ul class="takeaways">
+              {training.takeaways.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          </>
+        )
+      }
 
       <h2>למי מתאימה</h2>
-      <!-- TODO: נוגה תספק למי ההדרכה מתאימה (בעלי עסקים, ארגונים, קבוצות וכד'). אין להמציא. -->
-      <p class="placeholder">תוכן חסר: למי ההדרכה מתאימה.</p>
+      {
+        training.audience ? (
+          <p>{training.audience}</p>
+        ) : (
+          <p class="placeholder">תוכן חסר: למי ההדרכה מתאימה.</p>
+        )
+      }
+
+      <h2>משך ופורמט</h2>
+      <p class="format">{training.format}</p>
     </div>
   </section>
 
@@ -194,6 +225,36 @@ const crumbs = [
   }
   .format {
     font-weight: 700;
+  }
+  .about p {
+    font-size: 1.08rem;
+    line-height: 1.8;
+  }
+  .about p:last-child {
+    margin-bottom: 0;
+  }
+  /* יוצאים מההדרכה עם: שני טורים, וי עדין בזהב (בלי ריבוע), כמו בתהליך הליווי */
+  .takeaways {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.7rem 1.5rem;
+  }
+  .takeaways li {
+    position: relative;
+    margin: 0;
+    padding-inline-start: 1.7rem;
+    line-height: 1.55;
+  }
+  .takeaways li::before {
+    content: '✓';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    font-weight: 900;
+    color: var(--gold-dark);
   }
   /* משפטי מפתח מההדרכה: טקסט צף עם פס זהב, בלי קופסאות */
   .keylines {

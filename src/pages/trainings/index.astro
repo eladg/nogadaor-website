@@ -6,8 +6,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LightHero from '../../components/LightHero.astro';
 import ContentCover from '../../components/ContentCover.astro';
-import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import ReviewsCarousel from '../../components/ReviewsCarousel.astro';
+import ConferenceVideo from '../../components/ConferenceVideo.astro';
+import QuoteMarquee from '../../components/QuoteMarquee.astro';
 import { lectureReviews } from '../../data/reviews';
 import darkLines from '../../assets/atmosphere/dark-lines.webp';
 import { trainings, trainingCategories } from '../../data/trainings';
@@ -37,7 +37,8 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     <p>ההדרכות מותאמות לקהל, לארגון, למטרות המפגש ולאתגרים של המשתתפים, ומשלבות אסטרטגיה, שיווק, דוגמאות מהשטח וחשיבה מעשית. כל הדרכה ניתנת כהרצאה, ואפשר להפוך אותה לסדנה יישומית.</p>
   </LightHero>
 
-  <!-- הנושאים למעלה: קישורים לאזורים בעמוד. נושאים שעוד אין בהם הדרכות מסומנים "בקרוב". -->
+  <!-- הנושאים למעלה: קישורים לאזורים בעמוד. נושאים שעוד אין בהם הדרכות מסומנים "בקרוב".
+       בלי מספר ההדרכות ליד כל נושא (נוגה, 2026-11-08). -->
   <nav class="topics-nav" aria-label="נושאי ההדרכות">
     <div class="container">
       <ul>
@@ -45,7 +46,7 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
           groups.map((g) => (
             <li>
               <a href={`#${g.id}`}>
-                {g.title} <span class="topics-nav__count">{g.items.length}</span>
+                {g.title}
               </a>
             </li>
           ))
@@ -86,25 +87,25 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     ))
   }
 
-  <!-- על הבמה: סרטון כנס העסקים שנוגה הפיקה. מופיע בשני מקומות באתר: כאן ובעמוד הבית (2026-11-07). -->
+  <!-- על הבמה: סרטון כנס העסקים שנוגה הפיקה. מופיע בשני מקומות באתר: כאן ובעמוד הבית (2026-11-07).
+       אותה כריכה כמו בעמוד הבית (נוגה, 2026-11-08), מהרכיב המשותף ConferenceVideo. -->
   <section class="section section--deep atmo stage" style={linesStyle}>
     <div class="container stage__grid">
       <div class="reveal">
         <h2 class="sec-title">נוגה <span class="hl">על הבמה</span></h2>
         <p class="sec-lead">קצת מכנס העסקים שנוגה הפיקה, עם משתתפים שמספרים על החוויה.</p>
       </div>
-      <div class="stage__video reveal">
-        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום" />
-      </div>
+      <ConferenceVideo class="stage__video reveal" />
     </div>
   </section>
 
-  <!-- מה אמרו משתתפים: המלצות על הרצאות שעוד לא היו באתר (src/data/reviews.ts, lectureReviews) -->
+  <!-- מה אמרו משתתפים: המלצות על הרצאות (src/data/reviews.ts, lectureReviews).
+       באותו עיצוב כמו ההמלצות בעמוד הבית, בשתי שורות שזזות לכיוונים הפוכים (נוגה, 2026-11-08) -->
   <section class="section section--mist">
     <div class="container">
-      <h2 class="sec-title reveal">מה אמרו <span class="hl--mark">משתתפים</span></h2>
-      <ReviewsCarousel reviews={lectureReviews} label="המלצות משתתפים על ההרצאות" itemWidth="clamp(16rem, calc((100% - 2.5rem) / 3), 24rem)" />
+      <h2 class="sec-title reveal t-rev-title">מה אמרו <span class="hl--mark">משתתפים</span></h2>
     </div>
+    <QuoteMarquee reviews={lectureReviews} rows={2} />
   </section>
 
   <!-- בקרוב -->
@@ -183,16 +184,6 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
   .topics-nav a:hover {
     background: var(--teal-dark);
   }
-  .topics-nav__count {
-    display: inline-grid;
-    place-items: center;
-    min-width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 999px;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-size: 0.8rem;
-  }
   .topics-nav__soon {
     border: 1px dashed #b9c6d3;
     color: #5b6b80;
@@ -220,16 +211,17 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.75rem 1.5rem;
+    /* יותר מרווח בין ההדרכות (נוגה, 2026-11-08) */
+    gap: 3.25rem 2.75rem;
   }
   .tcard {
     position: relative;
-    flex: 0 1 calc((100% - 2 * 1.5rem) / 3);
+    flex: 0 1 calc((100% - 2 * 2.75rem) / 3);
     margin: 0;
   }
   @media (max-width: 62rem) {
     .tcard {
-      flex-basis: calc((100% - 1.5rem) / 2);
+      flex-basis: calc((100% - 2.75rem) / 2);
     }
   }
   @media (max-width: 36rem) {
@@ -266,7 +258,7 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
   .tcard__short {
     margin: 0;
     font-size: 0.97rem;
-    line-height: 1.55;
+    line-height: 1.65;
     color: #33445c;
   }
 
@@ -296,6 +288,10 @@ const soon = trainingCategories.filter((c) => 'soon' in c && c.soon);
     font-size: 1.2rem;
     font-weight: 900;
     color: #4a5b73;
+  }
+
+  .t-rev-title {
+    margin-bottom: 1.75rem;
   }
 
   /* ---------- על הבמה ---------- */

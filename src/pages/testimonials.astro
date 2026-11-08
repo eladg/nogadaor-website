@@ -5,23 +5,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Carousel from '../components/Carousel.astro';
-import ReviewsCarousel from '../components/ReviewsCarousel.astro';
+import QuoteMarquee from '../components/QuoteMarquee.astro';
 import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
-// תמונת אווירה (2026-11-07, קו רציף בכל האתר): צוות סביב שולחן, מאחורי ההמלצות הכתובות
-import { atmoStyle } from '../utils/atmo';
-import teamAtmo from '../assets/atmosphere/light-team.webp';
-const teamStyle = await atmoStyle(teamAtmo, 0.32);
 // הפתק בכתב יד בפתיח: טעינה מוקדמת של גופן כתב היד (בדיקת SEO, 2026-11-08). בלי זה הגופן מגיע בחלקים,
 // הטקסט בפתק עולה שורה ויורד בחזרה, וכל הפתיח "קופץ" בטלפון (CLS 0.29).
-import playpenHebrew from '@fontsource-variable/playpen-sans-hebrew/files/playpen-sans-hebrew-hebrew-wght-normal.woff2?url';
-import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen-sans-hebrew-latin-wght-normal.woff2?url';
+import handHebrew from '@fontsource/gveret-levin/files/gveret-levin-hebrew-400-normal.woff2?url';
+import handLatin from '@fontsource/gveret-levin/files/gveret-levin-latin-400-normal.woff2?url';
 ---
 
 <BaseLayout title="המלצות לקוחות" description="לקוחות מספרים על תהליך הליווי העסקי עם נוגה דיין אור.">
   <Fragment slot="head">
-    <link rel="preload" href={playpenHebrew} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={playpenLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={handHebrew} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={handLatin} as="font" type="font/woff2" crossorigin />
   </Fragment>
   <section class="t-hero">
     <div class="container t-hero__grid">
@@ -77,12 +73,13 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
   </section>
 
   <!-- המלצות כתובות: קרוסלה, מתעדכנת ידנית ב-src/data/reviews.ts -->
-  <section class="section section--mist t-reviews atmo" id="reviews" style={teamStyle}>
+  <section class="section section--mist t-reviews" id="reviews">
     <div class="container">
       <!-- הכותרת כמו בעמוד הבית (נוגה, 2026-11-08, במקום "מה אומרים עליי", שהיה בגוף ראשון) -->
       <h2 class="t-title">לקוחות משתפים</h2>
-      <ReviewsCarousel reviews={allReviews} label="המלצות לקוחות בכתב" />
     </div>
+    <!-- בדיוק באותו עיצוב כמו בעמוד הבית, אבל בשתי שורות שזזות לכיוונים הפוכים (נוגה, 2026-11-08) -->
+    <QuoteMarquee reviews={allReviews} rows={2} />
   </section>
 
   <!-- סיפורי מקרה: בינתיים לא יהיו (נוגה, 2026-11-08). האזור הוסר. אם יחזרו: לא להמציא, ולוודא שכל לקוח אישר את שמו. -->
@@ -105,10 +102,11 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
     gap: 2.5rem;
     align-items: center;
   }
+  /* הסרטון גדול יותר וקרוב יותר למרכז (נוגה, 2026-11-08: "שמאלה מדי ורזה מדי") */
   @media (min-width: 48rem) {
     .t-hero__grid {
-      grid-template-columns: 1fr auto;
-      gap: 4rem;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 3rem;
     }
   }
   .t-hero__kicker {
@@ -134,8 +132,9 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
     border-radius: 1.25rem;
     box-shadow: 0 18px 40px -22px rgb(11 26 51 / 0.35);
     font-family: var(--font-hand);
-    font-size: 1.25rem;
-    line-height: 1.85;
+    /* "גברת לוין" קטן יותר מגופנים אחרים באותו גודל, ולכן מוגדל */
+    font-size: 1.5rem;
+    line-height: 1.75;
     color: var(--navy);
     rotate: -0.6deg;
   }
@@ -159,7 +158,7 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
   }
   .t-note__sign {
     text-align: end;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: var(--teal-dark);
   }
@@ -173,7 +172,7 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
 
   .t-hero__video {
     margin: 0 auto;
-    width: min(16rem, 70vw);
+    width: min(20rem, 78vw);
     text-align: center;
   }
   .phone {
@@ -214,8 +213,7 @@ import playpenLatin from '@fontsource-variable/playpen-sans-hebrew/files/playpen
     line-height: 1.35;
   }
 
-  /* צבע ההצללה בקצות הקרוסלה = צבע הרקע של האזור */
-  .t-reviews {
-    --carousel-bg: var(--mist);
+  .t-reviews .t-title {
+    margin-bottom: 1.75rem;
   }
 </style>

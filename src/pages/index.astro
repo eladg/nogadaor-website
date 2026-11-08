@@ -8,7 +8,6 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import MomentsReel from '../components/MomentsReel.astro';
 import ServiceCards from '../components/ServiceCards.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
@@ -36,7 +35,7 @@ import darkStairs from '../assets/atmosphere/dark-stairs.webp';
 // הדמות בלי רקע (שקופה), כדי שתעמוד על הרקע הכהה של השאלון
 import pointing from '../assets/character/pointing-down-bust-clear.webp';
 // כריכת סרטון הכנס (נוגה, 2026-11-08): נוגה על הבמה מגבה, מול כל הקהל. חתוכה בלי הכיסאות הריקים והתקרה.
-import conferenceCover from '../assets/hero/conference-cover.jpg';
+import ConferenceVideo from '../components/ConferenceVideo.astro';
 // גלריה קלה: שורה אחת, רק תמונות קהל ותמונות עם לקוחות, בלי תמונות שכבר מופיעות באתר
 // (23, 08, 12 באודות, 14 בצור קשר, 15 בכריכת הסרטון) ובלי תמונות במה של נוגה לבד (נוגה, 2026-11-08)
 const momentRows = [['07', '19', '09', '16', '10', '13', '11', '06']];
@@ -219,15 +218,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <div class="h-head reveal">
         <h2 class="h-title h-title--split">קצת מכנס העסקים{' '}<span class="hl--mark">שפתח את השנה</span></h2>
       </div>
-      <div class="conference reveal">
-        <YouTubeEmbed id="RJd6_sdT62U" title="נוגה דיין אור - כנס עסקים במקסימום">
-          <span class="stage-cover">
-            <Image src={conferenceCover} alt="" widths={[640, 960, 1300]} sizes="(min-width: 44rem) 40rem, 100vw" />
-            <span class="stage-cover__play" aria-hidden="true"></span>
-            <span class="stage-cover__label">עסקים במקסימום</span>
-          </span>
-        </YouTubeEmbed>
-      </div>
+      <ConferenceVideo class="reveal" />
     </div>
     <div class="h-moments">
       <MomentsReel rows={momentRows} />
@@ -824,69 +815,6 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   }
   .more--dark a {
     color: var(--gold-light);
-  }
-  .conference {
-    /* קטן יותר (נוגה, 2026-11-08: "זה עצום") */
-    max-width: 40rem;
-    margin-inline: auto;
-    border-radius: 1.25rem;
-    overflow: hidden;
-    box-shadow: 0 30px 60px -35px rgb(11 26 51 / 0.55);
-  }
-  /* כריכת הסרטון: תמונה מהכנס עם כפתור הפעלה */
-  .stage-cover {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .stage-cover :global(img) {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 45%;
-  }
-  .stage-cover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(0deg, rgb(11 26 51 / 0.7) 0%, rgb(11 26 51 / 0) 45%);
-  }
-  .stage-cover__play {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    left: 50%;
-    width: 4.5rem;
-    height: 4.5rem;
-    border-radius: 50%;
-    background: var(--gold-gradient);
-    box-shadow: 0 12px 30px -8px rgb(0 0 0 / 0.6);
-    transform: translate(-50%, -50%);
-    transition: transform 0.25s ease;
-  }
-  .stage-cover__play::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 54%;
-    border-style: solid;
-    border-width: 0.75rem 0 0.75rem 1.2rem;
-    border-color: transparent transparent transparent var(--navy);
-    transform: translate(-50%, -50%);
-  }
-  .conference:hover .stage-cover__play {
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-  .stage-cover__label {
-    position: absolute;
-    z-index: 1;
-    bottom: 1rem;
-    right: 1.25rem;
-    color: var(--white);
-    font-size: clamp(1rem, 2vw, 1.3rem);
-    font-weight: 800;
   }
   /* כל התמונות מהכנסים, מתחת לסרטון */
   .h-moments {

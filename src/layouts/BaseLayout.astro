@@ -4,6 +4,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SiteIndex from '../components/SiteIndex.astro';
+import { launch } from '../data/launch';
 import { graph, breadcrumbSchema, type Schema } from '../utils/schema';
 // טעינה מוקדמת של הגופן (בדיקת SEO, 2026-11-08): בלי זה הטקסט מוצג קודם בגופן אחר, ואז מתחלף ל-Heebo,
 // הכותרת בפתיח של הבית יורדת שורה וכל העמוד "קופץ" (CLS 0.257 במחשב). אלה אותם קבצים שה-CSS טוען.
@@ -19,11 +20,11 @@ interface Props {
   schema?: Schema[];
   /** שביל ניווט לנתונים המובנים, מהבית ועד העמוד. נכתב רק כשיש site. */
   crumbs?: { name: string; path: string }[];
-}
   /** תמונת שיתוף לעמוד (וואטסאפ, פייסבוק, לינקדאין), למשל הכריכה כתמונה – src/utils/coverImages.ts */
   image?: { src: string; alt: string; width: number; height: number };
   /** article למדריכים ולמאמרים, website לכל השאר */
   ogType?: 'website' | 'article';
+}
 
 const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image, ogType = 'website' } = Astro.props;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
@@ -55,7 +56,6 @@ const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as 
     <meta property="og:locale" content="he_IL" />
     <meta property="og:type" content={ogType} />
     {canonical && <meta property="og:url" content={canonical} />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {
       ogImage && image && (
         <>
@@ -68,6 +68,7 @@ const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as 
         </>
       )
     }
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {ld.length > 0 && <script type="application/ld+json" set:html={graph(ld)} />}
@@ -83,7 +84,8 @@ const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as 
       <slot />
     </main>
     <!-- "כל מה שתמצאו באתר": בכל העמודים חוץ מעמוד הבית (נוגה, 2026-11-08) -->
-    {Astro.url.pathname !== '/' && <SiteIndex />}
+    <!-- "אתר רזה" (נוגה, 2026-11-08): בשלב הראשון בלי הרשימה הזו, עד שכל העמודים באוויר. מדליקים ב-src/data/launch.ts -->
+    {launch.fullSiteIndex && Astro.url.pathname !== '/' && <SiteIndex />}
     <Footer />
     <!-- הופעה עדינה של אזורים בגלילה: כל אלמנט עם class="reveal" מופיע כשמגיעים אליו -->
     <script is:inline>

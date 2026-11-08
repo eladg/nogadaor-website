@@ -6,11 +6,13 @@
 // הטקסט של ההמלצה לא משתנה: הוא רק נחתך בתצוגה.
 import type { Review } from '../data/reviews';
 
+// rows={2} (עמוד ההמלצות וקטלוג ההדרכות, נוגה 2026-11-08): שתי שורות שזזות לכיוונים הפוכים, באותו עיצוב בדיוק.
 interface Props {
   reviews: Review[];
+  rows?: 1 | 2;
 }
-const { reviews } = Astro.props;
-const rows = [reviews];
+const { reviews, rows: rowCount = 1 } = Astro.props;
+const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i % 2 === 1)] : [reviews];
 ---
 
 <div class="qm">
@@ -51,9 +53,9 @@ const rows = [reviews];
 </div>
 
 <script>
-  const root = document.querySelector<HTMLElement>('.qm');
-  const dialog = root?.querySelector<HTMLDialogElement>('.qm__dialog');
-  root?.querySelectorAll<HTMLElement>('.qm__card').forEach((card) => {
+  document.querySelectorAll<HTMLElement>('.qm').forEach((root) => {
+  const dialog = root.querySelector<HTMLDialogElement>('.qm__dialog');
+  root.querySelectorAll<HTMLElement>('.qm__card').forEach((card) => {
     const text = card.querySelector<HTMLElement>('.qm__text');
     const btn = card.querySelector<HTMLButtonElement>('.qm__more');
     if (!text || !btn) return;
@@ -71,6 +73,7 @@ const rows = [reviews];
   // לחיצה מחוץ לחלון סוגרת אותו
   dialog?.addEventListener('click', (e) => {
     if (e.target === dialog) dialog.close();
+  });
   });
 </script>
 

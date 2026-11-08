@@ -5,7 +5,8 @@
 */
 
 @import '@fontsource-variable/heebo';
-@import '@fontsource-variable/playpen-sans-hebrew'; /* גופן "כתב יד" למילים אישיות של נוגה */
+/* גופן "כתב יד" למילים אישיות של נוגה: "גברת לוין", עגול ורך (נוגה, 2026-11-08, במקום Playpen ה"קוצני"). רישיון OFL */
+@import '@fontsource/gveret-levin';
 
 :root {
   /* צבעי מותג */
@@ -25,7 +26,7 @@
 
   /* גופן – TODO: לאשר גופן סופי מול נוגה (כרגע Heebo, חינמי ונקי) */
   --font: 'Heebo Variable', system-ui, sans-serif;
-  --font-hand: 'Playpen Sans Hebrew Variable', var(--font); /* כתב יד: למילים אישיות בלבד, לא לטקסט רגיל */
+  --font-hand: 'Gveret Levin', var(--font); /* כתב יד: למילים אישיות בלבד, לא לטקסט רגיל */
 
   --max-width: 72rem;
   --header-h: 3.8rem; /* גובה כותרת האתר הדביקה (לפסים דביקים מתחתיה). במחשב: 4.6rem */

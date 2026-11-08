@@ -13,6 +13,7 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import { services, areas, steps } from '../../data/services';
 import { advances } from '../../data/advances';
+import { launch } from '../../data/launch';
 // למי הליווי מתאים: הרשימה של נוגה (2026-11-08), עם תיקוני ניסוח קלים. השניים האחרונים הם תוספת שלי
 // (עשרות אלפי לקוחות, לבקשתה, ומתוך "מה משתנה בעסק" שהוסר). טיוטה לאישור.
 const fitFor = [
@@ -65,7 +66,7 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
                 <h3 class="svc-row__title"><a href={s.href}>{s.title}</a></h3>
                 <p class="svc-row__lead">{s.lead}</p>
                 <p class="svc-row__text">{s.card}</p>
-                <span class="svc-row__more" aria-hidden="true">לפרטים ←</span>
+                {launch.servicePagesLive && <span class="svc-row__more" aria-hidden="true">לפרטים ←</span>}
               </div>
             </li>
           ))
