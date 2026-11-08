@@ -76,8 +76,8 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     <div class="container">
       <h2>הרצאות לצפייה <span class="hl">בחינם</span></h2>
       <!-- ההרצאות שנוגה בחרה (src/data/lectures.ts): 6 = 3 בשורה במחשב, 2 בטאבלט, 1 בנייד.
-           כל כרטיס תופס 5 שורות ברשת (subgrid), כך שהכריכות, השורה הקטנה, השמות וההסברים מתחילים באותו גובה בכל שורה.
-           צבעים: השם בלבן, ההסבר בלבן רך, ורק משפט המפתח מתוך ההרצאה בזהב (בסוף הכרטיס). -->
+           כל כרטיס תופס 4 שורות ברשת (subgrid), כך שהכריכות, השורה הקטנה, השמות וההסברים מתחילים באותו גובה בכל שורה.
+           צבעים: שם ההרצאה בזהב כדי שיבלוט, ההסבר בלבן רך. בלי ציטוטים (נוגה, 2026-11-08: היו רק בשתי הרצאות). -->
       <ul class="lecture-grid">
         {
           lectures.map((l, i) => (
@@ -90,7 +90,6 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
               </p>
               <h3 class="lecture__title">{l.title}</h3>
               <p class="lecture__short">{l.short}</p>
-              {l.quote ? <p class="lecture__quote">"{l.quote}"</p> : <span aria-hidden="true" />}
             </li>
           ))
         }
@@ -243,11 +242,11 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
       grid-template-columns: 1fr;
     }
   }
-  /* כל כרטיס = 5 שורות משותפות לכל השורה: כריכה, סוג ומשך, שם, הסבר, משפט מפתח */
+  /* כל כרטיס = 4 שורות משותפות לכל השורה: כריכה, סוג ומשך, שם, הסבר */
   .lecture {
     margin: 0;
     display: grid;
-    grid-row: span 5;
+    grid-row: span 4;
     grid-template-rows: subgrid;
     row-gap: 0;
     align-content: start;
@@ -260,7 +259,7 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     font-size: 1.2rem;
     font-weight: 800;
     line-height: 1.35;
-    color: var(--white);
+    color: var(--gold-light);
     text-wrap: balance;
   }
   .lecture__short {
@@ -268,16 +267,6 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     font-size: 0.97rem;
     line-height: 1.6;
     color: var(--on-dark-soft);
-  }
-  /* משפט מפתח מתוך ההרצאה: הדבר היחיד בזהב בכרטיס */
-  .lecture__quote {
-    margin: 0.85rem 0 0;
-    padding-inline-start: 0.75rem;
-    border-inline-start: 3px solid var(--gold-dark);
-    font-size: 0.97rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: var(--gold-light);
   }
   .trainings-link {
     margin: 2rem 0 0;

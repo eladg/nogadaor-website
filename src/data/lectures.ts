@@ -13,8 +13,6 @@ export interface Lecture {
   duration: string; // כמו ביוטיוב
   coverTitle: string; // *מילה* = זהב, | = ירידת שורה
   motif: CoverMotif;
-  // משפט מפתח אחד מתוך ההרצאה עצמה (מהתמלול שנוגה שלחה, 2026-11-08), בלי גוף ראשון. מוצג בכרטיס.
-  quote?: string;
 }
 
 export const lectures: Lecture[] = [
@@ -25,7 +23,6 @@ export const lectures: Lecture[] = [
     duration: '72:36',
     coverTitle: 'העסק שלך|*חייב לגדול*',
     motif: 'growth',
-    quote: 'לגדול מתחיל מבפנים. בטבע, מה שלא צומח נובל.',
   },
   {
     id: 'ACxJJDosGJM',
@@ -51,7 +48,6 @@ export const lectures: Lecture[] = [
     duration: '66:28',
     coverTitle: 'להיות עסק|*שקל להמליץ עליו*',
     motif: 'chat',
-    quote: 'זה לא התפקיד של הלקוח לזכור אותך.',
   },
   {
     id: 'HRLotmg20kE',
