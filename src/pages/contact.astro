@@ -3,7 +3,7 @@
 // כולל הקהילה (אין עמוד קהילה נפרד). אווירה שמחה וקלילה, מלא אייקונים, מקצועי ומזמין.
 // הסיסמה ומשפט ההשראה בפתיח: נוגה אישרה (2026-11-05). התמונה בפתיח: נוגה שלחה אותה לעמוד הזה.
 // הסדר (נוגה, 2026-11-05): פתיח ← קרוסלת "כל הדרכים להתחבר" ← הקהילה ← מהאינסטגרם ← טופס פנייה והרשמה לתכנים.
-// הטפסים מעוצבים בלבד ועדיין לא מחוברים לשום שירות. TODO: לחבר שירות טפסים ושירות דיוור.
+// שני הטפסים (פנייה והרשמה לתכנים) יוצרים איש קשר בסמוב דרך netlify/functions/smoove-contact.mjs (2026-11-08).
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
@@ -166,8 +166,8 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
   <!-- 5. טופס פנייה, ולצדו הרשמה לתכנים במייל -->
   <section class="section section--mist c-forms reveal atmo" style={deskStyle}>
     <div class="container c-forms__grid">
-      <!-- TODO: לחבר את הטופס לשירות טפסים (Formspree / Netlify Forms וכד'). כרגע הוא לא שולח דבר. -->
-      <form class="c-form js-demo-form" method="post" novalidate aria-labelledby="form-title">
+      <!-- הטופס יוצר איש קשר בסמוב דרך הפונקציה netlify/functions/smoove-contact.mjs (2026-11-08) -->
+      <form class="c-form js-smoove-form" data-form="contact" method="post" novalidate aria-labelledby="form-title">
         <h2 id="form-title" class="c-title">השאירו <span class="hl--mark">פרטים</span></h2>
         <!-- משפט ההשראה (נוגה אישרה) עבר לכאן מהפתיח, כדי לפזר את הסיסמאות בעמוד -->
         <p class="c-form__note">בואו נבדוק יחד איך עושים סדר ומוצאים כסף גם בעסק שלך</p>
@@ -199,17 +199,21 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
           <span>במה אפשר לעזור?</span>
           <textarea name="message" rows="2"></textarea>
         </label>
+        <!-- מלכודת לרובוטים: שדה מוסתר שגולש אמיתי לא רואה ולא ממלא -->
+        <div class="c-hp" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
         <button class="btn" type="submit">שליחה</button>
         <p class="c-form__status" role="status" aria-live="polite"></p>
       </form>
 
-      <!-- TODO: לחבר לשירות דיוור (רשימת תפוצה). כרגע הטופס לא שולח דבר. -->
+      <!-- ההרשמה יוצרת איש קשר בסמוב (עם הסכמה לדיוור) דרך netlify/functions/smoove-contact.mjs -->
       <div class="c-news">
         <span class="c-news__icon" aria-hidden="true"><Icon name="mail" size={28} /></span>
         <h2 id="news-title" class="c-news__title">הרשמה <span class="hl">לתכנים במייל</span></h2>
         <!-- הצעה שלי, לאישור נוגה -->
         <p class="c-news__text">תכנים ועדכונים ישירות לתיבת המייל.</p>
-        <form class="c-news__form js-demo-form" method="post" novalidate aria-labelledby="news-title">
+        <form class="c-news__form js-smoove-form" data-form="newsletter" method="post" novalidate aria-labelledby="news-title">
           <label>
             <span class="sr-only">שם</span>
             <input type="text" name="name" autocomplete="name" placeholder="שם" />
@@ -223,6 +227,9 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
             <input type="checkbox" name="consent" required />
             <span>אני מאשר/ת לקבל תכנים ועדכונים במייל</span>
           </label>
+          <div class="c-hp" aria-hidden="true">
+            <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
           <button class="btn" type="submit">להרשמה</button>
           <p class="c-form__status" role="status" aria-live="polite"></p>
         </form>
@@ -232,18 +239,77 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
 
 </BaseLayout>
 
-<!-- הטפסים עוד לא מחוברים: במקום לשלוח, מוצגת הודעה. TODO: להסיר כשמחברים שירות טפסים -->
-<script is:inline>
-  document.querySelectorAll('.js-demo-form').forEach(function (form) {
+<!-- שליחת הטפסים לפונקציה /api/contact, שיוצרת איש קשר בסמוב. המפתח שמור רק בשרת (Netlify). -->
+<script is:inline define:vars={{ whatsapp: contact.whatsapp }}>
+  var messages = {
+    contact: 'תודה, הפרטים התקבלו. חוזרים אליך בהקדם.',
+    newsletter: 'תודה, ההרשמה התקבלה.',
+    error: 'משהו השתבש בשליחה. אפשר לנסות שוב, או לכתוב ישירות ',
+  };
+
+  document.querySelectorAll('.js-smoove-form').forEach(function (form) {
+    var status = form.querySelector('.c-form__status');
+    var button = form.querySelector('button[type="submit"]');
+
+    function showError() {
+      status.textContent = messages.error;
+      var link = document.createElement('a');
+      link.href = whatsapp;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'בוואטסאפ';
+      status.appendChild(link);
+      status.dataset.state = 'error';
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var status = form.querySelector('.c-form__status');
-      if (status) status.textContent = 'הטופס עוד לא מחובר. בינתיים אפשר לכתוב לי בוואטסאפ.';
+      if (!form.reportValidity()) return;
+
+      var data = Object.fromEntries(new FormData(form));
+      data.form = form.dataset.form;
+      data.consent = data.consent === 'on';
+
+      button.disabled = true;
+      status.textContent = 'שולחים…';
+      delete status.dataset.state;
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+        .then(function (res) {
+          return res.json().catch(function () {
+            return { ok: false };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) throw new Error(result.error || 'failed');
+          status.textContent = messages[form.dataset.form] || messages.contact;
+          status.dataset.state = 'ok';
+          form.reset();
+        })
+        .catch(showError)
+        .finally(function () {
+          button.disabled = false;
+        });
     });
   });
 </script>
 
 <style>
+  /* מלכודת הרובוטים בטפסים: מחוץ למסך, לא נראית ולא נקראת */
+  .c-hp {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
   /* ---------- כללי לעמוד ---------- */
   .c-center {
     text-align: center;
