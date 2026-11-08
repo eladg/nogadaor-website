@@ -65,6 +65,9 @@ export function buildContact(data) {
     cellPhone: phone || undefined,
     // דיוור רק למי שסימן הסכמה בטופס ההרשמה. בטופס הפנייה אין תיבת הסכמה.
     canReceiveEmails: form === 'newsletter' ? consent : false,
+    // אף טופס לא מבקש הסכמה ל-SMS או לוואטסאפ, ובסמוב ברירת המחדל היא "כן"
+    canReceiveSmsMessages: false,
+    canReceiveWhatsappMessages: false,
     campaignSource: form === 'newsletter' ? 'אתר: הרשמה לתכנים במייל' : 'אתר: טופס פנייה',
   };
 
@@ -124,6 +127,8 @@ export default async (req) => {
       // בעדכון לא משנים הסכמה לדיוור שכבר ניתנה, אלא אם הגולש סימן עכשיו הסכמה
       const updateContact = { ...contact };
       if (!updateContact.canReceiveEmails) delete updateContact.canReceiveEmails;
+      delete updateContact.canReceiveSmsMessages;
+      delete updateContact.canReceiveWhatsappMessages;
       const update = await sendToSmoove(updateContact, apiKey, '?updateIfExists=true');
       if (!update.ok) {
         console.warn('Smoove update of existing contact failed', update.status, await update.text());
