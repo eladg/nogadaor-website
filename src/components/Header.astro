@@ -7,9 +7,7 @@ interface Props {
 }
 import { services } from '../data/services';
 const { currentPath } = Astro.props;
-// עמוד הבית: ההאדר כבר לא שקוף (2026-11-08). עם התמונה מהשביל, התפריט היה יושב על הגגון הבהיר.
-// כדי להחזיר את השקיפות: currentPath === '/'
-const overlay = false;
+const overlay = currentPath === '/';
 
 // תת-תפריט השירותים: שמות קצרים (נוגה, 2026-11-07: 2-3 מילים, "כמו כולם")
 const serviceLinks = services.map((s) => ({ href: s.href, label: s.menu }));
