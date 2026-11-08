@@ -135,7 +135,8 @@ const { items, tone = 'light' } = Astro.props;
   @media (min-width: 56rem) {
     .tl {
       grid-template-columns: repeat(var(--n), 1fr);
-      gap: 1.5rem;
+      /* פחות צפוף בין השלבים (נוגה, 2026-11-08) */
+      gap: 3.5rem;
     }
     .tl__step {
       padding-inline-start: 0;

@@ -66,10 +66,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   </section>
 
   <!-- 3. מסתכלים על העסק כולו: הבידול של נוגה (שילוב, ולא נושא מבודד) -->
-  <section class="section s-areas">
+  <section class="section section--deep s-areas">
     <div class="container">
       <!-- הכותרת של נוגה (2026-11-08), מתוך "הבידול של נוגה" במסמך העבודה. שאר המילים סביבה הוסרו. -->
-      <h2 class="sec-title center s-split s-areas__title reveal">ראייה מערכתית של העסק,{' '}<span class="hl--mark">לצד ירידה לפרטים המעשיים</span></h2>
+      <h2 class="sec-title center s-split s-areas__title reveal">ראייה מערכתית של העסק,{' '}<span class="hl">לצד ירידה לפרטים המעשיים</span></h2>
       <!-- נוגה (2026-11-08): בלי הבניינים. כרטיסים בכחול חזק, כולם בשורה אחת, והאייקון, הכותרת והמשפט באותו גובה בכל הכרטיסים. -->
       <ul class="areas">
         {
@@ -305,8 +305,12 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   }
 
   /* ---------- התחומים: כרטיסים בכחול חזק, כולם בשורה אחת, באותו גובה (subgrid) ---------- */
-  .s-areas {
-    background: var(--white);
+  /* רקע כהה וכרטיסים לבנים (נוגה, 2026-11-08) */
+  .s-areas__title {
+    color: var(--white);
+  }
+  .s-split .hl {
+    display: block;
   }
   .areas {
     list-style: none;
@@ -327,11 +331,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     padding: 1.35rem 0.85rem 1.25rem;
     border-radius: 1.1rem;
     text-align: center;
-    color: var(--white);
-    background:
-      radial-gradient(10rem 7rem at 100% 0, rgb(25 154 181 / 0.45), transparent 70%),
-      linear-gradient(170deg, #154f82, var(--navy) 85%);
-    box-shadow: 0 16px 30px -22px rgb(11 26 51 / 0.8);
+    color: var(--navy);
+    background: var(--white);
+    border-top: 3px solid var(--gold-dark);
+    box-shadow: 0 18px 34px -24px rgb(0 0 0 / 0.9);
     transition: transform 0.3s ease;
   }
   .area:hover {
@@ -351,13 +354,13 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     font-size: 1.05rem;
     font-weight: 900;
     line-height: 1.3;
-    color: var(--white);
+    color: var(--navy);
   }
   .area__text {
     margin: 0;
     font-size: 0.88rem;
     line-height: 1.55;
-    color: var(--on-dark);
+    color: #33445c;
   }
   /* טאבלט וטלפון: אותה שורה, גוללים לצדדים */
   @media (max-width: 64rem) {
