@@ -8,7 +8,6 @@ import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Ribbon from '../../components/Ribbon.astro';
-import Skyline from '../../components/Skyline.astro';
 import Timeline from '../../components/Timeline.astro';
 import Faq from '../../components/Faq.astro';
 import Icon from '../../components/Icon.astro';
@@ -71,8 +70,18 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     <div class="container">
       <!-- הכותרת של נוגה (2026-11-08), מתוך "הבידול של נוגה" במסמך העבודה. שאר המילים סביבה הוסרו. -->
       <h2 class="sec-title center s-split s-areas__title reveal">ראייה מערכתית של העסק,{' '}<span class="hl--mark">לצד ירידה לפרטים המעשיים</span></h2>
-      <!-- קו רקיע לילי של מגדלים (נוגה, 2026-11-08): src/components/Skyline.astro -->
-      <Skyline />
+      <!-- נוגה (2026-11-08): בלי הבניינים. כרטיסים בכחול חזק, כולם בשורה אחת, והאייקון, הכותרת והמשפט באותו גובה בכל הכרטיסים. -->
+      <ul class="areas">
+        {
+          areas.map((a, i) => (
+            <li class="area reveal" style={`transition-delay: ${i * 0.06}s`}>
+              <span class="area__icon" aria-hidden="true"><Icon name={a.icon} size={24} /></span>
+              <h3 class="area__title">{a.title}</h3>
+              <p class="area__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
@@ -81,12 +90,9 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     <div class="container">
       <div class="s-process__head">
         <div>
-          <h2 class="sec-title reveal">הגדלת הכנסות לא מתחילה <span class="hl--mark">בעוד משימות</span></h2>
-          <!-- בלי נקודתיים (נוגה, 2026-11-08). הניסוח שלי מתוך הטקסט שלה. -->
-          <p class="sec-lead">הגדלת הכנסות לא מגיעה מעוד רעיונות, עוד מאמץ או עוד הוצאות. היא מתחילה בהבנה עמוקה של העסק, של הלקוחות, של הצעת הערך והמסרים, ושל תהליכי העבודה ושגרות הניהול.</p>
-          <h3 class="process-title">תהליך ליווי עסקי וארגוני להגדלת הכנסות ושיפור הרווחיות</h3>
-          <!-- משפט הסיכום הטוב, בהתחלה ולא בסוף (נוגה, 2026-11-08) -->
-          <p class="principle principle--top">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
+          <!-- הסדר של נוגה (2026-11-08): המשפט שלה ככותרת ראשית, ואחריו הפסקה שלה (תוקנו רק שגיאות כתיב) -->
+          <h2 class="sec-title s-proc-title reveal">תובנות, החלטות ופעולות פשוטות וישימות{' '}<span class="hl--mark">שמקדמות את העסק בכל פגישה</span></h2>
+          <p class="sec-lead">טעות לחשוב שהגדלת הכנסות צריכה להגיע עם שינויים גדולים, רעיונות חדשניים, פרויקטים והשקעות. צריך להסתכל על הדברים מלמעלה, אבל להבין איך לעשות שינויים קטנים ואפקטיביים שמייצרים הבדל גדול.</p>
         </div>
         <Image src={flipchart} alt="" widths={[240, 380]} sizes="12rem" class="toon s-process__toon" />
       </div>
@@ -298,11 +304,75 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     margin-inline: auto;
   }
 
-  /* ---------- 8 תחומים: קו רקיע לילי (src/components/Skyline.astro) ---------- */
-  /* רקע שמיים בהיר, כמו קיר שעליו מצויר קו הרקיע */
+  /* ---------- התחומים: כרטיסים בכחול חזק, כולם בשורה אחת, באותו גובה (subgrid) ---------- */
   .s-areas {
-    overflow: hidden;
-    background: linear-gradient(180deg, var(--mist) 0%, var(--white) 100%);
+    background: var(--white);
+  }
+  .areas {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+  }
+  .area {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0.6rem;
+    justify-items: center;
+    align-items: start;
+    margin: 0;
+    padding: 1.35rem 0.85rem 1.25rem;
+    border-radius: 1.1rem;
+    text-align: center;
+    color: var(--white);
+    background:
+      radial-gradient(10rem 7rem at 100% 0, rgb(25 154 181 / 0.45), transparent 70%),
+      linear-gradient(170deg, #154f82, var(--navy) 85%);
+    box-shadow: 0 16px 30px -22px rgb(11 26 51 / 0.8);
+    transition: transform 0.3s ease;
+  }
+  .area:hover {
+    transform: translateY(-4px);
+  }
+  .area__icon {
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.8rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .area__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1.3;
+    color: var(--white);
+  }
+  .area__text {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--on-dark);
+  }
+  /* טאבלט וטלפון: אותה שורה, גוללים לצדדים */
+  @media (max-width: 64rem) {
+    .areas {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.5rem;
+    }
+    .area {
+      flex: 0 0 11rem;
+      display: flex;
+      flex-direction: column;
+      scroll-snap-align: start;
+    }
   }
 
   /* ---------- תהליך הליווי: בהיר, עם הדמות ליד הלוח ---------- */
@@ -441,6 +511,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   }
 
   /* ---------- העיקרון ---------- */
+  /* החלק המודגש בשורה משלו (הכלל של נוגה: בלי מילה צבועה בסוף שורה) */
+  .s-proc-title .hl--mark {
+    display: table;
+  }
   .s-process__note {
     max-width: 40rem;
     margin: 2rem auto 0;
