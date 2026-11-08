@@ -8,7 +8,6 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import MomentsReel from '../components/MomentsReel.astro';
 import ServiceCards from '../components/ServiceCards.astro';
@@ -37,11 +36,9 @@ import darkStairs from '../assets/atmosphere/dark-stairs.webp';
 import pointing from '../assets/character/pointing-down-bust-clear.webp';
 // כריכת סרטון הכנס (נוגה, 2026-11-08): נוגה על הבמה מגבה, מול כל הקהל. חתוכה בלי הכיסאות הריקים והתקרה.
 import conferenceCover from '../assets/hero/conference-cover.jpg';
-// כל התמונות מהכנסים, כמו באודות, וגם שלוש התמונות שבאודות יושבות ליד הסיפור (23, 08, 12)
-const momentRows = [
-  ['07', '14', '05', '23', '22', '18', '09', '21', '06', '17'],
-  ['19', '13', '08', '10', '15', '20', '12', '03', '11', '16'],
-];
+// גלריה קלה: שורה אחת, רק תמונות קהל ותמונות עם לקוחות, בלי תמונות שכבר מופיעות באתר
+// (23, 08, 12 באודות, 14 בצור קשר, 15 בכריכת הסרטון) ובלי תמונות במה של נוגה לבד (נוגה, 2026-11-08)
+const momentRows = [['07', '19', '09', '16', '10', '13', '11', '06']];
 const linesStyle = await atmoStyle(darkLines, 0.55);
 const stairsStyle = await atmoStyle(darkStairs, 0.4);
 
@@ -88,7 +85,7 @@ const guides = (await getCollection('guides'))
         <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
         <div class="h-hero__actions">
-          <a class="btn" href={contact.booking} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+          <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
           <a class="btn btn--ghost" href="/services/">לשירותים</a>
         </div>
       </div>
@@ -237,20 +234,19 @@ const guides = (await getCollection('guides'))
 
   <!-- 7. השאלון: הדבר הכי מרשים באתר, כי הוא מביא לידים (נוגה, 2026-11-08). אזור כהה בכחול של האתר עם זוהר טורקיז וזהב,
        כרטיס עם מסגרת זוהרת, הדמות (בלי רקע) ממורכזת מעל הכותרת, וכפתור זהב גדול. בלי מספר שאלות (עשוי להשתנות).
-       מספר המסלולים נלקח מהנתונים. הכותרת והמשפט הם הצעה שלי, ממתינים לאישור. -->
+       מספר המסלולים נלקח מהנתונים. הנוסח מתאר את מה שהשאלון באמת נותן: פרופיל, חוזקות ושלושה מיקודים. הצעה שלי, ממתינה לאישור. -->
   <section class="h-quiz" aria-labelledby="quiz-title">
     <div class="container">
       <div class="h-quiz__card">
         <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
         <p class="h-quiz__tag reveal"><Star size={16} /> שאלון חינמי</p>
-        <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">כמה העסק שלך מוכן{' '}<span class="hl">לקפיצה הבאה?</span></h2>
-        <p class="h-quiz__text reveal">שאלון קצר ב-{quizAreas.length} מסלולים שבודק את העסק, ומראה איפה הוא חזק, איפה כדאי להתמקד ומה הצעדים הבאים לשנת {quizYear}.</p>
+        <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">מה המיקוד הנכון{' '}<span class="hl">לעסק שלך ב-{quizYear}?</span></h2>
+        <p class="h-quiz__text reveal">שאלון קצר ב-{quizAreas.length} מסלולים שמראה איפה העסק חזק, ומה שלושת המיקודים שיקדמו אותו הכי הרבה בשנה הקרובה.</p>
         <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
       </div>
     </div>
   </section>
 
-  <CtaBand />
 
   <!-- 10. מדריכים חינמיים: שורה אחת והפניה למרכז הידע, ובסוף משפט סיום, ואז הפוטר (נוגה, 2026-11-08).
        במקום "כל מה שתמצאו באתר". -->
@@ -272,12 +268,20 @@ const guides = (await getCollection('guides'))
           ))
         }
       </ul>
+      <!-- הזמנה עדינה להדרכות לארגונים, בשורה אחת ולא עוד אזור (הצעה שלי) -->
+      <p class="h-guides__trainings reveal">מחפשים הרצאה או סדנה לצוות או לארגון?{' '}<a href="/trainings/">לקטלוג ההדרכות ←</a></p>
     </div>
   </section>
 
-  <!-- משפט הסיום: הסיסמה שחותמת כל פוסט של נוגה, באותו גופן של האתר ומודגשת (לא בכתב יד) -->
-  <section class="h-sign" aria-label="סיום">
-    <p class="h-sign__motto reveal">קמים ונהיים ענקיים מהחיים <Star size={26} /></p>
+  <!-- סיום: במקום הפס הכהה "העסק שלך חייב לגדול" (נוגה, 2026-11-08: "לאחד את הדברים בצורה זורמת יותר").
+       הסיסמה המאושרת, הכפתור לוואטסאפ, והסיסמה שחותמת כל פוסט של נוגה (באותו גופן, לא בכתב יד). -->
+  <section class="h-sign" aria-labelledby="sign-title">
+    <div class="container">
+      <h2 id="sign-title" class="h-title reveal">העסק שלך <span class="hl--mark">חייב לגדול</span></h2>
+      <p class="h-sign__lead reveal">ביחד נדאג שתהיה לך הצלחה עסקית בדרך שלך.</p>
+      <a class="btn reveal" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+      <p class="h-sign__motto reveal">קמים ונהיים ענקיים מהחיים <Star size={26} /></p>
+    </div>
   </section>
 </BaseLayout>
 
@@ -887,6 +891,10 @@ const guides = (await getCollection('guides'))
     margin-top: clamp(1.75rem, 4vw, 2.5rem);
     overflow: hidden;
   }
+  /* תמונות נמוכות יותר, כדי שהגלריה תהיה קלה לעין */
+  .h-moments :global(.reel) {
+    --h: clamp(8rem, 15vw, 11rem);
+  }
   .h-stage {
     padding-bottom: clamp(3.5rem, 8vw, 5.5rem);
   }
@@ -943,16 +951,34 @@ const guides = (await getCollection('guides'))
   }
 
   /* ---------- סיום: הסיסמה של נוגה ---------- */
+  .h-guides__trainings {
+    margin: 1.75rem 0 0;
+    text-align: center;
+    font-weight: 600;
+    color: #33445c;
+  }
+  .h-guides__trainings a {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
   .h-sign {
-    padding-block: clamp(2.5rem, 6vw, 3.75rem);
-    background: var(--white);
+    padding-block: clamp(3rem, 7vw, 4.5rem);
+    background:
+      radial-gradient(30rem 16rem at 50% 0, rgb(252 220 109 / 0.16), transparent 70%),
+      var(--white);
     text-align: center;
   }
+  .h-sign__lead {
+    margin: 0.75rem auto 1.5rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    color: #33445c;
+  }
   .h-sign__motto {
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    margin: 0;
+    margin: 2.25rem 0 0;
     font-size: clamp(1.7rem, 4.5vw, 2.8rem);
     font-weight: 900;
     line-height: 1.2;

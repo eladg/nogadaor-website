@@ -20,7 +20,6 @@ const instagram = socials.find((s) => s.icon === 'instagram')!;
 // הטלפון והאימייל מופיעים ליד טופס הפנייה.
 const ways = [
   { name: 'וואטסאפ', icon: 'whatsapp', handle: 'לשיחה איתי', href: contact.whatsapp, ltr: false },
-  { name: 'פגישת היכרות', icon: 'calendar', handle: '30 דקות ביומן', href: contact.booking, ltr: false },
   { name: 'הקהילה', icon: 'users', handle: 'תודעה עסקית מנצחת', href: contact.whatsappGroup, ltr: false },
   ...socials.map((s) => ({ ...s, ltr: !/[א-ת]/.test(s.handle) })),
 ] as const;

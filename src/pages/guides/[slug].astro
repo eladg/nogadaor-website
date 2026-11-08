@@ -176,17 +176,13 @@ const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
       <!-- הנוסח מתוך המדריכים של נוגה ("מוזמנים לפגישת זום קצרה...") -->
       <p class="g-cta__text">מוזמנים לפגישת זום קצרה, לשדרוג השיווק של העסק שלכם, לגמרי במתנה.</p>
       <div class="g-cta__actions">
-        <a class="btn g-cta__btn" href={contact.booking} target="_blank" rel="noopener">
-          <Icon name="calendar" size={20} /> לקביעת פגישת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-        </a>
-        <a class="g-cta__ghost" href={`${contact.whatsapp}?text=${waText}`} target="_blank" rel="noopener">
+        <a class="btn g-cta__btn" href={`${contact.whatsapp}?text=${waText}`} target="_blank" rel="noopener">
           <Icon name="whatsapp" size={20} /> לשיחה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
         <a class="g-cta__ghost" href={contact.whatsappGroup} target="_blank" rel="noopener">
           <Icon name="users" size={20} /> לקהילת "תודעה עסקית מנצחת"<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
       </div>
-      <p class="g-cta__note">{contact.bookingNote}.</p>
     </div>
   </section>
 
