@@ -22,7 +22,7 @@ const { items, tone = 'light' } = Astro.props;
             {item.gets.map((g) => (
               <li>
                 <span class="tl__check" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  <svg viewBox="0 0 20 20" width="18" height="18"><path d="M3.5 10.5 8 15 16.5 4.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </span>
                 <span>{g}</span>
               </li>
@@ -108,17 +108,12 @@ const { items, tone = 'light' } = Astro.props;
     font-size: 0.97rem;
     color: #33445c;
   }
+  /* וי לבד, בלי ריבוע (נוגה, 2026-11-08) */
   .tl__check {
     flex: none;
-    display: grid;
-    place-items: center;
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-top: 0.1rem;
-    border-radius: 0.4rem;
-    border: 1px solid rgb(25 154 181 / 0.45);
-    background: rgb(25 154 181 / 0.08);
-    color: var(--teal-dark);
+    display: inline-flex;
+    margin-top: 0.05rem;
+    color: var(--teal);
   }
   .tl--dark .tl__gets {
     border-top-color: rgb(255 255 255 / 0.14);
@@ -127,8 +122,6 @@ const { items, tone = 'light' } = Astro.props;
     color: var(--on-dark);
   }
   .tl--dark .tl__check {
-    border-color: rgb(252 220 109 / 0.5);
-    background: rgb(252 220 109 / 0.1);
     color: var(--gold-light);
   }
   .tl--dark .tl__title {

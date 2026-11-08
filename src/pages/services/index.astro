@@ -67,10 +67,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   </section>
 
   <!-- 3. מסתכלים על העסק כולו: הבידול של נוגה (שילוב, ולא נושא מבודד) -->
-  <section class="section section--deep s-areas">
+  <section class="section s-areas">
     <div class="container">
       <!-- הכותרת של נוגה (2026-11-08), מתוך "הבידול של נוגה" במסמך העבודה. שאר המילים סביבה הוסרו. -->
-      <h2 class="sec-title center s-split s-areas__title reveal">ראייה מערכתית של העסק,{' '}<span class="hl">לצד ירידה לפרטים המעשיים</span></h2>
+      <h2 class="sec-title center s-split s-areas__title reveal">ראייה מערכתית של העסק,{' '}<span class="hl--mark">לצד ירידה לפרטים המעשיים</span></h2>
       <!-- קו רקיע לילי של מגדלים (נוגה, 2026-11-08): src/components/Skyline.astro -->
       <Skyline />
     </div>
@@ -85,14 +85,14 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
           <!-- בלי נקודתיים (נוגה, 2026-11-08). הניסוח שלי מתוך הטקסט שלה. -->
           <p class="sec-lead">הגדלת הכנסות לא מגיעה מעוד רעיונות, עוד מאמץ או עוד הוצאות. היא מתחילה בהבנה עמוקה של העסק, של הלקוחות, של הצעת הערך והמסרים, ושל תהליכי העבודה ושגרות הניהול.</p>
           <h3 class="process-title">תהליך ליווי עסקי וארגוני להגדלת הכנסות ושיפור הרווחיות</h3>
+          <!-- משפט הסיכום הטוב, בהתחלה ולא בסוף (נוגה, 2026-11-08) -->
+          <p class="principle principle--top">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
         </div>
         <Image src={flipchart} alt="" widths={[240, 380]} sizes="12rem" class="toon s-process__toon" />
       </div>
       <Timeline items={steps} />
-      <!-- מתוך הצעת הליווי של נוגה (2026-11-08), כללי ולא מתחייב -->
+      <!-- מתוך הצעת הליווי של נוגה (2026-11-08), כללי ולא מתחייב. קטן, מתחת לשלבים. -->
       <p class="s-process__note reveal">הליווי מותאם אישית לצורכי העסק ולממצאים שעולים במהלך העבודה, ותחומי העבודה, עומק הבדיקה וסדרי העדיפויות נקבעים במשותף.</p>
-      <!-- משפט הסיום של נוגה, כמו בעמוד הבית (2026-11-08). במקום "המטרה...". -->
-      <p class="principle reveal">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
     </div>
   </section>
 
@@ -299,14 +299,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
   }
 
   /* ---------- 8 תחומים: קו רקיע לילי (src/components/Skyline.astro) ---------- */
+  /* רקע שמיים בהיר, כמו קיר שעליו מצויר קו הרקיע */
   .s-areas {
     overflow: hidden;
-  }
-  .s-areas__title {
-    color: var(--white);
-  }
-  .s-split .hl {
-    display: block;
+    background: linear-gradient(180deg, var(--mist) 0%, var(--white) 100%);
   }
 
   /* ---------- תהליך הליווי: בהיר, עם הדמות ליד הלוח ---------- */
@@ -446,11 +442,17 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
 
   /* ---------- העיקרון ---------- */
   .s-process__note {
-    max-width: 44rem;
-    margin: 2.25rem auto 0;
+    max-width: 40rem;
+    margin: 2rem auto 0;
     text-align: center;
-    line-height: 1.7;
-    color: #4a5b73;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #5b6b82;
+  }
+  .principle--top {
+    justify-content: flex-start;
+    text-align: start;
+    margin: 0.5rem 0 0;
   }
   .principle {
     display: flex;
