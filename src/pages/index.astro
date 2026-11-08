@@ -123,7 +123,7 @@ const index = [
   <section class="h-intro" aria-label="על הליווי">
     <div class="container">
       <p class="h-intro__lead reveal">העסק שלך חייב לגדול ולחשוב קדימה כל הזמן, במיוחד בתקופה שבה הטכנולוגיה משנה את העולם בקצב מסחרר.</p>
-      <p class="h-intro__text reveal">כל עסק הוא שונה ומיוחד, עם מטרות, תהליכי עבודה, חוזקות ומשאבים משלו. לכן הליווי מתחיל בלמידה של המצב הקיים ושל מה שרוצים להשיג, ומתוך מה שכבר יש בעסק מוצאים את הדרך שלו להצלחה עסקית: להגדיל הכנסות, לשפר רווחיות ולייעל את העבודה בכלים חדשניים ומעודכנים.</p>
+      <p class="h-intro__text reveal">כל עסק הוא שונה ומיוחד, עם מטרות, תהליכי עבודה, חוזקות ומשאבים משלו. לכן הליווי מתחיל בלמידה של המצב הקיים ושל מה שרוצים להשיג, ומתוך מה שכבר יש בעסק מוצאים את הדרך שלו להצלחה עסקית, להגדלת ההכנסות, לשיפור הרווחיות ולייעול העבודה בכלים חדשניים ומעודכנים.</p>
     </div>
   </section>
 
@@ -177,7 +177,8 @@ const index = [
         <h2 class="h-title">תהליך ליווי <span class="hl--mark">עסקי וארגוני</span></h2>
       </div>
       <Timeline items={steps} />
-      <!-- משפט הסיום "המטרה: ..." הוסר (נוגה, 2026-11-08). הצעות למשפט חדש ממתינות לבחירה שלה. -->
+      <!-- משפט הסיום של נוגה (2026-11-08) -->
+      <p class="h-goal reveal">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
     </div>
   </section>
 
@@ -185,7 +186,8 @@ const index = [
   <section class="section section--deep atmo h-when" style={linesStyle}>
     <div class="container">
       <div class="h-head reveal">
-        <h2 class="h-title">מתי נכון לבוא <span class="hl">לייעוץ עסקי?</span></h2>
+        <!-- הכותרת של נוגה (2026-11-08): הסיבות להתקדם דווקא עם נוגה, לא סיבות כלליות לייעוץ. הכרטיסים משלימים את המשפט ("כש...") -->
+        <h2 class="h-title">מתקדמים <span class="hl">עם נוגה</span></h2>
       </div>
       <ul class="moments">
         {
@@ -416,7 +418,7 @@ const index = [
     max-width: 44rem;
     margin: 0 auto 1rem;
     font-size: clamp(1.3rem, 2.6vw, 1.65rem);
-    font-weight: 800;
+    font-weight: 500;
     line-height: 1.45;
     color: var(--teal-dark);
   }
@@ -496,9 +498,10 @@ const index = [
     margin: 2.5rem auto 0;
     text-align: center;
     font-size: clamp(1.1rem, 2.2vw, 1.3rem);
-    font-weight: 800;
+    /* בלי בולד: נוגה לא אוהבת תוכן שכולו מודגש (2026-11-08) */
+    font-weight: 500;
     line-height: 1.55;
-    color: var(--navy);
+    color: var(--teal-dark);
   }
 
   /* ---------- 6. מתי נכון לבוא לייעוץ עסקי: ריבועים בולטים ---------- */
@@ -550,9 +553,9 @@ const index = [
   }
   .moment p {
     margin: 0;
-    font-size: clamp(1.12rem, 2vw, 1.3rem);
-    font-weight: 800;
-    line-height: 1.4;
+    font-size: clamp(1.08rem, 1.9vw, 1.22rem);
+    font-weight: 500;
+    line-height: 1.5;
     color: var(--white);
   }
 
