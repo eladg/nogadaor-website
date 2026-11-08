@@ -1,0 +1,171 @@
+---
+// "קיר תמונות" בסגנון פולארויד: כל תמונה במסגרת לבנה, מעט עקומה, עם פס "סלוטייפ" זהב.
+// בגלילה התמונות "נתלות" אחת אחרי השנייה, ובמעבר עכבר התמונה מתיישרת וקופצת קדימה.
+// בעמוד ההמלצות (נוגה, 2026-11-08: "תוסיף את התמונות החמודות האלו לעמוד של ההמלצות למטה, בצורה מדליקה קצת").
+// התמונות: נוגה שלחה אותן מכנס "עסקים במקסימום". המקור ב"חומרים גרפיים לאתר/תמונות לעמוד ההמלצות 2026-11-08".
+// הרשת: התמונה הראשונה רחבה (שני טורים), ולכן 12 משבצות, שמתחלקות שווה ל-4, 3 ו-2 טורים (שורות מאוזנות).
+import { Image } from 'astro:assets';
+
+const files = import.meta.glob<ImageMetadata>('../assets/testimonials/moments/*.jpg', { eager: true, import: 'default' });
+const pic = (num: string) => {
+  const key = Object.keys(files).find((k) => k.split('/').pop()!.startsWith(`${num}-`));
+  if (!key) throw new Error(`חסרה תמונה ${num} ב-src/assets/testimonials/moments`);
+  return files[key];
+};
+
+// תיאורים לקוראי מסך. בלי שמות של משתתפים
+const photos = [
+  { n: '01', alt: 'נוגה עם ארבע משתתפות בכנס עסקים במקסימום', wide: true, pos: '50% 30%' },
+  { n: '02', alt: 'נוגה עם משתתפת בכנס' },
+  { n: '03', alt: 'שתי משתתפות מחייכות בכנס' },
+  { n: '04', alt: 'משתתפות מצטלמות בסלפי בכנס' },
+  { n: '06', alt: 'נוגה עם שני משתתפים שמחזיקים את מחברת הכנס' },
+  { n: '05', alt: 'שלוש משתתפות ליד מדף הספרים בכנס' },
+  { n: '07', alt: 'נוגה עם משתתפת בכנס' },
+  { n: '08', alt: 'נוגה עם שתי משתתפות בכנס' },
+  { n: '09', alt: 'נוגה עם שלושה משתתפים בכנס' },
+  { n: '10', alt: 'שתי משתתפות בכנס' },
+  { n: '11', alt: 'שתי משתתפות עם כוס קפה ליד הרול-אפים של הכנס' },
+];
+// זוויות קטנות ושונות לכל תמונה, כדי שהקיר ייראה "נתלה ביד"
+const tilts = [-1.6, 2.2, -2.6, 1.4, -1.2, 2.8, -2.2, 1.8, -1.4, 2.4, -2];
+---
+
+<ul class="p-wall reveal" aria-label="תמונות מהכנס">
+  {
+    photos.map((p, i) => (
+      <li
+        class:list={['p-card', { 'p-card--wide': p.wide }]}
+        style={`--tilt:${tilts[i % tilts.length]}deg; --i:${i}; --pos:${p.pos ?? '50% 30%'}`}
+      >
+        <Image
+          src={pic(p.n)}
+          alt={p.alt}
+          widths={p.wide ? [640, 1000] : [360, 560]}
+          sizes={p.wide ? '(min-width: 64rem) 30rem, 90vw' : '(min-width: 64rem) 15rem, 45vw'}
+          loading="lazy"
+        />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .p-wall {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0.5rem 0 0;
+    max-width: 66rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6rem 1rem;
+  }
+  @media (min-width: 40rem) {
+    .p-wall {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.2rem 1.6rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .p-wall {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* מסגרת פולארויד: לבנה, עם שוליים רחבים יותר למטה */
+  .p-card {
+    position: relative;
+    margin: 0;
+    padding: 0.5rem 0.5rem 1.6rem;
+    background: var(--white);
+    border-radius: 0.3rem;
+    box-shadow:
+      0 1px 2px rgb(11 26 51 / 0.08),
+      0 14px 28px -14px rgb(11 26 51 / 0.35);
+    rotate: var(--tilt);
+    transition:
+      rotate 0.35s ease,
+      scale 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+  .p-card--wide {
+    grid-column: span 2;
+  }
+  .p-card :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: var(--pos);
+    border-radius: 0.15rem;
+  }
+  /* התמונה הרחבה בגובה של השכנות שלה: שני טורים של 4:3 פלוס הרווח ביניהם יוצא בערך 2.93:1 */
+  .p-card--wide :global(img) {
+    aspect-ratio: 2.93 / 1;
+  }
+
+  /* פס "סלוטייפ" בזהב שקוף בראש כל תמונה */
+  .p-card::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset-block-start: -0.7rem;
+    inset-inline-start: 50%;
+    width: 4.2rem;
+    height: 1.3rem;
+    translate: 50% 0;
+    rotate: calc(var(--tilt) * -2);
+    background: linear-gradient(90deg, rgb(252 220 109 / 0.75), rgb(209 154 74 / 0.6));
+    box-shadow: 0 1px 2px rgb(11 26 51 / 0.12);
+    clip-path: polygon(3% 0, 97% 4%, 100% 100%, 0 96%);
+  }
+  /* בתמונות זוגיות, פס בטורקיז, כדי שלא יהיה אחיד מדי */
+  .p-card:nth-child(even)::before {
+    background: linear-gradient(90deg, rgb(25 154 181 / 0.45), rgb(25 154 181 / 0.3));
+  }
+
+  /* במעבר עכבר או במיקוד: מתיישרת וקופצת קדימה */
+  .p-card:hover {
+    z-index: 2;
+    rotate: 0deg;
+    scale: 1.06;
+    box-shadow:
+      0 2px 4px rgb(11 26 51 / 0.1),
+      0 26px 44px -18px rgb(11 26 51 / 0.45);
+  }
+
+  /* "נתלות" אחת אחרי השנייה כשמגיעים לאזור */
+  :global(.js) .p-wall.reveal {
+    opacity: 1;
+    transform: none;
+  }
+  :global(.js) .p-wall:not(.is-in) .p-card {
+    opacity: 0;
+    translate: 0 -1.5rem;
+    rotate: calc(var(--tilt) * 4);
+  }
+  :global(.js) .p-wall.is-in .p-card {
+    transition:
+      opacity 0.5s ease calc(var(--i) * 0.07s),
+      translate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.07s),
+      rotate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.07s),
+      scale 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .p-card,
+    :global(.js) .p-wall.is-in .p-card {
+      transition: none;
+    }
+    :global(.js) .p-wall:not(.is-in) .p-card {
+      opacity: 1;
+      translate: none;
+      rotate: var(--tilt);
+    }
+    .p-card:hover {
+      scale: 1;
+    }
+  }
+</style>

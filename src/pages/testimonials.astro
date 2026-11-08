@@ -6,6 +6,7 @@ import CtaBand from '../components/CtaBand.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Carousel from '../components/Carousel.astro';
 import QuoteMarquee from '../components/QuoteMarquee.astro';
+import PhotoWall from '../components/PhotoWall.astro';
 import { featuredVideo, videos } from '../data/testimonials';
 import { allReviews } from '../data/reviews';
 // הפתק בכתב יד בפתיח: טעינה מוקדמת של גופן כתב היד (בדיקת SEO, 2026-11-08). בלי זה הגופן מגיע בחלקים,
@@ -80,6 +81,16 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
     </div>
     <!-- בדיוק באותו עיצוב כמו בעמוד הבית, אבל בשתי שורות שזזות לכיוונים הפוכים (נוגה, 2026-11-08) -->
     <QuoteMarquee reviews={allReviews} rows={2} />
+  </section>
+
+  <!-- תמונות מהכנס, בסגנון קיר פולארויד (נוגה, 2026-11-08: "למטה, בצורה מדליקה קצת").
+       הכותרת והשורה בכתב יד הן הצעה שלי, ממתינות לאישור נוגה -->
+  <section class="section t-moments" id="moments">
+    <div class="container">
+      <h2 class="t-title t-title--center">רגעים משותפים מהכנס</h2>
+      <p class="t-moments__hand">עסקים במקסימום, והאנשים שעושים אותו</p>
+      <PhotoWall />
+    </div>
   </section>
 
   <!-- סיפורי מקרה: בינתיים לא יהיו (נוגה, 2026-11-08). האזור הוסר. אם יחזרו: לא להמציא, ולוודא שכל לקוח אישר את שמו. -->
@@ -215,5 +226,28 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
 
   .t-reviews .t-title {
     margin-bottom: 1.75rem;
+  }
+
+  /* קיר התמונות: רקע בהיר עם נקודות עדינות, כמו לוח שעליו תולים תמונות */
+  .t-moments {
+    overflow: hidden;
+    background:
+      radial-gradient(circle, rgb(25 154 181 / 0.12) 1px, transparent 1.5px) 0 0 / 22px 22px,
+      radial-gradient(circle at 85% 10%, rgb(252 220 109 / 0.22), transparent 40%),
+      var(--white);
+  }
+  .t-title--center {
+    text-align: center;
+  }
+  .t-title--center::after {
+    margin-inline: auto;
+  }
+  .t-moments__hand {
+    margin: 0.6rem 0 2.25rem;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: var(--teal-dark);
+    text-wrap: balance;
   }
 </style>
