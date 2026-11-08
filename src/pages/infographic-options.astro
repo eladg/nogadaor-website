@@ -1,0 +1,496 @@
+---
+// עמוד עבודה זמני (2026-11-08): ארבע הדגמות לאינפוגרפיקה של 8 התחומים בעמוד השירותים, כדי שנוגה תבחר.
+// לא בתפריט. **למחוק אחרי שנוגה בוחרת.**
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Star from '../components/Star.astro';
+import { areas } from '../data/services';
+
+const n = areas.length;
+const r = (v: number) => Math.round(v * 100) / 100;
+
+// א. שמש וקרניים: העסק במרכז למטה, הקרניים יוצאות אל התחומים (הראשון בימין)
+const SUN_W = 100, SUN_H = 56, CX = 50, CY = 52;
+const sun = areas.map((a, i) => {
+  const th = ((i + 0.5) * Math.PI) / n;
+  const x = CX + 41 * Math.cos(th);
+  const y = CY - 40 * Math.sin(th);
+  const x1 = CX + 15 * Math.cos(th), y1 = CY - 15 * Math.sin(th);
+  const x2 = CX + 27 * Math.cos(th), y2 = CY - 26 * Math.sin(th);
+  return { ...a, left: r((x / SUN_W) * 100), top: r((y / SUN_H) * 100), x1: r(x1), y1: r(y1), x2: r(x2), y2: r(y2) };
+});
+
+// ב. קו רקיע: גובה לכל בניין (ב-rem)
+const heights = [10, 14, 8.5, 12, 15.5, 9.5, 13, 11];
+
+// ג. דרך מפותלת: תחנות לסירוגין למעלה ולמטה, מימין לשמאל; קו חלק שעובר דרכן (Catmull-Rom)
+const RW = 1000, RH = 420;
+const pts = areas.map((_, i) => ({ x: RW - 62.5 - i * 125, y: i % 2 ? 265 : 155 }));
+const all = [{ x: RW, y: 210 }, ...pts, { x: 0, y: 210 }];
+let road = `M ${all[0].x} ${all[0].y}`;
+for (let i = 0; i < all.length - 1; i++) {
+  const p0 = all[i - 1] ?? all[i], p1 = all[i], p2 = all[i + 1], p3 = all[i + 2] ?? p2;
+  const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
+  const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
+  road += ` C ${r(c1.x)} ${r(c1.y)}, ${r(c2.x)} ${r(c2.y)}, ${p2.x} ${p2.y}`;
+}
+const stops = areas.map((a, i) => ({ ...a, left: r((pts[i].x / RW) * 100), top: r((pts[i].y / RH) * 100), up: i % 2 === 0 }));
+
+// ד. מפת חיבורים: העסק במרכז, התחומים סביבו באליפסה, מחוברים למרכז וזה לזה
+const NW = 100, NH = 62, NX = 50, NY = 31;
+const net = areas.map((a, i) => {
+  const th = (i * 2 * Math.PI) / n - Math.PI / 2 + Math.PI / n;
+  const x = NX + 40 * Math.cos(th), y = NY + 24 * Math.sin(th);
+  return { ...a, x: r(x), y: r(y), left: r((x / NW) * 100), top: r((y / NH) * 100) };
+});
+---
+
+<BaseLayout title="הדגמות אינפוגרפיקה" description="עמוד עבודה זמני">
+  <section class="section">
+    <div class="container">
+      <h1 class="io-title">ארבע הדגמות לאינפוגרפיקה של 8 התחומים</h1>
+      <p class="io-note">עמוד עבודה זמני, לא בתפריט. בכל ההדגמות אותם 8 תחומים מעמוד השירותים. בוחרים אחת, ואז מלטשים אותה ומכניסים לעמוד.</p>
+    </div>
+  </section>
+
+  <!-- א. שמש וקרניים -->
+  <section class="section io-block">
+    <div class="container">
+      <h2 class="io-label">א. שמש וקרניים</h2>
+      <div class="sun" style={`aspect-ratio: ${SUN_W} / ${SUN_H}`}>
+        <svg class="sun__svg" viewBox={`0 0 ${SUN_W} ${SUN_H}`} aria-hidden="true">
+          <defs>
+            <linearGradient id="ray" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#fcdc6d" />
+              <stop offset="1" stop-color="#199ab5" />
+            </linearGradient>
+          </defs>
+          <path d={`M ${CX - 10} ${CY} A 10 10 0 0 1 ${CX + 10} ${CY}`} fill="none" stroke="#fcdc6d" stroke-width="0.5" />
+          <path d={`M ${CX - 14} ${CY} A 14 14 0 0 1 ${CX + 14} ${CY}`} fill="none" stroke="#199ab5" stroke-width="0.35" stroke-dasharray="1 1" />
+          {sun.map((s, i) => <line class="sun__ray" style={`animation-delay: ${0.15 * i}s`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} stroke="url(#ray)" stroke-width="0.45" stroke-linecap="round" />)}
+          <line x1="2" y1={CY} x2="98" y2={CY} stroke="#d8e6e7" stroke-width="0.3" />
+        </svg>
+        <div class="sun__core" style={`left: ${CX}%; top: ${(CY / SUN_H) * 100}%`}>
+          <Star size={34} />
+          <strong>העסק שלך</strong>
+        </div>
+        {
+          sun.map((s, i) => (
+            <div class="node" style={`left: ${s.left}%; top: ${s.top}%; animation-delay: ${0.15 * i + 0.3}s`}>
+              <span class="node__icon"><Icon name={s.icon} size={22} /></span>
+              <strong>{s.title}</strong>
+              <span class="node__text">{s.text}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ב. קו רקיע של בניינים -->
+  <section class="section section--deep io-block">
+    <div class="container">
+      <h2 class="io-label io-label--dark">ב. קו רקיע של בניינים</h2>
+      <p class="io-hint">מעבירים עכבר על בניין: החלונות נדלקים ומופיע ההסבר.</p>
+      <ul class="sky">
+        {
+          areas.map((a, i) => (
+            <li class="bld" tabindex="0" style={`--h: ${heights[i]}rem`}>
+              <span class="bld__tip">{a.text}</span>
+              <span class="bld__roof"><Icon name={a.icon} size={22} /></span>
+              <span class="bld__body"></span>
+              <strong class="bld__name">{a.title}</strong>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ג. דרך מפותלת -->
+  <section class="section io-block">
+    <div class="container">
+      <h2 class="io-label">ג. דרך מפותלת</h2>
+      <div class="road" style={`aspect-ratio: ${RW} / ${RH}`}>
+        <svg class="road__svg" viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true">
+          <path d={road} fill="none" stroke="#0b1a33" stroke-width="20" stroke-linecap="round" />
+          <path class="road__line" d={road} fill="none" stroke="#fcdc6d" stroke-width="3" stroke-dasharray="16 14" />
+        </svg>
+        {
+          stops.map((s, i) => (
+            <div class:list={['stop', { 'stop--up': s.up }]} style={`left: ${s.left}%; top: ${s.top}%`}>
+              <span class="stop__dot"><Icon name={s.icon} size={20} /></span>
+              <span class="stop__label">
+                <strong>{s.title}</strong>
+                <span>{s.text}</span>
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ד. מפת חיבורים -->
+  <section class="section section--mist io-block">
+    <div class="container">
+      <h2 class="io-label">ד. מפת חיבורים</h2>
+      <div class="net" style={`aspect-ratio: ${NW} / ${NH}`}>
+        <svg class="net__svg" viewBox={`0 0 ${NW} ${NH}`} aria-hidden="true">
+          {net.map((p, i) => {
+            const q = net[(i + 1) % n];
+            return <line x1={p.x} y1={p.y} x2={q.x} y2={q.y} stroke="#199ab5" stroke-opacity="0.35" stroke-width="0.25" />;
+          })}
+          {net.map((p, i) => {
+            const q = net[(i + 3) % n];
+            return <line x1={p.x} y1={p.y} x2={q.x} y2={q.y} stroke="#199ab5" stroke-opacity="0.15" stroke-width="0.2" />;
+          })}
+          {net.map((p) => <line x1={NX} y1={NY} x2={p.x} y2={p.y} stroke="#d19a4a" stroke-opacity="0.7" stroke-width="0.35" />)}
+        </svg>
+        <div class="net__core" style={`left: 50%; top: 50%`}>
+          <Star size={30} tone="white" />
+          <strong>העסק שלך</strong>
+        </div>
+        {
+          net.map((p) => (
+            <div class="node node--net" style={`left: ${p.left}%; top: ${p.top}%`}>
+              <span class="node__icon"><Icon name={p.icon} size={20} /></span>
+              <strong>{p.title}</strong>
+              <span class="node__text">{p.text}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .io-title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+  }
+  .io-note {
+    margin: 0;
+    color: #33445c;
+  }
+  .io-label {
+    margin: 0 0 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--teal-dark);
+  }
+  .io-label--dark {
+    color: var(--gold-light);
+  }
+  .io-hint {
+    margin: -1rem 0 1.5rem;
+    color: var(--on-dark-soft);
+  }
+  .io-block {
+    border-top: 1px solid var(--line);
+  }
+
+  /* צומת (תחום) משותף לשמש ולמפה */
+  .node {
+    position: absolute;
+    width: 9.5rem;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+    animation: pop 0.6s ease both;
+  }
+  .node strong {
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .node__icon {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    box-shadow: 0 10px 20px -12px rgb(11 26 51 / 0.6);
+  }
+  .node__text {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: #4a5b73;
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -40%) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  /* א. שמש */
+  .sun {
+    position: relative;
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+  .sun__svg,
+  .net__svg,
+  .road__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .sun__ray {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: draw 0.9s ease forwards;
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .sun__core {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.7rem 1.1rem 0.6rem;
+    border-radius: 1rem 1rem 0 0;
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  /* ב. קו רקיע */
+  .sky {
+    list-style: none;
+    margin: 6rem 0 0;
+    padding: 0 0 0.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  @media (max-width: 60rem) {
+    .sky {
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-top: 6rem;
+      margin-top: 0;
+    }
+  }
+  .bld {
+    position: relative;
+    flex: 1 0 6.5rem;
+    max-width: 8.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    outline: none;
+  }
+  .bld__roof {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-bottom: 0.4rem;
+    border-radius: 0.7rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .bld__body {
+    width: 100%;
+    height: var(--h);
+    border-radius: 0.6rem 0.6rem 0 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 14%, rgb(7 17 31 / 0.9) 14% 20%),
+      repeating-linear-gradient(180deg, rgb(255 255 255 / 0.13) 0 0.9rem, rgb(7 17 31 / 0.9) 0.9rem 1.5rem),
+      var(--navy-soft);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    transition: background 0.4s ease;
+  }
+  .bld:hover .bld__body,
+  .bld:focus-visible .bld__body {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 14%, rgb(7 17 31 / 0.9) 14% 20%),
+      repeating-linear-gradient(180deg, rgb(252 220 109 / 0.85) 0 0.9rem, rgb(7 17 31 / 0.9) 0.9rem 1.5rem),
+      var(--navy-soft);
+  }
+  .bld__body {
+    border-bottom: 2px solid rgb(252 220 109 / 0.6);
+  }
+  .bld__name {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--white);
+    white-space: nowrap;
+  }
+  .bld__tip {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    width: 11rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.8rem;
+    background: var(--white);
+    color: var(--navy);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .bld:hover .bld__tip,
+  .bld:focus-visible .bld__tip {
+    opacity: 1;
+    transform: none;
+  }
+  .sky + * {
+    margin-top: 2.5rem;
+  }
+  .section--deep .sky {
+    margin-bottom: 2.5rem;
+  }
+
+  /* ג. דרך */
+  .road {
+    position: relative;
+    max-width: 66rem;
+    margin-inline: auto;
+  }
+  .road__line {
+    animation: drive 30s linear infinite;
+  }
+  @keyframes drive {
+    to {
+      stroke-dashoffset: -600;
+    }
+  }
+  .stop {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .stop__dot {
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.8rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    border: 3px solid var(--white);
+    box-shadow: 0 8px 18px -10px rgb(11 26 51 / 0.7);
+  }
+  .stop__label {
+    position: absolute;
+    left: 50%;
+    width: 9rem;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    text-align: center;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: #4a5b73;
+  }
+  .stop__label strong {
+    font-size: 0.98rem;
+    color: var(--navy);
+  }
+  .stop--up .stop__label {
+    bottom: calc(100% + 0.5rem);
+  }
+  .stop:not(.stop--up) .stop__label {
+    top: calc(100% + 0.5rem);
+  }
+
+  /* ד. מפה */
+  .net {
+    position: relative;
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+  .net__core {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1.1rem;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: var(--white);
+    box-shadow: 0 16px 40px -18px rgb(25 154 181 / 0.9);
+  }
+  .node--net {
+    animation: none;
+  }
+  .node--net .node__icon {
+    background: var(--white);
+    color: var(--teal-dark);
+    border: 1px solid var(--line);
+  }
+
+  /* מסך צר: ההדגמות הופכות לרשימה (חוץ מהבניינים, שגוללים לצדדים) */
+  @media (max-width: 48rem) {
+    .sun,
+    .road,
+    .net {
+      aspect-ratio: auto !important;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .sun__svg,
+    .road__svg,
+    .net__svg {
+      display: none;
+    }
+    .node,
+    .stop,
+    .sun__core,
+    .net__core {
+      position: static;
+      transform: none;
+      width: auto;
+      animation: none;
+    }
+    .sun__core,
+    .net__core {
+      grid-column: 1 / -1;
+      border-radius: 1rem;
+    }
+    .stop__label {
+      position: static;
+      transform: none;
+      width: auto;
+      margin-top: 0.4rem;
+    }
+    .stop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .node,
+    .sun__ray,
+    .road__line {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>
