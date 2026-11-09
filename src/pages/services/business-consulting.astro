@@ -1,18 +1,16 @@
 ---
 // אסטרטגיה ושיווק, עמוד משלו (נוגה, 2026-11-09). יצא מהתבנית [slug].astro, כמו שאר עמודי השירות.
-// סבב 3: נוגה על הגרסה הקודמת "אחד העמודים המכוערים באתר, הגשר מזעזע, המסרים לא תועלתיים".
-// לכן בלי איור הגשר (הרעיון שלה נשאר, במילים, בפסקת ההסבר), וכל ניסוח מדבר על מה שהלקוח מקבל.
-// הסדר, לפי "כל עמוד חייב להתחיל הכי חזק ואז להגביר": פתיח עם הבטחה ותוכנית צמיחה מצוירת
-//   ← פס הסבר (הבעיה והתשובה) ← על מה עובדים (כהה, 6 תחומים עם מה מרוויחים) ← העתיד של העסקים (במקום / עושים)
-//   ← העקרונות ← התהליך ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
-// הטקסטים ב-src/data/strategy.ts. **טיוטה לאישור נוגה.**
+// סבב 4: המסרים מהפגישה עם שרון (drafts/strategy-messages-2026-11-09.md). ההדמיה בפתיח נמחקה ("מקטינה את המהות
+// של האסטרטגיה"), ותוכן הגשר חזר בלי איור. בלי סלנג, מילים פשוטות, ערך כבר מהפגישה הראשונה, בלי סיפורים מהשטח.
+// הסדר: פתיח ← פס הסבר (כל מומחה והפתרון שלו) ← העסק מבפנים והלקוחות מבחוץ ← מה משתפר בעסק (כהה, 6 תחומים)
+//   ← לפני שמגדילים תקציב (כל הדרך של הלקוח) ← העתיד של העסקים (במקום / עושים) ← העקרונות ← סיום.
+// בלי תוויות קטנות מעל הכותרות (נוגה). הטקסטים ב-src/data/strategy.ts. **טיוטה לאישור נוגה.**
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
-import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug } from '../../data/services';
-import { planMoves, strategyAreas, shifts, strategyPrinciples, strategySteps } from '../../data/strategy';
+import { insideOut, strategyAreas, journey, shifts, strategyPrinciples } from '../../data/strategy';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import whiteboard from '../../assets/atmosphere/light-whiteboard.webp';
@@ -22,7 +20,7 @@ const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, 
 const num = (i: number) => String(i + 1).padStart(2, '0');
 
 const description =
-  'אסטרטגיה ושיווק להגדלת הכנסות מתוך העסק שכבר בנית. בידול, מסרים, הצעות ערך, ניהול לקוחות חכם, קהילה ומותג, במהלכים ממוקדים ויישומיים.';
+  'אסטרטגיה ושיווק להגדלת המכירות מתוך העסק שכבר בנית. מבט מבחוץ, בידול ומסרים, הדרך מהפנייה ועד העסקה, לקוחות קיימים, הצעות, שיתופי פעולה, מותג וקהילה.';
 const path = '/services/business-consulting/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -33,73 +31,78 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: ההבטחה בימין, ובשמאל "תוכנית צמיחה" מצוירת מעל תמונת הלוח -->
+  <!-- 1. פתיח: ההבטחה, על תמונת הלוח שנמוגה לטקסט -->
   <section class="st-hero">
     <div class="st-hero__bg" aria-hidden="true">
-      <Image src={whiteboard} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
+      <Image src={whiteboard} alt="" widths={[640, 1024, 1600]} sizes="100vw" loading="eager" />
     </div>
-    <div class="container st-hero__grid">
-      <div>
-        <p class="st-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
-        <h1 class="st-hero__title">
-          <span>יותר לקוחות ויותר הכנסות</span>{' '}<span class="st-hero__mark">מתוך העסק שכבר בנית</span>
-        </h1>
-        <p class="st-hero__lead">
-          כל מומחה ממליץ על הפתרון שלו. כאן מתחילים מהעסק שלך, ובוחרים רק את המהלכים האסטרטגיים והשיווקיים שיביאו לו
-          הכי הרבה ערך והכנסות.
-        </p>
-        <div class="st-actions">
-          <a class="btn" href={waHref} target="_blank" rel="noopener">
-            לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
-          <a class="st-actions__link" href="#areas">על מה עובדים?</a>
-        </div>
-      </div>
-
-      <!-- תוכנית צמיחה מצוירת: איור בלבד, ולכן מוסתר מקוראי מסך. מוצג רק במחשב. -->
-      <div class="plan reveal" aria-hidden="true">
-        <div class="plan__head">
-          <span class="plan__name">תוכנית הצמיחה</span>
-          <span class="plan__chip">הרבעון הקרוב</span>
-        </div>
-        <ul class="plan__moves">
-          {
-            planMoves.map((m, i) => (
-              <li style={`--i: ${i}`}>
-                <span class="plan__check">
-                  <Icon name="check" size={14} />
-                </span>
-                {m}
-              </li>
-            ))
-          }
-        </ul>
-        <svg class="plan__curve" viewBox="0 0 300 70" preserveAspectRatio="none">
-          <path class="plan__area" d="M0 64 C60 60 90 52 130 44 S210 22 300 6 V70 H0 Z" />
-          <path class="plan__line" d="M0 64 C60 60 90 52 130 44 S210 22 300 6" />
-        </svg>
-        <p class="plan__tag"><Star size={16} /> מהלכים ממוקדים, בלי פרויקטים מסובכים</p>
+    <div class="container st-hero__inner">
+      <p class="st-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+      <h1 class="st-hero__title">
+        <span>יותר לקוחות ויותר מכירות</span>{' '}<span class="st-hero__mark">מתוך העסק שכבר בנית</span>
+      </h1>
+      <p class="st-hero__lead">
+        מבט מבחוץ שמוצא את ההזדמנויות שקשה לראות מבפנים, ובוחר את המהלכים האסטרטגיים והשיווקיים שיביאו לעסק הכי הרבה
+        ערך והכנסות.
+      </p>
+      <div class="st-actions">
+        <a class="btn" href={waHref} target="_blank" rel="noopener">
+          לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+        <a class="st-actions__link" href="#areas">מה משתפר בעסק?</a>
       </div>
     </div>
   </section>
 
-  <!-- 2. פס הסבר: הבעיה (כל מומחה והפתרון שלו) והתשובה (הגשר של נוגה, במילים) -->
+  <!-- 2. פס הסבר: כל מומחה והפתרון שלו -->
   <section class="st-explain">
     <div class="container reveal">
       <p>
-        מומחה לקמפיינים ממליץ על ממומן, מומחה לתוכן על עוד פוסטים, ומישהו אחר בטוח שהפתרון הוא אתר חדש או AI. כל רעיון
-        נשמע הגיוני, ובסוף נשארת רשימה ארוכה בלי ודאות מה באמת מתאים לעסק שלך.{' '}
-        <strong>שיווק טוב מתחיל מבפנים</strong>, ממה שהעסק יודע לעשות הכי טוב, ומתחבר בדיוק למה שהלקוחות שלו צריכים.
+        בעלי עסקים שומעים המון רעיונות. מומחה לקמפיינים ממליץ על פרסום ממומן, מומחה לתוכן על עוד פוסטים, ומישהו אחר בטוח
+        שהפתרון הוא אתר חדש או AI. כל רעיון נשמע הגיוני, ובסוף נשארת רשימה ארוכה בלי ודאות מה מתוכה מתאים לעסק שלך.{' '}
+        <strong>אסטרטגיה טובה עושה סדר</strong>, ובוחרת את מה שנכון לעסק הזה, ללקוחות שלו ולתקופה הזו.
       </p>
     </div>
   </section>
 
-  <!-- 3. על מה עובדים: 6 תחומים, ובכל אחד מה העסק מרוויח -->
+  <!-- 3. העסק מבפנים והלקוחות מבחוץ: התפיסה של נוגה, בלי איור -->
+  <section class="section st-io" aria-labelledby="io-title">
+    <div class="container">
+      <div class="center reveal">
+        <h2 id="io-title" class="sec-title st-split">
+          <span>שיווק טוב מחבר</span>{' '}<span class="hl--mark">בין העסק ללקוחות שלו</span>
+        </h2>
+        <p class="sec-lead st-io__lead">
+          כל אסטרטגיה מתחילה מבפנים. כשמכירים לעומק את העסק ומבינים בדיוק את הלקוחות, המסרים, ההצעות והמכירות מתחברים.
+        </p>
+      </div>
+      <div class="io reveal">
+        {
+          [insideOut.inside, insideOut.outside].map((side, i) => (
+            <div class:list={['io__side', { 'io__side--out': i === 1 }]}>
+              <h3 class="io__title">
+                <Icon name={i === 0 ? 'compass' : 'users'} size={24} />
+                {side.title}
+              </h3>
+              <ul>
+                {side.items.map((it) => (
+                  <li>{it}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        <p class="io__close">{insideOut.close}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. מה משתפר בעסק: 6 תחומים, ובכל אחד מה העסק מרוויח -->
   <section class="section section--deep st-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
         <h2 id="areas-title" class="sec-title st-split">
-          <span>כל מה שמביא לקוחות</span>{' '}<span class="hl">וגורם להם להישאר</span>
+          <span>כל מה שמביא לקוחות</span>{' '}<span class="hl">ומגדיל מכירות</span>
         </h2>
       </div>
       <ul class="areas">
@@ -126,8 +129,40 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 4. העתיד של העסקים: הדוגמה של נוגה, בניסוח אחר -->
-  <section class="section st-future" aria-labelledby="future-title">
+  <!-- 5. לפני שמגדילים תקציב: כל הדרך של הלקוח, מהפרסום ועד הקשר אחרי הקנייה -->
+  <section class="section st-journey" aria-labelledby="journey-title">
+    <div class="container st-journey__grid">
+      <div class="reveal">
+        <h2 id="journey-title" class="st-journey__title">
+          <span>לפני שמגדילים את תקציב הפרסום</span>{' '}<span class="hl--mark">בודקים מה קורה אחרי שהלקוח פונה</span>
+        </h2>
+        <p class="st-journey__text">
+          הרבה עסקים מנסים לגדול בעזרת עוד פרסום ועוד פניות. אבל כשהמסר לא מדויק, כשהשיחה הראשונה לא מסבירה מספיק, וכשהפגישה
+          לא עונה על מה שהלקוח צריך, גם יותר פניות לא יהפכו ליותר לקוחות.
+        </p>
+        <p class="st-journey__text st-journey__text--strong">
+          לכן בודקים את כל הדרך, מהפרסום ועד הקשר אחרי הקנייה, ומשפרים כל שלב. כך מגדילים מכירות בלי להגדיל את תקציב
+          השיווק ובלי להוסיף עובדים.
+        </p>
+      </div>
+      <ol class="journey">
+        {
+          journey.map((j, i) => (
+            <li class="journey__step reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <span class="journey__num" aria-hidden="true">{num(i)}</span>
+              <div>
+                <h3 class="journey__name">{j.title}</h3>
+                <p class="journey__q">{j.question}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. העתיד של העסקים: במקום / עושים -->
+  <section class="section section--mist st-future" aria-labelledby="future-title">
     <div class="container st-future__grid">
       <div class="reveal">
         <h2 id="future-title" class="st-future__title">
@@ -156,12 +191,12 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. העקרונות -->
-  <section class="section section--mist st-principles" aria-labelledby="principles-title">
+  <!-- 7. העקרונות -->
+  <section class="section st-principles" aria-labelledby="principles-title">
     <div class="container">
       <div class="center reveal">
         <h2 id="principles-title" class="sec-title st-split">
-          <span>אסטרטגיה שנבנית</span>{' '}<span class="hl--mark">בדיוק בשביל העסק שלך</span>
+          <span>כולם יודעים מה צריך לעשות</span>{' '}<span class="hl--mark">ההבדל הוא לגרום לזה לקרות</span>
         </h2>
       </div>
       <ol class="rules">
@@ -178,19 +213,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 6. התהליך -->
-  <section class="section st-process" aria-labelledby="process-title">
-    <div class="container">
-      <div class="center reveal">
-        <h2 id="process-title" class="sec-title st-split">
-          <span>מהיכרות עם העסק</span>{' '}<span class="hl--mark">למהלכים שיוצאים לדרך</span>
-        </h2>
-      </div>
-      <Timeline items={strategySteps} />
-    </div>
-  </section>
-
-  <!-- 7. סיום: ההזמנה של נוגה להיכרות, בכרטיס כהה בתוך אזור בהיר -->
+  <!-- 8. סיום: ההזמנה של נוגה להיכרות, בכרטיס כהה בתוך אזור בהיר -->
   <section class="section section--mist st-end" aria-labelledby="end-title">
     <div class="container">
       <div class="st-end__card reveal">
@@ -233,19 +256,20 @@ const crumbs = [
     -webkit-mask-image: linear-gradient(to left, transparent 35%, #000 85%);
     mask-image: linear-gradient(to left, transparent 35%, #000 85%);
   }
-  .st-hero__grid {
+  .st-hero__inner {
     position: relative;
-    display: grid;
-    gap: 2.5rem;
     padding-block: 2.5rem 3rem;
   }
   @media (min-width: 60rem) {
-    .st-hero__grid {
-      grid-template-columns: 1.15fr 0.85fr;
-      align-items: center;
-      gap: clamp(2rem, 5vw, 5rem);
-      min-height: min(74vh, 36rem);
+    .st-hero__inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: min(66vh, 32rem);
       padding-block: 3.5rem;
+    }
+    .st-hero__inner > * {
+      max-width: 40rem;
     }
   }
   .st-crumbs {
@@ -289,124 +313,6 @@ const crumbs = [
     color: var(--teal-dark);
   }
 
-  /* ---------- תוכנית הצמיחה המצוירת (רק במחשב) ---------- */
-  @media (max-width: 59.99rem) {
-    .plan {
-      display: none;
-    }
-  }
-  .plan {
-    position: relative;
-    width: min(100%, 26rem);
-    margin-inline: auto;
-    padding: 1.35rem 1.4rem 1.6rem;
-    border-radius: 1.5rem;
-    color: var(--on-dark);
-    background:
-      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
-      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
-      var(--navy-deep);
-    box-shadow: 0 2rem 4rem -1.5rem rgb(11 26 51 / 0.55);
-  }
-  .plan__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-  .plan__name {
-    font-weight: 900;
-    font-size: 1.05rem;
-    color: var(--white);
-  }
-  .plan__chip {
-    padding: 0.25rem 0.7rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--navy);
-    background: var(--gold-gradient);
-  }
-  .plan__moves {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.55rem;
-  }
-  .plan__moves li {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.65rem 0.8rem;
-    border-radius: 0.8rem;
-    background: rgb(255 255 255 / 0.06);
-    border: 1px solid rgb(255 255 255 / 0.1);
-    font-size: 0.95rem;
-    transition:
-      opacity 0.5s ease,
-      transform 0.5s ease;
-    transition-delay: calc(var(--i) * 0.15s + 0.2s);
-  }
-  .js .plan:not(.is-in) .plan__moves li {
-    opacity: 0;
-    transform: translateX(-0.75rem);
-  }
-  .plan__check {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.45rem;
-    background: var(--teal);
-    color: var(--white);
-  }
-  .plan__moves li:nth-child(even) .plan__check {
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .plan__curve {
-    display: block;
-    width: 100%;
-    height: 4.5rem;
-    margin-top: 1rem;
-    /* הצמיחה עולה משמאל לימין, כמו בכל גרף, גם בעמוד בעברית */
-  }
-  .plan__area {
-    fill: rgb(25 154 181 / 0.18);
-  }
-  .plan__line {
-    fill: none;
-    stroke: var(--gold-light);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
-    stroke-dasharray: 400;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1.4s ease 0.8s;
-  }
-  .js .plan:not(.is-in) .plan__line {
-    stroke-dashoffset: 400;
-  }
-  .plan__tag {
-    position: absolute;
-    inset-block-end: -1.1rem;
-    inset-inline-start: 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.35);
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: var(--navy);
-  }
-
   /* ---------- פס הסבר: תכלת צר, הטקסט לרוחב העמוד ---------- */
   .st-explain {
     padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
@@ -427,36 +333,96 @@ const crumbs = [
   }
 
   /* ---------- כותרות אזור ---------- */
-  .st-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0 0 0.6rem;
-    font-size: 0.9rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    color: var(--teal-dark);
-  }
-  .st-eyebrow::before,
-  .st-eyebrow::after {
-    content: '';
-    width: 2rem;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--gold-gradient);
-  }
-  .st-eyebrow--start::after {
-    display: none;
-  }
-  .st-eyebrow--dark {
-    color: var(--gold-light);
-  }
   .st-split {
     margin-bottom: 2.25rem;
   }
   .st-split > span {
     display: table;
     margin-inline: auto;
+  }
+
+  /* ---------- העסק מבפנים והלקוחות מבחוץ: שני טורים, ופס כהה שמחבר ביניהם ---------- */
+  .st-io__lead {
+    max-width: 44rem;
+    margin: -1.25rem auto 2.25rem;
+  }
+  .io {
+    display: grid;
+    max-width: 62rem;
+    margin-inline: auto;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 1.5rem 3rem -2rem rgb(11 26 51 / 0.35);
+  }
+  @media (min-width: 48rem) {
+    .io {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .io__side {
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--white);
+    border-top: 4px solid var(--teal);
+  }
+  .io__side--out {
+    background: var(--mist);
+    border-top-color: var(--gold-dark);
+  }
+  .io__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .io__title :global(svg) {
+    color: var(--teal-dark);
+  }
+  .io__side--out .io__title :global(svg) {
+    color: var(--gold-dark);
+  }
+  .io__side ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .io__side li {
+    position: relative;
+    padding-inline-start: 1.1rem;
+    line-height: 1.55;
+    color: #33445c;
+  }
+  .io__side li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.6em;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 0.1rem;
+    background: var(--teal);
+    transform: rotate(45deg);
+  }
+  .io__side--out li::before {
+    background: var(--gold-dark);
+  }
+  .io__close {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 1.1rem 1.5rem;
+    text-align: center;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--white);
+    background:
+      radial-gradient(20rem 8rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      var(--navy-deep);
   }
 
   /* ---------- על מה עובדים: כרטיסי זכוכית, הכול באותו גובה ---------- */
@@ -531,6 +497,94 @@ const crumbs = [
     color: var(--teal);
   }
 
+  /* ---------- לפני שמגדילים תקציב: טקסט בימין, הדרך של הלקוח בשמאל ---------- */
+  .st-journey__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 60rem) {
+    .st-journey__grid {
+      grid-template-columns: 1fr 1.05fr;
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  .st-journey__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .st-journey__title > span {
+    display: table;
+  }
+  .st-journey__text {
+    margin: 0 0 1rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .st-journey__text--strong {
+    margin: 0;
+    padding-inline-start: 1rem;
+    border-inline-start: 3px solid var(--gold-dark);
+    color: var(--navy);
+  }
+  .journey {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+  }
+  /* קו שמחבר בין השלבים */
+  .journey::before {
+    content: '';
+    position: absolute;
+    inset-block: 1.5rem;
+    inset-inline-start: 1.6rem;
+    width: 2px;
+    background: linear-gradient(180deg, var(--teal), var(--gold-dark));
+    opacity: 0.5;
+  }
+  .journey__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem 1.25rem 1rem 1rem;
+    border-radius: 1rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .journey__num {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    font-weight: 900;
+    color: var(--white);
+    background: var(--teal-dark);
+  }
+  .journey__step:nth-child(even) .journey__num {
+    color: var(--navy);
+    background: var(--gold-gradient);
+  }
+  .journey__name {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .journey__q {
+    margin: 0;
+    line-height: 1.55;
+    color: #33445c;
+  }
+
   /* ---------- העתיד של העסקים: טקסט בימין, "במקום / עושים" בשמאל ---------- */
   .st-future__grid {
     display: grid;
@@ -572,7 +626,7 @@ const crumbs = [
     gap: 1rem;
     padding: 1rem 1.25rem;
     border-radius: 1rem;
-    background: var(--mist);
+    background: var(--white);
     border: 1px solid var(--line);
   }
   .shift__from {
@@ -687,19 +741,5 @@ const crumbs = [
   }
   .st-end__btn {
     font-size: 1.1rem;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .plan__moves li,
-    .plan__line {
-      transition: none;
-    }
-    .js .plan:not(.is-in) .plan__moves li {
-      opacity: 1;
-      transform: none;
-    }
-    .js .plan:not(.is-in) .plan__line {
-      stroke-dashoffset: 0;
-    }
   }
 </style>
