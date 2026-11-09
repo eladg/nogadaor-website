@@ -101,10 +101,15 @@ const ld = [...schema, breadcrumbSchema(Astro.site, crumbs)].filter(Boolean) as 
         var io = new IntersectionObserver(
           function (entries) {
             entries.forEach(function (e) {
-              if (e.isIntersecting) {
-                e.target.classList.add('is-in');
-                io.unobserve(e.target);
-              }
+              if (!e.isIntersecting) return;
+              // קוביות באותה רשימה מופיעות יחד, גם אלה שעוד מחוץ למסך בשורה שגוללים לצדדים
+              var group = e.target.parentElement
+                ? e.target.parentElement.querySelectorAll(':scope > .reveal')
+                : [e.target];
+              Array.prototype.forEach.call(group, function (el) {
+                el.classList.add('is-in');
+                io.unobserve(el);
+              });
             });
           },
           { rootMargin: '0px 0px -8% 0px' }

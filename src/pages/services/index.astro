@@ -233,8 +233,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     color: var(--navy);
     transition: transform 0.3s ease;
   }
-  .svc-row:hover .svc-row__icon {
-    transform: translateY(-3px) rotate(-4deg);
+  @media (hover: hover) {
+    .svc-row:hover .svc-row__icon {
+      transform: translateY(-3px) rotate(-4deg);
+    }
   }
   .svc-row__title {
     margin: 0;
@@ -311,8 +313,10 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     box-shadow: 0 18px 34px -24px rgb(0 0 0 / 0.9);
     transition: transform 0.3s ease;
   }
-  .area:hover {
-    transform: translateY(-4px);
+  @media (hover: hover) {
+    .area:hover {
+      transform: translateY(-4px);
+    }
   }
   .area__icon {
     display: grid;

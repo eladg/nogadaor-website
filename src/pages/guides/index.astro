@@ -178,8 +178,10 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
     display: block;
     transition: transform 0.3s ease;
   }
-  .item:hover .item__cover {
-    transform: translateY(-4px);
+  @media (hover: hover) {
+    .item:hover .item__cover {
+      transform: translateY(-4px);
+    }
   }
   /* מדריך שעוד בכתיבה: בלי קישור, עם תג "בקרוב" */
   .item--soon .item__cover {
@@ -264,9 +266,14 @@ const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) 
       box-shadow 0.25s ease,
       border-color 0.25s ease;
   }
+  @media (hover: hover) {
+    .lecture:hover,
+    .lecture:focus-within {
+      translate: 0 -4px;
+    }
+  }
   .lecture:hover,
   .lecture:focus-within {
-    translate: 0 -4px;
     border-color: rgb(252 220 109 / 0.55);
     box-shadow: 0 28px 48px -28px rgb(7 17 31 / 0.7);
   }

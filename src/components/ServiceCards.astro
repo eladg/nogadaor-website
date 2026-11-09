@@ -145,7 +145,10 @@ const H = headingLevel;
 
   /* מגע או פחות תנועה: בלי היפוך. שני הצדדים זה מתחת לזה, בכרטיס אחד */
   @media (hover: none), (prefers-reduced-motion: reduce) {
+    /* החלק התחתון נמתח עד סוף הכרטיס, כך שכל הכרטיסים בשורה באותו אורך בדיוק (נוגה, 2026-11-09) */
     .svc__inner {
+      display: flex;
+      flex-direction: column;
       min-height: 0;
       transform: none !important;
       border-radius: 1.25rem;
@@ -164,6 +167,8 @@ const H = headingLevel;
       padding-bottom: 1rem;
     }
     .svc__back {
+      flex: 1;
+      justify-content: flex-start;
       padding-block: 1.1rem 1.25rem;
     }
   }

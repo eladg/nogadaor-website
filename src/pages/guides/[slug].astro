@@ -715,8 +715,12 @@ const crumbs = [
       box-shadow 0.25s ease;
   }
   .g-more__item:hover {
-    transform: translateY(-3px);
     box-shadow: 0 20px 36px -28px rgb(11 26 51 / 0.55);
+  }
+  @media (hover: hover) {
+    .g-more__item:hover {
+      transform: translateY(-3px);
+    }
   }
   .g-more__cover {
     width: 100%;

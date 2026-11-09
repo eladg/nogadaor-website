@@ -528,8 +528,13 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       border-color 0.3s ease;
   }
   .moment:hover {
-    transform: translateY(-4px);
     border-color: rgb(252 220 109 / 0.6);
+  }
+  /* הרמה רק במחשב עם עכבר, בטלפון הקוביות לא זזות */
+  @media (hover: hover) {
+    .moment:hover {
+      transform: translateY(-4px);
+    }
   }
   .moment__icon {
     display: grid;
@@ -685,9 +690,11 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     transform: translateX(-120%);
     animation: quiz-shine 3.6s ease-in-out infinite;
   }
-  .h-quiz__btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 22px 50px -14px rgb(252 220 109 / 0.85);
+  @media (hover: hover) {
+    .h-quiz__btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 22px 50px -14px rgb(252 220 109 / 0.85);
+    }
   }
   @keyframes quiz-shine {
     0%,
@@ -868,8 +875,10 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   .guide-card :global(.cc) {
     transition: transform 0.3s ease;
   }
-  .guide-card a:hover :global(.cc) {
-    transform: translateY(-4px);
+  @media (hover: hover) {
+    .guide-card a:hover :global(.cc) {
+      transform: translateY(-4px);
+    }
   }
   .guide-card__title {
     display: block;

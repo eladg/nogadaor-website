@@ -91,7 +91,12 @@ const policies = [
   .site-footer__icons a:focus-visible {
     background: var(--gold-gradient);
     color: var(--navy);
-    transform: translateY(-2px);
+  }
+  /* הרמה קטנה רק במחשב עם עכבר, כדי שבטלפון שום דבר לא יזוז מתחת לאצבע */
+  @media (hover: hover) {
+    .site-footer__icons a:hover {
+      transform: translateY(-2px);
+    }
   }
   .site-footer__policies {
     list-style: none;

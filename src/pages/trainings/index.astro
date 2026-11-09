@@ -175,6 +175,7 @@ const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURICompon
     display: none;
   }
   .topics-nav li {
+    display: flex;
     flex: none;
     margin: 0;
   }
@@ -285,8 +286,10 @@ const orderHref = (title: string) => `${contact.whatsapp}?text=${encodeURICompon
     display: block;
     transition: transform 0.3s ease;
   }
-  .tcard:hover .tcard__cover {
-    transform: translateY(-4px);
+  @media (hover: hover) {
+    .tcard:hover .tcard__cover {
+      transform: translateY(-4px);
+    }
   }
   .tcard__title {
     align-self: start;
