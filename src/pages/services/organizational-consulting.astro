@@ -5,6 +5,8 @@
 // סבב 3 (נוגה): בלי ארבע השכבות ובלי הפרק "מה שמודדים גדל" (מאפיין אחד בתועלות), תועלות במקום עקרונות,
 // ניסוחים של תוצאה ולא של תהליך, ומשפט עדין שלא מחפשים שינויים גדולים.
 // נוגה (2026-11-09): בלי תוויות קטנות מעל הכותרות, והמשפט העדין ("שינוי לא צריך להיות גדול...") בפסקת הפתיח.
+// סבב 7 (נוגה): התחומים בשני השלבים מההרצאות שלה, "איך מנהלים בחברות גדולות" בפס הבנק, "כולם יודעים מה לעשות,
+// אבל לא עוצרים לעשות" ככותרת התהליך, וההמלצה של זיו אדר בסיום.
 // סבב 6 (נוגה): "לא קולעים למה שאני ולמי שאני". סדר וזרימה, חיבור למגמות, התייעלות, משימות שתומכות בשיווק ובשימור,
 // ומבנה שנבנה סביב תהליכי העבודה. המשפט המאושר חזר לפתיח כלשונו, והדוגמאות מסבב 5 ירדו.
 // סבב 5 (נוגה): פתיח של שתי שורות, פסקת מסר בניסוח חד יותר עם הכותרת "ניהול טוב נראה בדוח רווח והפסד",
@@ -19,12 +21,15 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug } from '../../data/services';
-import { orgAreas, orgSteps } from '../../data/org';
+import { orgStages, orgSteps } from '../../data/org';
+import { allReviews } from '../../data/reviews';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import team from '../../assets/atmosphere/light-team.webp';
 
 const s = serviceBySlug('organizational-consulting')!;
+// ההמלצה של זיו אדר (פייסבוק), בנוסח שנוגה אישרה ב-reviews.ts, בלי שינוי
+const ziv = allReviews.find((r) => r.name === 'זיו אדר');
 const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, אשמח לשמוע על ייעוץ ארגוני')}`;
 
 const description =
@@ -79,7 +84,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 3. תחומי העבודה: 6 -->
+  <!-- 3. תחומי העבודה: 6, בשני השלבים מההרצאות של נוגה -->
   <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
@@ -87,28 +92,36 @@ const crumbs = [
           <span>מבנה, תהליכים וניהול</span>{' '}<span class="hl">שפועלים כמערכת אחת</span>
         </h2>
       </div>
-      <ul class="areas">
-        {
-          orgAreas.map((a, i) => (
-            <li class="area reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
-              <span class="area__icon">
-                <Icon name={a.icon} size={28} />
-              </span>
-              <h3 class="area__title">{a.title}</h3>
-              <p class="area__text">{a.text}</p>
-            </li>
-          ))
-        }
-      </ul>
+      {
+        orgStages.map((st, si) => (
+          <div class="stage">
+            <h3 class="stage__title reveal">
+              <span class="stage__num">שלב {si + 1}</span>{' '}{st.title}
+            </h3>
+            <ul class="areas">
+              {st.areas.map((a, i) => (
+                <li class="area reveal" style={`transition-delay: ${i * 0.1}s`}>
+                  <span class="area__icon">
+                    <Icon name={a.icon} size={28} />
+                  </span>
+                  <h4 class="area__title">{a.title}</h4>
+                  <p class="area__text">{a.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </div>
   </section>
 
-  <!-- 4. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
+  <!-- 4. הניסיון בבנק: איך מנהלים בחברות גדולות (מההרצאה של נוגה) -->
   <section class="og-band">
     <div class="container og-band__inner reveal">
       <span class="og-band__big">20 שנה</span>
       <span class="og-band__text">
-        בהנהלה של בנק גדול, בבניית נהלים, בקרות ודוחות עבודה שהניעו עשרות סניפים ומאות יועצי השקעות
+        בהנהלה של בנק גדול, שבו הניהול נשען על חזון, אסטרטגיה, תכנון שנתי וניהול שוטף. אותה תשתית ניהולית, בהתאמה
+        לגודל ולאופי של כל ארגון ומחלקה.
       </span>
     </div>
   </section>
@@ -118,16 +131,28 @@ const crumbs = [
     <div class="container">
       <div class="center reveal">
         <h2 id="process-title" class="sec-title og-split">
-          <span>מאבחון</span>{' '}<span class="hl--mark">להטמעה בשטח</span>
+          <span>כולם יודעים מה צריך לעשות</span>{' '}<span class="hl--mark">מעטים עוצרים לעשות את זה</span>
         </h2>
       </div>
       <Timeline items={orgSteps} />
     </div>
   </section>
 
-  <!-- 6. סיום: כרטיס כהה בתוך אזור בהיר -->
+  <!-- 6. סיום: ההמלצה של זיו אדר, וכרטיס כהה בתוך אזור בהיר -->
   <section class="section og-end" aria-labelledby="end-title">
     <div class="container">
+      {
+        ziv && (
+          <figure class="og-quote reveal">
+            <blockquote>
+              <p>{ziv.text}</p>
+            </blockquote>
+            <figcaption>
+              <strong>{ziv.name}</strong> <span>מקור {ziv.source}</span>
+            </figcaption>
+          </figure>
+        )
+      }
       <div class="og-end__card reveal">
         <Star size={30} />
         <h2 id="end-title" class="og-end__title">
@@ -328,6 +353,59 @@ const crumbs = [
     margin: 0;
     line-height: 1.65;
     color: var(--on-dark-soft);
+  }
+
+  /* ---------- שני השלבים ---------- */
+  .stage + .stage {
+    margin-top: 1.75rem;
+  }
+  .stage__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.85rem;
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.35rem, 2.6vw, 1.65rem);
+    font-weight: 900;
+    color: var(--white);
+  }
+  .stage__num {
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+
+  /* ---------- ההמלצה של זיו ---------- */
+  .og-quote {
+    max-width: 46rem;
+    margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+  .og-quote blockquote {
+    margin: 0;
+  }
+  .og-quote p {
+    margin: 0 0 1rem;
+    font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--navy);
+  }
+  .og-quote p::before,
+  .og-quote p::after {
+    content: '״';
+    color: var(--gold-dark);
+    font-weight: 900;
+  }
+  .og-quote figcaption {
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+  .og-quote figcaption strong {
+    color: var(--navy);
   }
 
   /* ---------- 20 שנה בבנק ---------- */
