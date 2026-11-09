@@ -1,8 +1,9 @@
 ---
 // פגישת ייעוץ, עמוד משלו (נוגה, 2026-11-09): "עמוד מאוד שימושי, מרשים ושונה", כל סוגי הפגישות אחת אחרי השנייה,
 // בלי פגישת פיננסים, עם תמונות מזמינות, ושיהיה ברור מאוד איזו בעיה כל פגישה פותרת ועם מה יוצאים.
-// הסדר: פתיח עם התמונה של נוגה ← "מה הכי בוער" (בורר שמוביל לפגישה) ← ארבעה פרקים, פגישה בכל פרק
-//   (האתגר, מה עושים בפגישה, יוצאים עם, המלצה אמיתית וכפתור וואטסאפ עם שם הפגישה) ← איך קובעים.
+// הסדר: פתיח (נוגה לוחצת יד ללקוח) ← "מה הכי בוער" (בורר שמוביל לפגישה) ← ארבעה פרקים, פגישה בכל פרק
+//   (משפט הפתיח של נוגה, מה עושים בפגישה, יוצאים עם, המלצה אמיתית וכפתור וואטסאפ עם שם הפגישה) ← איך קובעים.
+// כל התמונות הן תמונות האילוסטרציה של פגישות עם לקוחות שנוגה שלחה (2026-11-09).
 // הטקסטים ב-src/data/services.ts (topics). ההמלצות מ-reviews.ts לפי שם, בנוסח של נוגה בלי שינוי.
 // אין כאן "משתלב עם": הוא הציג את הליווי הפיננסי.
 import { Image } from 'astro:assets';
@@ -11,34 +12,34 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import { serviceBySlug } from '../../data/services';
 import { allReviews } from '../../data/reviews';
-import { contact, socials } from '../../data/contact';
+import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 
-import bench from '../../assets/about/gallery/03-bench-portrait.jpg';
-import lookingAhead from '../../assets/about/gallery/17-looking-ahead.jpg';
-import library from '../../assets/testimonials/moments/09-four-library.jpg';
-import stageSlide from '../../assets/about/gallery/13-stage-slide.jpg';
-import { instagramPosts } from '../../data/instagram';
+// תמונות האילוסטרציה של פגישות עם לקוחות שנוגה שלחה (2026-11-09). המקור ב"חומרים גרפיים לאתר/תמונות לפגישות ייעוץ 2026-11-09".
+import handshakeMan from '../../assets/consulting/handshake-man.webp';
+import handshakeWoman from '../../assets/consulting/handshake-woman.webp';
+import explaining from '../../assets/consulting/explaining-to-client.webp';
+import laptop from '../../assets/consulting/laptop-laughing.webp';
+import group from '../../assets/consulting/group-of-three.webp';
+import writing from '../../assets/consulting/writing-notebook.webp';
 
 const s = serviceBySlug('consulting-session')!;
 const topics = s.topics ?? [];
 
-// תמונה לכל פגישה. בנוכחות בדיגיטל: טלפון עם סרטון של נוגה מהאינסטגרם, ואייקוני הרשתות סביבו.
+// תמונה לכל פגישה. pos = החיתוך, כך שנוגה תמיד בתמונה.
 const photos: Record<string, { src: ImageMetadata; alt: string; pos: string }> = {
-  strategy: { src: lookingAhead, alt: 'נוגה על הבמה, מביטה קדימה', pos: '45% 30%' },
-  community: { src: library, alt: 'נוגה עם משתתפים בכנס עסקים במקסימום', pos: '50% 35%' },
-  presentation: { src: stageSlide, alt: 'נוגה מרצה מול מצגת בכנס', pos: '60% 40%' },
+  strategy: { src: explaining, alt: 'נוגה מסבירה ללקוח בפגישת ייעוץ', pos: '45% 40%' },
+  digital: { src: laptop, alt: 'נוגה ולקוחה צוחקות מול המחשב בפגישה', pos: '85% 35%' },
+  community: { src: group, alt: 'נוגה בפגישה עם שני לקוחות', pos: '10% 35%' },
+  presentation: { src: writing, alt: 'נוגה כותבת במחברת לצד לקוחה', pos: '30% 35%' },
 };
-// סרטון של נוגה מהאינסטגרם ("התייעלות יכולה לייצר גם הגדלת הכנסות"), מוביל לפוסט עצמו
-const reel = instagramPosts.find((p) => p.href.includes('DMneYkXocck'))!;
-const floating = socials.filter((x) => ['instagram', 'linkedin', 'facebook', 'tiktok', 'youtube'].includes(x.icon));
 
 const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
 const reviewOf = (name?: string) => (name ? allReviews.find((r) => r.name === name) : undefined);
 const num = (i: number) => String(i + 1).padStart(2, '0');
 
 const description =
-  'פגישת ייעוץ עסקי בנושא אחד, מיקוד אסטרטגי, נוכחות שיווקית בדיגיטל, בניית קהילה או בניית מצגת להדרכה ולוובינר. עובדים בפועל, מקבלים החלטות, ויוצאים עם כיוון ברור, סיכום מסודר והקלטה.';
+  'פגישת ייעוץ עסקי בנושא אחד, ייעוץ אסטרטגי, נוכחות שיווקית בדיגיטל, בניית קהילה או בניית הדרכה ווובינר. עובדים בפועל, מקבלים החלטות, ויוצאים עם כיוון ברור, סיכום מסודר והקלטה.';
 const path = '/services/consulting-session/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -49,10 +50,10 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: נוגה בצד, והטקסט על רקע בהיר -->
+  <!-- 1. פתיח: נוגה לוחצת יד ללקוח, בצד שמאל ופונה אל הטקסט -->
   <section class="cs-hero">
     <div class="cs-hero__media">
-      <Image src={bench} alt="נוגה דיין אור" widths={[480, 800, 1066]} sizes="(min-width: 60rem) 42vw, 100vw" loading="eager" />
+      <Image src={handshakeMan} alt="נוגה לוחצת יד ללקוח בתחילת פגישת ייעוץ" widths={[640, 1024, 1536]} sizes="(min-width: 60rem) 50vw, 100vw" loading="eager" />
     </div>
     <div class="container cs-hero__inner">
       <div class="cs-hero__text">
@@ -92,7 +93,10 @@ const crumbs = [
             <li>
               <a class="pick reveal" href={`#${t.id}`}>
                 <span class="pick__num" aria-hidden="true">{num(i)}</span>
-                <span class="pick__pain">{t.pain}</span>
+                <span class="pick__text">
+                  <span class="pick__pain">{t.pain}</span>
+                  <span class="pick__promise">{t.promise}</span>
+                </span>
                 <span class="pick__go">
                   <Icon name={t.icon} size={20} />
                   {t.title}
@@ -122,33 +126,19 @@ const crumbs = [
               <h2 id={`${t.id}-title`} class="ch__title">
                 {t.title}
               </h2>
-              <p class="ch__label">האתגר</p>
-              <p class="ch__challenge">{t.challenge}</p>
+              <p class="ch__challenge">{t.pain}</p>
+              <p class="ch__promise">{t.promise}</p>
             </div>
 
             <div class="ch__media reveal">
-              {photo ? (
+              {photo && (
                 <Image
                   src={photo.src}
                   alt={photo.alt}
-                  widths={[480, 800, 1200]}
-                  sizes="(min-width: 60rem) 44vw, 100vw"
+                  widths={[640, 1024, 1536]}
+                  sizes="(min-width: 60rem) 46vw, 100vw"
                   style={`object-position: ${photo.pos}`}
                 />
-              ) : (
-                <div class="phone-stage">
-                  <a class="phone" href={reel.href} target="_blank" rel="noopener">
-                    <Image src={reel.image} alt={reel.alt} widths={[361]} sizes="15rem" />
-                    <span class="sr-only"> (הסרטון באינסטגרם, נפתח בלשונית חדשה)</span>
-                  </a>
-                  <ul class="phone-stage__icons" aria-hidden="true">
-                    {floating.map((x, k) => (
-                      <li style={`--k: ${k}`}>
-                        <Icon name={x.icon as any} size={24} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               )}
             </div>
 
@@ -198,6 +188,10 @@ const crumbs = [
   <section class:list={['section cs-end', { 'section--mist': topics.length % 2 === 0 }]} aria-labelledby="end-title">
     <div class="container">
       <div class="cs-end__card reveal">
+        <div class="cs-end__media">
+          <Image src={handshakeWoman} alt="נוגה לוחצת יד ללקוחה" widths={[640, 1024]} sizes="(min-width: 60rem) 26rem, 100vw" />
+        </div>
+        <div class="cs-end__content">
         <Star size={30} />
         <h2 id="end-title" class="cs-end__title">
           <span>בוחרים נושא</span>{' '}<span class="hl">ומתאמים בוואטסאפ</span>
@@ -215,6 +209,7 @@ const crumbs = [
           <a href={wa('היי נוגה, אשמח להתייעץ איזו פגישת ייעוץ מתאימה לי')} target="_blank" rel="noopener">
             כתבו בכמה מילים מה מעסיק אתכם<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, ובוחרים יחד.
         </p>
+        </div>
       </div>
     </div>
   </section>
@@ -235,7 +230,7 @@ const crumbs = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 22%;
+    object-position: 30% 30%;
     /* בטלפון התמונה נעלמת כלפי מטה אל הטקסט */
     -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
@@ -255,11 +250,11 @@ const crumbs = [
       position: absolute;
       inset-block: 0;
       inset-inline-end: 0;
-      width: 44%;
+      width: 52%;
       height: auto;
     }
     .cs-hero__media :global(img) {
-      object-position: 50% 25%;
+      object-position: 28% 35%;
       -webkit-mask-image: linear-gradient(to right, #000 55%, transparent 100%);
       mask-image: linear-gradient(to right, #000 55%, transparent 100%);
     }
@@ -400,11 +395,21 @@ const crumbs = [
       grid-row: auto;
     }
   }
+  .pick__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
   .pick__pain {
-    font-size: clamp(1.12rem, 2.3vw, 1.4rem);
-    font-weight: 700;
-    line-height: 1.45;
+    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+    font-weight: 800;
+    line-height: 1.4;
     color: var(--navy);
+  }
+  .pick__promise {
+    font-size: 1.02rem;
+    line-height: 1.55;
+    color: #4a5b73;
   }
   .pick__go {
     display: inline-flex;
@@ -523,6 +528,13 @@ const crumbs = [
     line-height: 1.5;
     color: var(--navy);
   }
+  .ch__promise {
+    margin: 0.85rem 0 0;
+    font-size: clamp(1.08rem, 2vw, 1.22rem);
+    line-height: 1.65;
+    color: var(--teal-dark);
+    font-weight: 600;
+  }
   .ch__body p:not(.ch__label) {
     font-size: 1.08rem;
     line-height: 1.8;
@@ -554,79 +566,6 @@ const crumbs = [
       position: absolute;
       inset: 0;
       aspect-ratio: auto;
-    }
-  }
-
-  /* נוכחות בדיגיטל: טלפון עם סרטון של נוגה, ואייקוני הרשתות מרחפים סביבו */
-  .phone-stage {
-    position: relative;
-    height: 100%;
-    min-height: 24rem;
-    display: grid;
-    place-items: center;
-    padding-block: 2rem;
-    border-radius: 1.75rem;
-    background:
-      radial-gradient(22rem 16rem at 20% 10%, rgb(25 154 181 / 0.35), transparent 70%),
-      radial-gradient(20rem 14rem at 85% 90%, rgb(209 154 74 / 0.25), transparent 72%),
-      var(--navy-deep);
-    overflow: hidden;
-  }
-  @media (min-width: 60rem) {
-    .phone-stage {
-      position: absolute;
-      inset: 0;
-    }
-  }
-  .phone {
-    display: block;
-    position: relative;
-    width: min(13rem, 52vw);
-    aspect-ratio: 9 / 18.5;
-    border-radius: 2.2rem;
-    border: 0.55rem solid #050d1c;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.15),
-      0 2rem 4rem -1rem rgb(0 0 0 / 0.6);
-    transform: rotate(-4deg);
-  }
-  .phone :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .phone-stage__icons {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .phone-stage__icons li {
-    position: absolute;
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.9rem;
-    background: var(--white);
-    color: var(--teal-dark);
-    box-shadow: 0 0.75rem 1.5rem -0.5rem rgb(0 0 0 / 0.45);
-    animation: bob 5s ease-in-out infinite;
-    animation-delay: calc(var(--k) * -1s);
-  }
-  .phone-stage__icons li:nth-child(1) { top: 12%; right: 14%; }
-  .phone-stage__icons li:nth-child(2) { top: 30%; left: 10%; color: var(--gold-dark); }
-  .phone-stage__icons li:nth-child(3) { bottom: 26%; right: 9%; }
-  .phone-stage__icons li:nth-child(4) { bottom: 10%; left: 18%; color: var(--gold-dark); }
-  .phone-stage__icons li:nth-child(5) { top: 52%; right: 22%; display: none; }
-  @media (min-width: 60rem) {
-    .phone-stage__icons li:nth-child(5) {
-      display: grid;
-    }
-  }
-  @keyframes bob {
-    50% {
-      transform: translateY(-0.6rem);
     }
   }
 
@@ -721,10 +660,12 @@ const crumbs = [
   }
 
   /* ---------- איך קובעים ---------- */
+  /* כרטיס כהה: תמונה של לחיצת יד בצד, והצעדים לידה */
   .cs-end__card {
-    max-width: 58rem;
+    display: grid;
+    max-width: 66rem;
     margin-inline: auto;
-    padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+    overflow: hidden;
     border-radius: 2rem;
     text-align: center;
     color: var(--on-dark);
@@ -732,6 +673,32 @@ const crumbs = [
       radial-gradient(30rem 18rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
       radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.18), transparent 72%),
       var(--navy-deep);
+  }
+  .cs-end__media :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: 35% 35%;
+  }
+  .cs-end__content {
+    padding: clamp(1.75rem, 5vw, 3rem) clamp(1.25rem, 4vw, 3rem);
+  }
+  @media (min-width: 60rem) {
+    .cs-end__card {
+      grid-template-columns: 1fr 1.1fr;
+      align-items: center;
+    }
+    .cs-end__media {
+      order: 2;
+      align-self: stretch;
+    }
+    .cs-end__media :global(img) {
+      aspect-ratio: auto;
+      -webkit-mask-image: linear-gradient(to right, #000 70%, transparent 100%);
+      mask-image: linear-gradient(to right, #000 70%, transparent 100%);
+    }
   }
   .cs-end__title {
     margin: 0.5rem 0 1.75rem;
@@ -745,18 +712,12 @@ const crumbs = [
   }
   .cs-steps {
     list-style: none;
-    margin: 0 0 2rem;
+    max-width: 26rem;
+    margin: 0 auto 2rem;
     padding: 0;
     display: grid;
     gap: 1rem;
     text-align: start;
-  }
-  @media (min-width: 48rem) {
-    .cs-steps {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      text-align: center;
-    }
   }
   .cs-steps li {
     display: flex;
@@ -765,11 +726,6 @@ const crumbs = [
     font-size: 1.08rem;
     line-height: 1.5;
     color: var(--on-dark);
-  }
-  @media (min-width: 48rem) {
-    .cs-steps li {
-      flex-direction: column;
-    }
   }
   .cs-steps__n {
     flex: none;
@@ -800,9 +756,6 @@ const crumbs = [
     .pick__arrow,
     .ch__cta {
       transition: none;
-    }
-    .phone-stage__icons li {
-      animation: none;
     }
   }
 </style>
