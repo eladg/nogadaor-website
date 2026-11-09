@@ -20,7 +20,8 @@ import handshakeMan from '../../assets/consulting/handshake-man.webp';
 import handshakeWoman from '../../assets/consulting/handshake-woman.webp';
 import explaining from '../../assets/consulting/explaining-to-client.webp';
 import laptop from '../../assets/consulting/laptop-laughing.webp';
-import group from '../../assets/consulting/group-of-three.webp';
+// בקהילה: נוגה עם משתתפות בכנס (תמונה אמיתית). תמונת האילוסטרציה הקודמת נמחקה לבקשת נוגה (2026-11-09).
+import group from '../../assets/about/gallery/07-group-five.jpg';
 import writing from '../../assets/consulting/writing-notebook.webp';
 
 const s = serviceBySlug('consulting-session')!;
@@ -30,12 +31,13 @@ const topics = s.topics ?? [];
 const photos: Record<string, { src: ImageMetadata; alt: string; pos: string }> = {
   strategy: { src: explaining, alt: 'נוגה מסבירה ללקוח בפגישת ייעוץ', pos: '45% 40%' },
   digital: { src: laptop, alt: 'נוגה ולקוחה צוחקות מול המחשב בפגישה', pos: '85% 35%' },
-  community: { src: group, alt: 'נוגה בפגישה עם שני לקוחות', pos: '10% 35%' },
+  community: { src: group, alt: 'נוגה עם משתתפות בכנס עסקים במקסימום', pos: '50% 30%' },
   presentation: { src: writing, alt: 'נוגה כותבת במחברת לצד לקוחה', pos: '30% 35%' },
 };
 
 const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
-const reviewOf = (name?: string) => (name ? allReviews.find((r) => r.name === name) : undefined);
+const reviewOf = (name?: string, starts?: string) =>
+  name ? allReviews.find((r) => r.name === name && (!starts || r.text.startsWith(starts))) : undefined;
 const num = (i: number) => String(i + 1).padStart(2, '0');
 
 const description =
@@ -114,7 +116,7 @@ const crumbs = [
   {
     topics.map((t, i) => {
       const photo = photos[t.id];
-      const rv = reviewOf(t.review);
+      const rv = reviewOf(t.review, t.reviewStarts);
       return (
         <section id={t.id} class:list={['ch', { 'ch--mist': i % 2 === 0, 'ch--flip': i % 2 === 1 }]} aria-labelledby={`${t.id}-title`}>
           <div class="container ch__grid">
