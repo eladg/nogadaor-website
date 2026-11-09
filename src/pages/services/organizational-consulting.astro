@@ -1,0 +1,775 @@
+---
+// ייעוץ ארגוני, עמוד משלו (נוגה, 2026-11-09). נהלים, תפקידים, תהליכי עבודה ותהליכי ניהול. המיקוד: שיווק ומכירות,
+// הנעת עובדים, צוותים וסניפים, ומבנה נכון. **לא** בניית צוותים, נושאים פסיכולוגיים או משברים.
+// הסדר: פתיח (העסק גדל, גם הניהול צריך להתקדם; במחשב מבנה ארגוני מצויר בקוד) ← פס הכאב ← מה בונים (כהה, 6 תחומים)
+//   ← מה שמודדים גדל (תהליכי הניהול) ← 20 שנה בבנק (זהב) ← הגישה (4 עקרונות) ← איך זה עובד (3 שלבים)
+//   ← למי זה מתאים (כהה) ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// הטקסטים ב-src/data/org.ts. **טיוטה לאישור נוגה.**
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
+import Timeline from '../../components/Timeline.astro';
+import { serviceBySlug, type IconName } from '../../data/services';
+import { orgAreas, orgRhythm, orgPrinciples, orgSteps, orgFit } from '../../data/org';
+import { contact } from '../../data/contact';
+import { serviceSchema } from '../../utils/schema';
+import team from '../../assets/atmosphere/light-team.webp';
+
+const s = serviceBySlug('organizational-consulting')!;
+const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, אשמח לשמוע על ייעוץ ארגוני')}`;
+const num = (i: number) => String(i + 1).padStart(2, '0');
+
+// המבנה המצויר בפתיח: איור בלבד. לכל צוות פס התקדמות מול היעד ("מה שמודדים גדל").
+const units: { icon: IconName; name: string; pct: number }[] = [
+  { icon: 'megaphone', name: 'שיווק', pct: 72 },
+  { icon: 'target', name: 'מכירות', pct: 86 },
+  { icon: 'heart', name: 'שירות', pct: 64 },
+];
+
+const description =
+  'ייעוץ ארגוני לעסקים שגדלים. מבנה ארגוני נכון, הגדרות תפקידים, נהלי עבודה, ייעול תהליכים, תהליכי שיווק ומכירות, ושגרות ניהול ובקרה שמניעות עובדים, צוותים וסניפים קדימה.';
+const path = '/services/organizational-consulting/';
+const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'שירותים', path: '/services/' },
+  { name: s.title, path },
+];
+---
+
+<BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
+  <!-- 1. פתיח: הקריאה החזקה בימין, ובשמאל מבנה ארגוני מצויר מעל תמונת הצוות -->
+  <section class="og-hero">
+    <div class="og-hero__bg" aria-hidden="true">
+      <Image src={team} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
+    </div>
+    <div class="container og-hero__grid">
+      <div class="og-hero__text">
+        <p class="og-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+        <h1 class="og-hero__title">
+          <span class="og-hero__kicker">{s.title}</span>{' '}<span>העסק גדל</span>{' '}<span class="og-hero__mark">גם הניהול צריך להתקדם</span>
+        </h1>
+        <p class="og-hero__lead">
+          מבנה ברור, תפקידים מוגדרים, נהלי עבודה ושגרות ניהול שמחזיקים את העסק בתנועה. כך הצוותים, הסניפים והמכירות
+          מתקדמים, וההחלטות כבר לא מחכות רק לבעלים.
+        </p>
+        <div class="og-actions">
+          <a class="btn" href={waHref} target="_blank" rel="noopener">
+            לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          <a class="og-actions__link" href="#areas">מה בונים יחד?</a>
+        </div>
+      </div>
+
+      <!-- איור בלבד, ולכן מוסתר מקוראי מסך -->
+      <div class="chart reveal" aria-hidden="true">
+        <div class="chart__top">
+          <Icon name="crown" size={18} />
+          <span>הנהלה</span>
+        </div>
+        <ul class="chart__row">
+          {
+            units.map((u, i) => (
+              <li class="chart__unit" style={`--i: ${i}; --pct: ${u.pct}%`}>
+                <span class="chart__icon">
+                  <Icon name={u.icon} size={18} />
+                </span>
+                <span class="chart__name">{u.name}</span>
+                <span class="chart__bar">
+                  <i></i>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="chart__tag"><Icon name="check" size={16} /> כל אחד יודע מה באחריותו</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. הכאב: פס תכלת צר, הטקסט לרוחב העמוד -->
+  <section class="og-pain">
+    <div class="container og-pain__inner reveal">
+      <p>
+        כשהעסק קטן, הכול עובר דרך הבעלים וזה עובד. כשמצטרפים עובדים, צוותים וסניפים, אותה דרך עבודה מתחילה לעכב. כל אחד
+        עובד אחרת, משימות נופלות בין הכיסאות, ושאלות שהיו צריכות להיסגר בצוות חוזרות שוב אל הבעלים.{' '}
+        <strong>מבנה, נהלים ותהליכי ניהול</strong> הם מה שמאפשר לעסק להמשיך לגדול.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. מה בונים: 6 תחומים -->
+  <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="og-eyebrow og-eyebrow--dark">מה בונים יחד</p>
+        <h2 id="areas-title" class="sec-title og-split">
+          <span>ארגון שעובד נכון</span>{' '}<span class="hl">מהבעלים ועד הסניף האחרון</span>
+        </h2>
+      </div>
+      <ul class="areas">
+        {
+          orgAreas.map((a, i) => (
+            <li class="area reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="area__icon">
+                <Icon name={a.icon} size={28} />
+              </span>
+              <h3 class="area__title">{a.title}</h3>
+              <p class="area__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. מה שמודדים גדל: תהליכי הניהול, בלי פירוט -->
+  <section class="section og-measure" aria-labelledby="measure-title">
+    <div class="container og-measure__inner">
+      <div class="reveal">
+        <p class="og-eyebrow">תהליכי ניהול</p>
+        <h2 id="measure-title" class="og-measure__title">
+          <span>מה שמודדים</span>{' '}<span class="hl--mark">גדל</span>
+        </h2>
+        <p class="og-measure__text">
+          תהליכי הניהול הם המנוע שמניע את העסק קדימה. שגרה קבועה של פגישות עבודה, יעדים ובקרות הופכת החלטות למעשים, ומאפשרת
+          לראות בזמן מה מתקדם ומה צריך תשומת לב.
+        </p>
+      </div>
+      <ul class="rhythm">
+        {
+          orgRhythm.map((r, i) => (
+            <li class="rhythm__item reveal" style={`transition-delay: ${i * 0.12}s`}>
+              <span class="rhythm__icon">
+                <Icon name={r.icon} size={24} />
+              </span>
+              <span>{r.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
+  <section class="og-band">
+    <div class="container og-band__inner reveal">
+      <span class="og-band__big">20 שנה</span>
+      <span class="og-band__text">
+        בהנהלה של בנק גדול, בהובלת עשרות סניפים ומאות יועצי השקעות עם נהלים, בקרות ודוחות עבודה
+      </span>
+    </div>
+  </section>
+
+  <!-- 6. הגישה -->
+  <section class="section og-principles" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="og-eyebrow">הגישה</p>
+        <h2 id="principles-title" class="sec-title og-split">
+          <span>סדר שמתאים לעסק</span>{' '}<span class="hl--mark">ונשאר בו</span>
+        </h2>
+      </div>
+      <ol class="rules">
+        {
+          orgPrinciples.map((p, i) => (
+            <li class="rule reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <span class="rule__num" aria-hidden="true">{num(i)}</span>
+              <h3 class="rule__title">{p.title}</h3>
+              <p class="rule__text">{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 7. איך זה עובד -->
+  <section class="section section--mist og-process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="og-eyebrow">איך זה עובד</p>
+        <h2 id="process-title" class="sec-title og-split">
+          <span>מהאבחון</span>{' '}<span class="hl--mark">אל דרך עבודה חדשה</span>
+        </h2>
+      </div>
+      <Timeline items={orgSteps} />
+    </div>
+  </section>
+
+  <!-- 8. למי זה מתאים -->
+  <section class="section section--deep og-fit" aria-labelledby="fit-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="og-eyebrow og-eyebrow--dark">למי זה מתאים</p>
+        <h2 id="fit-title" class="sec-title og-split">
+          <span>לעסקים שגדלו</span>{' '}<span class="hl">ורוצים לגדול עוד</span>
+        </h2>
+      </div>
+      <ul class="fit">
+        {
+          orgFit.map((f, i) => (
+            <li class="fit__item reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <Icon name="check" size={22} />
+              <span>{f}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9. סיום: כרטיס כהה בתוך אזור בהיר -->
+  <section class="section section--mist og-end" aria-labelledby="end-title">
+    <div class="container">
+      <div class="og-end__card reveal">
+        <Star size={30} />
+        <h2 id="end-title" class="og-end__title">
+          <span>בואו נבנה עסק שעובד מצוין</span>{' '}<span class="hl">גם בלי שהכול יעבור דרכך</span>
+        </h2>
+        <p class="og-end__text">שיחת היכרות בוואטסאפ, בלי התחייבות.</p>
+        <a class="btn og-end__btn" href={waHref} target="_blank" rel="noopener">
+          לשיחת היכרות בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .og-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--white), var(--mist));
+    border-bottom: 1px solid var(--line);
+  }
+  .og-hero__bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.18;
+  }
+  @media (min-width: 60rem) {
+    .og-hero__bg {
+      opacity: 0.55;
+    }
+  }
+  .og-hero__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    -webkit-mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+    mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+  }
+  .og-hero__grid {
+    position: relative;
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 2.5rem 3rem;
+  }
+  @media (min-width: 60rem) {
+    .og-hero__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      min-height: min(78vh, 38rem);
+      padding-block: 3.5rem;
+    }
+  }
+  .og-crumbs {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+  .og-crumbs a {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .og-hero__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.4rem, 5.6vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--navy);
+  }
+  .og-hero__title > span {
+    display: block;
+    text-wrap: balance;
+  }
+  .og-hero__kicker {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--gold-dark);
+  }
+  .og-hero__mark {
+    color: var(--teal-dark);
+  }
+  .og-hero__lead {
+    max-width: 36rem;
+    margin: 0 0 1.75rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .og-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+  }
+  .og-actions__link {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- המבנה המצויר (רק במחשב) ---------- */
+  @media (max-width: 59.99rem) {
+    .chart {
+      display: none;
+    }
+  }
+  .chart {
+    position: relative;
+    width: min(100%, 27rem);
+    margin-inline: auto;
+    padding: 1.6rem 1.35rem 2.1rem;
+    border-radius: 1.5rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
+      var(--navy-deep);
+    box-shadow: 0 2rem 4rem -1.5rem rgb(11 26 51 / 0.55);
+  }
+  .chart__top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.65rem 1.4rem;
+    border-radius: 0.9rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-weight: 900;
+  }
+  /* קו אנכי מההנהלה, וקו אופקי שמחבר את שלושת הצוותים */
+  .chart__row {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 2.4rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+  .chart__row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 1.2rem;
+    background: rgb(255 255 255 / 0.3);
+  }
+  .chart__row::after {
+    content: '';
+    position: absolute;
+    top: 1.2rem;
+    inset-inline: calc(100% / 6);
+    height: 2px;
+    background: rgb(255 255 255 / 0.3);
+  }
+  .chart__unit {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    padding: 0.85rem 0.5rem 0.9rem;
+    border-radius: 0.9rem;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .chart__unit::before {
+    content: '';
+    position: absolute;
+    top: -1.2rem;
+    left: 50%;
+    width: 2px;
+    height: 1.2rem;
+    background: rgb(255 255 255 / 0.3);
+  }
+  .chart__icon {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.6rem;
+    background: rgb(25 154 181 / 0.3);
+  }
+  /* פס התקדמות מול היעד: מתמלא כשהאיור מופיע */
+  .chart__bar {
+    width: 100%;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    overflow: hidden;
+  }
+  .chart__bar i {
+    display: block;
+    width: var(--pct);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gold-gradient);
+    transition: width 0.9s ease;
+    transition-delay: calc(var(--i) * 0.25s + 0.3s);
+  }
+  .js .chart:not(.is-in) .chart__bar i {
+    width: 0;
+  }
+  .chart__tag {
+    position: absolute;
+    inset-block-end: -1.1rem;
+    inset-inline-start: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.35);
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .chart__tag :global(svg) {
+    color: var(--teal-dark);
+  }
+
+  /* ---------- פס הכאב ---------- */
+  .og-pain {
+    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+    background: var(--mist);
+    border-bottom: 1px solid var(--line);
+  }
+  .og-pain__inner p {
+    max-width: 72rem;
+    margin: 0 auto;
+    text-align: center;
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .og-pain__inner strong {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- כותרות אזור ---------- */
+  .og-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--teal-dark);
+  }
+  .og-eyebrow::before,
+  .og-eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+  .og-eyebrow--dark {
+    color: var(--gold-light);
+  }
+  .og-split {
+    margin-bottom: 2.25rem;
+  }
+  .og-split > span {
+    display: table;
+    margin-inline: auto;
+  }
+
+  /* ---------- מה בונים: 6 כרטיסי זכוכית, הכול באותו גובה ---------- */
+  .areas {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .areas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .areas {
+      grid-template-columns: 1fr;
+    }
+  }
+  .area {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.6rem;
+    margin: 0 0 1.25rem;
+    padding: 1.6rem 1.5rem;
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-top: 3px solid var(--teal);
+  }
+  .area:nth-child(even) {
+    border-top-color: var(--gold-dark);
+  }
+  .area__icon {
+    color: var(--gold-light);
+  }
+  .area__title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.3vw, 1.4rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .area__text {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--on-dark-soft);
+  }
+
+  /* ---------- מה שמודדים גדל ---------- */
+  .og-measure__inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 60rem) {
+    .og-measure__inner {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(2rem, 6vw, 5rem);
+    }
+  }
+  .og-measure__title {
+    margin: 0 0 1rem;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--navy);
+  }
+  .og-measure__text {
+    max-width: 36rem;
+    margin: 0;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .rhythm {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .rhythm__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1.1rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--teal);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .rhythm__item:nth-child(2) {
+    border-inline-start-color: var(--gold-dark);
+  }
+  .rhythm__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.8rem;
+    background: var(--navy-deep);
+    color: var(--gold-light);
+  }
+
+  /* ---------- 20 שנה בבנק ---------- */
+  .og-band {
+    background: var(--gold-gradient);
+    padding-block: 1.75rem;
+  }
+  .og-band__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    text-align: center;
+  }
+  .og-band__big {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .og-band__text {
+    max-width: 44rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  /* ---------- הגישה: מספר זהב גדול, בלי קופסאות ---------- */
+  .rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 clamp(1.25rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 62rem) {
+    .rules {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .rules {
+      grid-template-columns: 1fr;
+    }
+  }
+  .rule {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.4rem;
+    margin: 0 0 1.75rem;
+    padding-top: 1rem;
+    border-top: 3px solid var(--teal);
+  }
+  .rule:nth-child(even) {
+    border-top-color: var(--gold-dark);
+  }
+  .rule__num {
+    font-size: clamp(2.6rem, 5vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--gold-dark);
+    opacity: 0.8;
+  }
+  .rule__title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .rule__text {
+    margin: 0;
+    line-height: 1.65;
+    color: #33445c;
+  }
+
+  /* ---------- למי זה מתאים ---------- */
+  .fit {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 62rem) {
+    .fit {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .fit {
+      grid-template-columns: 1fr;
+    }
+  }
+  .fit__item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 1.35rem 1.25rem;
+    border-radius: 1.1rem;
+    background: rgb(25 154 181 / 0.2);
+    border: 1px solid rgb(25 154 181 / 0.45);
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--white);
+  }
+  .fit__item :global(svg) {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--gold-light);
+  }
+
+  /* ---------- סיום ---------- */
+  .og-end__card {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+    border-radius: 2rem;
+    text-align: center;
+    color: var(--on-dark);
+    background:
+      radial-gradient(30rem 18rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
+      radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.18), transparent 72%),
+      var(--navy-deep);
+  }
+  .og-end__title {
+    margin: 0.5rem 0 1rem;
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .og-end__title > span {
+    display: block;
+  }
+  .og-end__text {
+    margin: 0 0 1.75rem;
+    font-size: 1.1rem;
+    color: var(--on-dark-soft);
+  }
+  .og-end__btn {
+    font-size: 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chart__bar i {
+      transition: none;
+    }
+    .js .chart:not(.is-in) .chart__bar i {
+      width: var(--pct);
+    }
+  }
+</style>
