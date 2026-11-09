@@ -30,6 +30,27 @@ const feed: { icon: IconName; text: string }[] = [
   { icon: 'chart', text: 'דוח הבוקר מוכן לבעלים' },
 ];
 
+// קונפטי מפוזר בכרטיס המתנה (נוגה: "נקודות לא מסודרות בשורות", "יותר שמח"). מיקומים קבועים מראש, כדי שהעמוד ייבנה זהה בכל פעם.
+const confettiColors = ['var(--gold-light)', '#ffffff', '#8be4f2', 'var(--gold-dark)', '#ffd9a0'];
+let seed = 7;
+const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+const confetti = Array.from({ length: 34 }, (_, i) => ({
+  x: Math.round(rnd() * 100),
+  y: Math.round(rnd() * 100),
+  shape: ['dot', 'strip', 'glint', 'dot', 'strip'][i % 5],
+  color: confettiColors[i % confettiColors.length],
+  r: Math.round(rnd() * 360),
+  d: (rnd() * -8).toFixed(2),
+  s: (0.6 + rnd() * 0.8).toFixed(2),
+}));
+// קונפטי שמתפרץ מהמתנה: זווית (מעלות, 0 = למעלה) ומרחק
+const burst = [-70, -45, -22, 0, 20, 42, 66, -8, 32].map((a, i) => ({
+  a,
+  dist: 70 + (i % 3) * 22,
+  color: confettiColors[i % confettiColors.length],
+  delay: (i * 0.09).toFixed(2),
+}));
+
 const description =
   'ייעול תהליכים עם AI לעסקים. פחות עבודה ידנית, יותר סדר מול הלקוחות ובפיננסים, ותמונת מצב ברורה בכל רגע. פגישה ראשונה לבירור צרכים בחינם.';
 const path = '/services/ai-automation/';
@@ -57,9 +78,6 @@ const crumbs = [
           מסתכלים על העסק מלמעלה, בוחרים את התהליכים שהכי שווה לייעל, ומיישמים אותם בפועל. פחות עבודה ידנית, פחות תלות
           בבעלים, ויותר זמן להגדיל הכנסות ורווחיות.
         </p>
-        <a class="btn" href={waHref} target="_blank" rel="noopener">
-          לתיאום פגישה ראשונה<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-        </a>
       </div>
 
       <!-- איור בלבד, ולכן מוסתר מקוראי מסך -->
@@ -88,11 +106,22 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. פגישה ראשונה בחינם, כמתנה (נוגה: בטורקיז, חגיגי, חדשני כיאה לעמוד AI) -->
-  <section class="free" aria-labelledby="free-title">
-    <div class="free__glow" aria-hidden="true"></div>
-    <div class="container free__inner">
-      <div class="free__copy reveal">
+  <!-- 2. פגישה ראשונה בחינם, כמתנה (נוגה: בטורקיז, חגיגי, שמח, פחות רחב, נקודות מפוזרות) -->
+  <section class="free-wrap" aria-labelledby="free-title">
+    <div class="container">
+    <div class="free reveal">
+    <div class="confetti" aria-hidden="true">
+      {
+        confetti.map((c) => (
+          <i
+            class={`cf cf--${c.shape}`}
+            style={`--x: ${c.x}%; --y: ${c.y}%; --c: ${c.color}; --r: ${c.r}deg; --d: ${c.d}s; --s: ${c.s}`}
+          />
+        ))
+      }
+    </div>
+    <div class="free__inner">
+      <div class="free__copy">
         <p class="free__chip"><Icon name="gift" size={18} /> מתנה לעסק שלך</p>
         <h2 id="free-title" class="free__title">
           <span>פגישה ראשונה לבירור צרכים</span>{' '}<span class="free__big">בחינם</span>
@@ -105,40 +134,49 @@ const crumbs = [
       </div>
 
       <!-- המתנה והשאלות הנכונות שמרחפות סביבה: איור בלבד -->
-      <div class="gift reveal" aria-hidden="true">
-        <span class="gift__ring"></span>
-        <span class="gift__ring gift__ring--2"></span>
-        <span class="gift__rays"></span>
-        <svg class="gift__box" viewBox="0 0 160 160">
-          <defs>
-            <linearGradient id="giftGold" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#fde58a" />
-              <stop offset="1" stop-color="#d19a4a" />
-            </linearGradient>
-            <linearGradient id="giftBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#0f2a4d" />
-              <stop offset="1" stop-color="#0b1a33" />
-            </linearGradient>
-          </defs>
-          <!-- הקופסה -->
-          <rect x="30" y="78" width="100" height="70" rx="8" fill="url(#giftBody)" stroke="url(#giftGold)" stroke-width="2" />
-          <rect x="72" y="78" width="16" height="70" fill="url(#giftGold)" />
-          <!-- המכסה, מורם קצת -->
-          <g class="gift__lid">
-            <rect x="24" y="58" width="112" height="22" rx="6" fill="url(#giftBody)" stroke="url(#giftGold)" stroke-width="2" />
-            <rect x="72" y="58" width="16" height="22" fill="url(#giftGold)" />
-            <path d="M80 58 C66 34 44 38 50 50 C54 58 70 58 80 58 Z" fill="url(#giftGold)" />
-            <path d="M80 58 C94 34 116 38 110 50 C106 58 90 58 80 58 Z" fill="url(#giftGold)" />
-            <circle cx="80" cy="57" r="6" fill="#fde58a" />
-          </g>
-        </svg>
-        <span class="gift__spark"><Star size={22} /></span>
-        <span class="gift__glint gift__glint--1"></span>
-        <span class="gift__glint gift__glint--2"></span><span class="gift__glint gift__glint--3"></span>
+      <div class="gift" aria-hidden="true">
+        <span class="gift__sun"></span>
+        <span class="gift__glow"></span>
+        <div class="gift__stage">
+          <!-- קונפטי שמתפרץ מהקופסה -->
+          <span class="gift__burst">
+            {burst.map((b) => <i style={`--a: ${b.a}deg; --dist: ${b.dist}px; --c: ${b.color}; --delay: ${b.delay}s`} />)}
+          </span>
+          <svg class="gift__box" viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="giftGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffe9a3" />
+                <stop offset="0.55" stop-color="#fcdc6d" />
+                <stop offset="1" stop-color="#d19a4a" />
+              </linearGradient>
+              <linearGradient id="giftRibbon" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffffff" />
+                <stop offset="1" stop-color="#bff1f8" />
+              </linearGradient>
+            </defs>
+            <!-- הקופסה -->
+            <rect x="30" y="80" width="100" height="70" rx="9" fill="url(#giftGold)" />
+            <rect x="30" y="80" width="100" height="10" fill="#000" opacity="0.08" />
+            <rect x="72" y="80" width="16" height="70" fill="url(#giftRibbon)" />
+            <!-- המכסה עם הפפיון -->
+            <g class="gift__lid">
+              <rect x="24" y="60" width="112" height="22" rx="7" fill="url(#giftGold)" />
+              <rect x="72" y="60" width="16" height="22" fill="url(#giftRibbon)" />
+              <path d="M80 60 C64 32 38 36 46 52 C51 61 68 61 80 60 Z" fill="url(#giftRibbon)" />
+              <path d="M80 60 C96 32 122 36 114 52 C109 61 92 61 80 60 Z" fill="url(#giftRibbon)" />
+              <path d="M78 62 L66 78 L72 78 L80 66 Z" fill="#bff1f8" />
+              <path d="M82 62 L94 78 L88 78 L80 66 Z" fill="#bff1f8" />
+              <circle cx="80" cy="59" r="7" fill="#ffffff" />
+            </g>
+          </svg>
+          <span class="gift__spark"><Star size={24} /></span>
+        </div>
         <ul class="gift__qs">
           {firstMeeting.questions.map((q, i) => <li class={`gift__q gift__q--${i + 1}`} style={`--i: ${i}`}>{q}</li>)}
         </ul>
       </div>
+    </div>
+    </div>
     </div>
   </section>
 
@@ -146,7 +184,6 @@ const crumbs = [
   <section class="section section--deep ai-pillars" aria-labelledby="pillars-title">
     <div class="container">
       <div class="center reveal">
-        <p class="ai-eyebrow ai-eyebrow--dark">מה משתנה בעסק</p>
         <h2 id="pillars-title" class="sec-title ai-split">
           <span>פחות עבודה ידנית</span>{' '}<span class="hl">יותר זמן לנהל ולהצמיח</span>
         </h2>
@@ -200,7 +237,6 @@ const crumbs = [
   <section class="section section--mist ai-process" aria-labelledby="process-title">
     <div class="container">
       <div class="center reveal">
-        <p class="ai-eyebrow">איך זה עובד</p>
         <h2 id="process-title" class="sec-title ai-split">
           <span>מהפגישה הראשונה</span>{' '}<span class="hl--mark">ועד שזה עובד אצלך בעסק</span>
         </h2>
@@ -402,60 +438,82 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- פגישה ראשונה בחינם: מתנה בטורקיז (נוגה, 2026-11-09) ---------- */
+  /* ---------- פגישה ראשונה בחינם: כרטיס מתנה בטורקיז (נוגה, 2026-11-09) ---------- */
+  /* פחות רחב: כרטיס מעוגל בתוך אזור בהיר, לא פס לכל רוחב המסך */
+  .free-wrap {
+    padding-block: clamp(2rem, 4.5vw, 3rem);
+    background: var(--mist);
+  }
   .free {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(2.75rem, 6vw, 4.5rem);
+    max-width: 62rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 4.5vw, 3rem) clamp(1.25rem, 4vw, 3.25rem);
+    border-radius: 2rem;
     color: var(--white);
     background:
-      radial-gradient(40rem 22rem at 15% 50%, rgb(252 220 109 / 0.22), transparent 65%),
-      radial-gradient(36rem 24rem at 95% 0%, rgb(255 255 255 / 0.14), transparent 60%),
-      linear-gradient(135deg, #0d5a6b 0%, var(--teal-dark) 45%, #168aa3 100%);
-  }
-  /* רשת נקודות עדינה, תחושה טכנולוגית */
-  .free::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1.4px);
-    background-size: 22px 22px;
-    -webkit-mask-image: linear-gradient(to left, #000, transparent 75%);
-    mask-image: linear-gradient(to left, #000, transparent 75%);
-    pointer-events: none;
-  }
-  /* פס אור שעובר לאורך הקצה העליון */
-  .free::after {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
-    background-size: 40% 100%;
-    background-repeat: no-repeat;
-    animation: free-sweep 5s linear infinite;
-  }
-  @keyframes free-sweep {
-    from {
-      background-position: -40% 0;
-    }
-    to {
-      background-position: 140% 0;
-    }
+      radial-gradient(28rem 20rem at 18% 45%, rgb(252 220 109 / 0.28), transparent 65%),
+      radial-gradient(30rem 22rem at 100% 0%, rgb(139 228 242 / 0.25), transparent 60%),
+      linear-gradient(135deg, #0d5a6b 0%, var(--teal-dark) 45%, #1a9cb8 100%);
+    box-shadow: 0 2rem 4rem -2rem rgb(13 90 107 / 0.6);
   }
   .free__inner {
     position: relative;
+    z-index: 1;
     display: grid;
-    gap: 2.5rem;
+    gap: 1.5rem;
     align-items: center;
   }
   @media (min-width: 56rem) {
     .free__inner {
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: clamp(2rem, 5vw, 4.5rem);
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
     }
   }
+
+  /* קונפטי מפוזר, מרחף לאט */
+  .confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .cf {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: calc(0.5rem * var(--s));
+    height: calc(0.5rem * var(--s));
+    background: var(--c);
+    opacity: 0.75;
+    transform: rotate(var(--r));
+    animation: cf-drift 9s ease-in-out infinite;
+    animation-delay: var(--d);
+  }
+  .cf--dot {
+    border-radius: 50%;
+  }
+  .cf--strip {
+    width: calc(0.35rem * var(--s));
+    height: calc(0.95rem * var(--s));
+    border-radius: 0.2rem;
+  }
+  .cf--glint {
+    width: calc(0.8rem * var(--s));
+    height: calc(0.8rem * var(--s));
+    clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+    opacity: 0.9;
+  }
+  @keyframes cf-drift {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(var(--r));
+    }
+    50% {
+      transform: translate(6px, -12px) rotate(calc(var(--r) + 120deg));
+    }
+  }
+
   .free__copy {
     text-align: center;
   }
@@ -468,19 +526,18 @@ const crumbs = [
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    margin: 0 0 1rem;
+    margin: 0 0 0.9rem;
     padding: 0.4rem 1rem;
     border-radius: 999px;
-    background: rgb(255 255 255 / 0.12);
-    border: 1px solid rgb(255 255 255 / 0.3);
-    backdrop-filter: blur(6px);
+    background: rgb(255 255 255 / 0.14);
+    border: 1px solid rgb(255 255 255 / 0.32);
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--gold-light);
   }
   .free__title {
     margin: 0;
-    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-size: clamp(1.35rem, 2.8vw, 1.7rem);
     font-weight: 800;
     line-height: 1.25;
     color: var(--white);
@@ -490,7 +547,7 @@ const crumbs = [
   }
   .free__big {
     margin-top: 0.1rem;
-    font-size: clamp(3.4rem, 9vw, 5rem);
+    font-size: clamp(3.4rem, 9vw, 4.8rem);
     font-weight: 900;
     line-height: 1.05;
     background: linear-gradient(100deg, #fff6cf 0%, var(--gold-light) 35%, #ffffff 50%, var(--gold-light) 65%, #e9b860 100%);
@@ -511,7 +568,7 @@ const crumbs = [
   }
   .free__worth {
     display: inline-block;
-    margin: 0.75rem 0 1.25rem;
+    margin: 0.7rem 0 1.1rem;
     padding: 0.35rem 1rem;
     border-radius: 999px;
     background: var(--navy);
@@ -524,11 +581,11 @@ const crumbs = [
     text-decoration-thickness: 2px;
   }
   .free__text {
-    max-width: 36rem;
-    margin: 0 auto 1.75rem;
-    font-size: clamp(1.08rem, 1.9vw, 1.22rem);
+    max-width: 34rem;
+    margin: 0 auto 1.6rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.18rem);
     line-height: 1.75;
-    color: rgb(255 255 255 / 0.92);
+    color: rgb(255 255 255 / 0.94);
   }
   @media (min-width: 56rem) {
     .free__text {
@@ -549,129 +606,150 @@ const crumbs = [
     }
   }
 
-  /* ---------- המתנה, והשאלות הנכונות סביבה ---------- */
+  /* ---------- המתנה: קרני שמש, קופסה זהובה שהמכסה שלה קופץ, קונפטי שמתפרץ ---------- */
   .gift {
     position: relative;
     display: grid;
     place-items: center;
-    width: min(100%, 26rem);
+    width: min(100%, 22rem);
     aspect-ratio: 1;
     margin-inline: auto;
   }
-  .gift__ring {
+  .gift__sun {
     position: absolute;
-    inset: 12%;
+    inset: 4%;
     border-radius: 50%;
-    border: 1px dashed rgb(255 255 255 / 0.35);
-    animation: gift-spin 40s linear infinite;
-  }
-  .gift__ring--2 {
-    inset: 26%;
-    border-style: solid;
-    border-color: rgb(252 220 109 / 0.35);
-    animation-duration: 28s;
-    animation-direction: reverse;
+    background: repeating-conic-gradient(from 0deg, rgb(255 255 255 / 0.16) 0deg 8deg, transparent 8deg 22deg);
+    -webkit-mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+    mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+    animation: gift-spin 30s linear infinite;
   }
   @keyframes gift-spin {
     to {
       transform: rotate(360deg);
     }
   }
-  .gift__rays {
+  .gift__glow {
     position: absolute;
-    inset: 22%;
+    inset: 24%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgb(252 220 109 / 0.55), rgb(252 220 109 / 0.12) 45%, transparent 70%);
-    filter: blur(6px);
+    background: radial-gradient(circle, rgb(252 220 109 / 0.7), rgb(252 220 109 / 0.15) 50%, transparent 72%);
+    filter: blur(8px);
     animation: gift-breathe 3.5s ease-in-out infinite;
   }
   @keyframes gift-breathe {
     0%,
     100% {
-      transform: scale(0.92);
-      opacity: 0.8;
+      transform: scale(0.9);
+      opacity: 0.75;
     }
     50% {
-      transform: scale(1.06);
+      transform: scale(1.08);
       opacity: 1;
     }
   }
-  .gift__box {
+  .gift__stage {
     position: relative;
-    width: 46%;
+    width: 58%;
+    animation: gift-wiggle 4s ease-in-out infinite;
+  }
+  /* קפיצה קטנה ושמחה כל כמה שניות */
+  @keyframes gift-wiggle {
+    0%,
+    60%,
+    100% {
+      transform: translateY(0) rotate(0);
+    }
+    66% {
+      transform: translateY(-10px) rotate(-5deg);
+    }
+    72% {
+      transform: translateY(0) rotate(4deg);
+    }
+    78% {
+      transform: translateY(-4px) rotate(-2deg);
+    }
+    84% {
+      transform: translateY(0) rotate(0);
+    }
+  }
+  .gift__box {
+    display: block;
+    width: 100%;
     height: auto;
     overflow: visible;
-    filter: drop-shadow(0 1.25rem 1.5rem rgb(11 26 51 / 0.45));
-    animation: gift-float 4s ease-in-out infinite;
-  }
-  @keyframes gift-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
+    filter: drop-shadow(0 1rem 1.25rem rgb(11 26 51 / 0.4));
   }
   .gift__lid {
     transform-box: fill-box;
-    transform-origin: center bottom;
+    transform-origin: 20% 100%;
     animation: gift-lid 4s ease-in-out infinite;
   }
   @keyframes gift-lid {
     0%,
+    60%,
     100% {
       transform: translateY(0) rotate(0);
     }
-    50% {
-      transform: translateY(-7px) rotate(-3deg);
+    66%,
+    80% {
+      transform: translateY(-16px) rotate(-12deg);
+    }
+  }
+  /* הקונפטי שמתפרץ מפתח הקופסה */
+  .gift__burst {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+  }
+  .gift__burst i {
+    position: absolute;
+    width: 0.45rem;
+    height: 0.75rem;
+    margin: -0.375rem 0 0 -0.225rem;
+    border-radius: 0.15rem;
+    background: var(--c);
+    opacity: 0;
+    animation: gift-pop 4s ease-out infinite;
+    animation-delay: var(--delay);
+  }
+  @keyframes gift-pop {
+    0%,
+    62% {
+      opacity: 0;
+      transform: rotate(var(--a)) translateY(0) rotate(0);
+    }
+    66% {
+      opacity: 1;
+    }
+    92% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+      transform: rotate(var(--a)) translateY(calc(var(--dist) * -1)) rotate(260deg);
     }
   }
   .gift__spark {
     position: absolute;
-    top: 24%;
-    inset-inline-end: 30%;
+    top: -6%;
+    inset-inline-start: -12%;
     line-height: 0;
     animation: gift-twinkle 2.8s ease-in-out infinite;
-  }
-  .gift__glint {
-    position: absolute;
-    width: 0.6rem;
-    height: 0.6rem;
-    background: var(--white);
-    clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
-    animation: gift-twinkle 2.4s ease-in-out infinite;
-  }
-  .gift__glint--1 {
-    top: 30%;
-    inset-inline-start: 30%;
-    animation-delay: 0.6s;
-  }
-  .gift__glint--2 {
-    bottom: 30%;
-    inset-inline-end: 26%;
-    width: 0.45rem;
-    height: 0.45rem;
-    animation-delay: 1.2s;
-  }
-  .gift__glint--3 {
-    bottom: 36%;
-    inset-inline-start: 24%;
-    width: 0.5rem;
-    height: 0.5rem;
-    animation-delay: 1.8s;
   }
   @keyframes gift-twinkle {
     0%,
     100% {
-      transform: scale(0.6);
-      opacity: 0.4;
+      transform: scale(0.6) rotate(0);
+      opacity: 0.5;
     }
     50% {
-      transform: scale(1.1);
+      transform: scale(1.15) rotate(20deg);
       opacity: 1;
     }
   }
+
+  /* השאלות: בועות במיקומים לא סימטריים, מוטות קצת */
   .gift__qs {
     list-style: none;
     margin: 0;
@@ -679,82 +757,82 @@ const crumbs = [
   }
   .gift__q {
     position: absolute;
-    padding: 0.45rem 0.9rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 1rem 1rem 1rem 0.25rem;
-    background: rgb(255 255 255 / 0.14);
-    border: 1px solid rgb(255 255 255 / 0.32);
-    backdrop-filter: blur(8px);
+    background: rgb(255 255 255 / 0.95);
     box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.5);
-    font-size: 0.92rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 700;
     white-space: nowrap;
-    color: var(--white);
+    color: var(--teal-dark);
     animation: gift-bob 5s ease-in-out infinite;
-    animation-delay: calc(var(--i) * -1.25s);
+    animation-delay: calc(var(--i) * -1.3s);
   }
   .gift__q--1 {
-    top: 6%;
-    inset-inline-start: 0;
+    top: 4%;
+    inset-inline-start: 2%;
+    --rot: -4deg;
   }
   .gift__q--2 {
-    top: 18%;
-    inset-inline-end: -4%;
+    top: 30%;
+    inset-inline-end: -8%;
+    --rot: 3deg;
+    border-radius: 1rem 1rem 0.25rem 1rem;
   }
   .gift__q--3 {
-    bottom: 16%;
-    inset-inline-start: -4%;
+    bottom: 22%;
+    inset-inline-start: -6%;
+    --rot: 2deg;
   }
   .gift__q--4 {
-    bottom: 4%;
-    inset-inline-end: 4%;
+    bottom: 2%;
+    inset-inline-end: 6%;
+    --rot: -3deg;
+    border-radius: 1rem 1rem 0.25rem 1rem;
   }
   @keyframes gift-bob {
     0%,
     100% {
-      transform: translateY(0);
+      transform: translateY(0) rotate(var(--rot, 0deg));
     }
     50% {
-      transform: translateY(-6px);
+      transform: translateY(-6px) rotate(var(--rot, 0deg));
     }
   }
-  /* בטלפון: המתנה קטנה יותר, והשאלות בשורות מתחתיה */
+  /* בטלפון: המתנה מעל השאלות, והשאלות עוטפות זו את זו */
   @media (max-width: 36rem) {
     .gift {
       width: 100%;
       aspect-ratio: auto;
-      padding-top: 12.5rem;
+      padding-top: 13rem;
     }
-    .gift__ring,
-    .gift__rays {
+    .gift__sun,
+    .gift__glow {
       inset: auto;
       top: 0;
       left: 50%;
-      width: 12rem;
-      height: 12rem;
-      margin-left: -6rem;
+      width: 13rem;
+      height: 13rem;
+      margin-left: -6.5rem;
     }
-    .gift__ring--2 {
+    .gift__glow {
+      top: 2.5rem;
       width: 8rem;
       height: 8rem;
-      top: 2rem;
       margin-left: -4rem;
     }
-    .gift__box {
+    .gift__stage {
       position: absolute;
-      top: 2.5rem;
+      top: 3rem;
       left: 50%;
-      width: 7rem;
-      margin-left: -3.5rem;
-    }
-    .gift__spark,
-    .gift__glint {
-      display: none;
+      width: 7.5rem;
+      margin-left: -3.75rem;
     }
     .gift__qs {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
     .gift__q {
       position: static;
@@ -939,7 +1017,7 @@ const crumbs = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .free::after,
+    .cf,
     .free__big,
     .free__btn,
     .gift *,
