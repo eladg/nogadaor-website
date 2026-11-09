@@ -3,8 +3,10 @@
 // זה המקום היחיד באתר שמטפל ברווחיות ובתמחור. המהות: ההסתכלות הרחבה והאסטרטגית יחד עם התייעלות בתהליכי העבודה
 // (גבייה, ניהול עובדים ועוד), שכולם תורמים לרווחיות. ניתוח הנתונים מגלה הכול, ואז מטפלים איפה שצריך.
 // המומחים שנוגה מביאה לכל תחום לא נכתבים כאן (נוגה).
-// הסדר: פתיח (עם "לוח נתונים" מצויר בקוד, בלי מספרים) ← פסקת הסבר ← הדרך מההכנסה לרווח (איפה הכסף מתפספס)
-//   ← מנופי הרווחיות (כהה) ← 20 שנה בבנק (זהב) ← תהליך הליווי ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// סבב 2 (נוגה, 2026-11-09): "כל החומרים הטובים למטה". הסדר: קריאה חזקה "בואו נעשה סדר ונמצא את הכסף בעסק שלך"
+//   ← פסקת תועלת למי שנמאס לו מהסטרס ← מה מקבלים בסוף התהליך (כהה) ← העקרונות ← איך זה מתבצע (תהליך)
+//   ← על מה עובדים (מנופי הרווחיות, כהה) ← 20 שנה בבנק (זהב) ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// "מכל שקל שנכנס, כמה באמת נשאר?" אוחד לתוך כרטיסי המנופים (שורת "איפה הכסף מתפספס").
 // הטקסטים ב-src/data/finance.ts. **טיוטה לאישור נוגה.**
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -12,7 +14,7 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug } from '../../data/services';
-import { moneyPath, levers, financeSteps } from '../../data/finance';
+import { outcomes, principles, financeSteps, levers } from '../../data/finance';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import desk from '../../assets/atmosphere/light-desk.webp';
@@ -26,7 +28,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
 const bars = [38, 46, 41, 55, 62, 58, 74, 86];
 
 const description =
-  'ליווי פיננסי לשיפור רווחיות ותזרים. ניתוח נתונים, תמחור ורווחיות, תזרים וגבייה, מימון ומחזור הלוואות, עלויות וספקים, תהליכי עבודה וניהול עובדים.';
+  'ליווי פיננסי לשיפור רווחיות ותזרים. עושים סדר במספרים ומוצאים את הכסף בעסק, בתמחור, בגבייה, במימון ומחזור הלוואות, בעלויות, בתהליכי העבודה ובניהול העובדים.';
 const path = '/services/financial/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -37,7 +39,7 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: הטקסט בימין, ובשמאל "לוח נתונים" מצויר מעל תמונת השולחן -->
+  <!-- 1. פתיח: הקריאה החזקה בימין, ובשמאל "לוח נתונים" מצויר מעל תמונת השולחן -->
   <section class="fn-hero">
     <div class="fn-hero__bg" aria-hidden="true">
       <Image src={desk} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
@@ -45,13 +47,12 @@ const crumbs = [
     <div class="container fn-hero__grid">
       <div class="fn-hero__text">
         <p class="fn-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
-        <p class="fn-kicker">{s.lead}</p>
         <h1 class="fn-hero__title">
-          <span>{s.title}</span>{' '}<span class="fn-hero__sub">לשיפור הרווחיות והתזרים של העסק</span>
+          <span class="fn-hero__kicker">{s.title}</span>{' '}<span>בואו נעשה סדר</span>{' '}<span class="fn-hero__mark">ונמצא את הכסף בעסק שלך</span>
         </h1>
         <p class="fn-hero__lead">
-          המספרים של העסק מספרים את כל הסיפור. ניתוח מעמיק של הנתונים מגלה איפה נוצר הרווח, איפה הוא מתפספס ומה מעכב את
-          התזרים, ומשם מטפלים בדיוק במקומות שצריך.
+          ניתוח הנתונים מגלה איפה הכסף נמצא, איפה הוא מתפספס ומה מעכב את התזרים. משם מטפלים בדיוק איפה שצריך, בתמחור,
+          בגבייה, בתהליכים ובמימון.
         </p>
         <ul class="fn-chips">
           {
@@ -67,7 +68,7 @@ const crumbs = [
           <a class="btn" href={waHref} target="_blank" rel="noopener">
             לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
-          <a class="fn-actions__link" href="#path">איפה הרווח מתפספס?</a>
+          <a class="fn-actions__link" href="#outcomes">מה מקבלים בסוף?</a>
         </div>
       </div>
 
@@ -93,17 +94,17 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. פסקת הסבר בשפת הקורא, ומשפט מסכם -->
+  <!-- 2. פסקת תועלת: למי שנמאס לו מהסטרס ומבין שצריך לעשות סדר פעם אחת ולתמיד -->
   <section class="section fn-explain">
     <div class="container fn-explain__inner reveal">
       <p>
-        העסק עובד, יש לקוחות, יש תנועה ויש הכנסות. ובכל זאת, בסוף החודש נשאר פחות ממה שהיה צריך להישאר, התזרים לא משאיר
-        מרווח נשימה, ולפעמים נדמה שכל גידול בהכנסות מביא איתו עוד הוצאות, עוד עומס ועוד הלוואה.
+        העסק עובד, יש לקוחות ויש הכנסות, ובכל זאת הכסף מרגיש כמו מקור קבוע ללחץ. בודקים את חשבון הבנק לפני כל החלטה,
+        מחכים לתשלומים שמתעכבים, ולא בטוחים מה באמת מרוויח ומה רק נראה טוב על הנייר.
       </p>
       <p>
-        ליווי פיננסי לא מסתכם בבדיקת דוחות. הרווח של העסק נבנה בכל מקום, בתמחור ובהצעות המחיר, בגבייה, בתהליכי העבודה,
-        בניהול העובדים, בספקים ובמבנה האשראי. לכן מסתכלים על העסק כולו, מבינים מה המספרים מספרים, ובוחרים את המהלכים
-        שישפרו את השורה התחתונה, בלי פרויקטים מסובכים.
+        ליווי פיננסי בא לעשות סדר פעם אחת ולתמיד. לדעת בכל רגע איפה העסק עומד, כמה הוא מרוויח ומאיפה, לראות את הכסף
+        נכנס בזמן, ולקבל החלטות בשקט ובביטחון, מתוך נתונים ולא מתוך תחושה. במקום הסטרס מגיעה שליטה, ואיתה הזמן והראש
+        הפנוי לנהל ולהצמיח את העסק.
       </p>
       <p class="fn-explain__line">
         <Star size={22} />
@@ -112,52 +113,75 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 3. הדרך מההכנסה לרווח: התחנות שבהן הכסף מתפספס -->
-  <section class="section section--mist fn-path" id="path" aria-labelledby="path-title">
+  <!-- 3. מה מקבלים בסוף התהליך -->
+  <section class="section section--deep fn-outcomes" id="outcomes" aria-labelledby="outcomes-title">
     <div class="container">
       <div class="center reveal">
-        <p class="fn-eyebrow">מההכנסה לרווח</p>
-        <h2 id="path-title" class="sec-title fn-split">
-          <span>מכל שקל שנכנס לעסק,</span>{' '}<span class="hl--mark">כמה באמת נשאר?</span>
+        <p class="fn-eyebrow fn-eyebrow--dark">בסוף התהליך</p>
+        <h2 id="outcomes-title" class="sec-title fn-split">
+          <span>יוצאים מהתהליך</span>{' '}<span class="hl">עם שליטה מלאה בכסף</span>
         </h2>
-        <p class="sec-lead">
-          בדרך מההכנסה לשורה התחתונה הכסף עובר דרך התמחור, הגבייה, העלויות, תהליכי העבודה והמימון. ניתוח הנתונים מראה
-          באיזו תחנה הוא מתפספס, ושם מטפלים.
-        </p>
       </div>
-      <ol class="route">
-        <li class="route__stop route__stop--start reveal">
-          <span class="route__mark" aria-hidden="true"><Icon name="coins" size={20} /></span>
-          <h3 class="route__title">הכנסות</h3>
-        </li>
+      <ul class="gains">
         {
-          moneyPath.map((m, i) => (
-            <li class="route__stop reveal" style={`transition-delay: ${i * 0.08}s`}>
-              <span class="route__mark" aria-hidden="true">{num(i)}</span>
-              <h3 class="route__title">{m.title}</h3>
-              <p class="route__leak">{m.leak}</p>
+          outcomes.map((o, i) => (
+            <li class="gain reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="gain__icon">
+                <Icon name={o.icon} size={30} />
+              </span>
+              <h3 class="gain__title">{o.title}</h3>
+              <p class="gain__text">{o.text}</p>
             </li>
           ))
         }
-        <li class="route__stop route__stop--end reveal">
-          <span class="route__mark" aria-hidden="true"><Star size={22} tone="navy" /></span>
-          <h3 class="route__title">רווח</h3>
-        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. העקרונות -->
+  <section class="section fn-principles" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="fn-eyebrow">העקרונות</p>
+        <h2 id="principles-title" class="sec-title fn-split">
+          <span>ככה עושים סדר</span>{' '}<span class="hl--mark">שמחזיק לאורך זמן</span>
+        </h2>
+      </div>
+      <ol class="rules">
+        {
+          principles.map((p, i) => (
+            <li class="rule reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <span class="rule__num" aria-hidden="true">{num(i)}</span>
+              <h3 class="rule__title">{p.title}</h3>
+              <p class="rule__text">{p.text}</p>
+            </li>
+          ))
+        }
       </ol>
     </div>
   </section>
 
-  <!-- 4. מנופי הרווחיות -->
+  <!-- 5. איך זה מתבצע -->
+  <section class="section section--mist fn-process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="fn-eyebrow">איך זה מתבצע</p>
+        <h2 id="process-title" class="sec-title fn-split">
+          <span>מהנתונים</span>{' '}<span class="hl--mark">אל השורה התחתונה</span>
+        </h2>
+      </div>
+      <Timeline items={financeSteps} />
+    </div>
+  </section>
+
+  <!-- 6. על מה עובדים: מנופי הרווחיות, ובכל אחד איפה הכסף מתפספס -->
   <section class="section section--deep fn-levers" aria-labelledby="levers-title">
     <div class="container">
       <div class="center reveal">
         <p class="fn-eyebrow fn-eyebrow--dark">מנופי הרווחיות</p>
         <h2 id="levers-title" class="sec-title fn-split">
-          <span>מטפלים בדיוק</span>{' '}<span class="hl">איפה שצריך</span>
+          <span>מטפלים בכל מקום</span>{' '}<span class="hl">שבו הכסף מתפספס</span>
         </h2>
-        <p class="sec-lead">
-          אחרי שהנתונים מראים את התמונה, בוחרים את המנופים שישפיעו הכי הרבה על הרווח והתזרים של העסק.
-        </p>
       </div>
       <ul class="levers">
         {
@@ -167,7 +191,7 @@ const crumbs = [
                 <Icon name={l.icon} size={28} />
               </span>
               <h3 class="lever__title">{l.title}</h3>
-              <p class="lever__text">{l.text}</p>
+              <p class="lever__leak">{l.leak}</p>
               <ul class="lever__points">
                 {l.points.map((p) => (
                   <li>
@@ -183,7 +207,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. הניסיון בבנק -->
+  <!-- 7. הניסיון בבנק -->
   <section class="fn-band">
     <div class="container fn-band__inner reveal">
       <span class="fn-band__big">20 שנה</span>
@@ -191,26 +215,13 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 6. תהליך הליווי -->
-  <section class="section fn-process" aria-labelledby="process-title">
-    <div class="container">
-      <div class="center reveal">
-        <p class="fn-eyebrow">תהליך הליווי</p>
-        <h2 id="process-title" class="sec-title fn-split">
-          <span>מהנתונים</span>{' '}<span class="hl--mark">אל השורה התחתונה</span>
-        </h2>
-      </div>
-      <Timeline items={financeSteps} />
-    </div>
-  </section>
-
-  <!-- 7. סיום: כרטיס כהה בתוך אזור בהיר. המשפט "בואו נבדוק יחד..." אושר על ידי נוגה (2026-11-05). -->
+  <!-- 8. סיום: כרטיס כהה בתוך אזור בהיר -->
   <section class="section section--mist fn-end" aria-labelledby="end-title">
     <div class="container">
       <div class="fn-end__card reveal">
         <Star size={30} />
         <h2 id="end-title" class="fn-end__title">
-          <span>בואו נבדוק יחד איך עושים סדר</span>{' '}<span class="hl">ומוצאים כסף גם בעסק שלך</span>
+          <span>מוכנים לעשות סדר</span>{' '}<span class="hl">פעם אחת ולתמיד?</span>
         </h2>
         <p class="fn-end__text">שיחת היכרות בוואטסאפ, ומשם בוחרים יחד מאיפה מתחילים.</p>
         <a class="btn fn-end__btn" href={waHref} target="_blank" rel="noopener">
@@ -256,7 +267,7 @@ const crumbs = [
   }
   @media (min-width: 60rem) {
     .fn-hero__grid {
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.15fr 0.85fr;
       align-items: center;
       gap: clamp(2rem, 5vw, 5rem);
       min-height: min(78vh, 38rem);
@@ -272,26 +283,25 @@ const crumbs = [
     color: var(--teal-dark);
     font-weight: 700;
   }
-  .fn-kicker {
-    margin: 0 0 0.4rem;
-    font-weight: 800;
-    color: var(--gold-dark);
-  }
   .fn-hero__title {
-    margin: 0 0 1rem;
-    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.12;
     color: var(--navy);
   }
   .fn-hero__title > span {
     display: block;
+    text-wrap: balance;
   }
-  .fn-hero__sub {
-    margin-top: 0.6rem;
-    font-size: clamp(1.25rem, 3vw, 1.7rem);
+  .fn-hero__kicker {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
     font-weight: 800;
     line-height: 1.3;
+    color: var(--gold-dark);
+  }
+  .fn-hero__mark {
     color: var(--teal-dark);
   }
   .fn-hero__lead {
@@ -475,7 +485,7 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- פסקת הסבר ---------- */
+  /* ---------- פסקת תועלת ---------- */
   .fn-explain__inner {
     max-width: 46rem;
     text-align: center;
@@ -524,109 +534,110 @@ const crumbs = [
   .fn-eyebrow--dark {
     color: var(--gold-light);
   }
+  .fn-split {
+    margin-bottom: 2.25rem;
+  }
   .fn-split > span {
     display: table;
     margin-inline: auto;
   }
 
-  /* ---------- הדרך מההכנסה לרווח ---------- */
-  /* בטלפון: רשימה אנכית עם קו בצד. במחשב: שורה אחת עם קו שעובר מההכנסות אל הרווח. */
-  .route {
-    --mark: 2.6rem;
-    position: relative;
+  /* ---------- מה מקבלים: רשימה פתוחה בלי קופסאות, עם קווים מפרידים ---------- */
+  .gains {
     list-style: none;
-    max-width: 30rem;
-    margin: 1rem auto 0;
+    margin: 0;
     padding: 0;
     display: grid;
-    gap: 1.1rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    column-gap: clamp(1.5rem, 4vw, 3.5rem);
   }
-  .route::before {
-    content: '';
-    position: absolute;
-    inset-block: calc(var(--mark) / 2);
-    inset-inline-start: calc(var(--mark) / 2 - 1px);
-    width: 2px;
-    background: linear-gradient(180deg, var(--teal), var(--gold-dark));
+  @media (max-width: 62rem) {
+    .gains {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-  .route__stop {
-    position: relative;
+  @media (max-width: 36rem) {
+    .gains {
+      grid-template-columns: 1fr;
+    }
+  }
+  .gain {
     display: grid;
-    grid-template-columns: var(--mark) 1fr;
-    column-gap: 1rem;
-    align-items: center;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.5rem;
     margin: 0;
+    padding-block: 1.6rem;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
   }
-  .route__mark {
-    grid-row: span 2;
-    display: grid;
-    place-items: center;
-    width: var(--mark);
-    height: var(--mark);
-    border-radius: 0.75rem;
-    background: var(--white);
-    border: 2px solid var(--teal);
+  .gain__icon {
+    color: var(--gold-light);
+  }
+  .gain__title {
+    margin: 0;
+    font-size: clamp(1.3rem, 2.4vw, 1.55rem);
     font-weight: 900;
-    font-size: 0.95rem;
-    color: var(--teal-dark);
-  }
-  .route__stop--start .route__mark {
-    background: var(--teal);
+    line-height: 1.25;
     color: var(--white);
   }
-  .route__stop--end .route__mark {
-    background: var(--gold-gradient);
-    border-color: var(--gold-dark);
-  }
-  .route__title {
+  .gain__text {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
+  }
+
+  /* ---------- העקרונות: מספר זהב גדול, בלי קופסאות ---------- */
+  .rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 clamp(1.25rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 62rem) {
+    .rules {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .rules {
+      grid-template-columns: 1fr;
+    }
+  }
+  .rule {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.4rem;
+    margin: 0 0 1.75rem;
+    padding-top: 1rem;
+    border-top: 3px solid var(--teal);
+  }
+  .rule:nth-child(even) {
+    border-top-color: var(--gold-dark);
+  }
+  .rule__num {
+    font-size: clamp(2.6rem, 5vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--gold-dark);
+    opacity: 0.8;
+  }
+  .rule__title {
+    margin: 0;
+    font-size: 1.3rem;
     font-weight: 900;
     color: var(--navy);
   }
-  .route__stop--end .route__title {
-    font-size: 1.45rem;
-    color: var(--gold-dark);
-  }
-  .route__leak {
-    margin: 0.15rem 0 0;
-    line-height: 1.5;
-    color: #4a5b73;
-  }
-  @media (min-width: 62rem) {
-    .route {
-      max-width: none;
-      grid-template-columns: 0.6fr repeat(6, 1fr) 0.6fr;
-      gap: 0 1rem;
-      margin-top: 2rem;
-    }
-    .route::before {
-      inset-block: auto;
-      inset-block-start: calc(var(--mark) / 2 - 1px);
-      inset-inline: 2rem;
-      width: auto;
-      height: 2px;
-      background: linear-gradient(to left, var(--teal), var(--gold-dark));
-    }
-    .route__stop {
-      grid-template-columns: 1fr;
-      grid-template-rows: subgrid;
-      grid-row: span 3;
-      justify-items: center;
-      align-items: start;
-      row-gap: 0.75rem;
-      text-align: center;
-    }
-    .route {
-      grid-template-rows: auto auto auto;
-    }
-    .route__mark {
-      grid-row: auto;
-    }
-    .route__leak {
-      margin: 0;
-      font-size: 0.97rem;
-    }
+  .rule__text {
+    margin: 0;
+    line-height: 1.65;
+    color: #33445c;
   }
 
   /* ---------- מנופי הרווחיות: כרטיסי זכוכית, הכול באותו גובה ---------- */
@@ -673,10 +684,10 @@ const crumbs = [
     font-weight: 900;
     color: var(--white);
   }
-  .lever__text {
+  .lever__leak {
     margin: 0;
-    line-height: 1.6;
-    color: var(--on-dark-soft);
+    line-height: 1.55;
+    color: var(--gold-light);
   }
   .lever__points {
     list-style: none;
