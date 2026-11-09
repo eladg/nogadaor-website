@@ -5,6 +5,7 @@
 // סבב 3 (נוגה): בלי ארבע השכבות ובלי הפרק "מה שמודדים גדל" (מאפיין אחד בתועלות), תועלות במקום עקרונות,
 // ניסוחים של תוצאה ולא של תהליך, ומשפט עדין שלא מחפשים שינויים גדולים.
 // נוגה (2026-11-09): בלי תוויות קטנות מעל הכותרות, והמשפט העדין ("שינוי לא צריך להיות גדול...") בפסקת הפתיח.
+// סבב 12 (נוגה): אזור המסר "מבולגן ורועש ולא מקצועי". עכשיו פריסה עריכתית שקטה, שתי פסקאות נקיות, בלי קישוטים.
 // סבב 11 (נוגה): כותרת התהליך בלי "עוצרים", בשם הפועל, משהו חכם שהקורא אומר עליו "וואלה נכון".
 // סבב 10 (נוגה): פתיח נמוך יותר וכותרת קטנה יותר ("תן להגיע לפואנטה"). אזור המסר שבור בעדינות: משפט פתיחה גדול,
 // שלוש תוצאות בשורה עם הדגשה בטורקיז, הניסיון בבנק בטון שקט, והמשפט המסכם של נוגה "סדר, ארגון תהליכים וניהול נכון הופכים למנועי הגדלת הכנסות".
@@ -76,30 +77,22 @@ const crumbs = [
 
   <!-- 2. לנהל עסקים קטנים כגדולים (הכותרת של נוגה): הרווח כתוצאה של מכלול הפעולות (מההרצאה שלה), והניסיון בבנק בזרימה -->
   <section class="section section--mist og-msg" aria-labelledby="msg-title">
-    <div class="container og-msg__inner">
-      <h2 id="msg-title" class="og-msg__title reveal">לנהל עסקים קטנים <span class="hl--mark">כגדולים</span></h2>
-
-      <p class="og-msg__lead reveal">
-        הרווח הוא תוצאה של מכלול הפעולות{' '}<span class="og-c">השיווקיות, התפעוליות והניהוליות</span>{' '}בעסק.
-      </p>
-
-      <p class="og-msg__when reveal">כשהמבנה, התפקידים ותהליכי העבודה מחוברים נכון</p>
-      <ul class="og-flow">
-        <li class="reveal">העבודה <strong>זורמת</strong></li>
-        <li class="reveal" style="transition-delay: 0.1s">המשימות שמחזקות מכירות ושימור לקוחות <strong>נעשות בזמן</strong></li>
-        <li class="reveal" style="transition-delay: 0.2s">העסק <strong>מתעדכן לקצב של השוק</strong></li>
-      </ul>
-      <p class="og-msg__result reveal">וכך ההכנסות גדלות מתוך מה שכבר קיים.</p>
-
-      <p class="og-msg__bank reveal">
-        הגישה נשענת על ניסיון רב בפיתוח ויישום של תהליכי שינוי ארגוני, התייעלות וניהול, לאורך{' '}
-        <strong>20 שנה בהנהלת בנק גדול</strong>, מבניית נהלים והנחיות ועד בקרות ודיווחים. אותם כלים, בהתאמה לגודל
-        ולאופי של כל עסק.
-      </p>
-
-      <p class="og-msg__strong reveal">
-        <Star size={22} /> סדר, ארגון תהליכים וניהול נכון הופכים למנועי הגדלת הכנסות.
-      </p>
+    <div class="container og-msg__grid">
+      <div class="og-msg__head reveal">
+        <h2 id="msg-title" class="og-msg__title">לנהל עסקים קטנים <span class="og-msg__mark">כגדולים</span></h2>
+        <p class="og-msg__statement">סדר, ארגון תהליכים וניהול נכון הופכים למנועי הגדלת הכנסות.</p>
+      </div>
+      <div class="og-msg__body reveal">
+        <p>
+          הרווח הוא תוצאה של מכלול הפעולות השיווקיות, התפעוליות והניהוליות בעסק. כשהמבנה, התפקידים ותהליכי העבודה
+          מחוברים נכון, העבודה זורמת, המשימות שמחזקות מכירות ושימור לקוחות נעשות בזמן, והעסק מתעדכן לקצב של השוק. כך
+          ההכנסות גדלות מתוך מה שכבר קיים.
+        </p>
+        <p>
+          הגישה נשענת על ניסיון רב בפיתוח ויישום של תהליכי שינוי ארגוני, התייעלות וניהול, לאורך 20 שנה בהנהלת בנק גדול,
+          מבניית נהלים והנחיות ועד בקרות ודיווחים. אותם כלים, בהתאמה לגודל ולאופי של כל עסק.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -258,117 +251,49 @@ const crumbs = [
     color: var(--teal-dark);
   }
 
-  /* ---------- המסר: בשיא העדינות, בלי "ספר קריאה" ---------- */
+  /* ---------- המסר: פריסה עריכתית שקטה (נוגה, סבב 12: "מבולגן ורועש") ---------- */
   .og-msg {
-    padding-block: clamp(2.25rem, 5vw, 3.5rem);
+    padding-block: clamp(2.5rem, 5vw, 3.75rem);
   }
-  .og-msg__inner {
-    max-width: 54rem;
-    text-align: center;
+  .og-msg__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 60rem) {
+    .og-msg__grid {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(2.5rem, 6vw, 5rem);
+      align-items: start;
+    }
   }
   .og-msg__title {
-    margin: 0 0 1.25rem;
-    font-size: clamp(1.8rem, 4.2vw, 2.5rem);
+    margin: 0;
+    font-size: clamp(1.8rem, 3.6vw, 2.4rem);
     font-weight: 900;
     line-height: 1.2;
     color: var(--navy);
   }
-  /* המשפט הראשון גדול יותר, כפתיחה */
-  .og-msg__lead {
-    margin: 0 0 1.5rem;
-    font-size: clamp(1.25rem, 2.4vw, 1.5rem);
-    font-weight: 500;
+  .og-msg__mark {
+    color: var(--teal-dark);
+  }
+  .og-msg__statement {
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 3px solid var(--gold-dark);
+    max-width: 24rem;
+    font-size: 1.15rem;
+    font-weight: 600;
     line-height: 1.6;
     color: var(--navy);
   }
-  .og-c {
-    color: var(--teal-dark);
-    font-weight: 700;
-  }
-  .og-msg__when {
-    margin: 0 0 0.85rem;
+  .og-msg__body p {
+    margin: 0;
     font-size: 1.1rem;
-    color: #4a5b73;
-  }
-  /* שלוש התוצאות בשורה, עם קו זהב עדין ביניהן */
-  .og-flow {
-    list-style: none;
-    margin: 0 auto 1rem;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .og-flow li {
-    padding: 0.35rem 1.25rem;
-    font-size: 1.1rem;
-    line-height: 1.55;
+    line-height: 1.9;
     color: #33445c;
   }
-  .og-flow li + li {
-    border-inline-start: 2px solid rgb(209 154 74 / 0.55);
-  }
-  .og-flow strong {
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  @media (max-width: 40rem) {
-    .og-flow {
-      grid-template-columns: 1fr;
-      max-width: 24rem;
-    }
-    .og-flow li {
-      padding: 0.6rem 0;
-    }
-    .og-flow li + li {
-      border-inline-start: 0;
-      border-top: 2px solid rgb(209 154 74 / 0.45);
-    }
-  }
-  .og-msg__result {
-    margin: 0 0 2rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--navy);
-  }
-  /* הניסיון בבנק: טון שקט יותר, עם קו זהב קצר מעליו */
-  .og-msg__bank {
-    position: relative;
-    max-width: 46rem;
-    margin: 0 auto;
-    padding-top: 1.5rem;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: #4a5b73;
-  }
-  .og-msg__bank::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 3.5rem;
-    height: 3px;
-    border-radius: 3px;
-    background: var(--gold-gradient);
-    transform: translateX(-50%);
-  }
-  .og-msg__bank strong {
-    white-space: nowrap;
-    font-weight: 700;
-    color: var(--navy);
-  }
-  .og-msg__strong {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    margin: 1.75rem auto 0;
-    font-size: clamp(1.2rem, 2.3vw, 1.45rem);
-    font-weight: 800;
-    line-height: 1.4;
-    color: var(--teal-dark);
-  }
-  .og-msg__strong :global(svg) {
-    flex: none;
+  .og-msg__body p + p {
+    margin-top: 1rem;
   }
 
   /* ---------- כותרות אזור ---------- */
