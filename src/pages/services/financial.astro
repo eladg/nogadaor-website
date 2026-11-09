@@ -51,19 +51,8 @@ const crumbs = [
           <span class="fn-hero__kicker">{s.title}</span>{' '}<span>בואו נעשה סדר</span>{' '}<span class="fn-hero__mark">ונמצא את הכסף בעסק שלך</span>
         </h1>
         <p class="fn-hero__lead">
-          ניתוח הנתונים מגלה איפה הכסף נמצא, איפה הוא מתפספס ומה מעכב את התזרים. משם מטפלים בדיוק איפה שצריך, בתמחור,
-          בגבייה, בתהליכים ובמימון.
+          ניתוח הנתונים מגלה איפה הכסף נמצא, איפה הוא מתפספס ומה מעכב את התזרים. משם מטפלים בדיוק איפה שצריך.
         </p>
-        <ul class="fn-chips">
-          {
-            ['ניתוח נתונים', 'תמחור ורווחיות', 'תזרים, גבייה ומימון'].map((c) => (
-              <li>
-                <Icon name="check" size={16} />
-                {c}
-              </li>
-            ))
-          }
-        </ul>
         <div class="fn-actions">
           <a class="btn" href={waHref} target="_blank" rel="noopener">
             לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
@@ -94,21 +83,14 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. פסקת תועלת: למי שנמאס לו מהסטרס ומבין שצריך לעשות סדר פעם אחת ולתמיד -->
-  <section class="section fn-explain">
+  <!-- 2. פסקת תועלת: פס תכלת צר, הטקסט לרוחב העמוד (נוגה, 2026-11-09: שהחלקים המשמעותיים יתחילו מהר יותר) -->
+  <section class="fn-explain">
     <div class="container fn-explain__inner reveal">
       <p>
         העסק עובד, יש לקוחות ויש הכנסות, ובכל זאת הכסף מרגיש כמו מקור קבוע ללחץ. בודקים את חשבון הבנק לפני כל החלטה,
-        מחכים לתשלומים שמתעכבים, ולא בטוחים מה באמת מרוויח ומה רק נראה טוב על הנייר.
-      </p>
-      <p>
-        ליווי פיננסי בא לעשות סדר פעם אחת ולתמיד. לדעת בכל רגע איפה העסק עומד, כמה הוא מרוויח ומאיפה, לראות את הכסף
-        נכנס בזמן, ולקבל החלטות בשקט ובביטחון, מתוך נתונים ולא מתוך תחושה. במקום הסטרס מגיעה שליטה, ואיתה הזמן והראש
-        הפנוי לנהל ולהצמיח את העסק.
-      </p>
-      <p class="fn-explain__line">
-        <Star size={22} />
-        <span>הדוחות מספרים מה קרה. הניתוח העסקי מסביר למה, ומה עושים עכשיו.</span>
+        מחכים לתשלומים שמתעכבים, ולא בטוחים מה באמת מרוויח.{' '}
+        <strong>הגיע הזמן לעשות סדר פעם אחת ולתמיד</strong>, ולהחליף את הסטרס בשליטה, בשקט ובזמן פנוי לנהל ולהצמיח את
+        העסק.
       </p>
     </div>
   </section>
@@ -119,7 +101,7 @@ const crumbs = [
       <div class="center reveal">
         <p class="fn-eyebrow fn-eyebrow--dark">בסוף התהליך</p>
         <h2 id="outcomes-title" class="sec-title fn-split">
-          <span>יוצאים מהתהליך</span>{' '}<span class="hl">עם שליטה מלאה בכסף</span>
+          <span>עסק מסודר</span>{' '}<span class="hl">שהכסף בו עובד בשבילך</span>
         </h2>
       </div>
       <ul class="gains">
@@ -144,7 +126,7 @@ const crumbs = [
       <div class="center reveal">
         <p class="fn-eyebrow">העקרונות</p>
         <h2 id="principles-title" class="sec-title fn-split">
-          <span>ככה עושים סדר</span>{' '}<span class="hl--mark">שמחזיק לאורך זמן</span>
+          <span>ארבעה עקרונות</span>{' '}<span class="hl--mark">שעושים את ההבדל</span>
         </h2>
       </div>
       <ol class="rules">
@@ -221,7 +203,7 @@ const crumbs = [
       <div class="fn-end__card reveal">
         <Star size={30} />
         <h2 id="end-title" class="fn-end__title">
-          <span>מוכנים לעשות סדר</span>{' '}<span class="hl">פעם אחת ולתמיד?</span>
+          <span>הכסף כבר נמצא בעסק</span>{' '}<span class="hl">בואו נמצא אותו יחד</span>
         </h2>
         <p class="fn-end__text">שיחת היכרות בוואטסאפ, ומשם בוחרים יחד מאיפה מתחילים.</p>
         <a class="btn fn-end__btn" href={waHref} target="_blank" rel="noopener">
@@ -306,33 +288,10 @@ const crumbs = [
   }
   .fn-hero__lead {
     max-width: 36rem;
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.75rem;
     font-size: clamp(1.1rem, 2vw, 1.25rem);
     line-height: 1.75;
     color: #33445c;
-  }
-  .fn-chips {
-    list-style: none;
-    margin: 0 0 1.75rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .fn-chips li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--navy);
-  }
-  .fn-chips :global(svg) {
-    color: var(--gold-dark);
   }
   .fn-actions {
     display: flex;
@@ -346,6 +305,12 @@ const crumbs = [
   }
 
   /* ---------- לוח הנתונים המצויר ---------- */
+  /* בטלפון ובטאבלט הוא לא מוצג, כדי שהחלקים המשמעותיים יתחילו מהר (נוגה, 2026-11-09) */
+  @media (max-width: 59.99rem) {
+    .dash {
+      display: none;
+    }
+  }
   .dash {
     position: relative;
     width: min(100%, 26rem);
@@ -485,31 +450,23 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- פסקת תועלת ---------- */
-  .fn-explain__inner {
-    max-width: 46rem;
-    text-align: center;
+  /* ---------- פסקת תועלת: פס תכלת צר, הטקסט לרוחב העמוד ---------- */
+  .fn-explain {
+    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+    background: var(--mist);
+    border-bottom: 1px solid var(--line);
   }
   .fn-explain__inner p {
-    font-size: clamp(1.1rem, 2vw, 1.25rem);
-    line-height: 1.85;
+    max-width: 72rem;
+    margin: 0 auto;
+    text-align: center;
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    line-height: 1.8;
     color: #33445c;
   }
-  .fn-explain__inner p:first-child {
-    color: var(--navy);
-  }
-  .fn-explain__line {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 2rem 0 0;
-    padding-top: 2rem;
-    border-top: 1px solid var(--line);
-    font-size: clamp(1.3rem, 3vw, 1.75rem) !important;
-    font-weight: 500;
-    line-height: 1.5 !important;
-    color: var(--navy) !important;
+  .fn-explain__inner strong {
+    font-weight: 800;
+    color: var(--teal-dark);
   }
 
   /* ---------- כותרות אזור ---------- */
