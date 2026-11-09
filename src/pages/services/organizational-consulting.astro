@@ -1,17 +1,18 @@
 ---
-// ייעוץ ארגוני, עמוד משלו (נוגה, 2026-11-09). נהלים, תפקידים, תהליכי עבודה ותהליכי ניהול. המיקוד: שיווק ומכירות,
-// הנעת עובדים, צוותים וסניפים, ומבנה נכון. **לא** בניית צוותים, נושאים פסיכולוגיים או משברים.
-// הסדר: פתיח (העסק גדל, גם הניהול צריך להתקדם; במחשב מבנה ארגוני מצויר בקוד) ← פס הכאב ← מה בונים (כהה, 6 תחומים)
-//   ← מה שמודדים גדל (תהליכי הניהול) ← 20 שנה בבנק (זהב) ← הגישה (4 עקרונות) ← איך זה עובד (3 שלבים)
-//   ← למי זה מתאים (כהה) ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// ייעוץ ארגוני, עמוד משלו (נוגה, 2026-11-09, סבב 2). המסר: אפשר להגדיל הכנסות רק מלארגן ולנהל טוב יותר.
+// שפה סופר מקצועית וגבוהה. מתאים לעסק כולו או למחלקה, ולכן לא מדברים על "בעל הבית". **לא** בניית צוותים, פסיכולוגיה
+// או משברים. נוגה לא אהבה את הכותרת "העסק גדל / גם הניהול צריך להתקדם" ואת איור המבנה הארגוני (הציג רק חלק מהעסק).
+// הסדר: פתיח ← פס המסר ← תחומי העבודה (כהה, 6) ← ארבע השכבות של הניהול (מההרצאה של נוגה) ← מה שמודדים גדל
+//   ← 20 שנה בבנק (זהב) ← עקרונות (4) ← איך זה עובד (3) ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// "למי זה מתאים" הוסר (נוגה: "לא להגיד מה שלא צריך להגיד").
 // הטקסטים ב-src/data/org.ts. **טיוטה לאישור נוגה.**
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
-import { serviceBySlug, type IconName } from '../../data/services';
-import { orgAreas, orgRhythm, orgPrinciples, orgSteps, orgFit } from '../../data/org';
+import { serviceBySlug } from '../../data/services';
+import { orgAreas, orgLayers, orgRhythm, orgPrinciples, orgSteps } from '../../data/org';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import team from '../../assets/atmosphere/light-team.webp';
@@ -20,15 +21,8 @@ const s = serviceBySlug('organizational-consulting')!;
 const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, אשמח לשמוע על ייעוץ ארגוני')}`;
 const num = (i: number) => String(i + 1).padStart(2, '0');
 
-// המבנה המצויר בפתיח: איור בלבד. לכל צוות פס התקדמות מול היעד ("מה שמודדים גדל").
-const units: { icon: IconName; name: string; pct: number }[] = [
-  { icon: 'megaphone', name: 'שיווק', pct: 72 },
-  { icon: 'target', name: 'מכירות', pct: 86 },
-  { icon: 'heart', name: 'שירות', pct: 64 },
-];
-
 const description =
-  'ייעוץ ארגוני לעסקים שגדלים. מבנה ארגוני נכון, הגדרות תפקידים, נהלי עבודה, ייעול תהליכים, תהליכי שיווק ומכירות, ושגרות ניהול ובקרה שמניעות עובדים, צוותים וסניפים קדימה.';
+  'ייעוץ ארגוני להגדלת הכנסות באמצעות ניהול וארגון נכונים. מבנה ארגוני, הגדרות תפקידים, נהלי עבודה, התייעלות בתהליכי עבודה, תהליכי שיווק ומכירות, ושגרות ניהול ובקרה לעסק כולו או למחלקה.';
 const path = '/services/organizational-consulting/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -39,7 +33,7 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: הקריאה החזקה בימין, ובשמאל מבנה ארגוני מצויר מעל תמונת הצוות -->
+  <!-- 1. פתיח: הקריאה החזקה בימין, ותמונת הצוות נמוגה בשמאל (בלי איור) -->
   <section class="og-hero">
     <div class="og-hero__bg" aria-hidden="true">
       <Image src={team} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
@@ -48,64 +42,40 @@ const crumbs = [
       <div class="og-hero__text">
         <p class="og-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
         <h1 class="og-hero__title">
-          <span class="og-hero__kicker">{s.title}</span>{' '}<span>העסק גדל</span>{' '}<span class="og-hero__mark">גם הניהול צריך להתקדם</span>
+          <span class="og-hero__kicker">{s.title}</span>{' '}<span>ארגון וניהול מדויקים</span>{' '}<span class="og-hero__mark">שמגדילים הכנסות</span>
         </h1>
         <p class="og-hero__lead">
-          מבנה ברור, תפקידים מוגדרים, נהלי עבודה ושגרות ניהול שמחזיקים את העסק בתנועה. כך הצוותים, הסניפים והמכירות
-          מתקדמים, וההחלטות כבר לא מחכות רק לבעלים.
+          איתור מה שמעכב בתהליכי העבודה, מבנה ותפקידים מוגדרים, ותהליכי ניהול שמובילים לתוצאות. בארגון כולו, במחלקה או
+          ביחידה אחת.
         </p>
         <div class="og-actions">
           <a class="btn" href={waHref} target="_blank" rel="noopener">
             לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
-          <a class="og-actions__link" href="#areas">מה בונים יחד?</a>
+          <a class="og-actions__link" href="#areas">תחומי העבודה</a>
         </div>
-      </div>
-
-      <!-- איור בלבד, ולכן מוסתר מקוראי מסך -->
-      <div class="chart reveal" aria-hidden="true">
-        <div class="chart__top">
-          <Icon name="crown" size={18} />
-          <span>הנהלה</span>
-        </div>
-        <ul class="chart__row">
-          {
-            units.map((u, i) => (
-              <li class="chart__unit" style={`--i: ${i}; --pct: ${u.pct}%`}>
-                <span class="chart__icon">
-                  <Icon name={u.icon} size={18} />
-                </span>
-                <span class="chart__name">{u.name}</span>
-                <span class="chart__bar">
-                  <i></i>
-                </span>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="chart__tag"><Icon name="check" size={16} /> כל אחד יודע מה באחריותו</p>
       </div>
     </div>
   </section>
 
-  <!-- 2. הכאב: פס תכלת צר, הטקסט לרוחב העמוד -->
+  <!-- 2. המסר: פס תכלת צר, הטקסט לרוחב העמוד ("הרווח הוא תוצאה של מכלול הפעולות", מההרצאה של נוגה) -->
   <section class="og-pain">
     <div class="container og-pain__inner reveal">
       <p>
-        כשהעסק קטן, הכול עובר דרך הבעלים וזה עובד. כשמצטרפים עובדים, צוותים וסניפים, אותה דרך עבודה מתחילה לעכב. כל אחד
-        עובד אחרת, משימות נופלות בין הכיסאות, ושאלות שהיו צריכות להיסגר בצוות חוזרות שוב אל הבעלים.{' '}
-        <strong>מבנה, נהלים ותהליכי ניהול</strong> הם מה שמאפשר לעסק להמשיך לגדול.
+        הרווח של כל עסק הוא תוצאה של מכלול הפעולות השיווקיות, התפעוליות והניהוליות שמתקיימות בו. לכן הפוטנציאל הגדול
+        נמצא לא פעם בתוך הארגון, בתהליכים יעילים, בתפקידים מוגדרים ובניהול שוטף שמחובר ליעדים.{' '}
+        <strong>ארגון וניהול נכונים הם מנוע הכנסות בפני עצמו.</strong>
       </p>
     </div>
   </section>
 
-  <!-- 3. מה בונים: 6 תחומים -->
+  <!-- 3. תחומי העבודה: 6 -->
   <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
-        <p class="og-eyebrow og-eyebrow--dark">מה בונים יחד</p>
+        <p class="og-eyebrow og-eyebrow--dark">תחומי העבודה</p>
         <h2 id="areas-title" class="sec-title og-split">
-          <span>ארגון שעובד נכון</span>{' '}<span class="hl">מהבעלים ועד הסניף האחרון</span>
+          <span>מבנה, תהליכים וניהול</span>{' '}<span class="hl">שפועלים כמערכת אחת</span>
         </h2>
       </div>
       <ul class="areas">
@@ -124,8 +94,34 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 4. מה שמודדים גדל: תהליכי הניהול, בלי פירוט -->
-  <section class="section og-measure" aria-labelledby="measure-title">
+  <!-- 4. ארבע השכבות של הניהול (מההרצאה של נוגה "איך מנהלים בחברות ותאגידים"), מדרגות שעולות -->
+  <section class="section og-layers" aria-labelledby="layers-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="og-eyebrow">איך מנהלים ארגון</p>
+        <h2 id="layers-title" class="sec-title og-split">
+          <span>מהחזון</span>{' '}<span class="hl--mark">ועד הניהול השוטף</span>
+        </h2>
+        <p class="og-layers__lead">
+          ארגונים מצליחים מחברים בין ארבע שכבות של ניהול. כשהן מחוברות, כל החלטה בשטח משרתת את הכיוון של הארגון.
+        </p>
+      </div>
+      <ol class="layers">
+        {
+          orgLayers.map((l, i) => (
+            <li class="layer reveal" style={`--i: ${i}; transition-delay: ${i * 0.12}s`}>
+              <span class="layer__step" aria-hidden="true">{num(i)}</span>
+              <h3 class="layer__title">{l.title}</h3>
+              <p class="layer__text">{l.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. מה שמודדים גדל: תהליכי הניהול, בלי פירוט -->
+  <section class="section section--mist og-measure" aria-labelledby="measure-title">
     <div class="container og-measure__inner">
       <div class="reveal">
         <p class="og-eyebrow">תהליכי ניהול</p>
@@ -133,8 +129,8 @@ const crumbs = [
           <span>מה שמודדים</span>{' '}<span class="hl--mark">גדל</span>
         </h2>
         <p class="og-measure__text">
-          תהליכי הניהול הם המנוע שמניע את העסק קדימה. שגרה קבועה של פגישות עבודה, יעדים ובקרות הופכת החלטות למעשים, ומאפשרת
-          לראות בזמן מה מתקדם ומה צריך תשומת לב.
+          תהליכי הניהול הם שמניעים את הארגון קדימה. תכנון, בקרה ומעקב קבועים הופכים החלטות לביצוע, ומאפשרים לזהות בזמן מה
+          מתקדם ומה דורש התערבות.
         </p>
       </div>
       <ul class="rhythm">
@@ -152,23 +148,23 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
+  <!-- 6. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
   <section class="og-band">
     <div class="container og-band__inner reveal">
       <span class="og-band__big">20 שנה</span>
       <span class="og-band__text">
-        בהנהלה של בנק גדול, בהובלת עשרות סניפים ומאות יועצי השקעות עם נהלים, בקרות ודוחות עבודה
+        בהנהלה של בנק גדול, בבניית נהלים, בקרות ודוחות עבודה שהניעו עשרות סניפים ומאות יועצי השקעות
       </span>
     </div>
   </section>
 
-  <!-- 6. הגישה -->
+  <!-- 7. עקרונות העבודה -->
   <section class="section og-principles" aria-labelledby="principles-title">
     <div class="container">
       <div class="center reveal">
-        <p class="og-eyebrow">הגישה</p>
+        <p class="og-eyebrow">עקרונות העבודה</p>
         <h2 id="principles-title" class="sec-title og-split">
-          <span>סדר שמתאים לעסק</span>{' '}<span class="hl--mark">ונשאר בו</span>
+          <span>שינוי מדויק</span>{' '}<span class="hl--mark">שנטמע לאורך זמן</span>
         </h2>
       </div>
       <ol class="rules">
@@ -185,48 +181,26 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 7. איך זה עובד -->
+  <!-- 8. איך זה עובד -->
   <section class="section section--mist og-process" aria-labelledby="process-title">
     <div class="container">
       <div class="center reveal">
         <p class="og-eyebrow">איך זה עובד</p>
         <h2 id="process-title" class="sec-title og-split">
-          <span>מהאבחון</span>{' '}<span class="hl--mark">אל דרך עבודה חדשה</span>
+          <span>מאבחון</span>{' '}<span class="hl--mark">להטמעה בשטח</span>
         </h2>
       </div>
       <Timeline items={orgSteps} />
     </div>
   </section>
 
-  <!-- 8. למי זה מתאים -->
-  <section class="section section--deep og-fit" aria-labelledby="fit-title">
-    <div class="container">
-      <div class="center reveal">
-        <p class="og-eyebrow og-eyebrow--dark">למי זה מתאים</p>
-        <h2 id="fit-title" class="sec-title og-split">
-          <span>לעסקים שגדלו</span>{' '}<span class="hl">ורוצים לגדול עוד</span>
-        </h2>
-      </div>
-      <ul class="fit">
-        {
-          orgFit.map((f, i) => (
-            <li class="fit__item reveal" style={`transition-delay: ${i * 0.1}s`}>
-              <Icon name="check" size={22} />
-              <span>{f}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
   <!-- 9. סיום: כרטיס כהה בתוך אזור בהיר -->
-  <section class="section section--mist og-end" aria-labelledby="end-title">
+  <section class="section og-end" aria-labelledby="end-title">
     <div class="container">
       <div class="og-end__card reveal">
         <Star size={30} />
         <h2 id="end-title" class="og-end__title">
-          <span>בואו נבנה עסק שעובד מצוין</span>{' '}<span class="hl">גם בלי שהכול יעבור דרכך</span>
+          <span>בואו נבחן יחד</span>{' '}<span class="hl">איפה הארגון יכול לעבוד טוב יותר</span>
         </h2>
         <p class="og-end__text">שיחת היכרות בוואטסאפ, בלי התחייבות.</p>
         <a class="btn og-end__btn" href={waHref} target="_blank" rel="noopener">
@@ -271,11 +245,12 @@ const crumbs = [
   }
   @media (min-width: 60rem) {
     .og-hero__grid {
-      grid-template-columns: 1.15fr 0.85fr;
       align-items: center;
-      gap: clamp(2rem, 5vw, 5rem);
-      min-height: min(78vh, 38rem);
+      min-height: min(64vh, 32rem);
       padding-block: 3.5rem;
+    }
+    .og-hero__text {
+      max-width: 40rem;
     }
   }
   .og-crumbs {
@@ -323,136 +298,6 @@ const crumbs = [
   }
   .og-actions__link {
     font-weight: 800;
-    color: var(--teal-dark);
-  }
-
-  /* ---------- המבנה המצויר (רק במחשב) ---------- */
-  @media (max-width: 59.99rem) {
-    .chart {
-      display: none;
-    }
-  }
-  .chart {
-    position: relative;
-    width: min(100%, 27rem);
-    margin-inline: auto;
-    padding: 1.6rem 1.35rem 2.1rem;
-    border-radius: 1.5rem;
-    color: var(--on-dark);
-    background:
-      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
-      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
-      var(--navy-deep);
-    box-shadow: 0 2rem 4rem -1.5rem rgb(11 26 51 / 0.55);
-  }
-  .chart__top {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 0.65rem 1.4rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-weight: 900;
-  }
-  /* קו אנכי מההנהלה, וקו אופקי שמחבר את שלושת הצוותים */
-  .chart__row {
-    position: relative;
-    list-style: none;
-    margin: 0;
-    padding: 2.4rem 0 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
-  }
-  .chart__row::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 1.2rem;
-    background: rgb(255 255 255 / 0.3);
-  }
-  .chart__row::after {
-    content: '';
-    position: absolute;
-    top: 1.2rem;
-    inset-inline: calc(100% / 6);
-    height: 2px;
-    background: rgb(255 255 255 / 0.3);
-  }
-  .chart__unit {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    gap: 0.45rem;
-    padding: 0.85rem 0.5rem 0.9rem;
-    border-radius: 0.9rem;
-    background: rgb(255 255 255 / 0.06);
-    border: 1px solid rgb(255 255 255 / 0.12);
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--white);
-  }
-  .chart__unit::before {
-    content: '';
-    position: absolute;
-    top: -1.2rem;
-    left: 50%;
-    width: 2px;
-    height: 1.2rem;
-    background: rgb(255 255 255 / 0.3);
-  }
-  .chart__icon {
-    display: grid;
-    place-items: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 0.6rem;
-    background: rgb(25 154 181 / 0.3);
-  }
-  /* פס התקדמות מול היעד: מתמלא כשהאיור מופיע */
-  .chart__bar {
-    width: 100%;
-    height: 0.4rem;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.12);
-    overflow: hidden;
-  }
-  .chart__bar i {
-    display: block;
-    width: var(--pct);
-    height: 100%;
-    border-radius: inherit;
-    background: var(--gold-gradient);
-    transition: width 0.9s ease;
-    transition-delay: calc(var(--i) * 0.25s + 0.3s);
-  }
-  .js .chart:not(.is-in) .chart__bar i {
-    width: 0;
-  }
-  .chart__tag {
-    position: absolute;
-    inset-block-end: -1.1rem;
-    inset-inline-start: 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.35);
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: var(--navy);
-  }
-  .chart__tag :global(svg) {
     color: var(--teal-dark);
   }
 
@@ -554,6 +399,87 @@ const crumbs = [
     margin: 0;
     line-height: 1.65;
     color: var(--on-dark-soft);
+  }
+
+  /* ---------- ארבע השכבות: מדרגות שעולות מימין לשמאל ---------- */
+  .og-layers__lead {
+    max-width: 44rem;
+    margin: -1.25rem auto 2.5rem;
+    font-size: 1.12rem;
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .layers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 clamp(0.75rem, 2vw, 1.25rem);
+    align-items: end;
+  }
+  @media (max-width: 62rem) {
+    .layers {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .layers {
+      grid-template-columns: 1fr;
+    }
+  }
+  .layer {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.5rem;
+    margin: 0 0 1.75rem;
+  }
+  /* המדרגה: כל שכבה גבוהה מהקודמת, כחול שמעמיק עד הניהול השוטף */
+  .layer__step {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: end;
+    height: calc(3.25rem + var(--i) * 1.6rem);
+    padding: 0.7rem 1rem;
+    border-radius: 1rem 1rem 0.35rem 0.35rem;
+    background: color-mix(in srgb, var(--teal) calc(90% - var(--i) * 22%), var(--navy-deep));
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--white);
+  }
+  @media (max-width: 62rem) {
+    .layer__step {
+      height: 3rem;
+    }
+  }
+  /* בטלפון: טור אחד, והמדרגות מתארכות לרוחב */
+  @media (max-width: 36rem) {
+    .layers {
+      grid-auto-rows: auto;
+    }
+    .layer {
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    .layer__step {
+      width: calc(40% + var(--i) * 20%);
+      margin-bottom: 0.75rem;
+    }
+  }
+  .layer__title {
+    margin: 0.4rem 0 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .layer__text {
+    margin: 0;
+    line-height: 1.65;
+    color: #33445c;
   }
 
   /* ---------- מה שמודדים גדל ---------- */
@@ -694,44 +620,6 @@ const crumbs = [
     color: #33445c;
   }
 
-  /* ---------- למי זה מתאים ---------- */
-  .fit {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 62rem) {
-    .fit {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
-    .fit {
-      grid-template-columns: 1fr;
-    }
-  }
-  .fit__item {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin: 0;
-    padding: 1.35rem 1.25rem;
-    border-radius: 1.1rem;
-    background: rgb(25 154 181 / 0.2);
-    border: 1px solid rgb(25 154 181 / 0.45);
-    font-size: 1.08rem;
-    line-height: 1.55;
-    color: var(--white);
-  }
-  .fit__item :global(svg) {
-    flex: none;
-    margin-top: 0.15rem;
-    color: var(--gold-light);
-  }
-
   /* ---------- סיום ---------- */
   .og-end__card {
     max-width: 52rem;
@@ -764,12 +652,4 @@ const crumbs = [
     font-size: 1.1rem;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .chart__bar i {
-      transition: none;
-    }
-    .js .chart:not(.is-in) .chart__bar i {
-      width: var(--pct);
-    }
-  }
 </style>
