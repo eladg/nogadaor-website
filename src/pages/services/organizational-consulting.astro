@@ -5,6 +5,7 @@
 // סבב 3 (נוגה): בלי ארבע השכבות ובלי הפרק "מה שמודדים גדל" (מאפיין אחד בתועלות), תועלות במקום עקרונות,
 // ניסוחים של תוצאה ולא של תהליך, ומשפט עדין שלא מחפשים שינויים גדולים.
 // נוגה (2026-11-09): בלי תוויות קטנות מעל הכותרות, והמשפט העדין ("שינוי לא צריך להיות גדול...") בפסקת הפתיח.
+// סבב 8 (נוגה): בלי שלב 1 / שלב 2. אזור הבנק ממורכז בטורקיז, עם בולטים בכוכב שלה ובלי "20 שנה" כעיקר.
 // סבב 7 (נוגה): התחומים בשני השלבים מההרצאות שלה, "איך מנהלים בחברות גדולות" בפס הבנק, "כולם יודעים מה לעשות,
 // אבל לא עוצרים לעשות" ככותרת התהליך, וההמלצה של זיו אדר בסיום.
 // סבב 6 (נוגה): "לא קולעים למה שאני ולמי שאני". סדר וזרימה, חיבור למגמות, התייעלות, משימות שתומכות בשיווק ובשימור,
@@ -21,7 +22,7 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug } from '../../data/services';
-import { orgStages, orgSteps } from '../../data/org';
+import { orgAreas, orgExperience, orgSteps } from '../../data/org';
 import { allReviews } from '../../data/reviews';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
@@ -84,7 +85,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 3. תחומי העבודה: 6, בשני השלבים מההרצאות של נוגה -->
+  <!-- 3. תחומי העבודה: 6 -->
   <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
@@ -92,37 +93,42 @@ const crumbs = [
           <span>מבנה, תהליכים וניהול</span>{' '}<span class="hl">שפועלים כמערכת אחת</span>
         </h2>
       </div>
-      {
-        orgStages.map((st, si) => (
-          <div class="stage">
-            <h3 class="stage__title reveal">
-              <span class="stage__num">שלב {si + 1}</span>{' '}{st.title}
-            </h3>
-            <ul class="areas">
-              {st.areas.map((a, i) => (
-                <li class="area reveal" style={`transition-delay: ${i * 0.1}s`}>
-                  <span class="area__icon">
-                    <Icon name={a.icon} size={28} />
-                  </span>
-                  <h4 class="area__title">{a.title}</h4>
-                  <p class="area__text">{a.text}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
+      <ul class="areas">
+        {
+          orgAreas.map((a, i) => (
+            <li class="area reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="area__icon">
+                <Icon name={a.icon} size={28} />
+              </span>
+              <h3 class="area__title">{a.title}</h3>
+              <p class="area__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
-  <!-- 4. הניסיון בבנק: איך מנהלים בחברות גדולות (מההרצאה של נוגה) -->
-  <section class="og-band">
-    <div class="container og-band__inner reveal">
-      <span class="og-band__big">20 שנה</span>
-      <span class="og-band__text">
-        בהנהלה של בנק גדול, שבו הניהול נשען על חזון, אסטרטגיה, תכנון שנתי וניהול שוטף. אותה תשתית ניהולית, בהתאמה
-        לגודל ולאופי של כל ארגון ומחלקה.
-      </span>
+  <!-- 4. הניסיון מהבנק (נוגה, סבב 8): ממורכז, בטורקיז, בולטים עם הכוכב שלה. "20 שנה" הוא לא העיקר. -->
+  <section class="section og-exp" aria-labelledby="exp-title">
+    <div class="container og-exp__inner">
+      <h2 id="exp-title" class="sec-title og-split reveal">
+        <span>הכלים של ארגון גדול</span>{' '}<span class="og-exp__mark">בהתאמה לכל ארגון ומחלקה</span>
+      </h2>
+      <p class="og-exp__lead reveal">
+        שנים בהנהלה של בנק גדול, שבו הניהול נשען על חזון, אסטרטגיה, תכנון שנתי וניהול שוטף. משם מגיע ניסיון מעשי ועמוק
+        בבניית התשתית הניהולית.
+      </p>
+      <ul class="og-exp__list">
+        {
+          orgExperience.map((e, i) => (
+            <li class="reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <Star size={26} />
+              <span>{e}</span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
@@ -355,29 +361,6 @@ const crumbs = [
     color: var(--on-dark-soft);
   }
 
-  /* ---------- שני השלבים ---------- */
-  .stage + .stage {
-    margin-top: 1.75rem;
-  }
-  .stage__title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.85rem;
-    margin: 0 0 1.25rem;
-    font-size: clamp(1.35rem, 2.6vw, 1.65rem);
-    font-weight: 900;
-    color: var(--white);
-  }
-  .stage__num {
-    padding: 0.3rem 0.85rem;
-    border-radius: 999px;
-    background: var(--gold-gradient);
-    font-size: 0.95rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-
   /* ---------- ההמלצה של זיו ---------- */
   .og-quote {
     max-width: 46rem;
@@ -408,30 +391,63 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- 20 שנה בבנק ---------- */
-  .og-band {
-    background: var(--gold-gradient);
-    padding-block: 1.75rem;
+  /* ---------- הניסיון מהבנק: טורקיז, ממורכז, כוכבים ---------- */
+  .og-exp {
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    background:
+      radial-gradient(34rem 20rem at 100% 0, rgb(255 255 255 / 0.14), transparent 70%),
+      radial-gradient(30rem 18rem at 0 100%, rgb(209 154 74 / 0.22), transparent 72%),
+      linear-gradient(135deg, var(--teal-dark), #0d5d6e);
   }
-  .og-band__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.5rem 1rem;
+  .og-exp__inner {
     text-align: center;
   }
-  .og-band__big {
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 900;
-    color: var(--navy);
+  .og-exp .sec-title {
+    color: var(--white);
   }
-  .og-band__text {
-    max-width: 44rem;
-    font-size: 1.15rem;
-    font-weight: 600;
+  .og-exp__mark {
+    color: var(--gold-light);
+  }
+  .og-exp__lead {
+    max-width: 46rem;
+    margin: -1rem auto 2.25rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.8;
+    color: rgb(255 255 255 / 0.9);
+  }
+  .og-exp__list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 68rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 62rem) {
+    .og-exp__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .og-exp__list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .og-exp__list li {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.75rem;
+    padding: 1.4rem 1.1rem;
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.1);
+    border: 1px solid rgb(255 255 255 / 0.22);
+    font-size: 1.1rem;
+    font-weight: 700;
     line-height: 1.5;
-    color: var(--navy);
   }
 
   /* ---------- סיום ---------- */

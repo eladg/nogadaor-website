@@ -126,7 +126,7 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
           fitFor.map((item, i) => (
             <li class="reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
               <span class="fit-list__check" aria-hidden="true">
-                <svg viewBox="0 0 20 20" width="20" height="20"><path d="M3.5 10.5 8 15 16.5 4.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <Star size={22} tone="navy" />
               </span>
               <span>{item}</span>
             </li>
