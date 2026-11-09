@@ -14,7 +14,10 @@ import { servicePages, serviceBySlug, faqs, type Service } from '../../data/serv
 import { contact } from '../../data/contact';
 
 export function getStaticPaths() {
-  return servicePages.map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
+  // לפגישת הייעוץ יש עמוד משלו (consulting-session.astro, נוגה 2026-11-09)
+  return servicePages
+    .filter((s) => s.slug !== 'consulting-session')
+    .map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
 }
 
 const { service: s } = Astro.props as { service: Service };
@@ -29,14 +32,12 @@ import whiteboard from '../../assets/atmosphere/light-whiteboard.webp';
 import team from '../../assets/atmosphere/light-team.webp';
 import desk from '../../assets/atmosphere/light-desk.webp';
 import meeting from '../../assets/atmosphere/light-meeting-table.webp';
-import chairs from '../../assets/atmosphere/light-chairs.webp';
 
 const heroImages: Record<string, ImageMetadata> = {
   'business-consulting': whiteboard,
   'organizational-consulting': team,
   'ai-automation': meeting,
   financial: desk,
-  'consulting-session': chairs,
 };
 const heroImage = heroImages[s.slug] ?? desk;
 const topBlocks = (s.blocks ?? []).filter((b) => b.place !== 'bottom');
@@ -83,65 +84,6 @@ const crumbs = [
           {s.explain.map((para) => (
             <p>{para}</p>
           ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- 2א. נושאי הפגישה (פגישת ייעוץ): מתג בין ארבעה נושאים. בלי JavaScript כל הנושאים מוצגים זה מתחת לזה. -->
-  {
-    s.topics && (
-      <section class="section section--mist sv-topics">
-        <div class="container">
-          <h2 class="sec-title reveal">
-            ארבעה נושאים, <span class="hl--mark">פגישה אחת</span>
-          </h2>
-          <p class="sec-lead">בוחרים את הנושא שהכי חשוב לעסק עכשיו.</p>
-          <div class="tabs" role="tablist" aria-label="נושאי הפגישה" hidden>
-            {s.topics.map((t, i) => (
-              <button
-                class="tab"
-                type="button"
-                role="tab"
-                id={`tab-${t.id}`}
-                aria-controls={`panel-${t.id}`}
-                aria-selected={i === 0 ? 'true' : 'false'}
-                tabindex={i === 0 ? 0 : -1}
-              >
-                <Icon name={t.icon} size={22} />
-                <span>{t.title}</span>
-              </button>
-            ))}
-          </div>
-          <div class="panels">
-            {s.topics.map((t) => (
-              <article class="panel" id={`panel-${t.id}`} role="tabpanel" aria-labelledby={`tab-${t.id}`}>
-                <div class="panel__text">
-                  <h3 class="panel__title">
-                    <Icon name={t.icon} size={26} /> {t.title}
-                  </h3>
-                  <p class="panel__lead">{t.lead}</p>
-                  {t.paras.map((para) => (
-                    <p>{para}</p>
-                  ))}
-                </div>
-                <div class="panel__out">
-                  <p class="panel__out-title">יוצאים מהפגישה עם:</p>
-                  <ul>
-                    {t.outcomes.map((o) => (
-                      <li>
-                        <span class="panel__check" aria-hidden="true">
-                          <Icon name="check" size={16} />
-                        </span>
-                        {o}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            ))}
-          </div>
-          {s.topicsNote && <p class="topics-note">{s.topicsNote}</p>}
         </div>
       </section>
     )
@@ -704,156 +646,6 @@ const crumbs = [
     }
   }
 
-  /* ---------- נושאי הפגישה: מתג ---------- */
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-  }
-  .tabs[hidden] {
-    display: none;
-  }
-  /* בטלפון: ארבעת הנושאים ברשת של 2 על 2 */
-  @media (max-width: 40rem) {
-    .tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .tab {
-      justify-content: center;
-      border-radius: 1rem;
-      padding: 0.65rem 0.6rem;
-      font-size: 0.9rem;
-      text-align: center;
-      line-height: 1.3;
-    }
-  }
-  .tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.15rem;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--white);
-    color: var(--navy);
-    font: inherit;
-    font-weight: 800;
-    cursor: pointer;
-    transition:
-      background 0.25s ease,
-      color 0.25s ease,
-      border-color 0.25s ease;
-  }
-  .tab :global(svg) {
-    color: var(--teal-dark);
-  }
-  .tab:hover {
-    border-color: var(--teal);
-  }
-  .tab[aria-selected='true'] {
-    background: var(--navy);
-    border-color: var(--navy);
-    color: var(--white);
-  }
-  .tab[aria-selected='true'] :global(svg) {
-    color: var(--gold-light);
-  }
-  .panels {
-    display: grid;
-    gap: 1.25rem;
-  }
-  .panel {
-    display: grid;
-    gap: 1.5rem;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 1.5rem;
-  }
-  @media (min-width: 52rem) {
-    .panel {
-      grid-template-columns: 1.5fr 1fr;
-      gap: 2.5rem;
-      align-items: start;
-    }
-  }
-  .panel[hidden] {
-    display: none;
-  }
-  .panels.is-live .panel:not([hidden]) {
-    animation: panel-in 0.4s ease both;
-  }
-  @keyframes panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(0.5rem);
-    }
-  }
-  .panel__title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0 0 0.6rem;
-    font-size: 1.4rem;
-    font-weight: 900;
-  }
-  .panel__title :global(svg) {
-    color: var(--teal-dark);
-  }
-  .panel__lead {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--navy);
-  }
-  .panel__text p:not(.panel__lead) {
-    line-height: 1.75;
-    color: #33445c;
-  }
-  .panel__out {
-    padding: 1.35rem;
-    border-radius: 1.15rem;
-    background:
-      radial-gradient(14rem 10rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
-      var(--navy);
-    color: var(--white);
-  }
-  .panel__out-title {
-    margin: 0 0 0.75rem;
-    font-weight: 900;
-    color: var(--gold-light);
-  }
-  .panel__out ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.6rem;
-  }
-  .panel__out li {
-    display: flex;
-    gap: 0.55rem;
-    align-items: flex-start;
-    line-height: 1.45;
-    font-weight: 600;
-  }
-  .panel__check {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .topics-note {
-    margin: 1.25rem 0 0;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
-
   /* ---------- בלוקי טקסט: כותרת בצד, הטקסט לידה ---------- */
   .block {
     display: grid;
@@ -896,44 +688,5 @@ const crumbs = [
     font-weight: 500;
     color: var(--navy) !important;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .panels.is-live .panel:not([hidden]) {
-      animation: none;
-    }
-    .tab {
-      transition: none;
-    }
-  }
 </style>
 
-<script>
-  // מתג נושאי הפגישה (תבנית tabs נגישה: חיצים, Home ו-End). בלי JavaScript כל הנושאים מוצגים.
-  const tablist = document.querySelector<HTMLElement>('.tabs');
-  const panelsWrap = document.querySelector<HTMLElement>('.panels');
-  if (tablist && panelsWrap) {
-    const tabs = [...tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-    const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls') ?? ''));
-    const select = (i: number, focus = false) => {
-      tabs.forEach((t, j) => {
-        const on = i === j;
-        t.setAttribute('aria-selected', String(on));
-        t.tabIndex = on ? 0 : -1;
-        if (panels[j]) panels[j]!.hidden = !on;
-      });
-      if (focus) tabs[i].focus();
-    };
-    tablist.hidden = false;
-    panelsWrap.classList.add('is-live');
-    select(0);
-    tabs.forEach((t, i) => {
-      t.addEventListener('click', () => select(i));
-      t.addEventListener('keydown', (e) => {
-        // ב-RTL החץ שמאלה מתקדם לנושא הבא
-        const next = { ArrowLeft: i + 1, ArrowRight: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
-        if (next === undefined) return;
-        e.preventDefault();
-        select((next + tabs.length) % tabs.length, true);
-      });
-    });
-  }
-</script>

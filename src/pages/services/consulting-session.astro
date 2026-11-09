@@ -1,0 +1,808 @@
+---
+// פגישת ייעוץ, עמוד משלו (נוגה, 2026-11-09): "עמוד מאוד שימושי, מרשים ושונה", כל סוגי הפגישות אחת אחרי השנייה,
+// בלי פגישת פיננסים, עם תמונות מזמינות, ושיהיה ברור מאוד איזו בעיה כל פגישה פותרת ועם מה יוצאים.
+// הסדר: פתיח עם התמונה של נוגה ← "מה הכי בוער" (בורר שמוביל לפגישה) ← ארבעה פרקים, פגישה בכל פרק
+//   (האתגר, מה עושים בפגישה, יוצאים עם, המלצה אמיתית וכפתור וואטסאפ עם שם הפגישה) ← איך קובעים.
+// הטקסטים ב-src/data/services.ts (topics). ההמלצות מ-reviews.ts לפי שם, בנוסח של נוגה בלי שינוי.
+// אין כאן "משתלב עם": הוא הציג את הליווי הפיננסי.
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
+import { serviceBySlug } from '../../data/services';
+import { allReviews } from '../../data/reviews';
+import { contact, socials } from '../../data/contact';
+import { serviceSchema } from '../../utils/schema';
+
+import bench from '../../assets/about/gallery/03-bench-portrait.jpg';
+import lookingAhead from '../../assets/about/gallery/17-looking-ahead.jpg';
+import library from '../../assets/testimonials/moments/09-four-library.jpg';
+import stageSlide from '../../assets/about/gallery/13-stage-slide.jpg';
+import { instagramPosts } from '../../data/instagram';
+
+const s = serviceBySlug('consulting-session')!;
+const topics = s.topics ?? [];
+
+// תמונה לכל פגישה. בנוכחות בדיגיטל: טלפון עם סרטון של נוגה מהאינסטגרם, ואייקוני הרשתות סביבו.
+const photos: Record<string, { src: ImageMetadata; alt: string; pos: string }> = {
+  strategy: { src: lookingAhead, alt: 'נוגה על הבמה, מביטה קדימה', pos: '45% 30%' },
+  community: { src: library, alt: 'נוגה עם משתתפים בכנס עסקים במקסימום', pos: '50% 35%' },
+  presentation: { src: stageSlide, alt: 'נוגה מרצה מול מצגת בכנס', pos: '60% 40%' },
+};
+// סרטון של נוגה מהאינסטגרם ("התייעלות יכולה לייצר גם הגדלת הכנסות"), מוביל לפוסט עצמו
+const reel = instagramPosts.find((p) => p.href.includes('DMneYkXocck'))!;
+const floating = socials.filter((x) => ['instagram', 'linkedin', 'facebook', 'tiktok', 'youtube'].includes(x.icon));
+
+const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
+const reviewOf = (name?: string) => (name ? allReviews.find((r) => r.name === name) : undefined);
+const num = (i: number) => String(i + 1).padStart(2, '0');
+
+const description =
+  'פגישת ייעוץ עסקי בנושא אחד, מיקוד אסטרטגי, נוכחות שיווקית בדיגיטל, בניית קהילה או בניית מצגת להדרכה ולוובינר. עובדים בפועל, מקבלים החלטות, ויוצאים עם כיוון ברור, סיכום מסודר והקלטה.';
+const path = '/services/consulting-session/';
+const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'שירותים', path: '/services/' },
+  { name: s.title, path },
+];
+---
+
+<BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
+  <!-- 1. פתיח: נוגה בצד, והטקסט על רקע בהיר -->
+  <section class="cs-hero">
+    <div class="cs-hero__media">
+      <Image src={bench} alt="נוגה דיין אור" widths={[480, 800, 1066]} sizes="(min-width: 60rem) 42vw, 100vw" loading="eager" />
+    </div>
+    <div class="container cs-hero__inner">
+      <div class="cs-hero__text">
+        <p class="cs-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+        <h1 class="cs-hero__title">
+          <span>{s.title}</span>{' '}<span class="cs-hero__sub">לפיצוח אתגר עסקי בפגישה אחת</span>
+        </h1>
+        <p class="cs-hero__lead">{s.intro}</p>
+        <ul class="cs-chips">
+          {
+            ['עבודה מעשית', 'קבלת החלטות', 'סיכום מסודר והקלטה'].map((c) => (
+              <li>
+                <Icon name="check" size={16} />
+                {c}
+              </li>
+            ))
+          }
+        </ul>
+        <div class="cs-actions">
+          <a class="btn" href={wa('היי נוגה, אשמח לתאם פגישת ייעוץ')} target="_blank" rel="noopener">
+            לתיאום פגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          <a class="cs-actions__link" href="#choose">איזו פגישה מתאימה לי?</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. מה הכי בוער: כל שורה היא אתגר, ומובילה לפגישה שפותרת אותו -->
+  <section class="section cs-choose" id="choose" aria-labelledby="choose-title">
+    <div class="container">
+      <p class="cs-eyebrow">{topics.length} סוגי פגישות</p>
+      <h2 id="choose-title" class="sec-title center reveal">מה הכי <span class="hl--mark">בוער</span> בעסק עכשיו?</h2>
+      <ol class="picks">
+        {
+          topics.map((t, i) => (
+            <li>
+              <a class="pick reveal" href={`#${t.id}`}>
+                <span class="pick__num" aria-hidden="true">{num(i)}</span>
+                <span class="pick__pain">{t.pain}</span>
+                <span class="pick__go">
+                  <Icon name={t.icon} size={20} />
+                  {t.title}
+                  <span class="pick__arrow" aria-hidden="true">←</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3. הפגישות, אחת אחרי השנייה -->
+  {
+    topics.map((t, i) => {
+      const photo = photos[t.id];
+      const rv = reviewOf(t.review);
+      return (
+        <section id={t.id} class:list={['ch', { 'ch--mist': i % 2 === 0, 'ch--flip': i % 2 === 1 }]} aria-labelledby={`${t.id}-title`}>
+          <div class="container ch__grid">
+            <div class="ch__head reveal">
+              <p class="ch__num" aria-hidden="true">{num(i)}</p>
+              <p class="ch__kicker">
+                <Icon name={t.icon} size={20} /> פגישת ייעוץ
+              </p>
+              <h2 id={`${t.id}-title`} class="ch__title">
+                {t.title}
+              </h2>
+              <p class="ch__label">האתגר</p>
+              <p class="ch__challenge">{t.challenge}</p>
+            </div>
+
+            <div class="ch__media reveal">
+              {photo ? (
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 60rem) 44vw, 100vw"
+                  style={`object-position: ${photo.pos}`}
+                />
+              ) : (
+                <div class="phone-stage">
+                  <a class="phone" href={reel.href} target="_blank" rel="noopener">
+                    <Image src={reel.image} alt={reel.alt} widths={[361]} sizes="15rem" />
+                    <span class="sr-only"> (הסרטון באינסטגרם, נפתח בלשונית חדשה)</span>
+                  </a>
+                  <ul class="phone-stage__icons" aria-hidden="true">
+                    {floating.map((x, k) => (
+                      <li style={`--k: ${k}`}>
+                        <Icon name={x.icon as any} size={24} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div class="ch__body reveal">
+              <p class="ch__label">מה עושים בפגישה</p>
+              {t.paras.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+
+            <div class="ch__out reveal">
+              <p class="ch__out-title">יוצאים מהפגישה עם</p>
+              <ul>
+                {t.outcomes.map((o) => (
+                  <li>
+                    <Icon name="check" size={18} />
+                    <span>{o}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="ch__foot reveal">
+              {rv && (
+                <figure class="ch__quote">
+                  <blockquote>
+                    <p>{rv.text}</p>
+                  </blockquote>
+                  <figcaption>
+                    <strong>{rv.name}</strong> <span>מקור {rv.source}</span>
+                  </figcaption>
+                </figure>
+              )}
+              <a class="ch__cta" href={wa(`היי נוגה, אשמח לתאם פגישת ייעוץ בנושא ${t.title}`)} target="_blank" rel="noopener">
+                <Icon name="whatsapp" size={20} />
+                לתיאום פגישת {t.title}
+                <span class="sr-only"> (נפתח בלשונית חדשה)</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      );
+    })
+  }
+
+  <!-- 4. איך קובעים. כרטיס כהה בתוך אזור בהיר, כדי שלא יהיו שני אזורים כהים ברצף עם הפוטר. -->
+  <section class:list={['section cs-end', { 'section--mist': topics.length % 2 === 0 }]} aria-labelledby="end-title">
+    <div class="container">
+      <div class="cs-end__card reveal">
+        <Star size={30} />
+        <h2 id="end-title" class="cs-end__title">
+          <span>בוחרים נושא</span>{' '}<span class="hl">ומתאמים בוואטסאפ</span>
+        </h2>
+        <ol class="cs-steps">
+          <li><span class="cs-steps__n">1</span>בוחרים את הנושא שהכי בוער בעסק עכשיו</li>
+          <li><span class="cs-steps__n">2</span>שולחים הודעה בוואטסאפ ומתאמים מועד</li>
+          <li><span class="cs-steps__n">3</span>נפגשים, עובדים בפועל, ומקבלים סיכום והקלטה</li>
+        </ol>
+        <a class="btn cs-end__btn" href={wa('היי נוגה, אשמח לתאם פגישת ייעוץ')} target="_blank" rel="noopener">
+          לתיאום פגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+        <p class="cs-end__note">
+          עוד לא בטוחים איזו פגישה מתאימה?{' '}
+          <a href={wa('היי נוגה, אשמח להתייעץ איזו פגישת ייעוץ מתאימה לי')} target="_blank" rel="noopener">
+            כתבו בכמה מילים מה מעסיק אתכם<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, ובוחרים יחד.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .cs-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--white), var(--mist));
+  }
+  .cs-hero__media {
+    position: relative;
+    height: min(95vw, 24rem);
+  }
+  .cs-hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    /* בטלפון התמונה נעלמת כלפי מטה אל הטקסט */
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+  }
+  .cs-hero__inner {
+    position: relative;
+    padding-block: 0 3rem;
+  }
+  @media (min-width: 60rem) {
+    .cs-hero {
+      min-height: min(82vh, 40rem);
+      display: flex;
+      align-items: center;
+    }
+    /* במחשב התמונה בצד שמאל לכל הגובה, ונעלמת ימינה אל הטקסט */
+    .cs-hero__media {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-end: 0;
+      width: 44%;
+      height: auto;
+    }
+    .cs-hero__media :global(img) {
+      object-position: 50% 25%;
+      -webkit-mask-image: linear-gradient(to right, #000 55%, transparent 100%);
+      mask-image: linear-gradient(to right, #000 55%, transparent 100%);
+    }
+    .cs-hero__inner {
+      padding-block: 4rem;
+    }
+    .cs-hero__text {
+      max-width: 36rem;
+    }
+  }
+  .cs-crumbs {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+  .cs-crumbs a {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .cs-hero__title {
+    margin: 0 0 1rem;
+    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--navy);
+  }
+  .cs-hero__title > span {
+    display: block;
+  }
+  .cs-hero__sub {
+    margin-top: 0.6rem;
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--teal-dark);
+  }
+  .cs-hero__lead {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .cs-chips {
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .cs-chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .cs-chips :global(svg) {
+    color: var(--gold-dark);
+  }
+  .cs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+  }
+  .cs-actions__link {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- מה הכי בוער: רשימה טיפוגרפית, בלי קופסאות ---------- */
+  .cs-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+  .cs-eyebrow::before,
+  .cs-eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 2px;
+    background: var(--gold-gradient);
+  }
+  .picks {
+    list-style: none;
+    max-width: 62rem;
+    margin: 2rem auto 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .picks li {
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pick {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 0.35rem 1rem;
+    align-items: center;
+    padding: 1.25rem 0.75rem;
+    color: inherit;
+    text-decoration: none;
+    background: linear-gradient(270deg, var(--mist), var(--mist)) no-repeat right / 0% 100%;
+    transition: background-size 0.45s ease;
+  }
+  @media (min-width: 48rem) {
+    .pick {
+      grid-template-columns: 4.5rem 1fr auto;
+      padding: 1.6rem 1rem;
+    }
+  }
+  .pick:hover,
+  .pick:focus-visible {
+    background-size: 100% 100%;
+  }
+  .pick__num {
+    grid-row: span 2;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (min-width: 48rem) {
+    .pick__num {
+      grid-row: auto;
+    }
+  }
+  .pick__pain {
+    font-size: clamp(1.12rem, 2.3vw, 1.4rem);
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--navy);
+  }
+  .pick__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  @media (min-width: 48rem) {
+    .pick__go {
+      white-space: nowrap;
+    }
+  }
+  .pick__arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  .pick:hover .pick__arrow,
+  .pick:focus-visible .pick__arrow {
+    transform: translateX(-0.4rem);
+  }
+
+  /* ---------- פרק לכל פגישה ---------- */
+  .ch {
+    padding-block: clamp(3rem, 8vw, 6rem);
+    scroll-margin-top: var(--header-h);
+  }
+  .ch--mist {
+    background: var(--mist);
+  }
+  .ch__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 60rem) {
+    .ch__grid {
+      grid-template-columns: 1.05fr 1fr;
+      grid-template-areas:
+        'head media'
+        'body media'
+        'foot out';
+      column-gap: clamp(2.5rem, 5vw, 5rem);
+      row-gap: 1.25rem;
+      align-items: start;
+    }
+    .ch--flip .ch__grid {
+      grid-template-columns: 1fr 1.05fr;
+      grid-template-areas:
+        'media head'
+        'media body'
+        'out foot';
+    }
+    .ch__head {
+      grid-area: head;
+    }
+    .ch__media {
+      grid-area: media;
+      align-self: stretch;
+    }
+    .ch__body {
+      grid-area: body;
+    }
+    .ch__foot {
+      grid-area: foot;
+    }
+    /* "יוצאים עם" עולה על התחתית של התמונה */
+    .ch__out {
+      grid-area: out;
+      position: relative;
+      z-index: 1;
+      margin-top: -7rem;
+      margin-inline: 2rem -1.5rem;
+    }
+    .ch--flip .ch__out {
+      margin-inline: -1.5rem 2rem;
+    }
+  }
+
+  .ch__num {
+    margin: 0 0 -0.4rem;
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--gold-dark);
+    opacity: 0.75;
+  }
+  .ch__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.25rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .ch__title {
+    margin: 0 0 1.5rem;
+    font-size: clamp(2rem, 4.8vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--navy);
+  }
+  .ch__label {
+    margin: 0 0 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--gold-dark);
+  }
+  .ch__challenge {
+    margin: 0;
+    padding-inline-start: 1rem;
+    border-inline-start: 4px solid var(--teal);
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+  .ch__body p:not(.ch__label) {
+    font-size: 1.08rem;
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .ch__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* תמונה גדולה ומעוגלת, בלי מסגרת */
+  .ch__media {
+    position: relative;
+    min-height: 16rem;
+  }
+  .ch__media > :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 11;
+    object-fit: cover;
+    border-radius: 1.75rem;
+    box-shadow: 0 1.5rem 3rem -1.5rem rgb(11 26 51 / 0.35);
+  }
+  @media (min-width: 60rem) {
+    .ch__media {
+      min-height: 32rem;
+    }
+    .ch__media > :global(img) {
+      position: absolute;
+      inset: 0;
+      aspect-ratio: auto;
+    }
+  }
+
+  /* נוכחות בדיגיטל: טלפון עם סרטון של נוגה, ואייקוני הרשתות מרחפים סביבו */
+  .phone-stage {
+    position: relative;
+    height: 100%;
+    min-height: 24rem;
+    display: grid;
+    place-items: center;
+    padding-block: 2rem;
+    border-radius: 1.75rem;
+    background:
+      radial-gradient(22rem 16rem at 20% 10%, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(20rem 14rem at 85% 90%, rgb(209 154 74 / 0.25), transparent 72%),
+      var(--navy-deep);
+    overflow: hidden;
+  }
+  @media (min-width: 60rem) {
+    .phone-stage {
+      position: absolute;
+      inset: 0;
+    }
+  }
+  .phone {
+    display: block;
+    position: relative;
+    width: min(13rem, 52vw);
+    aspect-ratio: 9 / 18.5;
+    border-radius: 2.2rem;
+    border: 0.55rem solid #050d1c;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.15),
+      0 2rem 4rem -1rem rgb(0 0 0 / 0.6);
+    transform: rotate(-4deg);
+  }
+  .phone :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .phone-stage__icons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .phone-stage__icons li {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.9rem;
+    background: var(--white);
+    color: var(--teal-dark);
+    box-shadow: 0 0.75rem 1.5rem -0.5rem rgb(0 0 0 / 0.45);
+    animation: bob 5s ease-in-out infinite;
+    animation-delay: calc(var(--k) * -1s);
+  }
+  .phone-stage__icons li:nth-child(1) { top: 12%; right: 14%; }
+  .phone-stage__icons li:nth-child(2) { top: 30%; left: 10%; color: var(--gold-dark); }
+  .phone-stage__icons li:nth-child(3) { bottom: 26%; right: 9%; }
+  .phone-stage__icons li:nth-child(4) { bottom: 10%; left: 18%; color: var(--gold-dark); }
+  .phone-stage__icons li:nth-child(5) { top: 52%; right: 22%; display: none; }
+  @media (min-width: 60rem) {
+    .phone-stage__icons li:nth-child(5) {
+      display: grid;
+    }
+  }
+  @keyframes bob {
+    50% {
+      transform: translateY(-0.6rem);
+    }
+  }
+
+  /* יוצאים עם: כרטיס כחול כהה */
+  .ch__out {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border-radius: 1.4rem;
+    background:
+      radial-gradient(16rem 10rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      var(--navy);
+    color: var(--white);
+    box-shadow: 0 1.5rem 3rem -1.25rem rgb(11 26 51 / 0.55);
+  }
+  .ch__out-title {
+    margin: 0 0 0.85rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--gold-light);
+  }
+  .ch__out ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+  .ch__out li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    line-height: 1.45;
+    font-size: 1.05rem;
+  }
+  .ch__out li :global(svg) {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--gold-light);
+  }
+
+  /* המלצה אמיתית וכפתור */
+  .ch__quote {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1.1rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .ch--flip .ch__quote {
+    background: var(--mist);
+  }
+  .ch__quote blockquote {
+    margin: 0;
+  }
+  .ch__quote p {
+    margin: 0 0 0.6rem;
+    line-height: 1.7;
+    color: #33445c;
+  }
+  .ch__quote figcaption {
+    font-size: 0.92rem;
+    color: #4a5b73;
+  }
+  .ch__quote figcaption strong {
+    color: var(--navy);
+  }
+  .ch__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: 999px;
+    border: 2px solid var(--navy);
+    font-weight: 800;
+    line-height: 1.35;
+    color: var(--navy);
+    text-decoration: none;
+    transition:
+      background 0.25s ease,
+      color 0.25s ease;
+  }
+  .ch__cta :global(svg) {
+    flex: none;
+    color: var(--teal-dark);
+  }
+  .ch__cta:hover,
+  .ch__cta:focus-visible {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .ch__cta:hover :global(svg) {
+    color: var(--gold-light);
+  }
+
+  /* ---------- איך קובעים ---------- */
+  .cs-end__card {
+    max-width: 58rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+    border-radius: 2rem;
+    text-align: center;
+    color: var(--on-dark);
+    background:
+      radial-gradient(30rem 18rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
+      radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.18), transparent 72%),
+      var(--navy-deep);
+  }
+  .cs-end__title {
+    margin: 0.5rem 0 1.75rem;
+    font-size: clamp(1.8rem, 4.6vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--white);
+  }
+  .cs-end__title > span {
+    display: block;
+  }
+  .cs-steps {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    text-align: start;
+  }
+  @media (min-width: 48rem) {
+    .cs-steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      text-align: center;
+    }
+  }
+  .cs-steps li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    color: var(--on-dark);
+  }
+  @media (min-width: 48rem) {
+    .cs-steps li {
+      flex-direction: column;
+    }
+  }
+  .cs-steps__n {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+  .cs-end__btn {
+    font-size: 1.1rem;
+  }
+  .cs-end__note {
+    margin: 1.25rem 0 0;
+    color: var(--on-dark-soft);
+  }
+  .cs-end__note a {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pick,
+    .pick__arrow,
+    .ch__cta {
+      transition: none;
+    }
+    .phone-stage__icons li {
+      animation: none;
+    }
+  }
+</style>
