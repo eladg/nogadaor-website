@@ -33,7 +33,7 @@ const { image, title, kicker, crumbs, center = false } = Astro.props;
           </p>
         )
       }
-      {kicker && <p class="lh__kicker">{kicker}</p>}
+      {/* בלי תווית מעל הכותרת (נוגה, 2026-11-09) */}
       <h1 class="lh__title">{title}</h1>
       <div class="lh__lead"><slot /></div>
     </div>

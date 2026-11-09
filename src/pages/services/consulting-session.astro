@@ -87,7 +87,6 @@ const crumbs = [
   <!-- 2. מה הכי בוער: כל שורה היא אתגר, ומובילה לפגישה שפותרת אותו -->
   <section class="section cs-choose" id="choose" aria-labelledby="choose-title">
     <div class="container">
-      <p class="cs-eyebrow">{topics.length} סוגי פגישות</p>
       <h2 id="choose-title" class="sec-title center reveal">מה הכי <span class="hl--mark">בוער</span> בעסק עכשיו?</h2>
       <ol class="picks">
         {
@@ -122,9 +121,6 @@ const crumbs = [
           <div class="container ch__grid">
             <div class="ch__head reveal">
               <p class="ch__num" aria-hidden="true">{num(i)}</p>
-              <p class="ch__kicker">
-                <Icon name={t.icon} size={20} /> פגישת ייעוץ
-              </p>
               <h2 id={`${t.id}-title`} class="ch__title">
                 {t.title}
               </h2>

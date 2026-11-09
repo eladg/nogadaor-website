@@ -4,6 +4,7 @@
 // או משברים. נוגה לא אהבה את הכותרת "העסק גדל / גם הניהול צריך להתקדם" ואת איור המבנה הארגוני (הציג רק חלק מהעסק).
 // סבב 3 (נוגה): בלי ארבע השכבות ובלי הפרק "מה שמודדים גדל" (מאפיין אחד בתועלות), תועלות במקום עקרונות,
 // ניסוחים של תוצאה ולא של תהליך, ומשפט עדין שלא מחפשים שינויים גדולים.
+// נוגה (2026-11-09): בלי תוויות קטנות מעל הכותרות, והמשפט העדין ("שינוי לא צריך להיות גדול...") בפסקת הפתיח.
 // הסדר: פתיח ← פס המסר ← התוצאות (4 תועלות) ← תחומי העבודה (כהה, 6) ← 20 שנה בבנק (זהב) ← איך זה עובד (3)
 //   ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
 // "למי זה מתאים" הוסר (נוגה: "לא להגיד מה שלא צריך להגיד").
@@ -43,10 +44,10 @@ const crumbs = [
       <div class="og-hero__text">
         <p class="og-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
         <h1 class="og-hero__title">
-          <span class="og-hero__kicker">{s.title}</span>{' '}<span>ארגון וניהול מדויקים</span>{' '}<span class="og-hero__mark">שמגדילים הכנסות</span>
+          <span class="sr-only">{s.title} </span>{' '}<span>ארגון וניהול מדויקים</span>{' '}<span class="og-hero__mark">שמגדילים הכנסות</span>
         </h1>
         <p class="og-hero__lead">
-          מבנה, תפקידים, נהלים ותהליכי ניהול שמדויקים לאופי הפעילות. לארגון כולו או למחלקה אחת.
+          מבנה, תפקידים, נהלים ותהליכי ניהול שמדויקים לאופי הפעילות, לארגון כולו או למחלקה אחת. {orgGentle}
         </p>
         <div class="og-actions">
           <a class="btn" href={waHref} target="_blank" rel="noopener">
@@ -73,7 +74,6 @@ const crumbs = [
   <section class="section og-benefits" aria-labelledby="benefits-title">
     <div class="container">
       <div class="center reveal">
-        <p class="og-eyebrow">התוצאות</p>
         <h2 id="benefits-title" class="sec-title og-split">
           <span>ארגון שעובד נכון</span>{' '}<span class="hl--mark">ניכר בשורה התחתונה</span>
         </h2>
@@ -98,7 +98,6 @@ const crumbs = [
   <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
-        <p class="og-eyebrow og-eyebrow--dark">תחומי העבודה</p>
         <h2 id="areas-title" class="sec-title og-split">
           <span>מבנה, תהליכים וניהול</span>{' '}<span class="hl">שפועלים כמערכת אחת</span>
         </h2>
@@ -133,11 +132,9 @@ const crumbs = [
   <section class="section section--mist og-process" aria-labelledby="process-title">
     <div class="container">
       <div class="center reveal">
-        <p class="og-eyebrow">איך זה עובד</p>
         <h2 id="process-title" class="sec-title og-split">
           <span>מאבחון</span>{' '}<span class="hl--mark">להטמעה בשטח</span>
         </h2>
-        <p class="og-gentle">{orgGentle}</p>
       </div>
       <Timeline items={orgSteps} />
     </div>
