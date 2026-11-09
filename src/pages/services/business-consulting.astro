@@ -1,16 +1,17 @@
 ---
 // אסטרטגיה ושיווק, עמוד משלו (נוגה, 2026-11-09). יצא מהתבנית [slug].astro, כמו שאר עמודי השירות.
-// סבב 4: המסרים מהפגישה עם שרון (drafts/strategy-messages-2026-11-09.md). ההדמיה בפתיח נמחקה ("מקטינה את המהות
-// של האסטרטגיה"), ותוכן הגשר חזר בלי איור. בלי סלנג, מילים פשוטות, ערך כבר מהפגישה הראשונה, בלי סיפורים מהשטח.
-// הסדר: פתיח ← פס הסבר (כל מומחה והפתרון שלו) ← העסק מבפנים והלקוחות מבחוץ ← מה משתפר בעסק (כהה, 6 תחומים)
-//   ← לפני שמגדילים תקציב (כל הדרך של הלקוח) ← העתיד של העסקים (במקום / עושים) ← העקרונות ← סיום.
-// בלי תוויות קטנות מעל הכותרות (נוגה). הטקסטים ב-src/data/strategy.ts. **טיוטה לאישור נוגה.**
+// סבב 5: "אסטרטגיה עושים מבפנים החוצה, והיסודות צריכים להיות חזקים כדי לעמוד בכל השינויים של השוק".
+// הכול מתוך התוכן של נוגה (הוובינר, ההקלטה בסטודיו, הפגישה עם שרון וההנחיות שלה), בלי להמציא. המקורות ב-strategy.ts.
+// הסדר: פתיח ← פס הסבר בשפת הקורא ← מבחוץ פנימה מול מבפנים החוצה ← שיווק הוא הגשר (העסק מבפנים, הלקוחות מבחוץ)
+//   ← שיווק דיגיטלי הוא רק הקומה הראשונה (4 קומות, האסטרטגיה בראש) ← מה משתפר בעסק (כהה, 6 תחומים)
+//   ← כשהיסודות חזקים (במקום / עושים) ← העקרונות ← סיום.
+// בלי תוויות קטנות מעל הכותרות, בלי הדמיה בפתיח ובלי איור גשר (נוגה). **טיוטה לאישור נוגה.**
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import { serviceBySlug } from '../../data/services';
-import { insideOut, strategyAreas, journey, shifts, strategyPrinciples } from '../../data/strategy';
+import { focus, insideOut, floors, strategyAreas, shifts, strategyPrinciples } from '../../data/strategy';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import whiteboard from '../../assets/atmosphere/light-whiteboard.webp';
@@ -20,7 +21,7 @@ const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, 
 const num = (i: number) => String(i + 1).padStart(2, '0');
 
 const description =
-  'אסטרטגיה ושיווק להגדלת המכירות מתוך העסק שכבר בנית. מבט מבחוץ, בידול ומסרים, הדרך מהפנייה ועד העסקה, לקוחות קיימים, הצעות, שיתופי פעולה, מותג וקהילה.';
+  'אסטרטגיה ושיווק מבפנים החוצה. יסודות עסקיים חזקים שעומדים בשינויים בשוק, בידול ומסרים, החלטות שיווקיות, ניהול לקוחות חכם, מותג וקהילה, והגדלת מכירות מתוך מה שכבר קיים בעסק.';
 const path = '/services/business-consulting/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -31,7 +32,7 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: ההבטחה, על תמונת הלוח שנמוגה לטקסט -->
+  <!-- 1. פתיח: המסר של נוגה, על תמונת הלוח שנמוגה לטקסט -->
   <section class="st-hero">
     <div class="st-hero__bg" aria-hidden="true">
       <Image src={whiteboard} alt="" widths={[640, 1024, 1600]} sizes="100vw" loading="eager" />
@@ -39,11 +40,11 @@ const crumbs = [
     <div class="container st-hero__inner">
       <p class="st-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
       <h1 class="st-hero__title">
-        <span>יותר לקוחות ויותר מכירות</span>{' '}<span class="st-hero__mark">מתוך העסק שכבר בנית</span>
+        <span>אסטרטגיה שמתחילה מבפנים</span>{' '}<span class="st-hero__mark">ועומדת בכל שינוי בשוק</span>
       </h1>
       <p class="st-hero__lead">
-        מבט מבחוץ שמוצא את ההזדמנויות שקשה לראות מבפנים, ובוחר את המהלכים האסטרטגיים והשיווקיים שיביאו לעסק הכי הרבה
-        ערך והכנסות.
+        כשהיסודות של העסק חזקים וברורים, קל יותר לבחור את המהלכים הנכונים, לבלוט מול המתחרים ולהגדיל מכירות מתוך מה
+        שכבר קיים, בלי להגדיל את תקציב השיווק.
       </p>
       <div class="st-actions">
         <a class="btn" href={waHref} target="_blank" rel="noopener">
@@ -54,26 +55,70 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. פס הסבר: כל מומחה והפתרון שלו -->
+  <!-- 2. פס הסבר בשפה של הקורא -->
   <section class="st-explain">
     <div class="container reveal">
       <p>
-        בעלי עסקים שומעים המון רעיונות. מומחה לקמפיינים ממליץ על פרסום ממומן, מומחה לתוכן על עוד פוסטים, ומישהו אחר בטוח
-        שהפתרון הוא אתר חדש או AI. כל רעיון נשמע הגיוני, ובסוף נשארת רשימה ארוכה בלי ודאות מה מתוכה מתאים לעסק שלך.{' '}
-        <strong>אסטרטגיה טובה עושה סדר</strong>, ובוחרת את מה שנכון לעסק הזה, ללקוחות שלו ולתקופה הזו.
+        העסק עובד, יש לקוחות, ועדיין יש תחושה שהוא יכול להגיע הרבה יותר רחוק. מכל כיוון מגיעים רעיונות, שיטות שיווק
+        חדשות, כלים חדשים ומומחים שכל אחד ממליץ על הפתרון שלו, ולא ברור מה מכל זה באמת מתאים לעסק שלך.{' '}
+        <strong>מה שחסר הוא לא עוד רעיון, אלא כיוון ברור</strong>, שנבנה מתוך העסק עצמו ומאפשר לבחור בביטחון מה עושים
+        עכשיו ומה עוזבים.
       </p>
     </div>
   </section>
 
-  <!-- 3. העסק מבפנים והלקוחות מבחוץ: התפיסה של נוגה, בלי איור -->
-  <section class="section st-io" aria-labelledby="io-title">
+  <!-- 3. מבחוץ פנימה מול מבפנים החוצה (הוובינר) -->
+  <section class="section st-focus" aria-labelledby="focus-title">
+    <div class="container">
+      <div class="center reveal">
+        <h2 id="focus-title" class="sec-title st-split">
+          <span>פיתוח עסקי</span>{' '}<span class="hl--mark">מבפנים החוצה</span>
+        </h2>
+        <p class="sec-lead st-lead">
+          הרבה עסקים מחפשים את הפתרון בחוץ, בעוד שיטה, עוד קורס או עוד ערוץ. אסטרטגיה טובה מתחילה במקום אחר, בעסק
+          עצמו.
+        </p>
+      </div>
+      <div class="focus reveal">
+        <div class="focus__col focus__col--out">
+          <h3 class="focus__title">{focus.outside.title}</h3>
+          <ul>
+            {
+              focus.outside.items.map((it) => (
+                <li>
+                  <span class="focus__mark" aria-hidden="true">–</span>
+                  {it}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="focus__col focus__col--in">
+          <h3 class="focus__title">{focus.inside.title}</h3>
+          <ul>
+            {
+              focus.inside.items.map((it) => (
+                <li>
+                  <Icon name="check" size={18} />
+                  {it}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. שיווק הוא הגשר: העסק מבפנים והלקוחות מבחוץ, בלי איור -->
+  <section class="section section--mist st-io" aria-labelledby="io-title">
     <div class="container">
       <div class="center reveal">
         <h2 id="io-title" class="sec-title st-split">
-          <span>שיווק טוב מחבר</span>{' '}<span class="hl--mark">בין העסק ללקוחות שלו</span>
+          <span>שיווק הוא הגשר</span>{' '}<span class="hl--mark">בין העסק ללקוחות שלו</span>
         </h2>
-        <p class="sec-lead st-io__lead">
-          כל אסטרטגיה מתחילה מבפנים. כשמכירים לעומק את העסק ומבינים בדיוק את הלקוחות, המסרים, ההצעות והמכירות מתחברים.
+        <p class="sec-lead st-lead">
+          קודם מכירים לעומק את העסק, ומבינים בדיוק את הלקוחות ואת השוק. מתוך שני הצדדים בוחרים את המהלכים המדויקים לעסק.
         </p>
       </div>
       <div class="io reveal">
@@ -97,7 +142,37 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 4. מה משתפר בעסק: 6 תחומים, ובכל אחד מה העסק מרוויח -->
+  <!-- 5. שיווק דיגיטלי הוא רק הקומה הראשונה (הוובינר): ארבע קומות, האסטרטגיה בראש -->
+  <section class="section st-floors" aria-labelledby="floors-title">
+    <div class="container st-floors__grid">
+      <div class="reveal">
+        <h2 id="floors-title" class="st-side-title">
+          <span>שיווק דיגיטלי</span>{' '}<span class="hl--mark">הוא רק הקומה הראשונה</span>
+        </h2>
+        <p class="st-side-text">
+          פוסטים, סרטונים וקמפיינים הם החלק שרואים. הם עובדים טוב רק כשמעליהם יש החלטות שיווקיות ברורות, ניהול מסודר
+          ואסטרטגיה.
+        </p>
+        <p class="st-side-text st-side-text--strong">
+          לכן האסטרטגיה לא נכתבת פעם אחת ונשארת במגירה. היא משפיעה על השיווק, מושפעת ממנו ומהמגמות בשוק, ומתעדכנת כל
+          הזמן.
+        </p>
+      </div>
+      <ol class="floors reveal" aria-label="ארבע הקומות, מלמעלה למטה">
+        {
+          floors.map((f, i) => (
+            <li class="floor" style={`--w: ${64 + i * 12}%`}>
+              <span class="floor__level">קומה {f.level}</span>
+              <span class="floor__title">{f.title}</span>
+              <span class="floor__text">{f.text}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. מה משתפר בעסק: 6 תחומים, ובכל אחד מה העסק מרוויח -->
   <section class="section section--deep st-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
@@ -129,49 +204,17 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. לפני שמגדילים תקציב: כל הדרך של הלקוח, מהפרסום ועד הקשר אחרי הקנייה -->
-  <section class="section st-journey" aria-labelledby="journey-title">
-    <div class="container st-journey__grid">
-      <div class="reveal">
-        <h2 id="journey-title" class="st-journey__title">
-          <span>לפני שמגדילים את תקציב הפרסום</span>{' '}<span class="hl--mark">בודקים מה קורה אחרי שהלקוח פונה</span>
-        </h2>
-        <p class="st-journey__text">
-          הרבה עסקים מנסים לגדול בעזרת עוד פרסום ועוד פניות. אבל כשהמסר לא מדויק, כשהשיחה הראשונה לא מסבירה מספיק, וכשהפגישה
-          לא עונה על מה שהלקוח צריך, גם יותר פניות לא יהפכו ליותר לקוחות.
-        </p>
-        <p class="st-journey__text st-journey__text--strong">
-          לכן בודקים את כל הדרך, מהפרסום ועד הקשר אחרי הקנייה, ומשפרים כל שלב. כך מגדילים מכירות בלי להגדיל את תקציב
-          השיווק ובלי להוסיף עובדים.
-        </p>
-      </div>
-      <ol class="journey">
-        {
-          journey.map((j, i) => (
-            <li class="journey__step reveal" style={`transition-delay: ${i * 0.08}s`}>
-              <span class="journey__num" aria-hidden="true">{num(i)}</span>
-              <div>
-                <h3 class="journey__name">{j.title}</h3>
-                <p class="journey__q">{j.question}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- 6. העתיד של העסקים: במקום / עושים -->
-  <section class="section section--mist st-future" aria-labelledby="future-title">
+  <!-- 7. כשהיסודות חזקים: במקום / עושים -->
+  <section class="section st-future" aria-labelledby="future-title">
     <div class="container st-future__grid">
       <div class="reveal">
         <h2 id="future-title" class="st-future__title">
-          <span>העסקים שיובילו</span>{' '}<span class="hl--mark">הם העסקים שבתנועה</span>
+          <span>כשהיסודות חזקים</span>{' '}<span class="hl--mark">כל שינוי בשוק הוא הזדמנות</span>
         </h2>
         <p class="st-future__text">
-          השוק משתנה מהר, והלקוחות מצפים ליותר. עסק חזק משלב פיתוח עסקי בעבודה השוטפת, ומייצר כל הזמן הצעות ערך, מבצעים
-          ושיתופי פעולה חדשים, עם כלים חדשניים ומבט קדימה. זה לא דורש פרויקטים גדולים. זה דורש התמדה, חשיבה יצירתית
-          והרבה עשייה.
+          עסק לא עומד במקום. הוא גדל או שהוא קטן. השוק זז, הלקוחות משתנים והטכנולוגיה מתקדמת, ועסקים גדולים נעלמו כשהפסיקו
+          להיות רלוונטיים ללקוחות שלהם. עסק שבנוי על יסודות חזקים לא צריך לרדוף אחרי כל שינוי. הוא יודע מי הוא, למי הוא פונה
+          ומה הוא נותן, ולכן יכול להתאים את עצמו מהר ולהמשיך לצמוח.
         </p>
       </div>
       <ul class="shifts">
@@ -191,8 +234,8 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 7. העקרונות -->
-  <section class="section st-principles" aria-labelledby="principles-title">
+  <!-- 8. העקרונות -->
+  <section class="section section--mist st-principles" aria-labelledby="principles-title">
     <div class="container">
       <div class="center reveal">
         <h2 id="principles-title" class="sec-title st-split">
@@ -213,8 +256,8 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 8. סיום: ההזמנה של נוגה להיכרות, בכרטיס כהה בתוך אזור בהיר -->
-  <section class="section section--mist st-end" aria-labelledby="end-title">
+  <!-- 9. סיום: ההזמנה של נוגה להיכרות, בכרטיס כהה בתוך אזור בהיר -->
+  <section class="section st-end" aria-labelledby="end-title">
     <div class="container">
       <div class="st-end__card reveal">
         <Star size={30} />
@@ -341,11 +384,81 @@ const crumbs = [
     margin-inline: auto;
   }
 
-  /* ---------- העסק מבפנים והלקוחות מבחוץ: שני טורים, ופס כהה שמחבר ביניהם ---------- */
-  .st-io__lead {
+  .st-lead {
     max-width: 44rem;
     margin: -1.25rem auto 2.25rem;
   }
+
+  /* ---------- מבחוץ פנימה מול מבפנים החוצה: טור עמום וטור חזק ---------- */
+  .focus {
+    display: grid;
+    gap: 1rem;
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+  @media (min-width: 48rem) {
+    .focus {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
+  }
+  .focus__col {
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border-radius: 1.5rem;
+  }
+  .focus__col--out {
+    background: var(--mist);
+    border: 1px dashed #b9cdd2;
+  }
+  .focus__col--in {
+    color: var(--on-dark);
+    background:
+      radial-gradient(22rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(18rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
+      var(--navy-deep);
+    box-shadow: 0 1.5rem 3rem -2rem rgb(11 26 51 / 0.6);
+  }
+  .focus__title {
+    margin: 0 0 1rem;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #5a6b82;
+  }
+  .focus__col--in .focus__title {
+    color: var(--gold-light);
+  }
+  .focus__col ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .focus__col li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    line-height: 1.55;
+  }
+  .focus__col--out li {
+    color: #5a6b82;
+  }
+  .focus__mark {
+    flex: none;
+    width: 1.1rem;
+    font-weight: 900;
+    color: #9aaab8;
+  }
+  .focus__col--in li {
+    color: var(--white);
+  }
+  .focus__col--in :global(svg) {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--teal);
+  }
+
+  /* ---------- העסק מבפנים והלקוחות מבחוץ: שני טורים, ופס כהה שמחבר ביניהם ---------- */
   .io {
     display: grid;
     max-width: 62rem;
@@ -425,6 +538,109 @@ const crumbs = [
       var(--navy-deep);
   }
 
+  /* ---------- כותרת וטקסט בצד (קומות, ויסודות) ---------- */
+  .st-side-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.9rem, 4.2vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .st-side-title > span {
+    display: table;
+  }
+  .st-side-text {
+    margin: 0 0 1rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .st-side-text--strong {
+    margin: 0;
+    padding-inline-start: 1rem;
+    border-inline-start: 3px solid var(--gold-dark);
+    color: var(--navy);
+  }
+
+  /* ---------- ארבע הקומות: האסטרטגיה בראש וצרה, השיווק הדיגיטלי בבסיס ורחב ---------- */
+  .st-floors__grid {
+    display: grid;
+    gap: 2.25rem;
+    align-items: center;
+  }
+  @media (min-width: 60rem) {
+    .st-floors__grid {
+      grid-template-columns: 1fr 1.1fr;
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  .floors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+  }
+  .floor {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'level title'
+      'level text';
+    column-gap: 1rem;
+    align-items: center;
+    width: var(--w);
+    padding: 0.95rem 1.25rem;
+    border-radius: 0.9rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  /* בטלפון כל הקומות ברוחב מלא, כדי שהטקסט ייקרא */
+  @media (max-width: 40rem) {
+    .floor {
+      width: 100%;
+    }
+  }
+  .floor:first-child {
+    color: var(--on-dark);
+    border-color: transparent;
+    background:
+      radial-gradient(16rem 8rem at 100% 0, rgb(25 154 181 / 0.4), transparent 70%),
+      var(--navy-deep);
+    box-shadow: 0 1.25rem 2.5rem -1.5rem rgb(11 26 51 / 0.6);
+  }
+  .floor:nth-child(2) {
+    background: #e3f1f4;
+  }
+  .floor__level {
+    grid-area: level;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+    white-space: nowrap;
+  }
+  .floor:first-child .floor__level {
+    color: var(--gold-light);
+  }
+  .floor__title {
+    grid-area: title;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .floor:first-child .floor__title {
+    color: var(--white);
+  }
+  .floor__text {
+    grid-area: text;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #4a5b73;
+  }
+  .floor:first-child .floor__text {
+    color: var(--on-dark-soft);
+  }
+
   /* ---------- על מה עובדים: כרטיסי זכוכית, הכול באותו גובה ---------- */
   .areas {
     list-style: none;
@@ -497,94 +713,6 @@ const crumbs = [
     color: var(--teal);
   }
 
-  /* ---------- לפני שמגדילים תקציב: טקסט בימין, הדרך של הלקוח בשמאל ---------- */
-  .st-journey__grid {
-    display: grid;
-    gap: 2rem;
-    align-items: center;
-  }
-  @media (min-width: 60rem) {
-    .st-journey__grid {
-      grid-template-columns: 1fr 1.05fr;
-      gap: clamp(2.5rem, 5vw, 4.5rem);
-    }
-  }
-  .st-journey__title {
-    margin: 0 0 1rem;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 900;
-    line-height: 1.2;
-  }
-  .st-journey__title > span {
-    display: table;
-  }
-  .st-journey__text {
-    margin: 0 0 1rem;
-    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
-    line-height: 1.8;
-    color: #33445c;
-  }
-  .st-journey__text--strong {
-    margin: 0;
-    padding-inline-start: 1rem;
-    border-inline-start: 3px solid var(--gold-dark);
-    color: var(--navy);
-  }
-  .journey {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    display: grid;
-    gap: 0.75rem;
-  }
-  /* קו שמחבר בין השלבים */
-  .journey::before {
-    content: '';
-    position: absolute;
-    inset-block: 1.5rem;
-    inset-inline-start: 1.6rem;
-    width: 2px;
-    background: linear-gradient(180deg, var(--teal), var(--gold-dark));
-    opacity: 0.5;
-  }
-  .journey__step {
-    position: relative;
-    display: grid;
-    grid-template-columns: 3.2rem 1fr;
-    gap: 1rem;
-    align-items: start;
-    padding: 1rem 1.25rem 1rem 1rem;
-    border-radius: 1rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-  }
-  .journey__num {
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 0.8rem;
-    font-weight: 900;
-    color: var(--white);
-    background: var(--teal-dark);
-  }
-  .journey__step:nth-child(even) .journey__num {
-    color: var(--navy);
-    background: var(--gold-gradient);
-  }
-  .journey__name {
-    margin: 0 0 0.2rem;
-    font-size: 1.15rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-  .journey__q {
-    margin: 0;
-    line-height: 1.55;
-    color: #33445c;
-  }
-
   /* ---------- העתיד של העסקים: טקסט בימין, "במקום / עושים" בשמאל ---------- */
   .st-future__grid {
     display: grid;
@@ -626,7 +754,7 @@ const crumbs = [
     gap: 1rem;
     padding: 1rem 1.25rem;
     border-radius: 1rem;
-    background: var(--white);
+    background: var(--mist);
     border: 1px solid var(--line);
   }
   .shift__from {
