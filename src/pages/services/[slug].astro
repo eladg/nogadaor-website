@@ -14,9 +14,9 @@ import { servicePages, serviceBySlug, faqs, type Service } from '../../data/serv
 import { contact } from '../../data/contact';
 
 export function getStaticPaths() {
-  // לפגישת הייעוץ יש עמוד משלו (consulting-session.astro, נוגה 2026-11-09)
+  // לפגישת הייעוץ ולליווי הפיננסי יש עמוד משלהם (consulting-session.astro, financial.astro, נוגה 2026-11-09)
   return servicePages
-    .filter((s) => s.slug !== 'consulting-session')
+    .filter((s) => s.slug !== 'consulting-session' && s.slug !== 'financial')
     .map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
 }
 

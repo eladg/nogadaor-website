@@ -1,0 +1,777 @@
+---
+// ליווי פיננסי, עמוד משלו (נוגה, 2026-11-09): "לסדר את העמוד של הפיננסים", עסקי ומרשים.
+// זה המקום היחיד באתר שמטפל ברווחיות ובתמחור. המהות: ההסתכלות הרחבה והאסטרטגית יחד עם התייעלות בתהליכי העבודה
+// (גבייה, ניהול עובדים ועוד), שכולם תורמים לרווחיות. ניתוח הנתונים מגלה הכול, ואז מטפלים איפה שצריך.
+// המומחים שנוגה מביאה לכל תחום לא נכתבים כאן (נוגה).
+// הסדר: פתיח (עם "לוח נתונים" מצויר בקוד, בלי מספרים) ← פסקת הסבר ← הדרך מההכנסה לרווח (איפה הכסף מתפספס)
+//   ← מנופי הרווחיות (כהה) ← 20 שנה בבנק (זהב) ← תהליך הליווי ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// הטקסטים ב-src/data/finance.ts. **טיוטה לאישור נוגה.**
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
+import Timeline from '../../components/Timeline.astro';
+import { serviceBySlug } from '../../data/services';
+import { moneyPath, levers, financeSteps } from '../../data/finance';
+import { contact } from '../../data/contact';
+import { serviceSchema } from '../../utils/schema';
+import desk from '../../assets/atmosphere/light-desk.webp';
+
+const s = serviceBySlug('financial')!;
+const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
+const waHref = wa('היי נוגה, אשמח לשמוע על ליווי פיננסי');
+const num = (i: number) => String(i + 1).padStart(2, '0');
+
+// גובה העמודות בלוח הנתונים המצויר (אחוזים, רק איור, בלי מספרים על המסך)
+const bars = [38, 46, 41, 55, 62, 58, 74, 86];
+
+const description =
+  'ליווי פיננסי לשיפור רווחיות ותזרים. ניתוח נתונים, תמחור ורווחיות, תזרים וגבייה, מימון ומחזור הלוואות, עלויות וספקים, תהליכי עבודה וניהול עובדים.';
+const path = '/services/financial/';
+const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'שירותים', path: '/services/' },
+  { name: s.title, path },
+];
+---
+
+<BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
+  <!-- 1. פתיח: הטקסט בימין, ובשמאל "לוח נתונים" מצויר מעל תמונת השולחן -->
+  <section class="fn-hero">
+    <div class="fn-hero__bg" aria-hidden="true">
+      <Image src={desk} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
+    </div>
+    <div class="container fn-hero__grid">
+      <div class="fn-hero__text">
+        <p class="fn-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+        <p class="fn-kicker">{s.lead}</p>
+        <h1 class="fn-hero__title">
+          <span>{s.title}</span>{' '}<span class="fn-hero__sub">לשיפור הרווחיות והתזרים של העסק</span>
+        </h1>
+        <p class="fn-hero__lead">
+          המספרים של העסק מספרים את כל הסיפור. ניתוח מעמיק של הנתונים מגלה איפה נוצר הרווח, איפה הוא מתפספס ומה מעכב את
+          התזרים, ומשם מטפלים בדיוק במקומות שצריך.
+        </p>
+        <ul class="fn-chips">
+          {
+            ['ניתוח נתונים', 'תמחור ורווחיות', 'תזרים, גבייה ומימון'].map((c) => (
+              <li>
+                <Icon name="check" size={16} />
+                {c}
+              </li>
+            ))
+          }
+        </ul>
+        <div class="fn-actions">
+          <a class="btn" href={waHref} target="_blank" rel="noopener">
+            לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          <a class="fn-actions__link" href="#path">איפה הרווח מתפספס?</a>
+        </div>
+      </div>
+
+      <!-- לוח נתונים מצויר: איור בלבד, בלי מספרים, ולכן מוסתר מקוראי מסך -->
+      <div class="dash reveal" aria-hidden="true">
+        <div class="dash__head">
+          <span class="dash__dots"><i></i><i></i><i></i></span>
+          <span class="dash__name">תמונת מצב</span>
+        </div>
+        <div class="dash__chart">
+          {bars.map((h, i) => <span class="dash__bar" style={`--h: ${h}%; --i: ${i}`} />)}
+          <svg class="dash__line" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M4 70 L17 62 L30 66 L43 52 L56 44 L69 47 L82 30 L96 16" />
+          </svg>
+        </div>
+        <ul class="dash__rows">
+          <li><span>רווחיות לפי שירות</span><span class="dash__meter"><i style="--w: 78%"></i></span></li>
+          <li><span>גבייה בזמן</span><span class="dash__meter dash__meter--teal"><i style="--w: 64%"></i></span></li>
+          <li><span>תזרים מתוכנן</span><span class="dash__meter"><i style="--w: 88%"></i></span></li>
+        </ul>
+        <p class="dash__tag"><Icon name="chart" size={16} /> החלטות מבוססות נתונים</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. פסקת הסבר בשפת הקורא, ומשפט מסכם -->
+  <section class="section fn-explain">
+    <div class="container fn-explain__inner reveal">
+      <p>
+        העסק עובד, יש לקוחות, יש תנועה ויש הכנסות. ובכל זאת, בסוף החודש נשאר פחות ממה שהיה צריך להישאר, התזרים לא משאיר
+        מרווח נשימה, ולפעמים נדמה שכל גידול בהכנסות מביא איתו עוד הוצאות, עוד עומס ועוד הלוואה.
+      </p>
+      <p>
+        ליווי פיננסי לא מסתכם בבדיקת דוחות. הרווח של העסק נבנה בכל מקום, בתמחור ובהצעות המחיר, בגבייה, בתהליכי העבודה,
+        בניהול העובדים, בספקים ובמבנה האשראי. לכן מסתכלים על העסק כולו, מבינים מה המספרים מספרים, ובוחרים את המהלכים
+        שישפרו את השורה התחתונה, בלי פרויקטים מסובכים.
+      </p>
+      <p class="fn-explain__line">
+        <Star size={22} />
+        <span>הדוחות מספרים מה קרה. הניתוח העסקי מסביר למה, ומה עושים עכשיו.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. הדרך מההכנסה לרווח: התחנות שבהן הכסף מתפספס -->
+  <section class="section section--mist fn-path" id="path" aria-labelledby="path-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="fn-eyebrow">מההכנסה לרווח</p>
+        <h2 id="path-title" class="sec-title fn-split">
+          <span>מכל שקל שנכנס לעסק,</span>{' '}<span class="hl--mark">כמה באמת נשאר?</span>
+        </h2>
+        <p class="sec-lead">
+          בדרך מההכנסה לשורה התחתונה הכסף עובר דרך התמחור, הגבייה, העלויות, תהליכי העבודה והמימון. ניתוח הנתונים מראה
+          באיזו תחנה הוא מתפספס, ושם מטפלים.
+        </p>
+      </div>
+      <ol class="route">
+        <li class="route__stop route__stop--start reveal">
+          <span class="route__mark" aria-hidden="true"><Icon name="coins" size={20} /></span>
+          <h3 class="route__title">הכנסות</h3>
+        </li>
+        {
+          moneyPath.map((m, i) => (
+            <li class="route__stop reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <span class="route__mark" aria-hidden="true">{num(i)}</span>
+              <h3 class="route__title">{m.title}</h3>
+              <p class="route__leak">{m.leak}</p>
+            </li>
+          ))
+        }
+        <li class="route__stop route__stop--end reveal">
+          <span class="route__mark" aria-hidden="true"><Star size={22} tone="navy" /></span>
+          <h3 class="route__title">רווח</h3>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. מנופי הרווחיות -->
+  <section class="section section--deep fn-levers" aria-labelledby="levers-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="fn-eyebrow fn-eyebrow--dark">מנופי הרווחיות</p>
+        <h2 id="levers-title" class="sec-title fn-split">
+          <span>מטפלים בדיוק</span>{' '}<span class="hl">איפה שצריך</span>
+        </h2>
+        <p class="sec-lead">
+          אחרי שהנתונים מראים את התמונה, בוחרים את המנופים שישפיעו הכי הרבה על הרווח והתזרים של העסק.
+        </p>
+      </div>
+      <ul class="levers">
+        {
+          levers.map((l, i) => (
+            <li class="lever reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="lever__icon">
+                <Icon name={l.icon} size={28} />
+              </span>
+              <h3 class="lever__title">{l.title}</h3>
+              <p class="lever__text">{l.text}</p>
+              <ul class="lever__points">
+                {l.points.map((p) => (
+                  <li>
+                    <Icon name="check" size={16} />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. הניסיון בבנק -->
+  <section class="fn-band">
+    <div class="container fn-band__inner reveal">
+      <span class="fn-band__big">20 שנה</span>
+      <span class="fn-band__text">בהנהלה של בנק גדול, והיכרות מבפנים עם הדרך שבה בנק מסתכל על עסק</span>
+    </div>
+  </section>
+
+  <!-- 6. תהליך הליווי -->
+  <section class="section fn-process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="fn-eyebrow">תהליך הליווי</p>
+        <h2 id="process-title" class="sec-title fn-split">
+          <span>מהנתונים</span>{' '}<span class="hl--mark">אל השורה התחתונה</span>
+        </h2>
+      </div>
+      <Timeline items={financeSteps} />
+    </div>
+  </section>
+
+  <!-- 7. סיום: כרטיס כהה בתוך אזור בהיר. המשפט "בואו נבדוק יחד..." אושר על ידי נוגה (2026-11-05). -->
+  <section class="section section--mist fn-end" aria-labelledby="end-title">
+    <div class="container">
+      <div class="fn-end__card reveal">
+        <Star size={30} />
+        <h2 id="end-title" class="fn-end__title">
+          <span>בואו נבדוק יחד איך עושים סדר</span>{' '}<span class="hl">ומוצאים כסף גם בעסק שלך</span>
+        </h2>
+        <p class="fn-end__text">שיחת היכרות בוואטסאפ, ומשם בוחרים יחד מאיפה מתחילים.</p>
+        <a class="btn fn-end__btn" href={waHref} target="_blank" rel="noopener">
+          לשיחת היכרות בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .fn-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--white), var(--mist));
+    border-bottom: 1px solid var(--line);
+  }
+  .fn-hero__bg {
+    position: absolute;
+    inset: 0;
+    /* בטלפון התמונה מאחורי הטקסט, ולכן עדינה מאוד */
+    opacity: 0.18;
+  }
+  @media (min-width: 60rem) {
+    .fn-hero__bg {
+      opacity: 0.55;
+    }
+  }
+  .fn-hero__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left bottom;
+    -webkit-mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+    mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+  }
+  .fn-hero__grid {
+    position: relative;
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 2.5rem 3rem;
+  }
+  @media (min-width: 60rem) {
+    .fn-hero__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      min-height: min(78vh, 38rem);
+      padding-block: 3.5rem;
+    }
+  }
+  .fn-crumbs {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+  .fn-crumbs a {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .fn-kicker {
+    margin: 0 0 0.4rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+  .fn-hero__title {
+    margin: 0 0 1rem;
+    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--navy);
+  }
+  .fn-hero__title > span {
+    display: block;
+  }
+  .fn-hero__sub {
+    margin-top: 0.6rem;
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--teal-dark);
+  }
+  .fn-hero__lead {
+    max-width: 36rem;
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .fn-chips {
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .fn-chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .fn-chips :global(svg) {
+    color: var(--gold-dark);
+  }
+  .fn-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+  }
+  .fn-actions__link {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- לוח הנתונים המצויר ---------- */
+  .dash {
+    position: relative;
+    width: min(100%, 26rem);
+    margin-inline: auto;
+    padding: 1.25rem 1.35rem 1.4rem;
+    border-radius: 1.5rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
+      var(--navy-deep);
+    box-shadow: 0 2rem 4rem -1.5rem rgb(11 26 51 / 0.55);
+  }
+  .dash__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .dash__dots {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+  .dash__dots i {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 0.15rem;
+    background: rgb(255 255 255 / 0.25);
+  }
+  .dash__dots i:first-child {
+    background: var(--gold-light);
+  }
+  .dash__name {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--white);
+  }
+  .dash__chart {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.45rem;
+    height: 9.5rem;
+    padding: 0.5rem 0.25rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 0.18);
+    /* קווי רשת עדינים */
+    background: repeating-linear-gradient(180deg, transparent 0 calc(25% - 1px), rgb(255 255 255 / 0.07) calc(25% - 1px) 25%);
+    /* ציר הזמן בגרף נקרא משמאל לימין, גם בעמוד בעברית */
+    direction: ltr;
+  }
+  .dash__bar {
+    flex: 1;
+    height: var(--h);
+    border-radius: 0.35rem 0.35rem 0.1rem 0.1rem;
+    background: linear-gradient(180deg, rgb(25 154 181 / 0.95), rgb(25 154 181 / 0.35));
+    transform-origin: bottom;
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--i) * 0.07s + 0.2s);
+  }
+  .dash__bar:last-of-type {
+    background: var(--gold-gradient);
+  }
+  .js .dash:not(.is-in) .dash__bar {
+    transform: scaleY(0.08);
+  }
+  .dash__line {
+    position: absolute;
+    inset: 0.5rem 0.25rem 0;
+    width: calc(100% - 0.5rem);
+    height: calc(100% - 0.5rem);
+    overflow: visible;
+  }
+  .dash__line path {
+    fill: none;
+    stroke: var(--gold-light);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.4s ease 0.5s;
+  }
+  .js .dash:not(.is-in) .dash__line path {
+    stroke-dashoffset: 200;
+  }
+  .dash__rows {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .dash__rows li {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--on-dark-soft);
+  }
+  .dash__meter {
+    height: 0.5rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.1);
+    overflow: hidden;
+  }
+  .dash__meter i {
+    display: block;
+    width: var(--w);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gold-gradient);
+    transition: width 1s ease 0.6s;
+  }
+  .dash__meter--teal i {
+    background: var(--teal);
+  }
+  .js .dash:not(.is-in) .dash__meter i {
+    width: 0;
+  }
+  .dash__tag {
+    position: absolute;
+    inset-block-end: -1.1rem;
+    inset-inline-start: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.35);
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  /* ---------- פסקת הסבר ---------- */
+  .fn-explain__inner {
+    max-width: 46rem;
+    text-align: center;
+  }
+  .fn-explain__inner p {
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.85;
+    color: #33445c;
+  }
+  .fn-explain__inner p:first-child {
+    color: var(--navy);
+  }
+  .fn-explain__line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 2rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+    font-size: clamp(1.3rem, 3vw, 1.75rem) !important;
+    font-weight: 500;
+    line-height: 1.5 !important;
+    color: var(--navy) !important;
+  }
+
+  /* ---------- כותרות אזור ---------- */
+  .fn-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--teal-dark);
+  }
+  .fn-eyebrow::before,
+  .fn-eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+  .fn-eyebrow--dark {
+    color: var(--gold-light);
+  }
+  .fn-split > span {
+    display: table;
+    margin-inline: auto;
+  }
+
+  /* ---------- הדרך מההכנסה לרווח ---------- */
+  /* בטלפון: רשימה אנכית עם קו בצד. במחשב: שורה אחת עם קו שעובר מההכנסות אל הרווח. */
+  .route {
+    --mark: 2.6rem;
+    position: relative;
+    list-style: none;
+    max-width: 30rem;
+    margin: 1rem auto 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .route::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(var(--mark) / 2);
+    inset-inline-start: calc(var(--mark) / 2 - 1px);
+    width: 2px;
+    background: linear-gradient(180deg, var(--teal), var(--gold-dark));
+  }
+  .route__stop {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--mark) 1fr;
+    column-gap: 1rem;
+    align-items: center;
+    margin: 0;
+  }
+  .route__mark {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: var(--mark);
+    height: var(--mark);
+    border-radius: 0.75rem;
+    background: var(--white);
+    border: 2px solid var(--teal);
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: var(--teal-dark);
+  }
+  .route__stop--start .route__mark {
+    background: var(--teal);
+    color: var(--white);
+  }
+  .route__stop--end .route__mark {
+    background: var(--gold-gradient);
+    border-color: var(--gold-dark);
+  }
+  .route__title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .route__stop--end .route__title {
+    font-size: 1.45rem;
+    color: var(--gold-dark);
+  }
+  .route__leak {
+    margin: 0.15rem 0 0;
+    line-height: 1.5;
+    color: #4a5b73;
+  }
+  @media (min-width: 62rem) {
+    .route {
+      max-width: none;
+      grid-template-columns: 0.6fr repeat(6, 1fr) 0.6fr;
+      gap: 0 1rem;
+      margin-top: 2rem;
+    }
+    .route::before {
+      inset-block: auto;
+      inset-block-start: calc(var(--mark) / 2 - 1px);
+      inset-inline: 2rem;
+      width: auto;
+      height: 2px;
+      background: linear-gradient(to left, var(--teal), var(--gold-dark));
+    }
+    .route__stop {
+      grid-template-columns: 1fr;
+      grid-template-rows: subgrid;
+      grid-row: span 3;
+      justify-items: center;
+      align-items: start;
+      row-gap: 0.75rem;
+      text-align: center;
+    }
+    .route {
+      grid-template-rows: auto auto auto;
+    }
+    .route__mark {
+      grid-row: auto;
+    }
+    .route__leak {
+      margin: 0;
+      font-size: 0.97rem;
+    }
+  }
+
+  /* ---------- מנופי הרווחיות: כרטיסי זכוכית, הכול באותו גובה ---------- */
+  .levers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto auto auto 1fr;
+    gap: 0 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .levers {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .levers {
+      grid-template-columns: 1fr;
+    }
+  }
+  .lever {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    row-gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-top: 3px solid var(--teal);
+  }
+  .lever:nth-child(even) {
+    border-top-color: var(--gold-dark);
+  }
+  .lever__icon {
+    color: var(--gold-light);
+  }
+  .lever__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--white);
+  }
+  .lever__text {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
+  }
+  .lever__points {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0.85rem 0 0;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+  .lever__points li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    line-height: 1.45;
+    color: var(--on-dark);
+  }
+  .lever__points :global(svg) {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--teal);
+  }
+
+  /* ---------- 20 שנה בבנק ---------- */
+  .fn-band {
+    background: var(--gold-gradient);
+    padding-block: 1.75rem;
+  }
+  .fn-band__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    text-align: center;
+  }
+  .fn-band__big {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .fn-band__text {
+    max-width: 40rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  /* ---------- סיום ---------- */
+  .fn-end__card {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+    border-radius: 2rem;
+    text-align: center;
+    color: var(--on-dark);
+    background:
+      radial-gradient(30rem 18rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
+      radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.18), transparent 72%),
+      var(--navy-deep);
+  }
+  .fn-end__title {
+    margin: 0.5rem 0 1rem;
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .fn-end__title > span {
+    display: block;
+  }
+  .fn-end__text {
+    margin: 0 0 1.75rem;
+    font-size: 1.1rem;
+    color: var(--on-dark-soft);
+  }
+  .fn-end__btn {
+    font-size: 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dash__bar,
+    .dash__line path,
+    .dash__meter i {
+      transition: none;
+    }
+    .js .dash:not(.is-in) .dash__bar {
+      transform: none;
+    }
+    .js .dash:not(.is-in) .dash__line path {
+      stroke-dashoffset: 0;
+    }
+    .js .dash:not(.is-in) .dash__meter i {
+      width: var(--w);
+    }
+  }
+</style>
