@@ -88,20 +88,56 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. פגישה ראשונה בחינם (נוגה: בגדול, בין הדברים הראשונים בעמוד) -->
+  <!-- 2. פגישה ראשונה בחינם, כמתנה (נוגה: בטורקיז, חגיגי, חדשני כיאה לעמוד AI) -->
   <section class="free" aria-labelledby="free-title">
-    <div class="container free__inner reveal">
-      <div class="free__offer">
+    <div class="free__glow" aria-hidden="true"></div>
+    <div class="container free__inner">
+      <div class="free__copy reveal">
+        <p class="free__chip"><Icon name="gift" size={18} /> מתנה לעסק שלך</p>
         <h2 id="free-title" class="free__title">
           <span>פגישה ראשונה לבירור צרכים</span>{' '}<span class="free__big">בחינם</span>
         </h2>
-        <p class="free__worth">פגישה בשווי {firstMeeting.worth}</p>
-      </div>
-      <div class="free__body">
+        <p class="free__worth">פגישה בשווי <s>{firstMeeting.worth}</s></p>
         <p class="free__text">{firstMeeting.text}</p>
         <a class="btn free__btn" href={waHref} target="_blank" rel="noopener">
-          לתיאום בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          לתיאום הפגישה בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
+      </div>
+
+      <!-- המתנה והשאלות הנכונות שמרחפות סביבה: איור בלבד -->
+      <div class="gift reveal" aria-hidden="true">
+        <span class="gift__ring"></span>
+        <span class="gift__ring gift__ring--2"></span>
+        <span class="gift__rays"></span>
+        <svg class="gift__box" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="giftGold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#fde58a" />
+              <stop offset="1" stop-color="#d19a4a" />
+            </linearGradient>
+            <linearGradient id="giftBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0f2a4d" />
+              <stop offset="1" stop-color="#0b1a33" />
+            </linearGradient>
+          </defs>
+          <!-- הקופסה -->
+          <rect x="30" y="78" width="100" height="70" rx="8" fill="url(#giftBody)" stroke="url(#giftGold)" stroke-width="2" />
+          <rect x="72" y="78" width="16" height="70" fill="url(#giftGold)" />
+          <!-- המכסה, מורם קצת -->
+          <g class="gift__lid">
+            <rect x="24" y="58" width="112" height="22" rx="6" fill="url(#giftBody)" stroke="url(#giftGold)" stroke-width="2" />
+            <rect x="72" y="58" width="16" height="22" fill="url(#giftGold)" />
+            <path d="M80 58 C66 34 44 38 50 50 C54 58 70 58 80 58 Z" fill="url(#giftGold)" />
+            <path d="M80 58 C94 34 116 38 110 50 C106 58 90 58 80 58 Z" fill="url(#giftGold)" />
+            <circle cx="80" cy="57" r="6" fill="#fde58a" />
+          </g>
+        </svg>
+        <span class="gift__spark"><Star size={22} /></span>
+        <span class="gift__glint gift__glint--1"></span>
+        <span class="gift__glint gift__glint--2"></span><span class="gift__glint gift__glint--3"></span>
+        <ul class="gift__qs">
+          {firstMeeting.questions.map((q, i) => <li class={`gift__q gift__q--${i + 1}`} style={`--i: ${i}`}>{q}</li>)}
+        </ul>
       </div>
     </div>
   </section>
@@ -366,76 +402,363 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- פגישה ראשונה בחינם: פס זהב בולט ---------- */
+  /* ---------- פגישה ראשונה בחינם: מתנה בטורקיז (נוגה, 2026-11-09) ---------- */
   .free {
-    background: var(--gold-gradient);
-    padding-block: clamp(1.75rem, 4vw, 2.5rem);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.75rem, 6vw, 4.5rem);
+    color: var(--white);
+    background:
+      radial-gradient(40rem 22rem at 15% 50%, rgb(252 220 109 / 0.22), transparent 65%),
+      radial-gradient(36rem 24rem at 95% 0%, rgb(255 255 255 / 0.14), transparent 60%),
+      linear-gradient(135deg, #0d5a6b 0%, var(--teal-dark) 45%, #168aa3 100%);
+  }
+  /* רשת נקודות עדינה, תחושה טכנולוגית */
+  .free::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1.4px);
+    background-size: 22px 22px;
+    -webkit-mask-image: linear-gradient(to left, #000, transparent 75%);
+    mask-image: linear-gradient(to left, #000, transparent 75%);
+    pointer-events: none;
+  }
+  /* פס אור שעובר לאורך הקצה העליון */
+  .free::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: free-sweep 5s linear infinite;
+  }
+  @keyframes free-sweep {
+    from {
+      background-position: -40% 0;
+    }
+    to {
+      background-position: 140% 0;
+    }
   }
   .free__inner {
+    position: relative;
     display: grid;
-    gap: 1.25rem 3rem;
+    gap: 2.5rem;
     align-items: center;
-    text-align: center;
   }
   @media (min-width: 56rem) {
     .free__inner {
-      grid-template-columns: auto 1fr;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(2rem, 5vw, 4.5rem);
+    }
+  }
+  .free__copy {
+    text-align: center;
+  }
+  @media (min-width: 56rem) {
+    .free__copy {
       text-align: start;
     }
   }
+  .free__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 1rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    backdrop-filter: blur(6px);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
   .free__title {
     margin: 0;
-    font-size: clamp(1.35rem, 3vw, 1.7rem);
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
     font-weight: 800;
-    line-height: 1.2;
-    color: var(--navy);
+    line-height: 1.25;
+    color: var(--white);
   }
   .free__title > span {
     display: block;
   }
   .free__big {
-    margin-top: 0.15rem;
-    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    margin-top: 0.1rem;
+    font-size: clamp(3.4rem, 9vw, 5rem);
     font-weight: 900;
-    line-height: 1;
+    line-height: 1.05;
+    background: linear-gradient(100deg, #fff6cf 0%, var(--gold-light) 35%, #ffffff 50%, var(--gold-light) 65%, #e9b860 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: free-shine 4s ease-in-out infinite;
+  }
+  @keyframes free-shine {
+    0%,
+    100% {
+      background-position: 100% 0;
+    }
+    50% {
+      background-position: 0% 0;
+    }
   }
   .free__worth {
     display: inline-block;
-    margin: 0.6rem 0 0;
-    padding: 0.3rem 0.9rem;
+    margin: 0.75rem 0 1.25rem;
+    padding: 0.35rem 1rem;
     border-radius: 999px;
     background: var(--navy);
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 700;
+    color: var(--on-dark);
+  }
+  .free__worth s {
     color: var(--gold-light);
-  }
-  .free__body {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem 2rem;
-  }
-  @media (min-width: 56rem) {
-    .free__body {
-      justify-content: space-between;
-      padding-inline-start: 3rem;
-      border-inline-start: 2px solid rgb(11 26 51 / 0.2);
-    }
+    text-decoration-thickness: 2px;
   }
   .free__text {
-    flex: 1 1 22rem;
     max-width: 36rem;
-    margin: 0;
-    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
-    font-weight: 500;
-    line-height: 1.65;
-    color: var(--navy);
+    margin: 0 auto 1.75rem;
+    font-size: clamp(1.08rem, 1.9vw, 1.22rem);
+    line-height: 1.75;
+    color: rgb(255 255 255 / 0.92);
   }
-  /* כפתור כהה על רקע הזהב */
+  @media (min-width: 56rem) {
+    .free__text {
+      margin-inline: 0;
+    }
+  }
   .free__btn {
-    background: var(--navy);
+    font-size: 1.1rem;
+    animation: free-pulse 2.6s ease-out infinite;
+  }
+  @keyframes free-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgb(252 220 109 / 0.55);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 1rem rgb(252 220 109 / 0);
+    }
+  }
+
+  /* ---------- המתנה, והשאלות הנכונות סביבה ---------- */
+  .gift {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(100%, 26rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+  .gift__ring {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    border: 1px dashed rgb(255 255 255 / 0.35);
+    animation: gift-spin 40s linear infinite;
+  }
+  .gift__ring--2 {
+    inset: 26%;
+    border-style: solid;
+    border-color: rgb(252 220 109 / 0.35);
+    animation-duration: 28s;
+    animation-direction: reverse;
+  }
+  @keyframes gift-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .gift__rays {
+    position: absolute;
+    inset: 22%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(252 220 109 / 0.55), rgb(252 220 109 / 0.12) 45%, transparent 70%);
+    filter: blur(6px);
+    animation: gift-breathe 3.5s ease-in-out infinite;
+  }
+  @keyframes gift-breathe {
+    0%,
+    100% {
+      transform: scale(0.92);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.06);
+      opacity: 1;
+    }
+  }
+  .gift__box {
+    position: relative;
+    width: 46%;
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 1.25rem 1.5rem rgb(11 26 51 / 0.45));
+    animation: gift-float 4s ease-in-out infinite;
+  }
+  @keyframes gift-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .gift__lid {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: gift-lid 4s ease-in-out infinite;
+  }
+  @keyframes gift-lid {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0);
+    }
+    50% {
+      transform: translateY(-7px) rotate(-3deg);
+    }
+  }
+  .gift__spark {
+    position: absolute;
+    top: 24%;
+    inset-inline-end: 30%;
+    line-height: 0;
+    animation: gift-twinkle 2.8s ease-in-out infinite;
+  }
+  .gift__glint {
+    position: absolute;
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--white);
+    clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+    animation: gift-twinkle 2.4s ease-in-out infinite;
+  }
+  .gift__glint--1 {
+    top: 30%;
+    inset-inline-start: 30%;
+    animation-delay: 0.6s;
+  }
+  .gift__glint--2 {
+    bottom: 30%;
+    inset-inline-end: 26%;
+    width: 0.45rem;
+    height: 0.45rem;
+    animation-delay: 1.2s;
+  }
+  .gift__glint--3 {
+    bottom: 36%;
+    inset-inline-start: 24%;
+    width: 0.5rem;
+    height: 0.5rem;
+    animation-delay: 1.8s;
+  }
+  @keyframes gift-twinkle {
+    0%,
+    100% {
+      transform: scale(0.6);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+  }
+  .gift__qs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .gift__q {
+    position: absolute;
+    padding: 0.45rem 0.9rem;
+    border-radius: 1rem 1rem 1rem 0.25rem;
+    background: rgb(255 255 255 / 0.14);
+    border: 1px solid rgb(255 255 255 / 0.32);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.5);
+    font-size: 0.92rem;
+    font-weight: 600;
+    white-space: nowrap;
     color: var(--white);
+    animation: gift-bob 5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -1.25s);
+  }
+  .gift__q--1 {
+    top: 6%;
+    inset-inline-start: 0;
+  }
+  .gift__q--2 {
+    top: 18%;
+    inset-inline-end: -4%;
+  }
+  .gift__q--3 {
+    bottom: 16%;
+    inset-inline-start: -4%;
+  }
+  .gift__q--4 {
+    bottom: 4%;
+    inset-inline-end: 4%;
+  }
+  @keyframes gift-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+  /* בטלפון: המתנה קטנה יותר, והשאלות בשורות מתחתיה */
+  @media (max-width: 36rem) {
+    .gift {
+      width: 100%;
+      aspect-ratio: auto;
+      padding-top: 12.5rem;
+    }
+    .gift__ring,
+    .gift__rays {
+      inset: auto;
+      top: 0;
+      left: 50%;
+      width: 12rem;
+      height: 12rem;
+      margin-left: -6rem;
+    }
+    .gift__ring--2 {
+      width: 8rem;
+      height: 8rem;
+      top: 2rem;
+      margin-left: -4rem;
+    }
+    .gift__box {
+      position: absolute;
+      top: 2.5rem;
+      left: 50%;
+      width: 7rem;
+      margin-left: -3.5rem;
+    }
+    .gift__spark,
+    .gift__glint {
+      display: none;
+    }
+    .gift__qs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .gift__q {
+      position: static;
+    }
   }
 
   /* ---------- כותרות אזור ---------- */
@@ -616,6 +939,13 @@ const crumbs = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .free::after,
+    .free__big,
+    .free__btn,
+    .gift *,
+    .gift :global(*) {
+      animation: none !important;
+    }
     .feed__row {
       transition: none;
     }
