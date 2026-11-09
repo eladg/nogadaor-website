@@ -1,9 +1,10 @@
 ---
 // ייעול תהליכים עם AI, עמוד משלו (נוגה, 2026-11-09): "חזק, בועט, קולע, בלי בירבורים, הבטחות ישימות,
 // ראייה מלמעלה של העסק, בחירת תהליכים חשובים לייעול ויישום בפועל".
-// הסדר: פתיח (בינה מלאכותית עם ראש עסקי) ← פס הכאב (הכול עובר דרכך) ← מה עובר לאוטומציה (כהה, שלוש התועלות
-//   של נוגה עם דוגמאות מעשיות) ← הגישה (4 עקרונות) ← איך זה עובד (4 שלבים) ← למי זה מתאים (כהה)
-//   ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// סבב 2 (נוגה, 2026-11-09): הכול בתועלת ללקוח, לא בטכני. תווית אחת מעל הכותרת ("שירותים / שם השירות"), לא שתיים.
+// הסדר: פתיח (בינה מלאכותית עם ראש עסקי, ולצדו "קורה עכשיו בעסק") ← פגישה ראשונה בחינם בשווי 700 ₪ (בגדול, זהב)
+//   ← מה משתנה בעסק (כהה, שלוש התועלות של נוגה) ← למי זה מתאים (מה מאתגר ביום יום ומה משתפר)
+//   ← איך זה עובד (הגישה והשלבים יחד, 3) ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
 // הטקסטים ב-src/data/ai.ts. **טיוטה לאישור נוגה.**
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -11,15 +12,14 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug, type IconName } from '../../data/services';
-import { pillars, aiPrinciples, aiSteps, aiFit, aiIndustries } from '../../data/ai';
+import { pillars, aiSteps, aiFit, aiIndustries, firstMeeting } from '../../data/ai';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import meeting from '../../assets/atmosphere/light-meeting-table.webp';
 
 const s = serviceBySlug('ai-automation')!;
 const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
-const waHref = wa('היי נוגה, אשמח לשמוע על ייעול תהליכים עם AI');
-const num = (i: number) => String(i + 1).padStart(2, '0');
+const waHref = wa('היי נוגה, אשמח לתאם פגישה ראשונה לבירור הצרכים של העסק (ייעול תהליכים עם AI)');
 
 // "קורה עכשיו בעסק": איור בלבד, פעולות שמתבצעות לבד (מתוך תחומי היישום)
 const feed: { icon: IconName; text: string }[] = [
@@ -31,7 +31,7 @@ const feed: { icon: IconName; text: string }[] = [
 ];
 
 const description =
-  'ייעול תהליכים עם AI ואוטומציות לעסקים. מסתכלים על העסק מלמעלה, בוחרים את התהליכים שהכי שווה לייעל ומיישמים בפועל, מעקב לידים, תזכורות בוואטסאפ, דשבורד ניהולי ופחות עבודה ידנית.';
+  'ייעול תהליכים עם AI לעסקים. פחות עבודה ידנית, יותר סדר מול הלקוחות ובפיננסים, ותמונת מצב ברורה בכל רגע. פגישה ראשונה לבירור צרכים בחינם.';
 const path = '/services/ai-automation/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -51,18 +51,15 @@ const crumbs = [
       <div class="ai-hero__text">
         <p class="ai-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
         <h1 class="ai-hero__title">
-          <span class="ai-hero__kicker">{s.title}</span>{' '}<span>בינה מלאכותית</span>{' '}<span class="ai-hero__mark">עם ראש עסקי</span>
+          <span>בינה מלאכותית</span>{' '}<span class="ai-hero__mark">עם ראש עסקי</span>
         </h1>
         <p class="ai-hero__lead">
           מסתכלים על העסק מלמעלה, בוחרים את התהליכים שהכי שווה לייעל, ומיישמים אותם בפועל. פחות עבודה ידנית, פחות תלות
           בבעלים, ויותר זמן להגדיל הכנסות ורווחיות.
         </p>
-        <div class="ai-actions">
-          <a class="btn" href={waHref} target="_blank" rel="noopener">
-            לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
-          <a class="ai-actions__link" href="#pillars">מה עובר לאוטומציה?</a>
-        </div>
+        <a class="btn" href={waHref} target="_blank" rel="noopener">
+          לתיאום פגישה ראשונה<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
       </div>
 
       <!-- איור בלבד, ולכן מוסתר מקוראי מסך -->
@@ -91,19 +88,26 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. הכאב: פס תכלת צר, הטקסט לרוחב העמוד -->
-  <section class="ai-pain">
-    <div class="container ai-pain__inner reveal">
-      <p>
-        כל שאלה, כל אישור וכל תקלה מגיעים אליך. לידים מחכים למענה, לקוחות שואלים מה קורה עם התיק, ומידע מועתק ידנית
-        מקובץ לקובץ ומהמערכת לוואטסאפ.{' '}
-        <strong>הגיע הזמן שהעסק ירוץ בלי שהכול יעבור דרכך</strong>, והזמן שלך ילך לניהול ולצמיחה.
-      </p>
+  <!-- 2. פגישה ראשונה בחינם (נוגה: בגדול, בין הדברים הראשונים בעמוד) -->
+  <section class="free" aria-labelledby="free-title">
+    <div class="container free__inner reveal">
+      <div class="free__offer">
+        <h2 id="free-title" class="free__title">
+          <span>פגישה ראשונה לבירור צרכים</span>{' '}<span class="free__big">בחינם</span>
+        </h2>
+        <p class="free__worth">פגישה בשווי {firstMeeting.worth}</p>
+      </div>
+      <div class="free__body">
+        <p class="free__text">{firstMeeting.text}</p>
+        <a class="btn free__btn" href={waHref} target="_blank" rel="noopener">
+          לתיאום בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  <!-- 3. מה עובר לאוטומציה: שלוש התועלות, ובכל אחת דוגמאות מעשיות -->
-  <section class="section section--deep ai-pillars" id="pillars" aria-labelledby="pillars-title">
+  <!-- 3. מה משתנה בעסק: שלוש התועלות -->
+  <section class="section section--deep ai-pillars" aria-labelledby="pillars-title">
     <div class="container">
       <div class="center reveal">
         <p class="ai-eyebrow ai-eyebrow--dark">מה משתנה בעסק</p>
@@ -120,14 +124,6 @@ const crumbs = [
               </span>
               <h3 class="pillar__title">{p.title}</h3>
               <p class="pillar__text">{p.text}</p>
-              <ul class="pillar__points">
-                {p.points.map((pt) => (
-                  <li>
-                    <Icon name="check" size={16} />
-                    <span>{pt}</span>
-                  </li>
-                ))}
-              </ul>
             </li>
           ))
         }
@@ -135,57 +131,27 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 4. הגישה -->
-  <section class="section ai-principles" aria-labelledby="principles-title">
+  <!-- 4. למי זה מתאים: מה מאתגר ביום יום, ומה משתפר -->
+  <section class="section ai-fit" aria-labelledby="fit-title">
     <div class="container">
       <div class="center reveal">
-        <p class="ai-eyebrow">הגישה</p>
-        <h2 id="principles-title" class="sec-title ai-split">
-          <span>קודם חשיבה עסקית</span>{' '}<span class="hl--mark">אחר כך טכנולוגיה</span>
-        </h2>
-      </div>
-      <ol class="rules">
-        {
-          aiPrinciples.map((p, i) => (
-            <li class="rule reveal" style={`transition-delay: ${i * 0.1}s`}>
-              <span class="rule__num" aria-hidden="true">{num(i)}</span>
-              <h3 class="rule__title">{p.title}</h3>
-              <p class="rule__text">{p.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- 5. איך זה עובד -->
-  <section class="section section--mist ai-process" aria-labelledby="process-title">
-    <div class="container">
-      <div class="center reveal">
-        <p class="ai-eyebrow">איך זה עובד</p>
-        <h2 id="process-title" class="sec-title ai-split">
-          <span>מהתמונה הגדולה</span>{' '}<span class="hl--mark">אל יישום בפועל</span>
-        </h2>
-      </div>
-      <Timeline items={aiSteps} />
-    </div>
-  </section>
-
-  <!-- 6. למי זה מתאים -->
-  <section class="section section--deep ai-fit" aria-labelledby="fit-title">
-    <div class="container">
-      <div class="center reveal">
-        <p class="ai-eyebrow ai-eyebrow--dark">למי זה מתאים</p>
+        <p class="ai-eyebrow">למי זה מתאים</p>
         <h2 id="fit-title" class="sec-title ai-split">
-          <span>לעסקים שבהם</span>{' '}<span class="hl">הכול עובר דרך הבעלים</span>
+          <span>מה שמעסיק אותך היום</span>{' '}<span class="hl--mark">יכול לעבוד אחרת</span>
         </h2>
       </div>
       <ul class="fit">
         {
           aiFit.map((f, i) => (
-            <li class="fit__item reveal" style={`transition-delay: ${i * 0.1}s`}>
-              <Icon name="check" size={22} />
-              <span>{f}</span>
+            <li class="fit__item reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="fit__icon">
+                <Icon name={f.icon} size={24} />
+              </span>
+              <p class="fit__pain">{f.pain}</p>
+              <p class="fit__gain">
+                <Icon name="arrow" size={18} />
+                <span>{f.gain}</span>
+              </p>
             </li>
           ))
         }
@@ -194,17 +160,30 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 7. סיום: כרטיס כהה בתוך אזור בהיר -->
-  <section class="section section--mist ai-end" aria-labelledby="end-title">
+  <!-- 5. איך זה עובד: הגישה והשלבים יחד -->
+  <section class="section section--mist ai-process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="ai-eyebrow">איך זה עובד</p>
+        <h2 id="process-title" class="sec-title ai-split">
+          <span>מהפגישה הראשונה</span>{' '}<span class="hl--mark">ועד שזה עובד אצלך בעסק</span>
+        </h2>
+      </div>
+      <Timeline items={aiSteps} />
+    </div>
+  </section>
+
+  <!-- 6. סיום: כרטיס כהה בתוך אזור בהיר -->
+  <section class="section ai-end" aria-labelledby="end-title">
     <div class="container">
       <div class="ai-end__card reveal">
         <Star size={30} />
         <h2 id="end-title" class="ai-end__title">
           <span>העסק יכול לעבוד חכם יותר</span>{' '}<span class="hl">בואו נבחר מאיפה מתחילים</span>
         </h2>
-        <p class="ai-end__text">שיחת היכרות בוואטסאפ, בלי התחייבות.</p>
+        <p class="ai-end__text">פגישה ראשונה לבירור הצרכים של העסק, בחינם.</p>
         <a class="btn ai-end__btn" href={waHref} target="_blank" rel="noopener">
-          לשיחת היכרות בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          לתיאום בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
       </div>
     </div>
@@ -217,7 +196,6 @@ const crumbs = [
     position: relative;
     overflow: hidden;
     background: linear-gradient(180deg, var(--white), var(--mist));
-    border-bottom: 1px solid var(--line);
   }
   .ai-hero__bg {
     position: absolute;
@@ -248,18 +226,18 @@ const crumbs = [
       grid-template-columns: 1.15fr 0.85fr;
       align-items: center;
       gap: clamp(2rem, 5vw, 5rem);
-      min-height: min(78vh, 38rem);
-      padding-block: 3.5rem;
+      min-height: min(70vh, 34rem);
+      padding-block: 3rem;
     }
   }
   .ai-crumbs {
     margin: 0 0 0.75rem;
-    font-size: 0.95rem;
-    color: #4a5b73;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-dark);
   }
   .ai-crumbs a {
     color: var(--teal-dark);
-    font-weight: 700;
   }
   .ai-hero__title {
     margin: 0 0 1.25rem;
@@ -272,13 +250,6 @@ const crumbs = [
     display: block;
     text-wrap: balance;
   }
-  .ai-hero__kicker {
-    margin-bottom: 0.6rem;
-    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-    font-weight: 800;
-    line-height: 1.3;
-    color: var(--gold-dark);
-  }
   .ai-hero__mark {
     color: var(--teal-dark);
   }
@@ -288,16 +259,6 @@ const crumbs = [
     font-size: clamp(1.1rem, 2vw, 1.25rem);
     line-height: 1.75;
     color: #33445c;
-  }
-  .ai-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.5rem;
-  }
-  .ai-actions__link {
-    font-weight: 800;
-    color: var(--teal-dark);
   }
 
   /* ---------- "קורה עכשיו בעסק" (רק במחשב) ---------- */
@@ -405,23 +366,76 @@ const crumbs = [
     color: var(--navy);
   }
 
-  /* ---------- פס הכאב ---------- */
-  .ai-pain {
-    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
-    background: var(--mist);
-    border-bottom: 1px solid var(--line);
+  /* ---------- פגישה ראשונה בחינם: פס זהב בולט ---------- */
+  .free {
+    background: var(--gold-gradient);
+    padding-block: clamp(1.75rem, 4vw, 2.5rem);
   }
-  .ai-pain__inner p {
-    max-width: 72rem;
-    margin: 0 auto;
+  .free__inner {
+    display: grid;
+    gap: 1.25rem 3rem;
+    align-items: center;
     text-align: center;
-    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
-    line-height: 1.8;
-    color: #33445c;
   }
-  .ai-pain__inner strong {
+  @media (min-width: 56rem) {
+    .free__inner {
+      grid-template-columns: auto 1fr;
+      text-align: start;
+    }
+  }
+  .free__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 3vw, 1.7rem);
     font-weight: 800;
-    color: var(--teal-dark);
+    line-height: 1.2;
+    color: var(--navy);
+  }
+  .free__title > span {
+    display: block;
+  }
+  .free__big {
+    margin-top: 0.15rem;
+    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .free__worth {
+    display: inline-block;
+    margin: 0.6rem 0 0;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: var(--navy);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--gold-light);
+  }
+  .free__body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 2rem;
+  }
+  @media (min-width: 56rem) {
+    .free__body {
+      justify-content: space-between;
+      padding-inline-start: 3rem;
+      border-inline-start: 2px solid rgb(11 26 51 / 0.2);
+    }
+  }
+  .free__text {
+    flex: 1 1 22rem;
+    max-width: 36rem;
+    margin: 0;
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.65;
+    color: var(--navy);
+  }
+  /* כפתור כהה על רקע הזהב */
+  .free__btn {
+    background: var(--navy);
+    color: var(--white);
   }
 
   /* ---------- כותרות אזור ---------- */
@@ -454,14 +468,14 @@ const crumbs = [
     margin-inline: auto;
   }
 
-  /* ---------- מה עובר לאוטומציה: שלושה כרטיסי זכוכית, הכול באותו גובה ---------- */
+  /* ---------- מה משתנה בעסק: שלושה כרטיסי זכוכית, הכול באותו גובה ---------- */
   .pillars {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: auto auto auto 1fr;
+    grid-auto-rows: auto auto 1fr;
     gap: 0 1.25rem;
   }
   @media (max-width: 62rem) {
@@ -474,7 +488,7 @@ const crumbs = [
   .pillar {
     display: grid;
     grid-template-rows: subgrid;
-    grid-row: span 4;
+    grid-row: span 3;
     row-gap: 0.6rem;
     margin: 0 0 1.25rem;
     padding: 1.75rem 1.6rem;
@@ -498,91 +512,20 @@ const crumbs = [
   }
   .pillar__text {
     margin: 0;
-    line-height: 1.6;
+    font-size: 1.08rem;
+    line-height: 1.65;
     color: var(--on-dark-soft);
   }
-  .pillar__points {
-    list-style: none;
-    margin: 0.5rem 0 0;
-    padding: 1rem 0 0;
-    border-top: 1px solid rgb(255 255 255 / 0.12);
-    display: grid;
-    gap: 0.55rem;
-    align-content: start;
-  }
-  .pillar__points li {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-start;
-    line-height: 1.45;
-    color: var(--on-dark);
-  }
-  .pillar__points :global(svg) {
-    flex: none;
-    margin-top: 0.2rem;
-    color: var(--gold-light);
-  }
 
-  /* ---------- הגישה: מספר זהב גדול, בלי קופסאות ---------- */
-  .rules {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: auto auto 1fr;
-    gap: 0 clamp(1.25rem, 3vw, 2.5rem);
-  }
-  @media (max-width: 62rem) {
-    .rules {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
-    .rules {
-      grid-template-columns: 1fr;
-    }
-  }
-  .rule {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 3;
-    row-gap: 0.4rem;
-    margin: 0 0 1.75rem;
-    padding-top: 1rem;
-    border-top: 3px solid var(--teal);
-  }
-  .rule:nth-child(even) {
-    border-top-color: var(--gold-dark);
-  }
-  .rule__num {
-    font-size: clamp(2.6rem, 5vw, 3.4rem);
-    font-weight: 900;
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 2px var(--gold-dark);
-    opacity: 0.8;
-  }
-  .rule__title {
-    margin: 0;
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-  .rule__text {
-    margin: 0;
-    line-height: 1.65;
-    color: #33445c;
-  }
-
-  /* ---------- למי זה מתאים ---------- */
+  /* ---------- למי זה מתאים: הכאב, ומתחתיו מה משתפר ---------- */
   .fit {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 1.25rem;
   }
   @media (max-width: 62rem) {
     .fit {
@@ -595,30 +538,49 @@ const crumbs = [
     }
   }
   .fit__item {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.6rem;
+    margin: 0 0 1.25rem;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  .fit__icon {
+    color: var(--teal);
+  }
+  .fit__pain {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #4a5b73;
+  }
+  .fit__gain {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     align-items: flex-start;
     margin: 0;
-    padding: 1.35rem 1.25rem;
-    border-radius: 1.1rem;
-    background: rgb(25 154 181 / 0.2);
-    border: 1px solid rgb(25 154 181 / 0.45);
-    font-size: 1.08rem;
-    line-height: 1.55;
-    color: var(--white);
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--navy);
   }
-  .fit__item :global(svg) {
+  .fit__gain :global(svg) {
     flex: none;
-    margin-top: 0.15rem;
-    color: var(--gold-light);
+    margin-top: 0.3rem;
+    color: var(--gold-dark);
   }
   .fit__industries {
     max-width: 52rem;
-    margin: 2rem auto 0;
+    margin: 1.25rem auto 0;
     text-align: center;
     font-size: 1.08rem;
     line-height: 1.7;
-    color: var(--on-dark-soft);
+    color: #4a5b73;
   }
 
   /* ---------- סיום ---------- */
