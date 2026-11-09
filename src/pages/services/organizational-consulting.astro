@@ -5,7 +5,9 @@
 // סבב 3 (נוגה): בלי ארבע השכבות ובלי הפרק "מה שמודדים גדל" (מאפיין אחד בתועלות), תועלות במקום עקרונות,
 // ניסוחים של תוצאה ולא של תהליך, ומשפט עדין שלא מחפשים שינויים גדולים.
 // נוגה (2026-11-09): בלי תוויות קטנות מעל הכותרות, והמשפט העדין ("שינוי לא צריך להיות גדול...") בפסקת הפתיח.
-// הסדר: פתיח ← פס המסר ← התוצאות (4 תועלות) ← תחומי העבודה (כהה, 6) ← 20 שנה בבנק (זהב) ← איך זה עובד (3)
+// סבב 5 (נוגה): פתיח של שתי שורות, פסקת מסר בניסוח חד יותר עם הכותרת "ניהול טוב נראה בדוח רווח והפסד",
+// ואזור התועלות נמחק ("לא מועיל לעמוד בכלל").
+// הסדר: פתיח ← המסר ← תחומי העבודה (כהה, 6) ← 20 שנה בבנק (זהב) ← איך זה עובד (3)
 //   ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
 // "למי זה מתאים" הוסר (נוגה: "לא להגיד מה שלא צריך להגיד").
 // הטקסטים ב-src/data/org.ts. **טיוטה לאישור נוגה.**
@@ -15,7 +17,7 @@ import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
 import Timeline from '../../components/Timeline.astro';
 import { serviceBySlug } from '../../data/services';
-import { orgAreas, orgBenefits, orgSteps, orgGentle } from '../../data/org';
+import { orgAreas, orgSteps } from '../../data/org';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import team from '../../assets/atmosphere/light-team.webp';
@@ -47,7 +49,8 @@ const crumbs = [
           <span class="sr-only">{s.title} </span>{' '}<span>ארגון וניהול מדויקים</span>{' '}<span class="og-hero__mark">שמגדילים הכנסות</span>
         </h1>
         <p class="og-hero__lead">
-          מבנה, תפקידים, נהלים ותהליכי ניהול שמדויקים לאופי הפעילות, לארגון כולו או למחלקה אחת. {orgGentle}
+          שינוי לא צריך להיות גדול כדי להיות משמעותי. לפעמים תפקיד אחד שמוגדר מחדש, או פגישת עבודה אחת שמתנהלת
+          אחרת, משנים את התוצאות של מחלקה שלמה.
         </p>
         <div class="og-actions">
           <a class="btn" href={waHref} target="_blank" rel="noopener">
@@ -59,42 +62,22 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. המסר: פס תכלת צר, הטקסט לרוחב העמוד ("הרווח הוא תוצאה של מכלול הפעולות", מההרצאה של נוגה) -->
-  <section class="og-pain">
-    <div class="container og-pain__inner reveal">
-      <p>
-        הרווח של כל עסק הוא תוצאה של מכלול הפעולות השיווקיות, התפעוליות והניהוליות שמתקיימות בו. לכן חלק ניכר מהפוטנציאל
-        העסקי טמון בתוך הארגון, באופן שבו הוא בנוי, עובד ומנוהל.{' '}
-        <strong>ארגון וניהול נכונים הם מנוע הכנסות בפני עצמו.</strong>
+  <!-- 2. המסר (הרעיון מההרצאה של נוגה "לנהל עסק רווחי": הרווח הוא תוצאה של מכלול הפעולות) -->
+  <section class="section section--mist og-msg" aria-labelledby="msg-title">
+    <div class="container reveal">
+      <h2 id="msg-title" class="sec-title og-split">
+        <span>ניהול טוב</span>{' '}<span class="hl--mark">נראה בדוח רווח והפסד</span>
+      </h2>
+      <p class="og-msg__text">
+        הרווח הוא תוצאה של כל מה שקורה בעסק, בשיווק, בתפעול ובניהול, ושל האופן שבו הדברים מתחברים זה לזה. ליד שמחכה
+        יומיים למענה, הצעת מחיר שעוברת שלוש ידיים, יעד שאף אחד לא מודד ולכן גם לא גדל. כל אחד מהם נראה זניח, ויחד הם
+        עולים הון. לכן חלק גדול מהפוטנציאל שעוד לא מומש נמצא בתוך הארגון עצמו, באופן שבו הוא בנוי, עובד ומנוהל.
       </p>
+      <p class="og-msg__strong">ארגון וניהול נכונים הם מנוע הכנסות בפני עצמו.</p>
     </div>
   </section>
 
-  <!-- 3. התוצאות: 4 תועלות -->
-  <section class="section og-benefits" aria-labelledby="benefits-title">
-    <div class="container">
-      <div class="center reveal">
-        <h2 id="benefits-title" class="sec-title og-split">
-          <span>ארגון שעובד נכון</span>{' '}<span class="hl--mark">ניכר בשורה התחתונה</span>
-        </h2>
-      </div>
-      <ul class="rules">
-        {
-          orgBenefits.map((b, i) => (
-            <li class="rule reveal" style={`transition-delay: ${i * 0.1}s`}>
-              <span class="rule__icon">
-                <Icon name={b.icon} size={24} />
-              </span>
-              <h3 class="rule__title">{b.title}</h3>
-              <p class="rule__text">{b.text}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 4. תחומי העבודה: 6 -->
+  <!-- 3. תחומי העבודה: 6 -->
   <section class="section section--deep og-areas" id="areas" aria-labelledby="areas-title">
     <div class="container">
       <div class="center reveal">
@@ -118,7 +101,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
+  <!-- 4. הניסיון בבנק (מתוך הסיפור באודות, בלי מספרים מדויקים) -->
   <section class="og-band">
     <div class="container og-band__inner reveal">
       <span class="og-band__big">20 שנה</span>
@@ -128,7 +111,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 6. איך זה עובד (עם המשפט העדין שלא מחפשים שינויים גדולים) -->
+  <!-- 5. איך זה עובד -->
   <section class="section section--mist og-process" aria-labelledby="process-title">
     <div class="container">
       <div class="center reveal">
@@ -140,7 +123,7 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 7. סיום: כרטיס כהה בתוך אזור בהיר -->
+  <!-- 6. סיום: כרטיס כהה בתוך אזור בהיר -->
   <section class="section og-end" aria-labelledby="end-title">
     <div class="container">
       <div class="og-end__card reveal">
@@ -247,21 +230,19 @@ const crumbs = [
     color: var(--teal-dark);
   }
 
-  /* ---------- פס הכאב ---------- */
-  .og-pain {
-    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
-    background: var(--mist);
-    border-bottom: 1px solid var(--line);
-  }
-  .og-pain__inner p {
-    max-width: 72rem;
+  /* ---------- המסר ---------- */
+  .og-msg__text {
+    max-width: 50rem;
     margin: 0 auto;
     text-align: center;
-    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
-    line-height: 1.8;
+    font-size: clamp(1.1rem, 1.9vw, 1.25rem);
+    line-height: 1.85;
     color: #33445c;
   }
-  .og-pain__inner strong {
+  .og-msg__strong {
+    margin: 1.5rem auto 0;
+    text-align: center;
+    font-size: clamp(1.2rem, 2.2vw, 1.4rem);
     font-weight: 800;
     color: var(--teal-dark);
   }
@@ -371,66 +352,6 @@ const crumbs = [
     font-weight: 600;
     line-height: 1.5;
     color: var(--navy);
-  }
-
-  /* ---------- התוצאות: אייקון, כותרת וטקסט, בלי קופסאות ---------- */
-  .rules {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: auto auto 1fr;
-    gap: 0 clamp(1.25rem, 3vw, 2.5rem);
-  }
-  @media (max-width: 62rem) {
-    .rules {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
-    .rules {
-      grid-template-columns: 1fr;
-    }
-  }
-  .rule {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 3;
-    row-gap: 0.75rem;
-    margin: 0 0 1.75rem;
-    padding-top: 1rem;
-    border-top: 3px solid var(--teal);
-  }
-  .rule:nth-child(even) {
-    border-top-color: var(--gold-dark);
-  }
-  .rule__icon {
-    display: grid;
-    place-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.9rem;
-    background: var(--navy-deep);
-    color: var(--gold-light);
-  }
-  .og-gentle {
-    max-width: 44rem;
-    margin: -1.25rem auto 2.5rem;
-    font-size: 1.12rem;
-    line-height: 1.75;
-    color: #33445c;
-  }
-  .rule__title {
-    margin: 0;
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-  .rule__text {
-    margin: 0;
-    line-height: 1.65;
-    color: #33445c;
   }
 
   /* ---------- סיום ---------- */
