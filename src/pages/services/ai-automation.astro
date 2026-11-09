@@ -1,0 +1,665 @@
+---
+// ייעול תהליכים עם AI, עמוד משלו (נוגה, 2026-11-09): "חזק, בועט, קולע, בלי בירבורים, הבטחות ישימות,
+// ראייה מלמעלה של העסק, בחירת תהליכים חשובים לייעול ויישום בפועל".
+// הסדר: פתיח (בינה מלאכותית עם ראש עסקי) ← פס הכאב (הכול עובר דרכך) ← מה עובר לאוטומציה (כהה, שלוש התועלות
+//   של נוגה עם דוגמאות מעשיות) ← הגישה (4 עקרונות) ← איך זה עובד (4 שלבים) ← למי זה מתאים (כהה)
+//   ← סיום (כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה).
+// הטקסטים ב-src/data/ai.ts. **טיוטה לאישור נוגה.**
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
+import Timeline from '../../components/Timeline.astro';
+import { serviceBySlug, type IconName } from '../../data/services';
+import { pillars, aiPrinciples, aiSteps, aiFit, aiIndustries } from '../../data/ai';
+import { contact } from '../../data/contact';
+import { serviceSchema } from '../../utils/schema';
+import meeting from '../../assets/atmosphere/light-meeting-table.webp';
+
+const s = serviceBySlug('ai-automation')!;
+const wa = (text: string) => `${contact.whatsapp}?text=${encodeURIComponent(text)}`;
+const waHref = wa('היי נוגה, אשמח לשמוע על ייעול תהליכים עם AI');
+const num = (i: number) => String(i + 1).padStart(2, '0');
+
+// "קורה עכשיו בעסק": איור בלבד, פעולות שמתבצעות לבד (מתוך תחומי היישום)
+const feed: { icon: IconName; text: string }[] = [
+  { icon: 'users', text: 'ליד חדש נקלט ושויך לעובד' },
+  { icon: 'whatsapp', text: 'תזכורת לפגישה נשלחה בוואטסאפ' },
+  { icon: 'list', text: 'סטטוס התיק עודכן ללקוח' },
+  { icon: 'coins', text: 'תזכורת תשלום יצאה בזמן' },
+  { icon: 'chart', text: 'דוח הבוקר מוכן לבעלים' },
+];
+
+const description =
+  'ייעול תהליכים עם AI ואוטומציות לעסקים. מסתכלים על העסק מלמעלה, בוחרים את התהליכים שהכי שווה לייעל ומיישמים בפועל, מעקב לידים, תזכורות בוואטסאפ, דשבורד ניהולי ופחות עבודה ידנית.';
+const path = '/services/ai-automation/';
+const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
+const crumbs = [
+  { name: 'בית', path: '/' },
+  { name: 'שירותים', path: '/services/' },
+  { name: s.title, path },
+];
+---
+
+<BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
+  <!-- 1. פתיח: הקריאה החזקה בימין, ובשמאל "קורה עכשיו בעסק" מצויר מעל תמונת חדר הישיבות -->
+  <section class="ai-hero">
+    <div class="ai-hero__bg" aria-hidden="true">
+      <Image src={meeting} alt="" widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 60vw, 100vw" loading="eager" />
+    </div>
+    <div class="container ai-hero__grid">
+      <div class="ai-hero__text">
+        <p class="ai-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
+        <h1 class="ai-hero__title">
+          <span class="ai-hero__kicker">{s.title}</span>{' '}<span>בינה מלאכותית</span>{' '}<span class="ai-hero__mark">עם ראש עסקי</span>
+        </h1>
+        <p class="ai-hero__lead">
+          מסתכלים על העסק מלמעלה, בוחרים את התהליכים שהכי שווה לייעל, ומיישמים אותם בפועל. פחות עבודה ידנית, פחות תלות
+          בבעלים, ויותר זמן להגדיל הכנסות ורווחיות.
+        </p>
+        <div class="ai-actions">
+          <a class="btn" href={waHref} target="_blank" rel="noopener">
+            לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          <a class="ai-actions__link" href="#pillars">מה עובר לאוטומציה?</a>
+        </div>
+      </div>
+
+      <!-- איור בלבד, ולכן מוסתר מקוראי מסך -->
+      <div class="feed reveal" aria-hidden="true">
+        <div class="feed__head">
+          <span class="feed__dots"><i></i><i></i><i></i></span>
+          <span class="feed__name">קורה עכשיו בעסק</span>
+        </div>
+        <ul class="feed__list">
+          {
+            feed.map((f, i) => (
+              <li class="feed__row" style={`--i: ${i}`}>
+                <span class="feed__icon">
+                  <Icon name={f.icon} size={18} />
+                </span>
+                <span class="feed__text">{f.text}</span>
+                <span class="feed__done">
+                  <Icon name="check" size={16} />
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="feed__tag"><Icon name="robot" size={16} /> בלי שאף אחד הקליד</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. הכאב: פס תכלת צר, הטקסט לרוחב העמוד -->
+  <section class="ai-pain">
+    <div class="container ai-pain__inner reveal">
+      <p>
+        כל שאלה, כל אישור וכל תקלה מגיעים אליך. לידים מחכים למענה, לקוחות שואלים מה קורה עם התיק, ומידע מועתק ידנית
+        מקובץ לקובץ ומהמערכת לוואטסאפ.{' '}
+        <strong>הגיע הזמן שהעסק ירוץ בלי שהכול יעבור דרכך</strong>, והזמן שלך ילך לניהול ולצמיחה.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. מה עובר לאוטומציה: שלוש התועלות, ובכל אחת דוגמאות מעשיות -->
+  <section class="section section--deep ai-pillars" id="pillars" aria-labelledby="pillars-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="ai-eyebrow ai-eyebrow--dark">מה משתנה בעסק</p>
+        <h2 id="pillars-title" class="sec-title ai-split">
+          <span>פחות עבודה ידנית</span>{' '}<span class="hl">יותר זמן לנהל ולהצמיח</span>
+        </h2>
+      </div>
+      <ul class="pillars">
+        {
+          pillars.map((p, i) => (
+            <li class="pillar reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <span class="pillar__icon">
+                <Icon name={p.icon} size={30} />
+              </span>
+              <h3 class="pillar__title">{p.title}</h3>
+              <p class="pillar__text">{p.text}</p>
+              <ul class="pillar__points">
+                {p.points.map((pt) => (
+                  <li>
+                    <Icon name="check" size={16} />
+                    <span>{pt}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. הגישה -->
+  <section class="section ai-principles" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="ai-eyebrow">הגישה</p>
+        <h2 id="principles-title" class="sec-title ai-split">
+          <span>קודם חשיבה עסקית</span>{' '}<span class="hl--mark">אחר כך טכנולוגיה</span>
+        </h2>
+      </div>
+      <ol class="rules">
+        {
+          aiPrinciples.map((p, i) => (
+            <li class="rule reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <span class="rule__num" aria-hidden="true">{num(i)}</span>
+              <h3 class="rule__title">{p.title}</h3>
+              <p class="rule__text">{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. איך זה עובד -->
+  <section class="section section--mist ai-process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="ai-eyebrow">איך זה עובד</p>
+        <h2 id="process-title" class="sec-title ai-split">
+          <span>מהתמונה הגדולה</span>{' '}<span class="hl--mark">אל יישום בפועל</span>
+        </h2>
+      </div>
+      <Timeline items={aiSteps} />
+    </div>
+  </section>
+
+  <!-- 6. למי זה מתאים -->
+  <section class="section section--deep ai-fit" aria-labelledby="fit-title">
+    <div class="container">
+      <div class="center reveal">
+        <p class="ai-eyebrow ai-eyebrow--dark">למי זה מתאים</p>
+        <h2 id="fit-title" class="sec-title ai-split">
+          <span>לעסקים שבהם</span>{' '}<span class="hl">הכול עובר דרך הבעלים</span>
+        </h2>
+      </div>
+      <ul class="fit">
+        {
+          aiFit.map((f, i) => (
+            <li class="fit__item reveal" style={`transition-delay: ${i * 0.1}s`}>
+              <Icon name="check" size={22} />
+              <span>{f}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="fit__industries reveal">{aiIndustries}</p>
+    </div>
+  </section>
+
+  <!-- 7. סיום: כרטיס כהה בתוך אזור בהיר -->
+  <section class="section section--mist ai-end" aria-labelledby="end-title">
+    <div class="container">
+      <div class="ai-end__card reveal">
+        <Star size={30} />
+        <h2 id="end-title" class="ai-end__title">
+          <span>העסק יכול לעבוד חכם יותר</span>{' '}<span class="hl">בואו נבחר מאיפה מתחילים</span>
+        </h2>
+        <p class="ai-end__text">שיחת היכרות בוואטסאפ, בלי התחייבות.</p>
+        <a class="btn ai-end__btn" href={waHref} target="_blank" rel="noopener">
+          לשיחת היכרות בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .ai-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--white), var(--mist));
+    border-bottom: 1px solid var(--line);
+  }
+  .ai-hero__bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.18;
+  }
+  @media (min-width: 60rem) {
+    .ai-hero__bg {
+      opacity: 0.55;
+    }
+  }
+  .ai-hero__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    -webkit-mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+    mask-image: linear-gradient(to left, transparent 35%, #000 85%);
+  }
+  .ai-hero__grid {
+    position: relative;
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 2.5rem 3rem;
+  }
+  @media (min-width: 60rem) {
+    .ai-hero__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      min-height: min(78vh, 38rem);
+      padding-block: 3.5rem;
+    }
+  }
+  .ai-crumbs {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    color: #4a5b73;
+  }
+  .ai-crumbs a {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  .ai-hero__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.4rem, 5.6vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--navy);
+  }
+  .ai-hero__title > span {
+    display: block;
+    text-wrap: balance;
+  }
+  .ai-hero__kicker {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--gold-dark);
+  }
+  .ai-hero__mark {
+    color: var(--teal-dark);
+  }
+  .ai-hero__lead {
+    max-width: 36rem;
+    margin: 0 0 1.75rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .ai-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+  }
+  .ai-actions__link {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- "קורה עכשיו בעסק" (רק במחשב) ---------- */
+  @media (max-width: 59.99rem) {
+    .feed {
+      display: none;
+    }
+  }
+  .feed {
+    position: relative;
+    width: min(100%, 26rem);
+    margin-inline: auto;
+    padding: 1.25rem 1.35rem 1.9rem;
+    border-radius: 1.5rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(18rem 12rem at 100% 0, rgb(25 154 181 / 0.35), transparent 70%),
+      radial-gradient(14rem 10rem at 0 100%, rgb(209 154 74 / 0.2), transparent 72%),
+      var(--navy-deep);
+    box-shadow: 0 2rem 4rem -1.5rem rgb(11 26 51 / 0.55);
+  }
+  .feed__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .feed__dots {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+  .feed__dots i {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 0.15rem;
+    background: rgb(255 255 255 / 0.25);
+  }
+  .feed__dots i:first-child {
+    background: var(--gold-light);
+  }
+  .feed__name {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--white);
+  }
+  .feed__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .feed__row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 0.9rem;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.95rem;
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+    transition-delay: calc(var(--i) * 0.35s + 0.2s);
+  }
+  .js .feed:not(.is-in) .feed__row {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  .feed__icon {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+    background: rgb(25 154 181 / 0.25);
+    color: var(--white);
+  }
+  .feed__done {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .feed__tag {
+    position: absolute;
+    inset-block-end: -1.1rem;
+    inset-inline-start: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(11 26 51 / 0.35);
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  /* ---------- פס הכאב ---------- */
+  .ai-pain {
+    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+    background: var(--mist);
+    border-bottom: 1px solid var(--line);
+  }
+  .ai-pain__inner p {
+    max-width: 72rem;
+    margin: 0 auto;
+    text-align: center;
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .ai-pain__inner strong {
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+
+  /* ---------- כותרות אזור ---------- */
+  .ai-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--teal-dark);
+  }
+  .ai-eyebrow::before,
+  .ai-eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-gradient);
+  }
+  .ai-eyebrow--dark {
+    color: var(--gold-light);
+  }
+  .ai-split {
+    margin-bottom: 2.25rem;
+  }
+  .ai-split > span {
+    display: table;
+    margin-inline: auto;
+  }
+
+  /* ---------- מה עובר לאוטומציה: שלושה כרטיסי זכוכית, הכול באותו גובה ---------- */
+  .pillars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto auto auto 1fr;
+    gap: 0 1.25rem;
+  }
+  @media (max-width: 62rem) {
+    .pillars {
+      grid-template-columns: 1fr;
+      max-width: 36rem;
+      margin-inline: auto;
+    }
+  }
+  .pillar {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    row-gap: 0.6rem;
+    margin: 0 0 1.25rem;
+    padding: 1.75rem 1.6rem;
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-top: 3px solid var(--teal);
+  }
+  .pillar:nth-child(2) {
+    border-top-color: var(--gold-dark);
+  }
+  .pillar__icon {
+    color: var(--gold-light);
+  }
+  .pillar__title {
+    margin: 0;
+    font-size: clamp(1.3rem, 2.4vw, 1.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .pillar__text {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
+  }
+  .pillar__points {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 1rem 0 0;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    display: grid;
+    gap: 0.55rem;
+    align-content: start;
+  }
+  .pillar__points li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    line-height: 1.45;
+    color: var(--on-dark);
+  }
+  .pillar__points :global(svg) {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--gold-light);
+  }
+
+  /* ---------- הגישה: מספר זהב גדול, בלי קופסאות ---------- */
+  .rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: auto auto 1fr;
+    gap: 0 clamp(1.25rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 62rem) {
+    .rules {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .rules {
+      grid-template-columns: 1fr;
+    }
+  }
+  .rule {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0.4rem;
+    margin: 0 0 1.75rem;
+    padding-top: 1rem;
+    border-top: 3px solid var(--teal);
+  }
+  .rule:nth-child(even) {
+    border-top-color: var(--gold-dark);
+  }
+  .rule__num {
+    font-size: clamp(2.6rem, 5vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--gold-dark);
+    opacity: 0.8;
+  }
+  .rule__title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .rule__text {
+    margin: 0;
+    line-height: 1.65;
+    color: #33445c;
+  }
+
+  /* ---------- למי זה מתאים ---------- */
+  .fit {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 62rem) {
+    .fit {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .fit {
+      grid-template-columns: 1fr;
+    }
+  }
+  .fit__item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 1.35rem 1.25rem;
+    border-radius: 1.1rem;
+    background: rgb(25 154 181 / 0.2);
+    border: 1px solid rgb(25 154 181 / 0.45);
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--white);
+  }
+  .fit__item :global(svg) {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--gold-light);
+  }
+  .fit__industries {
+    max-width: 52rem;
+    margin: 2rem auto 0;
+    text-align: center;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--on-dark-soft);
+  }
+
+  /* ---------- סיום ---------- */
+  .ai-end__card {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+    border-radius: 2rem;
+    text-align: center;
+    color: var(--on-dark);
+    background:
+      radial-gradient(30rem 18rem at 100% 0, rgb(25 154 181 / 0.3), transparent 70%),
+      radial-gradient(26rem 16rem at 0 100%, rgb(209 154 74 / 0.18), transparent 72%),
+      var(--navy-deep);
+  }
+  .ai-end__title {
+    margin: 0.5rem 0 1rem;
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .ai-end__title > span {
+    display: block;
+  }
+  .ai-end__text {
+    margin: 0 0 1.75rem;
+    font-size: 1.1rem;
+    color: var(--on-dark-soft);
+  }
+  .ai-end__btn {
+    font-size: 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feed__row {
+      transition: none;
+    }
+    .js .feed:not(.is-in) .feed__row {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
