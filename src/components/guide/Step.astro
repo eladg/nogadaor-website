@@ -51,4 +51,14 @@ const { title } = Astro.props;
   .step-g__text :global(p:last-child) {
     margin-bottom: 0;
   }
+  /* תיבת העתקה בתוך שלב (בדיקה ופרומפט יחד). בטלפון היא נמתחת לכל הרוחב, כדי שהפרומפט לא יהיה צר מדי */
+  .step-g__text :global(.copy-g) {
+    margin: 1rem 0 0.75rem;
+  }
+  @media (max-width: 40rem) {
+    .step-g__text :global(.copy-g) {
+      position: relative;
+      margin-inline: -4rem -1.2rem;
+    }
+  }
 </style>
