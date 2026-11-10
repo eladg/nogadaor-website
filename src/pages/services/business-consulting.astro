@@ -1,25 +1,28 @@
 ---
-// אסטרטגיה ושיווק, עמוד משלו (נוגה, 2026-11-09). יצא מהתבנית [slug].astro, כמו שאר עמודי השירות.
-// סבב 6: כותרת שנוגה בחרה, בלי משפט מתחתיה ← "מה שעבד אתמול / כבר לא מספיק היום" (השינויים של השנה האחרונה,
-//   וחזרה עדינה על המסר של עמוד הבית) ← "כל מה שמביא לקוחות / ומגדיל מכירות" (כהה, נוגה: "החלק הזה טוב")
-//   ← שישה עקרונות בעיצוב פתוח, בלי קופסאות (כותרת דביקה בצד, ורשימה עם קו זהב ומספרים גדולים) ← סיום פתוח.
-// בלי תוויות קטנות מעל הכותרות, בלי הדמיה בפתיח ובלי איור גשר (נוגה). הטקסטים ב-src/data/strategy.ts. **טיוטה לאישור נוגה.**
+// אסטרטגיה ושיווק, עמוד משלו (נוגה, 2026-11-10). יצא מהתבנית [slug].astro, כמו שאר עמודי השירות.
+// סבב 7: **כל הטקסט הוא של נוגה, מילה במילה** (src/data/strategy.ts). נוגה אהבה את העיצוב של סבב 6
+// (כותרת דביקה בצד, קו זהב ומספרים גדולים, רשימות עם קווים, בלי קופסאות), והוא משמש כאן לכל האזורים.
+// הסדר לפי הטקסט שלה: פתיח ← משקיעים הרבה ← להבין, לזהות, לגרום לזה לקרות (4 שלבים) ← לבחור לאן העסק הולך
+//   ← מה אפשר לקדם יחד (כהה) ← מה התהליך מאפשר ← שאלות נפוצות ← מחברים את מה שצריך ← הגיע הזמן.
+// בלי תוויות קטנות מעל הכותרות (נוגה).
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
-import { serviceBySlug } from '../../data/services';
-import { changes, strategyAreas, principles } from '../../data/strategy';
+import Faq from '../../components/Faq.astro';
+import { serviceBySlug, type Service } from '../../data/services';
+import { hero, pains, approach, strategy, topics, enables, strategyFaq, connect, end } from '../../data/strategy';
 import { contact } from '../../data/contact';
 import { serviceSchema } from '../../utils/schema';
 import whiteboard from '../../assets/atmosphere/light-whiteboard.webp';
 
 const s = serviceBySlug('business-consulting')!;
-const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, אשמח לשמוע על אסטרטגיה ושיווק')}`;
+const waHref = `${contact.whatsapp}?text=${encodeURIComponent('היי נוגה, אשמח לתאם שיחת היכרות על אסטרטגיה ושיווק')}`;
 const num = (i: number) => String(i + 1).padStart(2, '0');
+const connectLinks = connect.links.map(serviceBySlug).filter((x): x is Service => Boolean(x));
 
 const description =
-  'יסודות אסטרטגיים ברורים שמוציאים מהשיווק את המקסימום. אסטרטגיה ושיווק מבפנים החוצה, בידול ומסרים, ניהול לקוחות חכם, מותג וקהילה, להגדלת הכנסות ושיפור רווחיות.';
+  'ייעוץ ופיתוח עסקי להגדלת הכנסות. לזהות הזדמנויות, לקבל החלטות ולבנות יחד את המהלכים שיאפשרו לעסק שלך לעלות מדרגה, באסטרטגיה, בשיווק, במכירות ובניהול לקוחות.';
 const path = '/services/business-consulting/';
 const schema = [serviceSchema(Astro.site, { name: s.title, description, path })];
 const crumbs = [
@@ -30,7 +33,7 @@ const crumbs = [
 ---
 
 <BaseLayout title={s.title} description={description} schema={schema} crumbs={crumbs}>
-  <!-- 1. פתיח: הכותרת שנוגה בחרה, בלי משפט מתחתיה -->
+  <!-- 1. פתיח -->
   <section class="st-hero">
     <div class="st-hero__bg" aria-hidden="true">
       <Image src={whiteboard} alt="" widths={[640, 1024, 1600]} sizes="100vw" loading="eager" />
@@ -38,66 +41,28 @@ const crumbs = [
     <div class="container st-hero__inner">
       <p class="st-crumbs"><a href="/services/">שירותים</a> <span aria-hidden="true">/</span> {s.title}</p>
       <h1 class="st-hero__title">
-        <span>יסודות אסטרטגיים ברורים</span>{' '}<span class="st-hero__mark">מוציאים מהשיווק את המקסימום</span>
+        <span>{hero.title}</span>{' '}<span class="st-hero__mark">{hero.titleMark}</span>
       </h1>
+      {hero.paras.map((p, i) => <p class:list={['st-hero__lead', { 'st-hero__lead--strong': i === 1 }]}>{p}</p>)}
       <div class="st-actions">
         <a class="btn" href={waHref} target="_blank" rel="noopener">
-          לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          {hero.cta}<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
-        <a class="st-actions__link" href="#areas">מה משתפר בעסק?</a>
       </div>
     </div>
   </section>
 
-  <!-- 2. מה השתנה בשנה האחרונה, וחזרה עדינה על המסר של עמוד הבית -->
-  <section class="section st-now" aria-labelledby="now-title">
+  <!-- 2. משקיעים הרבה: כותרת בצד ורשימה עם קווים -->
+  <section class="section st-now" aria-labelledby="pains-title">
     <div class="container st-now__grid">
-      <h2 id="now-title" class="st-now__title reveal">
-        <span>מה שעבד אתמול</span>{' '}<span class="hl--mark">כבר לא מספיק היום</span>
+      <h2 id="pains-title" class="st-now__title reveal">
+        <span>{pains.title}</span>{' '}<span class="hl--mark">{pains.titleMark}</span>
       </h2>
-      <div class="st-now__body">
-        <ul class="now-list">
-          {
-            changes.map((c, i) => (
-              <li class="reveal" style={`transition-delay: ${i * 0.1}s`}>
-                {c}
-              </li>
-            ))
-          }
-        </ul>
-        <p class="st-now__punch reveal">
-          דווקא עכשיו, כשהעולם משתנה בקצב מהיר, זה הזמן של העסק שלך לגדול, להגדיל הכנסות ולשפר רווחיות, עם אסטרטגיה ושיווק
-          שמתאימים לשוק של היום ולא לשוק של אתמול.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. מה משתפר בעסק: 6 תחומים, ובכל אחד מה העסק מרוויח (נוגה: "החלק הזה טוב") -->
-  <section class="section section--deep st-areas" id="areas" aria-labelledby="areas-title">
-    <div class="container">
-      <div class="center reveal">
-        <h2 id="areas-title" class="sec-title st-split">
-          <span>כל מה שמביא לקוחות</span>{' '}<span class="hl">ומגדיל מכירות</span>
-        </h2>
-      </div>
-      <ul class="areas">
+      <ul class="now-list">
         {
-          strategyAreas.map((a, i) => (
-            <li class="area reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
-              <span class="area__icon">
-                <Icon name={a.icon} size={28} />
-              </span>
-              <h3 class="area__title">{a.title}</h3>
-              <p class="area__gain">{a.gain}</p>
-              <ul class="area__points">
-                {a.points.map((p) => (
-                  <li>
-                    <Icon name="check" size={16} />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
+          pains.items.map((c, i) => (
+            <li class="reveal" style={`transition-delay: ${i * 0.1}s`}>
+              {c}
             </li>
           ))
         }
@@ -105,34 +70,27 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 4. העקרונות: כותרת דביקה בצד, ורשימה פתוחה עם קו זהב ומספרים גדולים, בלי קופסאות -->
-  <section class="section st-rules" aria-labelledby="rules-title">
+  <!-- 3. להבין את העסק, לזהות מה יקדם אותו, לגרום לזה לקרות: כותרת דביקה ו-4 שלבים על קו זהב -->
+  <section class="section section--mist st-rules" aria-labelledby="approach-title">
     <div class="container st-rules__grid">
       <div class="st-rules__head">
-        <h2 id="rules-title" class="st-rules__title reveal">
-          <span>אסטרטגיה ושיווק</span>{' '}<span class="hl--mark">מבפנים החוצה</span>
+        <h2 id="approach-title" class="st-rules__title reveal">
+          {approach.title.map((t, i) => (
+            <>
+              <span class:list={[{ 'hl--mark': i === approach.title.length - 1 }]}>{t}</span>{' '}
+            </>
+          ))}
         </h2>
-        <p class="st-rules__lead reveal">שישה עקרונות שעליהם נבנים יסודות אסטרטגיים ברורים, ששיווק טוב יכול לעמוד עליהם.</p>
         <a class="btn st-rules__btn reveal" href={waHref} target="_blank" rel="noopener">
-          לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          {hero.cta}<span class="sr-only"> (נפתח בלשונית חדשה)</span>
         </a>
       </div>
       <ol class="rules">
         {
-          principles.map((p, i) => (
+          approach.steps.map((p, i) => (
             <li class="rule reveal">
               <span class="rule__num" aria-hidden="true">{num(i)}</span>
-              <div class="rule__body">
-                <h3 class="rule__title">{p.title}</h3>
-                <p class="rule__text">{p.text}</p>
-                {p.ladder && (
-                  <ol class="ladder" aria-label="הקומות, מלמטה למעלה">
-                    {p.ladder.map((step, j) => (
-                      <li style={`--j: ${j}`}>{step}</li>
-                    ))}
-                  </ol>
-                )}
-              </div>
+              <p class="rule__text">{p}</p>
             </li>
           ))
         }
@@ -140,16 +98,104 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 5. סיום פתוח, בלי כרטיס -->
+  <!-- 4. לבחור לאן העסק הולך ואיך מגיעים לשם: עמודה עריכתית, וארבע ההחלטות בשורה -->
+  <section class="section st-strategy" aria-labelledby="strategy-title">
+    <div class="container st-strategy__inner">
+      <h2 id="strategy-title" class="sec-title st-split reveal">
+        <span>{strategy.title}</span>{' '}<span class="hl--mark">{strategy.titleMark}</span>
+      </h2>
+      <p class="st-strategy__lead reveal">{strategy.lead}</p>
+      {strategy.paras.map((p) => <p class="st-strategy__text reveal">{p}</p>)}
+      <div class="decisions reveal">
+        <p class="decisions__lead">{strategy.decisionsLead}</p>
+        <ul class="decisions__list">
+          {strategy.decisions.map((d) => <li>{d}</li>)}
+        </ul>
+      </div>
+      <p class="st-strategy__text st-strategy__close reveal">{strategy.close}</p>
+    </div>
+  </section>
+
+  <!-- 5. מה אפשר לקדם יחד (כהה) -->
+  <section class="section section--deep st-areas" id="areas" aria-labelledby="areas-title">
+    <div class="container">
+      <div class="center reveal">
+        <h2 id="areas-title" class="sec-title st-split">{topics.title}</h2>
+      </div>
+      <ul class="areas">
+        {
+          topics.items.map((a, i) => (
+            <li class="area reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+              <span class="area__icon">
+                <Icon name={a.icon} size={28} />
+              </span>
+              <h3 class="area__title">{a.title}</h3>
+              <p class="area__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="st-areas__note reveal">{topics.note}</p>
+    </div>
+  </section>
+
+  <!-- 6. מה התהליך מאפשר: כותרת בצד ורשימה עם קווים -->
+  <section class="section st-now" aria-labelledby="enables-title">
+    <div class="container st-now__grid">
+      <h2 id="enables-title" class="st-now__title reveal">
+        <span class="hl--mark">{enables.title}</span>
+      </h2>
+      <ul class="now-list now-list--check">
+        {
+          enables.items.map((c, i) => (
+            <li class="reveal" style={`transition-delay: ${i * 0.08}s`}>
+              <Icon name="check" size={18} />
+              <span>{c}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. שאלות נפוצות -->
+  <section class="section section--mist st-faq">
+    <div class="container st-faq__inner">
+      <Faq items={strategyFaq} />
+    </div>
+  </section>
+
+  <!-- 8. מחברים את מה שצריך כדי להתקדם, עם קישורים לשלושת השירותים שנוגה הזכירה -->
+  <section class="section st-connect" aria-labelledby="connect-title">
+    <div class="container st-connect__inner reveal">
+      <h2 id="connect-title" class="st-connect__title">{connect.title}</h2>
+      <p class="st-connect__text">{connect.text}</p>
+      <ul class="st-connect__links">
+        {
+          connectLinks.map((r) => (
+            <li>
+              <a href={r.href}>
+                <Icon name={r.icon} size={20} />
+                <span>{r.title}</span>
+                <span aria-hidden="true">←</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9. הגיע הזמן לקפיצת המדרגה שלך: סיום פתוח, בלי כרטיס -->
   <section class="section section--mist st-end" aria-labelledby="end-title">
     <div class="container st-end__inner reveal">
       <Star size={30} />
       <h2 id="end-title" class="st-end__title">
-        <span>העסק שלך יכול להגיע</span>{' '}<span class="hl--mark">הרבה יותר רחוק</span>
+        <span>{end.title}</span>{' '}<span class="hl--mark">{end.titleMark}</span>
       </h2>
-      <p class="st-end__text">שיחת היכרות בוואטסאפ, ומשם בוחרים יחד את המהלך הראשון.</p>
+      <p class="st-end__text">{end.text}</p>
       <a class="btn st-end__btn" href={waHref} target="_blank" rel="noopener">
-        לשיחת היכרות בוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        {end.cta}<span class="sr-only"> (נפתח בלשונית חדשה)</span>
       </a>
     </div>
   </section>
@@ -454,7 +500,7 @@ const crumbs = [
     line-height: 1;
     color: transparent;
     -webkit-text-stroke: 2px var(--gold-dark);
-    background: var(--white);
+    background: var(--mist);
   }
   .rule:nth-child(even) .rule__num {
     -webkit-text-stroke-color: var(--teal);
@@ -468,6 +514,7 @@ const crumbs = [
   }
   .rule__text {
     margin: 0;
+    align-self: center;
     max-width: 40rem;
     font-size: 1.08rem;
     line-height: 1.75;
@@ -519,4 +566,143 @@ const crumbs = [
   .st-end__btn {
     font-size: 1.1rem;
   }
+  /* ---------- פתיח: שתי הפסקאות של נוגה ---------- */
+  .st-hero__lead {
+    max-width: 40rem;
+    margin: 0 0 1rem;
+    font-size: clamp(1.05rem, 1.9vw, 1.2rem);
+    line-height: 1.75;
+    color: #33445c;
+  }
+  .st-hero__lead--strong {
+    margin-bottom: 1.75rem;
+    color: var(--navy);
+  }
+
+  /* ---------- רשימה עם וי (מה התהליך מאפשר) ---------- */
+  .now-list--check li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    padding-inline-start: 0;
+  }
+  .now-list--check li::before {
+    display: none;
+  }
+  .now-list--check :global(svg) {
+    flex: none;
+    margin-top: 0.3rem;
+    color: var(--gold-dark);
+  }
+
+  /* ---------- לבחור לאן העסק הולך: עמודה עריכתית אחת ---------- */
+  .st-strategy__inner {
+    max-width: 50rem;
+    text-align: center;
+  }
+  .st-strategy__lead {
+    margin: -0.75rem auto 1.25rem;
+    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+  .st-strategy__text {
+    margin: 0 auto 1rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
+    line-height: 1.85;
+    color: #33445c;
+  }
+  .st-strategy__close {
+    margin-bottom: 0;
+  }
+  /* ארבע ההחלטות: שורה טיפוגרפית בין שני קווי זהב, בלי קופסאות */
+  .decisions {
+    margin: 2rem auto;
+    padding-block: 1.35rem;
+    border-block: 1px solid var(--gold-dark);
+  }
+  .decisions__lead {
+    margin: 0 0 0.85rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .decisions__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 0;
+  }
+  .decisions__list li {
+    padding-inline: 1.1rem;
+    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .decisions__list li + li {
+    border-inline-start: 2px solid var(--line);
+  }
+
+  /* ---------- מה אפשר לקדם יחד: טקסט הכרטיס והמשפט שמתחת ---------- */
+  .area__text {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--on-dark);
+  }
+  .st-areas__note {
+    max-width: 44rem;
+    margin: 1rem auto 0;
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--gold-light);
+  }
+
+  /* ---------- שאלות נפוצות ---------- */
+  .st-faq__inner {
+    max-width: 52rem;
+  }
+
+  /* ---------- מחברים את מה שצריך ---------- */
+  .st-connect__inner {
+    max-width: 50rem;
+    text-align: center;
+  }
+  .st-connect__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    font-weight: 900;
+  }
+  .st-connect__text {
+    margin: 0 0 1.5rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.15rem);
+    line-height: 1.8;
+    color: #33445c;
+  }
+  .st-connect__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 2rem;
+  }
+  .st-connect__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 2px solid var(--gold-dark);
+    font-weight: 800;
+    color: var(--teal-dark);
+    text-decoration: none;
+  }
+  .st-connect__links a:hover {
+    color: var(--navy);
+  }
+
 </style>
