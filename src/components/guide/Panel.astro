@@ -69,6 +69,10 @@ const icon = { good: 'check', bad: 'warning', neutral: 'spark' }[tone] as 'check
   .pnl-g--bad .pnl-g__body :global(li::marker) {
     color: var(--gold-light);
   }
+  /* .pnl-g--bad לפני: כדי לגבור על הצבע הכללי של strong במדריך (.prose), שהפך את ההדגשה לכחול כהה על כהה */
+  .pnl-g.pnl-g--bad .pnl-g__body :global(strong) {
+    color: var(--gold-light);
+  }
   .pnl-g__body :global(p:last-child) {
     margin-bottom: 0;
   }

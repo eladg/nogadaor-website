@@ -1,0 +1,50 @@
+---
+// משפטים שאומרים לצ'אט (נוגה, 2026-11-10): "זה לא פרומפט אחד, זה איך לדבר איתו". מסגרת שקטה עם ציטוטים, בלי כפתור העתקה.
+// שימוש בקובץ mdx: בתוך <Says> כותבים רשימה רגילה, משפט בכל שורה, בלי נקודה בסוף.
+---
+
+<div class="says-g">
+  <slot />
+</div>
+
+<style>
+  .says-g {
+    margin: 1.5rem 0 2.25rem;
+    padding: 1.2rem 1.3rem;
+    border-radius: 1.25rem;
+    background: var(--mist);
+    border: 1px solid var(--line);
+  }
+  .says-g :global(ul) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  /* כל משפט כמו הודעה בצ'אט */
+  .says-g :global(li) {
+    position: relative;
+    justify-self: start;
+    margin: 0;
+    padding: 0.7rem 1.1rem;
+    padding-inline-start: 2.6rem;
+    border-radius: 1.1rem 0.3rem 1.1rem 1.1rem;
+    background: var(--white);
+    border: 1px solid rgb(25 154 181 / 0.3);
+    box-shadow: 0 10px 22px -18px rgb(11 26 51 / 0.55);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+  .says-g :global(li)::before {
+    content: '״';
+    position: absolute;
+    inset-inline-start: 0.9rem;
+    top: 0.35rem;
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--gold-dark);
+  }
+</style>

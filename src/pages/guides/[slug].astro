@@ -25,6 +25,8 @@ import Band from '../../components/guide/Band.astro';
 import Iceberg from '../../components/guide/Iceberg.astro';
 import Ranking from '../../components/guide/Ranking.astro';
 import Takeaways from '../../components/guide/Takeaways.astro';
+import Part from '../../components/guide/Part.astro';
+import Says from '../../components/guide/Says.astro';
 import { contact } from '../../data/contact';
 import nogaPhoto from '../../assets/contact/noga-bench.jpg';
 import { atmoStyle } from '../../utils/atmo';
@@ -43,6 +45,11 @@ const d = guide.data;
 const isArticle = d.type === 'article';
 const typeLabel = isArticle ? 'מאמר' : 'מדריך';
 const toc = headings.filter((h) => h.depth === 2);
+// מדריך בשני חלקים (נוגה, 2026-11-10): אם יש בגוף המדריך <Part title="...">, המספור מתחיל מחדש אחריו,
+// וגם תוכן העניינים מתחלק לשניים. מספר הכותרות שלפני הרכיב קובע איפה החלוקה.
+const partMatch = guide.body?.match(/<Part\s+title="([^"]+)"/);
+const partAt = partMatch ? (guide.body!.slice(0, partMatch.index).match(/^## /gm) ?? []).length : toc.length;
+const tocParts = partMatch ? [toc.slice(0, partAt), toc.slice(partAt)] : [toc];
 
 const minutes = readingMinutes(guide.body);
 // אייקון לכל סוג (נוגה, 2026-11-06): מדריך = רשימה, מאמר = ספר פתוח
@@ -57,7 +64,7 @@ const related = all
   .slice(0, 3);
 
 const description = d.description;
-const components = { Callout, Cards, Card, Steps, Step, Compare, Panel, CopyBox, Checklist, Band, Iceberg, Ranking, Takeaways };
+const components = { Callout, Cards, Card, Steps, Step, Compare, Panel, CopyBox, Checklist, Band, Iceberg, Ranking, Takeaways, Part, Says };
 const gainIcons = ['target', 'bulb', 'rocket', 'chart'] as const;
 
 // נתונים מובנים: מאמר שנוגה כתבה, ושביל ניווט (src/utils/schema.ts)
@@ -140,13 +147,22 @@ const crumbs = [
         toc.length > 2 && (
           <nav class="g-toc" aria-label="תוכן העניינים">
             <p class="g-toc__title">ב{typeLabel}:</p>
-            <ol>
-              {toc.map((h) => (
-                <li>
-                  <a href={`#${h.slug}`}>{h.text}</a>
-                </li>
-              ))}
-            </ol>
+            {tocParts.map((part, i) => (
+              <>
+                {i > 0 && (
+                  <p class="g-toc__part">
+                    <a href="#part-2">{partMatch![1]}</a>
+                  </p>
+                )}
+                <ol>
+                  {part.map((h) => (
+                    <li>
+                      <a href={`#${h.slug}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ))}
           </nav>
         )
       }
@@ -432,6 +448,16 @@ const crumbs = [
     margin: 0;
     padding-inline-start: 1.3em;
   }
+  /* שם החלק השני בתוכן העניינים, מעל הרשימה שלו */
+  .g-toc__part {
+    margin: 0.9rem 0 0.5rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--line);
+    font-weight: 900;
+  }
+  .g-toc .g-toc__part a {
+    color: var(--teal-dark);
+  }
   .g-toc li {
     margin-bottom: 0.4em;
   }
@@ -487,6 +513,13 @@ const crumbs = [
     color: var(--white);
     font-size: 1rem;
     font-weight: 900;
+  }
+  /* מדריך בשני חלקים: אחרי <Part> הכותרות נספרות מחדש, במונה נפרד */
+  .prose--numbered :global(.part-g ~ h2) {
+    counter-increment: g-h2b;
+  }
+  .prose--numbered :global(.part-g ~ h2)::before {
+    content: counter(g-h2b, decimal-leading-zero);
   }
   .prose--numbered :global(h2:nth-of-type(even))::before {
     background: var(--gold-gradient);
