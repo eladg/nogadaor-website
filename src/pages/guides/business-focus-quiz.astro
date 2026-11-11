@@ -48,10 +48,6 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       <form id="quiz" class="qz" novalidate>
         <!-- פס התקדמות (מוצג רק עם JavaScript) -->
         <div class="qz-progress" data-progress hidden>
-          <div class="qz-progress__top">
-            <span class="qz-progress__area" data-area-name></span>
-            <span class="qz-progress__count">שאלה <span data-current>1</span> מתוך {total}</span>
-          </div>
           <div class="qz-progress__track"><span class="qz-progress__fill" data-fill></span></div>
         </div>
 
@@ -60,17 +56,28 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
             quizQuestions.map((q, i) => {
               const area = areaById[q.area];
               return (
-                <li class="qz-q" data-q={i}>
+                <li class={`qz-q qz-q--c${i % 3}`} data-q={i}>
                   <fieldset>
+                    {/* מספר השאלה: תג קטן וצבעוני שקופץ בכל החלפת מסך (נוגה, 2026-11-11) */}
+                    <span class="qz-num" dir="ltr" aria-hidden="true">
+                      <b>{String(i + 1).padStart(2, '0')}</b>
+                      <small>/{total}</small>
+                    </span>
                     <legend>
+                      <span class="sr-only">שאלה {i + 1} מתוך {total}.</span>
                       <span class="qz-q__area">
                         <Icon name={area.icon as 'target'} size={16} /> {area.title}
                       </span>
-                      <span class="qz-q__text">{q.text}</span>
+                      {/* השאלה מופיעה באפקט הקלדה. העותק השקוף שומר את הגובה, כדי שהתשובות לא יקפצו */}
+                      <span class="qz-q__text">
+                        <span class="qz-ghost" aria-hidden="true">{q.text}</span>
+                        <span class="qz-type" aria-hidden="true" data-text={q.text}>{q.text}</span>
+                        <span class="sr-only">{q.text}</span>
+                      </span>
                     </legend>
                     <div class="qz-opts">
                       {q.options.map((opt, k) => (
-                        <label class="qz-opt">
+                        <label class="qz-opt" style={`--k:${k}`}>
                           <input type="radio" name={`q${i}`} value={q.options.length - 1 - k} />
                           <span class="qz-opt__mark" aria-hidden="true" />
                           <span class="qz-opt__text">{opt}</span>
@@ -167,8 +174,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     var qs = Array.prototype.slice.call(form.querySelectorAll('.qz-q'));
     var progress = document.querySelector('[data-progress]');
     var fill = document.querySelector('[data-fill]');
-    var currentEl = document.querySelector('[data-current]');
-    var areaName = document.querySelector('[data-area-name]');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var typing = null; // { el, timer } של ההקלדה שרצה עכשיו
     var nav = document.querySelector('[data-nav]');
     var back = document.querySelector('[data-back]');
     var next = document.querySelector('[data-next]');
@@ -186,11 +193,43 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     function save() {
       try { localStorage.setItem(KEY, JSON.stringify(values())); } catch (e) {}
     }
+    // אפקט הקלדה לשאלה. משך כולל של כשנייה, בלי קשר לאורך השאלה
+    function stopTyping() {
+      if (!typing) return;
+      clearInterval(typing.timer);
+      typing.el.textContent = typing.el.dataset.text;
+      typing.el.classList.remove('is-typing');
+      typing = null;
+    }
+    function typeIn(li) {
+      stopTyping();
+      var el = li.querySelector('.qz-type');
+      var full = el.dataset.text;
+      if (reduce) { el.textContent = full; return 0; }
+      var step = Math.max(10, Math.min(28, 1000 / full.length));
+      var n = 0;
+      el.textContent = '';
+      el.classList.add('is-typing');
+      typing = { el: el, timer: setInterval(function () {
+        n += 1;
+        el.textContent = full.slice(0, n);
+        if (n >= full.length) stopTyping();
+      }, step) };
+      return full.length * step;
+    }
+    // כניסה של מסך חדש: הכרטיס נכנס מהצד, המספר קופץ, השאלה מוקלדת והתשובות עולות אחריה
+    function enter(li, forward) {
+      li.classList.remove('is-in', 'is-fwd', 'is-back');
+      void li.offsetWidth; // מאפס את האנימציה
+      var dur = typeIn(li);
+      li.style.setProperty('--base', Math.round(dur * 0.55) + 'ms');
+      li.classList.add('is-in', forward ? 'is-fwd' : 'is-back');
+    }
     function show(i) {
+      var prev = idx;
       idx = Math.max(0, Math.min(qs.length - 1, i));
       qs.forEach(function (q, k) { q.hidden = k !== idx; });
-      currentEl.textContent = idx + 1;
-      areaName.textContent = titles[config.questionAreas[idx]];
+      if (prev !== idx || !qs[idx].classList.contains('is-in')) enter(qs[idx], idx >= prev);
       var answered = values().filter(function (v) { return v !== null; }).length;
       fill.style.width = (answered / qs.length) * 100 + '%';
       back.disabled = idx === 0;
@@ -361,18 +400,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     max-width: 46rem;
   }
   .qz-progress {
-    margin-bottom: 1.25rem;
-  }
-  .qz-progress__top {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: 800;
-    font-size: 0.95rem;
-  }
-  .qz-progress__area {
-    color: var(--teal-dark);
+    margin-bottom: 2rem;
   }
   .qz-progress__track {
     display: block;
@@ -395,12 +423,16 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 1.25rem;
+    gap: 2.25rem; /* מקום לתג המספר שבולט מעל כל כרטיס */
+  }
+  .qz:not(.is-wizard) .qz-list {
+    padding-top: 1rem;
   }
   .qz-q {
     margin: 0;
   }
   .qz-q fieldset {
+    position: relative;
     margin: 0;
     padding: clamp(1.25rem, 4vw, 2rem);
     border: 1px solid var(--line);
@@ -426,12 +458,137 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     font-weight: 800;
   }
   .qz-q__text {
+    position: relative;
     display: block;
     margin-bottom: 1.1rem;
     font-size: clamp(1.25rem, 3vw, 1.5rem);
     font-weight: 900;
     line-height: 1.35;
     color: var(--navy);
+  }
+  /* העותק השקוף תופס את המקום, והטקסט המוקלד יושב מעליו */
+  .qz-ghost {
+    visibility: hidden;
+  }
+  .qz-type {
+    position: absolute;
+    inset: 0;
+  }
+  .qz-type.is-typing::after {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 1.05em;
+    margin-inline-start: 2px;
+    vertical-align: -0.15em;
+    border-radius: 2px;
+    background: var(--gold-dark);
+    animation: qz-caret 0.7s steps(1) infinite;
+  }
+  @keyframes qz-caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* ---------- מספר השאלה: תג צבעוני שקופץ (נוגה, 2026-11-11) ---------- */
+  .qz-num {
+    position: absolute;
+    top: -1.15rem;
+    left: clamp(1rem, 4vw, 1.75rem); /* פיזי, כי לתג יש dir=ltr */
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    padding: 0.3rem 0.85rem 0.35rem;
+    border-radius: 0.85rem;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal) 55%, #6cc3d5);
+    box-shadow:
+      0 10px 22px -10px rgb(25 154 181 / 0.75),
+      inset 0 1px 0 rgb(255 255 255 / 0.35);
+    transform: rotate(-5deg);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .qz-num b {
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+  }
+  .qz-num small {
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+  /* שלושה צבעים מתחלפים: טורקיז, זהב, כחול כהה */
+  .qz-q--c1 .qz-num {
+    color: var(--navy);
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light) 60%, #fff1b8);
+    box-shadow:
+      0 10px 22px -10px rgb(209 154 74 / 0.8),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+    transform: rotate(4deg);
+  }
+  .qz-q--c2 .qz-num {
+    background: linear-gradient(135deg, var(--navy-deep), var(--navy) 50%, #1d4f7a);
+    box-shadow:
+      0 10px 22px -10px rgb(11 26 51 / 0.8),
+      inset 0 1px 0 rgb(255 255 255 / 0.2);
+  }
+  .qz-q--c2 .qz-num small {
+    color: var(--gold-light);
+    opacity: 1;
+  }
+
+  /* ---------- החלפת מסך ---------- */
+  .qz-q.is-in fieldset {
+    animation: qz-card-fwd 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+  }
+  .qz-q.is-in.is-back fieldset {
+    animation-name: qz-card-back;
+  }
+  .qz-q.is-in .qz-num {
+    animation: qz-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s backwards;
+  }
+  .qz-q.is-in .qz-q__area {
+    animation: qz-fade 0.35s ease 0.1s backwards;
+  }
+  .qz-q.is-in .qz-opt {
+    animation: qz-opt-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+    animation-delay: calc(var(--base, 0ms) + var(--k, 0) * 70ms);
+  }
+  @keyframes qz-card-fwd {
+    from {
+      opacity: 0;
+      transform: translateX(-2.5rem);
+    }
+  }
+  @keyframes qz-card-back {
+    from {
+      opacity: 0;
+      transform: translateX(2.5rem);
+    }
+  }
+  @keyframes qz-pop {
+    0% {
+      opacity: 0;
+      transform: rotate(-18deg) scale(0.3);
+    }
+    60% {
+      opacity: 1;
+      transform: rotate(3deg) scale(1.15);
+    }
+  }
+  @keyframes qz-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes qz-opt-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.6rem);
+    }
   }
   .qz-opts {
     display: grid;
@@ -720,6 +877,12 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     .qz-bar__fill,
     .qz-opt {
       transition: none;
+    }
+    .qz-q.is-in fieldset,
+    .qz-q.is-in .qz-num,
+    .qz-q.is-in .qz-q__area,
+    .qz-q.is-in .qz-opt {
+      animation: none;
     }
   }
 </style>
