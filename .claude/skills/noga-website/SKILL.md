@@ -12,7 +12,7 @@ description: הגדרות הבסיס של האתר העסקי של נוגה די
 ## 1. כללי עבודה עם נוגה (חובה)
 - נוגה אינה מפתחת. מסבירים בעברית פשוטה, בלי ז'רגון.
 - **לא מפרסמים שום דבר באינטרנט (אירוח, דומיין, שיתוף האתר) בלי שנוגה ביקשה במפורש**, ובכל פעם מחדש.
-- **גיבוי ופרסום הם שני דברים נפרדים (נוגה, 2026-11-10; מחליף את הכלל הקודם "דוחפים ל-origin main").** האתר החי ב-Netlify (https://noga-website.netlify.app/) בנוי מהענף `main` ב-GitHub, ולכן **דחיפה ל-`main` היא פרסום לאינטרנט.**
+- **גיבוי ופרסום הם שני דברים נפרדים (נוגה, 2026-11-10; מחליף את הכלל הקודם "דוחפים ל-origin main").** האתר החי ב-Netlify (https://noga-website.netlify.app/) בנוי מהענף `main` ב-GitHub (מ-2026-11-11 הריפו הוא `eladg/nogadaor-website`, וה-Deployment באחריות אלעד; ראו סעיף 2), ולכן **דחיפה ל-`main` היא פרסום לאינטרנט.**
   - **גיבוי:** בערך כל 3-4 החלפות הודעות דוחפים בעצמנו לענף `work` בלבד: `git push origin HEAD:refs/heads/work` (הענף המקומי נשאר `main`). זה לא מפרסם כלום. לפני דחיפה לוודא ש-`npm run build` עובר ושאין בהוספה את תיקיית "חומרים גרפיים לאתר" או קבצים רגישים. בלי force. אחרי כל דחיפה מוסרים לנוגה שורה אחת שהגיבוי נשמר.
   - **פרסום:** **אף פעם לא דוחפים ל-`main` בלי שנוגה אמרה "לפרסם" באותה התכתבות.** בערך כל 20 החלפות הודעות שואלים אותה אם לפרסם. רק אחרי אישור: `git push origin HEAD:main`, ואז בודקים באתר החי שהשינוי עלה.
   - אם ה-push נכשל על הרשאות, מבקשים ממנה להתחבר בטרמינל. תיקיית החומרים הגרפיים אינה מגובה, ונוגה אמרה שאין צורך.
@@ -23,7 +23,11 @@ description: הגדרות הבסיס של האתר העסקי של נוגה די
 - המפרט הוא `REQUIREMENTS.md` בשורש הריפוזיטורי. לא מנחשים דרישות שלא כתובות בו.
 
 ## 2. מיקומים וכלים
-- ריפוזיטורי: `C:\Users\נוגה\Documents\GitHub\website` (ענף `main`, מרוחק: `https://github.com/nogadaor/website.git`).
+- ריפוזיטורי: `C:\Users\נוגה\Documents\GitHub\website` (ענף `main`).
+- **הריפו המרוחק (origin) עבר (2026-11-11) ל-https://github.com/eladg/nogadaor-website.** אלעד, האח של נוגה, אחראי על אחסון הריפו ועל ה-Deployment של האתר. הכתובת הישנה `nogadaor/website` כבר לא בשימוש, ולא דוחפים אליה.
+  - `origin` מוגדר בכתובת HTTPS: `https://github.com/eladg/nogadaor-website.git`. נוגה ביקשה את כתובת ה-SSH (`git@github.com:eladg/nogadaor-website.git`), אבל במחשב שלה אין מפתח SSH ל-GitHub (`Permission denied (publickey)`), ולכן HTTPS, שעובד עם החיבור הקיים (Git Credential Manager). זה אותו ריפו. אם יוגדר מפתח SSH, אפשר לעבור: `git remote set-url origin git@github.com:eladg/nogadaor-website.git`.
+  - נבדק ב-2026-11-11: יש לנוגה הרשאת כתיבה (`git push --dry-run` עבר), ובריפו החדש כבר היו `main` ו-`work` זהים לישנים.
+  - **ה-Deployment באחריות אלעד.** כללי הגיבוי והפרסום בסעיף 1 נשארים (דחיפה ל-`main` = פרסום, רק באישור נוגה), אבל איך האתר החי נבנה מהריפו (Netlify או אחר) תלוי בהגדרות של אלעד. לבדוק איתו ולא להניח.
 - Astro 7.4.5, Node.js 26.13.0 LTS, npm 11. Node מותקן ב-`C:\Program Files\nodejs`. ב-PowerShell של הסשן ייתכן ש-PATH לא כולל אותו, ואז מריצים קודם `$env:Path += ";C:\Program Files\nodejs"`.
 - שרת פיתוח: `npx astro dev --background` (כתובת http://localhost:4321). מצב: `npx astro dev status`. עצירה: `npx astro dev stop`.
 - בנייה: `npm run build`.
