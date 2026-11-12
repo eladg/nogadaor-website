@@ -340,19 +340,35 @@ const meetingBg = await getImage({ src: meeting, width: 1400, format: 'webp' });
     line-height: 1.55;
     color: #33445c;
   }
-  /* טאבלט וטלפון: אותה שורה, גוללים לצדדים */
+  /* טאבלט וטלפון: בלי גלילה לצדדים (נוגה, 2026-11-12). כל תחום בשורה, האייקון מימין לכותרת ולהסבר.
+     בטאבלט שני טורים. */
   @media (max-width: 64rem) {
     .areas {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 0.5rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
     }
     .area {
-      flex: 0 0 11rem;
-      display: flex;
-      flex-direction: column;
-      scroll-snap-align: start;
+      grid-row: auto;
+      grid-template-rows: none;
+      grid-template-columns: auto 1fr;
+      column-gap: 0.85rem;
+      row-gap: 0.2rem;
+      justify-items: start;
+      padding: 1rem 1.1rem;
+      text-align: start;
+      border-top: 0;
+      border-inline-start: 3px solid var(--gold-dark);
+    }
+    .area__icon {
+      grid-row: span 2;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+  @media (max-width: 40rem) {
+    .areas {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
     }
   }
 

@@ -59,7 +59,7 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
   <section class="section" id="videos">
     <div class="container">
       <h2 class="t-title">לקוחות מספרים</h2>
-      <Carousel label="סרטוני המלצות" itemWidth="clamp(10.5rem, 42%, 14rem)">
+      <Carousel label="סרטוני המלצות" itemWidth="clamp(10.5rem, 42%, 14rem)" gridOnPhone>
         {
           videos.map((v) => (
             <li class="v-card">
@@ -80,7 +80,7 @@ import handLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-nor
       <h2 class="t-title">לקוחות משתפים</h2>
     </div>
     <!-- בדיוק באותו עיצוב כמו בעמוד הבית, אבל בשתי שורות שזזות לכיוונים הפוכים (נוגה, 2026-11-08) -->
-    <QuoteMarquee reviews={allReviews} rows={2} />
+    <QuoteMarquee reviews={allReviews} rows={2} mobileStart={4} />
   </section>
 
   <!-- תמונות מהכנס, בסגנון קיר פולארויד (נוגה, 2026-11-08: "למטה, בצורה מדליקה קצת").

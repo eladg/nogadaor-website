@@ -4,18 +4,21 @@
 // בכל כרטיס: גרש זהב מבריק, ההתחלה של ההמלצה (4 שורות), "קרא עוד" ושם הממליץ, תמיד באותו גובה בכל הכרטיסים.
 // "קרא עוד" פותח חלון עם ההמלצה המלאה. התנועה נעצרת כשהעכבר או המקלדת על ההמלצות, ולא פועלת למי שביקש פחות תנועה.
 // הטקסט של ההמלצה לא משתנה: הוא רק נחתך בתצוגה.
+// בטלפון (נוגה, 2026-11-12): בלי תנועה לצדדים. ההמלצות זו מתחת לזו, מתחילים בכמה, וכפתור "לעוד המלצות" מוסיף עוד,
+// כך שרואים שיש הרבה בלי להעמיס את העמוד.
 import type { Review } from '../data/reviews';
 
 // rows={2} (עמוד ההמלצות וקטלוג ההדרכות, נוגה 2026-11-08): שתי שורות שזזות לכיוונים הפוכים, באותו עיצוב בדיוק.
 interface Props {
   reviews: Review[];
   rows?: 1 | 2;
+  mobileStart?: number; // כמה המלצות מוצגות בטלפון לפני הכפתור
 }
-const { reviews, rows: rowCount = 1 } = Astro.props;
+const { reviews, rows: rowCount = 1, mobileStart = 3 } = Astro.props;
 const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i % 2 === 1)] : [reviews];
 ---
 
-<div class="qm">
+<div class="qm" data-start={mobileStart}>
   {
     rows.map((row, ri) => (
       <div class:list={['qm__row', { 'qm__row--rev': ri === 1 }]}>
@@ -41,6 +44,8 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     ))
   }
 
+  <button type="button" class="qm__showmore">לעוד המלצות</button>
+
   <dialog class="qm__dialog" aria-labelledby="qm-dialog-name">
     <button type="button" class="qm__close" aria-label="סגירה">×</button>
     <span class="qm__mark" aria-hidden="true">”</span>
@@ -55,12 +60,35 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
 <script>
   document.querySelectorAll<HTMLElement>('.qm').forEach((root) => {
   const dialog = root.querySelector<HTMLDialogElement>('.qm__dialog');
+  // "קרא עוד" מופיע רק כשההמלצה נחתכה, אבל המקום שלו שמור תמיד, כדי שהשם יישאר באותו גובה.
+  // נבדק שוב כשכרטיס נחשף בטלפון, כי כרטיס מוסתר לא נמדד.
+  const measure = (card: HTMLElement) => {
+    const text = card.querySelector<HTMLElement>('.qm__text');
+    const btn = card.querySelector<HTMLButtonElement>('.qm__more');
+    if (!text || !btn || !text.clientHeight) return;
+    btn.classList.toggle('is-empty', text.scrollHeight <= text.clientHeight + 2);
+  };
+  // טלפון: מציגים כמה המלצות, והכפתור מוסיף ארבע בכל לחיצה
+  const cards = [...root.querySelectorAll<HTMLElement>('.qm__card:not(.qm__card--dup)')];
+  const more = root.querySelector<HTMLButtonElement>('.qm__showmore');
+  let shown = Number(root.dataset.start) || 3;
+  const sync = () => {
+    cards.forEach((c, i) => c.classList.toggle('is-later', i >= shown));
+    more?.classList.toggle('is-done', shown >= cards.length);
+  };
+  sync();
+  more?.addEventListener('click', () => {
+    const from = shown;
+    shown += 4;
+    sync();
+    cards.slice(from, shown).forEach(measure);
+    cards[from]?.querySelector<HTMLElement>('.qm__more:not(.is-empty)')?.focus({ preventScroll: true });
+  });
   root.querySelectorAll<HTMLElement>('.qm__card').forEach((card) => {
     const text = card.querySelector<HTMLElement>('.qm__text');
     const btn = card.querySelector<HTMLButtonElement>('.qm__more');
     if (!text || !btn) return;
-    // "קרא עוד" מופיע רק כשההמלצה נחתכה, אבל המקום שלו שמור תמיד, כדי שהשם יישאר באותו גובה
-    if (text.scrollHeight <= text.clientHeight + 2) btn.classList.add('is-empty');
+    measure(card);
     btn.addEventListener('click', () => {
       if (!dialog) return;
       dialog.querySelector('.qm__dtext')!.textContent = text.textContent;
@@ -219,9 +247,72 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     cursor: pointer;
   }
 
-  @media (max-width: 36rem) {
+  /* הכפתור "לעוד המלצות": רק בטלפון */
+  .qm__showmore {
+    display: none;
+  }
+
+  /* ---------- טלפון: ההמלצות זו מתחת לזו, בלי תנועה (נוגה, 2026-11-12) ---------- */
+  @media (max-width: 40rem) {
+    .qm {
+      gap: 0.75rem;
+      width: min(100% - 2rem, 30rem);
+      margin-inline: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .qm__row {
+      overflow: visible;
+    }
+    .qm__track {
+      flex-direction: column;
+      gap: 0.75rem;
+      width: auto;
+      padding: 0;
+      animation: none;
+    }
     .qm__card {
-      width: 13.5rem;
+      width: auto;
+      margin: 0;
+      padding: 0.9rem 1.1rem 0.85rem;
+    }
+    .qm__card--dup,
+    .qm__card.is-later {
+      display: none;
+    }
+    /* הגרש קטן יותר, כדי שהכרטיס יהיה קומפקטי */
+    .qm__card .qm__mark {
+      height: 1.3rem;
+      font-size: 2.5rem;
+    }
+    .qm__text {
+      -webkit-line-clamp: 3;
+      height: calc(1.6em * 3);
+    }
+    .qm__by {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.25rem 0.75rem;
+      margin-top: 0.6rem;
+      padding-top: 0.55rem;
+    }
+    :global(.js) .qm__showmore {
+      display: block;
+      justify-self: center;
+      margin-top: 0.5rem;
+      padding: 0.65em 1.6em;
+      border: 1.5px solid var(--teal);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--teal-dark);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .qm__showmore.is-done {
+      display: none;
     }
   }
 
@@ -232,6 +323,11 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     }
     .qm__row {
       overflow-x: auto;
+    }
+    @media (max-width: 40rem) {
+      .qm__row {
+        overflow: visible;
+      }
     }
     .qm__card--dup {
       display: none;

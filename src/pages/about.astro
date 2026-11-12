@@ -50,7 +50,7 @@ const alts: Record<string, string> = {
 
 
 // שש הקוביות ואייקוניהן: src/data/principles.ts (משותף לאודות ולעמוד הבית)
-import { ways, icons } from '../data/principles';
+import WaysGrid from '../components/WaysGrid.astro';
 // תמונת אווירה (2026-11-07, קו רציף בכל האתר): מדרגות מוארות, עדין, מאחורי "עקרונות הליווי"
 import { atmoStyle } from '../utils/atmo';
 import stairsAtmo from '../assets/atmosphere/dark-stairs.webp';
@@ -167,19 +167,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
     <div class="container">
       <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת בגוף יחיד שמתאימה לתוכן הקוביות -->
       <h2 class="a-ways__title reveal">עקרונות <span class="hl">הליווי שלי</span></h2>
-      <ul class="ways">
-        {
-          ways.map((w, i) => (
-            <li class="way reveal" style={`transition-delay: ${(i % 3) * 110}ms`}>
-              <span class="way__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icons[w.icon]} />
-              </span>
-              <h3>{w.title}</h3>
-              <p>{w.text}</p>
-            </li>
-          ))
-        }
-      </ul>
+      <WaysGrid />
     </div>
   </section>
 
@@ -632,55 +620,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
     color: var(--white);
     font-size: clamp(1.9rem, 5vw, 2.8rem);
     font-weight: 900;
-    margin-bottom: 1.5rem;
-  }
-  .ways {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  }
-  @media (min-width: 62rem) {
-    .ways {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  .way {
-    position: relative;
-    padding: 1.75rem 1.6rem 1.6rem;
-    border-radius: 1.25rem;
-    background: linear-gradient(160deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
-    border: 1px solid rgb(255 255 255 / 0.1);
-    transition:
-      opacity 0.7s ease,
-      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-      border-color 0.3s ease;
-  }
-  .way:hover {
-    border-color: rgb(252 220 109 / 0.55);
-  }
-  .way__icon {
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    margin-bottom: 1.1rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .way h3 {
-    color: var(--white);
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  .way p {
-    margin: 0;
-    color: var(--on-dark-soft);
-    line-height: 1.65;
-    font-size: 1.02rem;
+    margin-bottom: 0;
   }
 
   /* ---------- 4. מומחים שאני עובדת איתם ---------- */

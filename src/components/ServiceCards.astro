@@ -5,7 +5,7 @@
 // במכשירי מגע, או אצל מי שביקש פחות תנועה, אין היפוך: שני הצדדים מוצגים יחד בכרטיס אחד.
 // 6 שירותים: 3 בשורה במחשב, 2 בטאבלט, 1 בנייד (שורות מאוזנות).
 // variant="row" (עמוד הבית, נוגה 2026-11-08): כל השירותים בשורה אחת, כרטיס כהה עם אייקון טורקיז, ומאחור טורקיז.
-// בטאבלט ובנייד: שורה אחת שגוללים לצדדים.
+// בטאבלט 3 בשורה ובטלפון 2 בשורה (נוגה, 2026-11-12), ובמסך מגע רק הצד הקדמי, בלי הטקסט שמאחור.
 import Icon from './Icon.astro';
 import { services } from '../data/services';
 import { launch } from '../data/launch';
@@ -239,22 +239,45 @@ const H = headingLevel;
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
-  /* טאבלט ונייד: שורה אחת שגוללים לצדדים */
+  /* טאבלט: 3 בשורה. טלפון: זוגות, 2 בשורה (נוגה, 2026-11-12: הגלילה לצדדים לא עובדת בטלפון) */
   @media (max-width: 64rem) {
     .svc--row {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 0.5rem;
+      grid-template-columns: repeat(3, 1fr);
     }
-    .svc--row .svc__item {
-      flex: 0 0 15rem;
-      scroll-snap-align: start;
+  }
+  @media (max-width: 40rem) {
+    .svc--row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .svc--row .svc__face {
+      padding: 1.15rem 0.7rem 1.1rem;
+      gap: 0.45rem;
+    }
+    .svc--row .svc__icon,
+    .svc--row .svc__item:nth-child(even) .svc__icon {
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 0.75rem;
+    }
+    .svc--row .svc__title {
+      font-size: 1rem;
+    }
+    .svc--row .svc__lead {
+      font-size: 0.84rem;
     }
   }
   @media (hover: none), (prefers-reduced-motion: reduce) {
     .svc--row .svc__inner {
+      min-height: 0;
       border-color: rgb(255 255 255 / 0.08);
+    }
+    /* בטלפון ובטאבלט בעמוד הבית: רק הצד הקדמי. מה שכתוב מאחור לא מוצג (נוגה, 2026-11-12) */
+    .svc--row .svc__back {
+      display: none;
+    }
+    .svc--row .svc__front {
+      flex: 1;
     }
   }
 </style>

@@ -9,12 +9,14 @@ interface Props {
   label: string; // שם הקרוסלה לקוראי מסך
   itemWidth?: string; // רוחב כל פריט (ערך CSS)
   auto?: boolean;
+  // gridOnPhone: בטלפון הפריטים בזוגות (2 בשורה) במקום שורה שגוללים לצדדים (נוגה, 2026-11-12)
+  gridOnPhone?: boolean;
 }
-const { label, itemWidth = 'min(88%, 22rem)', auto = false } = Astro.props;
+const { label, itemWidth = 'min(88%, 22rem)', auto = false, gridOnPhone = false } = Astro.props;
 ---
 
 <div
-  class="carousel"
+  class:list={['carousel', { 'carousel--phone-grid': gridOnPhone }]}
   role="region"
   aria-roledescription="קרוסלה"
   aria-label={label}
@@ -181,6 +183,22 @@ const { label, itemWidth = 'min(88%, 22rem)', auto = false } = Astro.props;
   }
   .carousel__pause {
     font-size: 0.9rem;
+  }
+
+  /* טלפון: זוגות, בלי גלילה ובלי כפתורים */
+  @media (max-width: 40rem) {
+    .carousel--phone-grid .carousel__track {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem 0.75rem;
+      padding: 0;
+      overflow: visible;
+    }
+    .carousel--phone-grid::before,
+    .carousel--phone-grid::after,
+    .carousel--phone-grid .carousel__controls {
+      display: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
