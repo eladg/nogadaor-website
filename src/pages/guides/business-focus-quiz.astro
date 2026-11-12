@@ -1,9 +1,11 @@
 ---
-// שאלון מיקוד פיתוח עסקי, גרסה 3 (2026-11-05): "מבחן אמריקאי עם תובנות".
-// 25 שאלות ב-7 תחומים. כל שאלה בודקת דבר אחד, ו-5 תשובות במדרגות שוות (4 עד 0 נקודות). שאלה אחת בכל מסך.
-// בסוף: אחוז לכל תחום, שלושת התחומים החלשים כמיקודים (עם תובנה וקישור למדריך) ושתי החוזקות.
+// שאלון מיקוד פיתוח עסקי, גרסה 5 (2026-11-12): כלי שיווקי של נוגה, שמסתכל על העסק מלמעלה ומחפש אפשרויות
+// להגדלת הכנסות בלי להוציא עוד כסף על לידים. שאלה אחת בכל מסך, באפקט הקלדה.
+// בשאלה רגילה 5 תשובות (4 עד 0 נקודות). בשאלה עם כמה תשובות (multi) הניקוד הוא מספר הדרכים שסומנו, עד 4.
+// התוצאה: ציון ורמה, פס לכל תחום, "אפשרויות להגדלת הכנסות" (טקסט grow לכל תשובה חלשה, לפי תחומים, מהחלש לחזק)
+// ו"מה כבר עובד ושווה לשמור" (טקסט keep לכל תשובה חזקה), כל אחד עם משפט מסכם לפי התשובות.
 // התשובות נשמרות רק בדפדפן של המבקר (localStorage) ולא נשלחות לשום מקום.
-// השאלות, התשובות והתובנות ב-src/data/quiz.ts (טיוטה לאישור נוגה).
+// השאלות והטקסטים ב-src/data/quiz.ts (טיוטה לאישור נוגה).
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import { quizAreas, quizQuestions, quizLevels, quizYear } from '../../data/quiz';
@@ -11,10 +13,11 @@ import { contact } from '../../data/contact';
 
 const total = quizQuestions.length;
 const areaById = Object.fromEntries(quizAreas.map((a) => [a.id, a]));
+const MAX = 4; // הניקוד המרבי לשאלה
 const config = {
   areas: quizAreas.map((a) => ({ id: a.id, title: a.title, count: quizQuestions.filter((q) => q.area === a.id).length })),
-  perQuestion: quizQuestions[0].options.length - 1, // הניקוד המרבי לשאלה (4)
-  questionAreas: quizQuestions.map((q) => q.area),
+  max: MAX,
+  questions: quizQuestions.map((q) => ({ area: q.area, multi: !!q.multi })),
   levels: quizLevels,
   whatsapp: contact.whatsapp,
 };
@@ -26,19 +29,20 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
 <BaseLayout
   title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
-  description={`שאלון אבחון עסקי של ${total} שאלות ב-${quizAreas.length} תחומים: אסטרטגיה, הצעת שירות ותמחור, נראות דיגיטלית, שיווק יזום, מכירות ושימור, כישורי ניהול והתייעלות, וכספים. בסוף מקבלים פרופיל של העסק ושלושה מיקודים לשנה הקרובה.`}
+  description={`שאלון אבחון עסקי של ${total} שאלות שמסתכלות על העסק מלמעלה, באסטרטגיה, בהצעות ובמחירים, בנראות, בשיווק, במכירות, בניהול ובכספים. בסוף מקבלים תמונת מצב ואפשרויות להגדלת הכנסות מתוך מה שכבר קיים בעסק.`}
 >
   <header class="qz-hero atmo" style={linesStyle}>
     <div class="container qz-hero__inner">
       <p class="qz-crumbs"><a href="/">בית</a> <span aria-hidden="true">/</span> שאלון</p>
       <h1>שאלון מיקוד פיתוח עסקי לשנת <span class="hl">{quizYear}</span></h1>
+      {/* טיוטה לאישור נוגה */}
       <p class="qz-hero__lead">
-        {total} שאלות קצרות על {quizAreas.length} תחומים בעסק. בכל שאלה בחרו את התשובה שהכי מתארת את המצב היום, גם אם היא לא מושלמת. בסוף תקבלו פרופיל של העסק ושלושה מיקודים לשנה הקרובה.
+        {total} שאלות קצרות שמסתכלות על העסק מלמעלה. בכל שאלה בוחרים את התשובה שהכי מתארת את המצב היום. בסוף מקבלים תמונת מצב של העסק ואפשרויות להגדלת הכנסות מתוך מה שכבר קיים בו, בלי להוציא עוד כסף על לידים.
       </p>
       <ul class="qz-meta">
-        <li><Icon name="clock" size={16} /> כ-5 דקות</li>
+        <li><Icon name="clock" size={16} /> כ-7 דקות</li>
         <li><Icon name="layers" size={16} /> {quizAreas.length} תחומים</li>
-        <li><Icon name="heart" size={16} /> התשובות נשמרות רק במכשיר שלכם</li>
+        <li><Icon name="heart" size={16} /> התשובות נשמרות רק במכשיר שלך</li>
       </ul>
     </div>
   </header>
@@ -75,14 +79,28 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
                         <span class="sr-only">{q.text}</span>
                       </span>
                     </legend>
+                    {q.multi && <p class="qz-hint">אפשר לסמן כמה תשובות</p>}
                     <div class="qz-opts">
-                      {q.options.map((opt, k) => (
-                        <label class="qz-opt" style={`--k:${k}`}>
-                          <input type="radio" name={`q${i}`} value={q.options.length - 1 - k} />
-                          <span class="qz-opt__mark" aria-hidden="true" />
-                          <span class="qz-opt__text">{opt}</span>
-                        </label>
-                      ))}
+                      {q.options.map((opt, k) =>
+                        q.multi ? (
+                          <label class="qz-opt qz-opt--multi" style={`--k:${k}`}>
+                            <input
+                              type="checkbox"
+                              name={`q${i}`}
+                              value={k}
+                              data-none={k === q.options.length - 1 ? '' : undefined}
+                            />
+                            <span class="qz-opt__mark" aria-hidden="true" />
+                            <span class="qz-opt__text">{opt}</span>
+                          </label>
+                        ) : (
+                          <label class="qz-opt" style={`--k:${k}`}>
+                            <input type="radio" name={`q${i}`} value={q.options.length - 1 - k} />
+                            <span class="qz-opt__mark" aria-hidden="true" />
+                            <span class="qz-opt__text">{opt}</span>
+                          </label>
+                        )
+                      )}
                     </div>
                   </fieldset>
                 </li>
@@ -106,7 +124,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       <div class="qz-result" data-result hidden tabindex="-1">
         <div class="qz-score">
           <div class="qz-score__ring" data-ring>
-            <span class="qz-score__num"><span data-percent>0</span>%</span>
+            <span class="qz-score__num" dir="ltr"><span data-percent>0</span>%</span>
           </div>
           <div>
             <h2 class="qz-score__title" data-level-title></h2>
@@ -131,21 +149,35 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           }
         </ul>
 
-        <h3 class="qz-h3">שלושת המיקודים שלך לשנת {quizYear}</h3>
-        <p class="qz-sub">אלה התחומים שקיבלו את הציון הנמוך ביותר. כאן השינוי הכי קטן ייתן את התוצאה הכי גדולה.</p>
-        <div class="qz-focus" data-focus>
+        {/* אפשרויות להגדלת הכנסות: לכל תשובה חלשה טקסט grow, לפי תחומים מהחלש לחזק (נוגה, 2026-11-11) */}
+        <h3 class="qz-h3">אפשרויות להגדלת הכנסות בעסק שלך</h3>
+        <p class="qz-sum" data-grow-sum></p>
+        <div class="qz-groups" data-groups>
           {
             quizAreas.map((a) => (
-              <article class="qz-card" data-card={a.id} hidden>
-                <span class="qz-card__icon">
-                  <Icon name={a.icon as 'target'} size={24} />
-                </span>
-                <h4 class="qz-card__title">
-                  {a.title} <span class="qz-card__pct" />
+              <article class="qz-group" data-group={a.id} hidden>
+                <h4 class="qz-group__title">
+                  <span class="qz-group__icon">
+                    <Icon name={a.icon as 'target'} size={20} />
+                  </span>
+                  {a.title} <span class="qz-group__pct" />
                 </h4>
-                <p class="qz-card__text">{a.insight}</p>
+                <ul class="qz-group__list">
+                  {quizQuestions.map((q, i) =>
+                    q.area === a.id ? (
+                      <li data-grow={i} hidden>
+                        {q.grow}
+                        {q.link && (
+                          <a class="qz-group__qlink" href={q.link.href}>
+                            {q.link.label} <Icon name="arrow" size={14} />
+                          </a>
+                        )}
+                      </li>
+                    ) : null
+                  )}
+                </ul>
                 {a.link && (
-                  <a class="qz-card__link" href={a.link.href}>
+                  <a class="qz-group__link" href={a.link.href}>
                     {a.link.label} <Icon name="arrow" size={16} />
                   </a>
                 )}
@@ -153,12 +185,23 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
             ))
           }
         </div>
+        <button type="button" class="qz-more" data-more hidden></button>
 
-        <p class="qz-strengths" data-strengths></p>
+        {/* מה כבר עובד: לכל תשובה חזקה טקסט keep */}
+        <h3 class="qz-h3">מה כבר עובד ושווה לשמור</h3>
+        <p class="qz-sum" data-keep-sum></p>
+        <ul class="qz-keep" data-keep>
+          {quizQuestions.map((q, i) => (
+            <li data-keep-item={i} hidden>
+              <Icon name="check" size={18} />
+              <span>{q.keep}</span>
+            </li>
+          ))}
+        </ul>
 
         <div class="qz-actions">
           <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
-            <Icon name="whatsapp" size={20} /> לשיחה על המיקודים שלי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+            <Icon name="whatsapp" size={20} /> לשיחה על האפשרויות שיצאו לי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
           <button type="button" class="qz-actions__again" data-again>למילוי מחדש</button>
         </div>
@@ -169,7 +212,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
 <script is:inline define:vars={{ config }}>
   (function () {
-    var KEY = 'focus-quiz-2027-v4'; // מפתח חדש: תשובות מהגרסה הקודמת (4 תשובות) לא מתאימות
+    var KEY = 'focus-quiz-2027-v5'; // גרסה 5: שאלות חדשות, ושאלה עם כמה תשובות
     var form = document.getElementById('quiz');
     var qs = Array.prototype.slice.call(form.querySelectorAll('.qz-q'));
     var progress = document.querySelector('[data-progress]');
@@ -184,14 +227,30 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     config.areas.forEach(function (a) { titles[a.id] = a.title; });
     var idx = 0;
 
+    // הניקוד של כל שאלה (null אם עוד לא נענתה).
+    // שאלה עם כמה תשובות: מספר הדרכים שסומנו, עד הניקוד המרבי. "אף אחת" לבד = 0.
     function values() {
-      return qs.map(function (q) {
-        var c = q.querySelector('input:checked');
-        return c ? Number(c.value) : null;
+      return qs.map(function (q, i) {
+        var checked = q.querySelectorAll('input:checked');
+        if (!checked.length) return null;
+        if (!config.questions[i].multi) return Number(checked[0].value);
+        var n = 0;
+        checked.forEach(function (c) { if (!c.hasAttribute('data-none')) n += 1; });
+        return Math.min(n, config.max);
       });
     }
+    // לשמירה: בשאלה רגילה הניקוד, ובשאלה עם כמה תשובות רשימת התשובות שסומנו
     function save() {
-      try { localStorage.setItem(KEY, JSON.stringify(values())); } catch (e) {}
+      var data = qs.map(function (q, i) {
+        if (!config.questions[i].multi) {
+          var c = q.querySelector('input:checked');
+          return c ? Number(c.value) : null;
+        }
+        var list = [];
+        q.querySelectorAll('input:checked').forEach(function (c) { list.push(Number(c.value)); });
+        return list.length ? list : null;
+      });
+      try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
     }
     // אפקט הקלדה לשאלה. משך כולל של כשנייה, בלי קשר לאורך השאלה
     function stopTyping() {
@@ -230,18 +289,24 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       idx = Math.max(0, Math.min(qs.length - 1, i));
       qs.forEach(function (q, k) { q.hidden = k !== idx; });
       if (prev !== idx || !qs[idx].classList.contains('is-in')) enter(qs[idx], idx >= prev);
-      var answered = values().filter(function (v) { return v !== null; }).length;
+      var v = values();
+      var answered = v.filter(function (x) { return x !== null; }).length;
       fill.style.width = (answered / qs.length) * 100 + '%';
       back.disabled = idx === 0;
-      var hasAnswer = values()[idx] !== null;
-      next.disabled = !hasAnswer;
+      next.disabled = v[idx] === null;
       next.innerHTML = idx === qs.length - 1 ? 'לתוצאה <span aria-hidden="true">←</span>' : 'הבאה <span aria-hidden="true">←</span>';
+    }
+    // שם תחום במירכאות, כי בשמות יש ו' החיבור ("נראות ואמון")
+    function quoted(t) { return '"' + t + '"'; }
+    function list(names) {
+      if (names.length < 2) return names.join('');
+      return names.slice(0, -1).join(', ') + ' ו' + names[names.length - 1];
     }
     function finish() {
       var v = values();
       var sums = {}, max = {};
-      config.areas.forEach(function (a) { sums[a.id] = 0; max[a.id] = a.count * config.perQuestion; });
-      v.forEach(function (val, i) { sums[config.questionAreas[i]] += val || 0; });
+      config.areas.forEach(function (a) { sums[a.id] = 0; max[a.id] = a.count * config.max; });
+      v.forEach(function (val, i) { sums[config.questions[i].area] += val || 0; });
       var pct = {};
       config.areas.forEach(function (a) { pct[a.id] = Math.round((sums[a.id] / max[a.id]) * 100); });
       // הציון הכללי: ממוצע של אחוזי התחומים, כך שכל תחום שוקל אותו דבר, בלי קשר למספר השאלות בו
@@ -253,29 +318,72 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       document.querySelector('[data-level-title]').textContent = level.title;
       document.querySelector('[data-level-text]').textContent = level.text;
 
+      // התחומים מהחלש לחזק (בתיקו: לפי סדר התחומים)
+      var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
+        .sort(function (a, b) { return a.p - b.p || a.i - b.i; });
+
+      // אפשרויות להגדלת הכנסות: תשובה של 2 נקודות ומטה
+      var groupsBox = document.querySelector('[data-groups]');
+      var growAreas = [];
+      var growCount = 0;
+      order.forEach(function (o) {
+        var group = groupsBox.querySelector('[data-group="' + o.id + '"]');
+        var items = [];
+        group.querySelectorAll('[data-grow]').forEach(function (li) {
+          var val = v[Number(li.dataset.grow)];
+          li.hidden = val > 2;
+          if (!li.hidden) items.push({ li: li, val: val });
+        });
+        // בתוך התחום: מהתשובה החלשה לחזקה
+        items.sort(function (a, b) { return a.val - b.val; }).forEach(function (it) { it.li.parentNode.appendChild(it.li); });
+        group.hidden = !items.length;
+        group.classList.remove('is-extra');
+        group.querySelector('.qz-group__pct').textContent = '(' + o.p + '%)';
+        groupsBox.appendChild(group);
+        if (items.length) { growAreas.push(o.id); growCount += items.length; }
+      });
+      // שלושת התחומים הראשונים גלויים, והשאר מאחורי כפתור
+      var more = document.querySelector('[data-more]');
+      var extra = growAreas.slice(3);
+      extra.forEach(function (id) { groupsBox.querySelector('[data-group="' + id + '"]').classList.add('is-extra'); });
+      groupsBox.classList.toggle('is-collapsed', extra.length > 0);
+      more.hidden = !extra.length;
+      if (extra.length) more.textContent = 'לעוד אפשרויות ב-' + extra.length + (extra.length === 1 ? ' תחום נוסף' : ' תחומים נוספים');
+
       config.areas.forEach(function (a) {
         var bar = document.querySelector('[data-bar="' + a.id + '"]');
         bar.querySelector('.qz-bar__fill').style.width = pct[a.id] + '%';
         bar.querySelector('.qz-bar__pct').textContent = pct[a.id] + '%';
-        bar.classList.remove('is-focus');
+        bar.classList.toggle('is-focus', growAreas.slice(0, 3).indexOf(a.id) !== -1);
       });
-      // שלושת התחומים החלשים (בתיקו: לפי סדר התחומים)
-      var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
-        .sort(function (a, b) { return a.p - b.p || a.i - b.i; });
-      var focus = order.slice(0, 3);
-      var strengths = order.slice(-2).reverse();
-      var focusBox = document.querySelector('[data-focus]');
-      focusBox.querySelectorAll('[data-card]').forEach(function (c) { c.hidden = true; });
-      focus.forEach(function (f) {
-        var card = focusBox.querySelector('[data-card="' + f.id + '"]');
-        card.hidden = false;
-        card.querySelector('.qz-card__pct').textContent = '(' + f.p + '%)';
-        focusBox.appendChild(card);
-        document.querySelector('[data-bar="' + f.id + '"]').classList.add('is-focus');
+
+      var top = growAreas.slice(0, 2).map(function (id) { return quoted(titles[id]); });
+      document.querySelector('[data-grow-sum]').textContent = growCount
+        ? 'נמצאו ' + (growCount === 1 ? 'אפשרות אחת' : growCount + ' אפשרויות') +
+          ' להגדלת הכנסות, כולן מתוך מה שכבר קיים בעסק ובלי להוציא עוד כסף על לידים. הכי הרבה פוטנציאל נמצא ב' +
+          (top.length === 2 ? 'תחומים ' + top[0] + ' ו' + top[1] : 'תחום ' + top[0]) + '.'
+        : 'לא נמצאו פערים משמעותיים. העסק עובד טוב בכל התחומים שנבדקו, וההמשך הוא לדייק ולהאיץ.';
+
+      // מה כבר עובד: תשובה של 3-4 נקודות, מהחזקה לחלשה, עד 6
+      var keepBox = document.querySelector('[data-keep]');
+      var keeps = [];
+      keepBox.querySelectorAll('[data-keep-item]').forEach(function (li) {
+        var val = v[Number(li.dataset.keepItem)];
+        li.hidden = true;
+        if (val >= 3) keeps.push({ li: li, val: val });
       });
-      document.querySelector('[data-strengths]').innerHTML =
-        '<strong>החוזקות שלך:</strong> ' + strengths.map(function (s) { return titles[s.id]; }).join(' וגם ') + '. כדאי להישען עליהן בדרך למיקודים.';
-      var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי. המיקודים שיצאו לי: ' + focus.map(function (f) { return titles[f.id]; }).join(', ') + '. אשמח לשיחה';
+      keeps.sort(function (a, b) { return b.val - a.val; });
+      keeps.slice(0, 6).forEach(function (k) { k.li.hidden = false; keepBox.appendChild(k.li); });
+      var strongest = order[order.length - 1];
+      document.querySelector('[data-keep-sum]').textContent = keeps.length
+        ? (keeps.length === 1 ? 'דבר אחד כבר עובד טוב בעסק' : keeps.length + ' דברים כבר עובדים טוב בעסק') +
+          ', והתחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליהם, כי את מה שכבר עובד חזק אפשר להגביר.' +
+          (keeps.length > 6 ? ' אלה החזקים שבהם.' : '')
+        : 'עוד לא נמצאו תחומים חזקים במיוחד. זה בדיוק המקום להתחיל בו, צעד אחרי צעד.';
+
+      var focusNames = growAreas.slice(0, 3).map(function (id) { return quoted(titles[id]); });
+      var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי. ' +
+        (focusNames.length ? 'הכי הרבה פוטנציאל יצא לי ב' + list(focusNames) + '. ' : '') + 'אשמח לשיחה';
       document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
 
       form.hidden = true;
@@ -295,15 +403,31 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       if (Array.isArray(saved)) {
         saved.forEach(function (val, i) {
           if (val === null || !qs[i]) return;
-          var inp = qs[i].querySelector('input[value="' + val + '"]');
-          if (inp) inp.checked = true;
+          (Array.isArray(val) ? val : [val]).forEach(function (x) {
+            var inp = qs[i].querySelector('input[value="' + x + '"]');
+            if (inp) inp.checked = true;
+          });
         });
       }
     } catch (e) {}
     var firstOpen = values().indexOf(null);
     show(firstOpen === -1 ? qs.length - 1 : firstOpen);
 
-    form.addEventListener('change', function () {
+    form.addEventListener('change', function (e) {
+      var t = e.target;
+      if (t.type === 'checkbox') {
+        // "אף אחת" מבטלת את השאר, וסימון של דרך כלשהי מבטל את "אף אחת"
+        var q = t.closest('.qz-q');
+        if (t.checked && t.hasAttribute('data-none')) {
+          q.querySelectorAll('input:not([data-none])').forEach(function (c) { c.checked = false; });
+        } else if (t.checked) {
+          var none = q.querySelector('[data-none]');
+          if (none) none.checked = false;
+        }
+        save();
+        show(idx);
+        return; // בשאלה עם כמה תשובות ממשיכים בכפתור "הבאה"
+      }
       save();
       show(idx);
       // מעבר אוטומטי לשאלה הבאה אחרי בחירה
@@ -317,10 +441,15 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     });
     back.addEventListener('click', function () { show(idx - 1); });
     next.addEventListener('click', function () {
+      var open = values().indexOf(null);
       if (idx === qs.length - 1) {
-        if (values().indexOf(null) === -1) finish();
-        else show(values().indexOf(null));
+        if (open === -1) finish();
+        else show(open);
       } else show(idx + 1);
+    });
+    document.querySelector('[data-more]').addEventListener('click', function () {
+      document.querySelector('[data-groups]').classList.remove('is-collapsed');
+      this.hidden = true;
     });
     document.querySelector('[data-again]').addEventListener('click', function () {
       form.reset();
@@ -394,6 +523,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
   /* ---------- השאלון ---------- */
   .qz-body {
+    overflow-x: clip; /* הכרטיס נכנס מהצד, ובטלפון זה לא יוצר גלילה לצדדים */
     padding-block: clamp(1.75rem, 5vw, 3rem);
   }
   .qz-wrap {
@@ -643,6 +773,18 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     outline: 3px solid var(--gold-dark);
     outline-offset: 2px;
   }
+  .qz-hint {
+    margin: -0.5rem 0 0.75rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .qz-opt--multi .qz-opt__mark {
+    border-radius: 0.35rem;
+  }
+  .qz-opt--multi:has(input:checked) .qz-opt__mark {
+    box-shadow: inset 0 0 0 3px var(--white);
+  }
   .qz-nav {
     display: flex;
     justify-content: space-between;
@@ -704,8 +846,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     background: conic-gradient(var(--gold-light) calc(var(--p) * 1%), rgb(255 255 255 / 0.12) 0);
   }
   .qz-score__num {
-    display: grid;
-    place-items: center;
+    display: flex; /* המספר וסימן האחוז באותה שורה */
+    align-items: center;
+    justify-content: center;
     width: 5.9rem;
     height: 5.9rem;
     border-radius: 50%;
@@ -741,9 +884,6 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     font-size: 1.35rem;
     font-weight: 900;
     color: var(--navy);
-  }
-  .qz-sub {
-    margin: -0.25rem 0 1rem;
   }
   .qz-bars {
     list-style: none;
@@ -807,58 +947,124 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       grid-row: 2;
     }
   }
-  .qz-focus {
+  /* משפט מסכם מעל כל רשימה בתוצאה, לפי התשובות */
+  .qz-sum {
+    margin: -0.25rem 0 1rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  /* ---------- אפשרויות להגדלת הכנסות, לפי תחומים ---------- */
+  .qz-groups {
     display: grid;
     gap: 1rem;
   }
-  .qz-card {
-    position: relative;
-    padding: 1.3rem 1.4rem 1.2rem;
-    padding-inline-start: 4.6rem;
+  .qz-groups.is-collapsed .qz-group.is-extra {
+    display: none;
+  }
+  .qz-group {
+    padding: 1.2rem 1.4rem 1.15rem;
     border-radius: 1.25rem;
     background: linear-gradient(160deg, var(--white) 40%, rgb(252 220 109 / 0.22));
     border: 1px solid rgb(209 154 74 / 0.45);
   }
-  .qz-card__icon {
-    position: absolute;
-    inset-inline-start: 1.2rem;
-    top: 1.3rem;
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 0.85rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .qz-card__title {
-    margin: 0 0 0.35rem;
+  .qz-group__title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0 0 0.75rem;
     font-size: 1.15rem;
     font-weight: 900;
     color: var(--navy);
   }
-  .qz-card__pct {
+  .qz-group__icon {
+    display: grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 0.75rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+  }
+  .qz-group__pct {
     font-weight: 700;
     color: #8a5a17;
     font-size: 0.95rem;
   }
-  .qz-card__text {
-    margin: 0 0 0.5rem;
+  .qz-group__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .qz-group__list li {
+    position: relative;
+    margin: 0;
+    padding-inline-start: 1.4rem;
     line-height: 1.65;
   }
-  .qz-card__link {
+  .qz-group__list li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.2rem;
+    top: 0.6em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background: var(--gold-dark);
+    transform: rotate(45deg);
+  }
+  .qz-group__qlink,
+  .qz-group__link {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     font-weight: 800;
     color: var(--teal-dark);
   }
-  .qz-strengths {
-    margin: 1.25rem 0 0;
-    padding: 1rem 1.2rem;
-    border-radius: 1rem;
-    background: rgb(25 154 181 / 0.1);
-    border-inline-start: 4px solid var(--teal);
+  .qz-group__qlink {
+    margin-inline-start: 0.4rem;
+    font-size: 0.92rem;
+  }
+  .qz-group__link {
+    margin-top: 0.8rem;
+  }
+  .qz-more {
+    margin-top: 1rem;
+    padding: 0.6rem 1.3rem;
+    border-radius: 999px;
+    border: 2px solid rgb(209 154 74 / 0.6);
+    background: var(--white);
+    color: #8a5a17;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  /* ---------- מה כבר עובד ---------- */
+  .qz-keep {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+    display: grid;
+    gap: 0.7rem;
+    border-radius: 1.25rem;
+    background: rgb(25 154 181 / 0.08);
+    border: 1px solid rgb(25 154 181 / 0.25);
+  }
+  .qz-keep li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin: 0;
+    line-height: 1.65;
+  }
+  .qz-keep :global(svg) {
+    flex: none;
+    margin-top: 0.25em;
+    color: var(--teal-dark);
   }
   .qz-actions {
     display: flex;
