@@ -17,7 +17,10 @@ import stairs from '../../assets/atmosphere/dark-stairs.webp';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 // קודם המדריכים ואחריהם המאמרים, כל קבוצה לפי order
-const items = [...all.filter((g) => g.data.type === 'guide'), ...all.filter((g) => g.data.type === 'article')];
+// קודם המדריכים ואחריהם המאמרים, ובכל קבוצה הפתוחים קודם וה"בקרוב" אחריהם (נוגה, 2026-11-12)
+const live = (type: string) => all.filter((g) => g.data.type === type && !g.data.comingSoon);
+const soon = (type: string) => all.filter((g) => g.data.type === type && g.data.comingSoon);
+const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('article')];
 ---
 
 <BaseLayout

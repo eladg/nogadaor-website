@@ -11,6 +11,10 @@ import Icon from '../../components/Icon.astro';
 import { quizAreas, quizQuestions, quizLevels, quizYear } from '../../data/quiz';
 import { contact } from '../../data/contact';
 
+// קישורים למדריכים שעוד מסומנים "בקרוב" לא מוצגים (אין להם עמוד), וחוזרים לבד כשהמדריך נפתח (נוגה, 2026-11-12)
+import { getCollection } from 'astro:content';
+const soonGuides = new Set((await getCollection('guides')).filter((g) => g.data.comingSoon).map((g) => `/guides/${g.id}/`));
+const liveLink = (link?: { href: string; label: string }) => !!link && !soonGuides.has(link.href);
 const total = quizQuestions.length;
 const areaById = Object.fromEntries(quizAreas.map((a) => [a.id, a]));
 const MAX = 4; // הניקוד המרבי לשאלה
@@ -167,7 +171,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
                     q.area === a.id ? (
                       <li data-grow={i} hidden>
                         {q.grow}
-                        {q.link && (
+                        {liveLink(q.link) && q.link && (
                           <a class="qz-group__qlink" href={q.link.href}>
                             {q.link.label} <Icon name="arrow" size={14} />
                           </a>
@@ -176,7 +180,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
                     ) : null
                   )}
                 </ul>
-                {a.link && (
+                {liveLink(a.link) && a.link && (
                   <a class="qz-group__link" href={a.link.href}>
                     {a.link.label} <Icon name="arrow" size={16} />
                   </a>

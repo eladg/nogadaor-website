@@ -51,10 +51,11 @@ const stats = [
 ];
 
 // שורת מדריכים חינמיים בסוף העמוד (נוגה, 2026-11-08: במקום "כל מה שתמצאו באתר", שנראה כמו פוטר מיותר)
-const guides = (await getCollection('guides'))
-  .filter((g) => !g.data.comingSoon && g.data.type === 'guide')
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
+// קודם המדריכים הפתוחים, ואם אין ארבעה, משלימים במדריכים "בקרוב" (בלי קישור), כדי שהשורה תישאר מלאה (נוגה, 2026-11-12)
+const guideList = (await getCollection('guides'))
+  .filter((g) => g.data.type === 'guide')
+  .sort((a, b) => a.data.order - b.data.order);
+const guides = [...guideList.filter((g) => !g.data.comingSoon), ...guideList.filter((g) => g.data.comingSoon)].slice(0, 4);
 
 // נתונים מובנים לגוגל ול-AI: מי נוגה, מה העסק ומה האתר (src/utils/schema.ts)
 import { personSchema, businessSchema, websiteSchema } from '../utils/schema';
@@ -80,7 +81,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       />
     </div>
     <div class="container h-hero__inner">
-      <div class="h-hero__text">
+      <div class="h-hero__text">
         <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
         <div class="h-hero__actions">
@@ -219,7 +220,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   <section class="h-quiz" aria-labelledby="quiz-title">
     <div class="container">
       <div class="h-quiz__card">
-        <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
+        <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
         <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">מה המיקוד הנכון{' '}<span class="hl">לעסק שלך ב-{quizYear}?</span></h2>
         <p class="h-quiz__text reveal">שאלון קצר שמסתכל על העסק מלמעלה ומראה איפה הוא חזק, ואילו אפשרויות להגדלת הכנסות כבר נמצאות בו.</p>
         <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
@@ -239,11 +240,21 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <ul class="guides-row">
         {
           guides.map((g, i) => (
-            <li class="guide-card reveal" style={`transition-delay: ${i * 0.08}s`}>
-              <a href={`/guides/${g.id}/`}>
-                <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
-                <span class="guide-card__title">{g.data.title}</span>
-              </a>
+            <li class:list={['guide-card reveal', { 'guide-card--soon': g.data.comingSoon }]} style={`transition-delay: ${i * 0.08}s`}>
+              {g.data.comingSoon ? (
+                <div class="guide-card__inner">
+                  <span class="guide-card__cover">
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
+                    <span class="guide-card__soon">בקרוב</span>
+                  </span>
+                  <span class="guide-card__title">{g.data.title}</span>
+                </div>
+              ) : (
+                <a href={`/guides/${g.id}/`}>
+                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
+                  <span class="guide-card__title">{g.data.title}</span>
+                </a>
+              )}
             </li>
           ))
         }
@@ -836,6 +847,26 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     .guide-card a:hover :global(.cc) {
       transform: translateY(-4px);
     }
+  }
+  /* מדריך "בקרוב": בלי קישור, עם תג זהב על הכריכה (נוגה, 2026-11-12) */
+  .guide-card__inner {
+    display: block;
+    color: var(--navy);
+  }
+  .guide-card__cover {
+    position: relative;
+    display: block;
+  }
+  .guide-card__soon {
+    position: absolute;
+    top: 0.6rem;
+    inset-inline-start: 0.6rem;
+    padding: 0.15rem 0.7rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 0.8rem;
+    font-weight: 800;
   }
   .guide-card__title {
     display: block;
