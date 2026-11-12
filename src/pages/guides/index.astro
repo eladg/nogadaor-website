@@ -85,7 +85,7 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
       <ul class="lecture-grid">
         {
           lectures.map((l, i) => (
-            <li class="lecture reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
+            <li class="lecture reveal" id={`lecture-${l.id}`} style={`transition-delay: ${(i % 3) * 0.1}s`}>
               <YouTubeEmbed id={l.id} title={l.title}>
                 <ContentCover title={l.coverTitle} motif={l.motif} kind="lecture" duration={l.duration} ratio="16/9" size="wide" />
               </YouTubeEmbed>
@@ -109,8 +109,9 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
 
 <style>
   /* קישור ישיר להרצאות (/guides/#lectures) מגיע מתחת לכותרת הדביקה */
-  #lectures {
-    scroll-margin-top: var(--header-h);
+  #lectures,
+  .lecture {
+    scroll-margin-top: calc(var(--header-h) + 1rem); /* גם קישור להרצאה אחת (/guides/#lecture-<id>), למשל מהשאלון */
   }
   .intro {
     margin-bottom: 1.75rem;
