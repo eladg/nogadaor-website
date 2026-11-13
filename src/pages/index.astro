@@ -264,14 +264,14 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
               {g.data.comingSoon ? (
                 <div class="guide-card__inner">
                   <span class="guide-card__cover">
-                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" fit />
                     <span class="guide-card__soon">בקרוב</span>
                   </span>
                   <span class="guide-card__title">{g.data.title}</span>
                 </div>
               ) : (
                 <a href={`/guides/${g.id}/`}>
-                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" />
+                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind="guide" fit />
                   <span class="guide-card__title">{g.data.title}</span>
                 </a>
               )}

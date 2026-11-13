@@ -112,7 +112,7 @@ const crumbs = [
         <ShareBar title={d.title} download={d.download} tone="dark" />
       </div>
       <div class="g-hero__cover">
-        <ContentCover title={d.coverTitle ?? d.title} motif={d.coverMotif} star={d.coverStar} kind={d.type} />
+        <ContentCover title={d.coverTitle ?? d.title} motif={d.coverMotif} star={d.coverStar} kind={d.type} fit />
       </div>
     </div>
   </header>
@@ -227,7 +227,7 @@ const crumbs = [
             {related.map((g) => (
               <li class="g-more__item">
                 <div class="g-more__cover">
-                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
+                  <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} fit />
                 </div>
                 <div class="g-more__text">
                   <h3>

@@ -1,22 +1,22 @@
 ---
 // עמוד "מרכז הידע" (לשעבר "מדריכים והרצאות", נוגה 2026-11-07): חלק 1 מדריכים ומאמרים יחד, חלק 2 הדרכות מהיוטיוב (נוגה, 2026-11-07).
 // כרגע הכל פתוח לצפייה (בלי הורדה ובלי איסוף אימייל).
-// עיצוב (נוגה, 2026-11-06): כריכות בסגנון "חפץ זכוכית זוהר" (src/components/ContentCover.astro), בלי לוגו ובלי מספור.
+// עיצוב (נוגה, 2026-11-13): רשת ישרה ומאווררת כמו בקטלוג ההדרכות, פתיח בהיר, ובכריכה אותו שם כמו בכותרת (בלי שם קצר נפרד).
+// עיצוב קודם (נוגה, 2026-11-06): כריכות בסגנון "חפץ זכוכית זוהר" (src/components/ContentCover.astro), בלי לוגו ובלי מספור.
 // לכל סוג תוכן פריסה משלו באותה שפה: מדריכים בפריסה מדורגת (האמצעי נמוך יותר, מושך לגלול), שאלון בכרטיס רחב,
 // הרצאות בפס כהה, ומאמרים ברשימה עם כריכה בצד. מתחת לכל כריכה: סוג התוכן וזמן הקריאה. הכרטיסים מופיעים בהדרגה בגלילה.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeader from '../../components/PageHeader.astro';
+import LightHero from '../../components/LightHero.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import ContentCover from '../../components/ContentCover.astro';
 import Icon from '../../components/Icon.astro';
 import { readingMinutes } from '../../utils/readingTime';
 import { lectures, minutesOf } from '../../data/lectures';
-import stairs from '../../assets/atmosphere/dark-stairs.webp';
+import desk from '../../assets/atmosphere/light-desk.webp';
 
 const all = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
-// קודם המדריכים ואחריהם המאמרים, כל קבוצה לפי order
 // קודם המדריכים ואחריהם המאמרים, ובכל קבוצה הפתוחים קודם וה"בקרוב" אחריהם (נוגה, 2026-11-12)
 const live = (type: string) => all.filter((g) => g.data.type === type && !g.data.comingSoon);
 const soon = (type: string) => all.filter((g) => g.data.type === type && g.data.comingSoon);
@@ -28,31 +28,30 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
   description="מרכז הידע של נוגה דיין אור: מדריכים, מאמרים והרצאות לצפייה בחינם לבעלי עסקים."
 >
   <!-- בלי משפט פתיחה (נוגה, 2026-11-07: "לא צריך משפט פתיחה") -->
-  <PageHeader title="מרכז הידע" image={stairs} />
+  <!-- פתיח בהיר כמו בקטלוג ההדרכות (נוגה, 2026-11-13: "דומה להדרכות, יותר ישר, יותר מאוורר") -->
+  <LightHero image={desk} title="מרכז הידע" />
 
   <!-- חלק 1: מדריכים ומאמרים יחד (נוגה, 2026-11-07: "שהמאמר לא יהיה לבד"). קודם המדריכים, אחריהם המאמרים.
        לכל כרטיס סוג משלו מתחת לכריכה (מדריך = רשימה, מאמר = ספר פתוח). -->
   <section class="section">
     <div class="container">
       <h2>מדריכים ומאמרים</h2>
-      <p class="intro">הכול פתוח לקריאה כאן באתר.</p>
       <!-- הוחלט (2026-11-05): בשלב ראשון הכל פתוח, בלי איסוף אימיילים. לא לבנות שער אימייל עד שנוגה תבקש. -->
-      <!-- TODO (נוגה, 2026-11-07): מדריכים חדשים שנוגה רוצה, עוד אין להם תוכן: הקמת עסק, תודעה עסקית מנצחת, מציאת בידול. -->
       <ul class="shelf">
         {
           items.map((g, i) => {
             const isArticle = g.data.type === 'article';
             const soon = g.data.comingSoon;
             return (
-              <li class:list={['item reveal', { 'item--soon': soon }]} style={`transition-delay: ${(i % 3) * 0.12}s`}>
+              <li class:list={['item reveal', { 'item--soon': soon }]} style={`transition-delay: ${(i % 3) * 0.08}s`}>
                 {soon ? (
                   <div class="item__cover">
-                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} fit />
                     <span class="soon-badge">בקרוב</span>
                   </div>
                 ) : (
                   <a class="item__cover" href={`/guides/${g.id}/`} tabindex="-1" aria-hidden="true">
-                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} />
+                    <ContentCover title={g.data.coverTitle ?? g.data.title} motif={g.data.coverMotif} star={g.data.coverStar} kind={g.data.type} fit />
                   </a>
                 )}
                 <p class="meta">
@@ -142,41 +141,34 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
     color: var(--white);
   }
 
-  /* מדריכים: 3 בשורה במחשב, 2 בטאבלט, 1 בנייד. העמודה האמצעית נמוכה יותר (פריסה מדורגת). */
+  /* מדריכים ומאמרים: רשת ישרה ומאווררת כמו בקטלוג ההדרכות (נוגה, 2026-11-13). 3 בשורה במחשב, 2 בטאבלט, 1 בנייד.
+     כל כרטיס תופס 4 שורות משותפות (subgrid), כך שהכריכות, הסוג, השמות וההסברים מתחילים באותו גובה בכל שורה. */
   .shelf {
     list-style: none;
-    margin: 0;
+    margin: 2rem 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem 1.5rem;
-    align-items: start;
-  }
-  .shelf > li:nth-child(3n + 2) {
-    margin-top: 3rem;
+    gap: 0 2.5rem;
   }
   @media (max-width: 62rem) {
     .shelf {
       grid-template-columns: repeat(2, 1fr);
-    }
-    .shelf > li:nth-child(3n + 2) {
-      margin-top: 0;
-    }
-    .shelf > li:nth-child(2n) {
-      margin-top: 2.5rem;
+      column-gap: 2rem;
     }
   }
   @media (max-width: 36rem) {
     .shelf {
       grid-template-columns: 1fr;
     }
-    .shelf > li:nth-child(2n) {
-      margin-top: 0;
-    }
   }
   .item {
     position: relative;
-    margin: 0;
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    margin: 0 0 3.5rem;
   }
   .item__cover {
     display: block;
@@ -206,8 +198,10 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
     font-weight: 800;
   }
   .item__title {
-    margin: 0 0 0.25rem;
+    align-self: start;
+    margin: 0 0 0.4rem;
     font-size: 1.15rem;
+    font-weight: 900;
     line-height: 1.35;
   }
   .item__title a {
@@ -224,6 +218,7 @@ const items = [...live('guide'), ...live('article'), ...soon('guide'), ...soon('
     color: var(--teal-dark);
   }
   .item__sub {
+    align-self: start;
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.5;
