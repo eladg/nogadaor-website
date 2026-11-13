@@ -10,7 +10,12 @@ const { currentPath } = Astro.props;
 const overlay = currentPath === '/';
 
 // תת-תפריט השירותים: שמות קצרים (נוגה, 2026-11-07: 2-3 מילים, "כמו כולם")
-const serviceLinks = services.map((s) => ({ href: s.href, label: s.menu }));
+// פגישת הייעוץ ראשונה ובולטת (בזהב) בתת-התפריט בלבד (נוגה, 2026-11-13). הסדר בשאר האתר לא משתנה.
+const featuredService = '/services/consulting-session/';
+const serviceLinks = [
+  ...services.filter((s) => s.href === featuredService),
+  ...services.filter((s) => s.href !== featuredService),
+].map((s) => ({ href: s.href, label: s.menu, featured: s.href === featuredService }));
 
 const links = [
   { href: '/', label: 'בית' },
@@ -54,7 +59,7 @@ const isCurrent = (href: string) =>
                 <ul class="site-nav__sub" aria-label="השירותים">
                   {serviceLinks.map((sl) => (
                     <li>
-                      <a href={sl.href} aria-current={currentPath === sl.href ? 'page' : undefined}>
+                      <a href={sl.href} class:list={[{ 'is-featured': sl.featured }]} aria-current={currentPath === sl.href ? 'page' : undefined}>
                         {sl.label}
                       </a>
                     </li>
@@ -221,6 +226,11 @@ const isCurrent = (href: string) =>
     font-size: 0.95rem;
     color: var(--on-dark-soft);
   }
+  /* פגישת הייעוץ: בזהב, מודגשת */
+  .site-nav .site-nav__sub a.is-featured {
+    color: var(--gold-light);
+    font-weight: 800;
+  }
 
   /* מסך צר מאוד: הכפתור מתקצר כדי שהכול ייכנס בשורה אחת */
   @media (max-width: 23rem) {
@@ -304,6 +314,14 @@ const isCurrent = (href: string) =>
     }
     .site-nav__sub a:hover {
       background: rgb(255 255 255 / 0.07);
+    }
+    .site-nav .site-nav__sub a.is-featured {
+      margin-bottom: 0.25rem;
+      background: rgb(252 220 109 / 0.12);
+      box-shadow: inset 0 0 0 1px rgb(252 220 109 / 0.35);
+    }
+    .site-nav .site-nav__sub a.is-featured:hover {
+      background: rgb(252 220 109 / 0.2);
     }
   }
 </style>
