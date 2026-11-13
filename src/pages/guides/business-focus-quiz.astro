@@ -36,6 +36,12 @@ const screens = [
 const total = screens.length;
 const resLinks = (keys?: (keyof typeof quizResources)[]) =>
   (keys ?? []).map((k) => quizResources[k]).filter((l) => !soonGuides.has(l.href));
+// חלק מנתוני שאלה (team / byAnswer): השירות והקישורים הופכים לקישורים מלאים
+const resolveParts = (part: { service?: keyof typeof quizServices; res?: (keyof typeof quizResources)[] } & Record<string, unknown>) => ({
+  ...part,
+  ...(part.service ? { service: quizServices[part.service] } : {}),
+  ...(part.res ? { res: resLinks(part.res) } : {}),
+});
 const cheers = quizCheers(total);
 const MAX = 4; // הניקוד המרבי לשאלה
 const config = {
@@ -58,12 +64,10 @@ const config = {
       impact: q.impact,
       service: quizServices[q.service],
       res: resLinks(q.res),
-      team: q.team
-        ? {
-            ...q.team,
-            ...(q.team.service ? { service: quizServices[q.team.service] } : {}),
-            ...(q.team.res ? { res: resLinks(q.team.res) } : {}),
-          }
+      team: q.team ? resolveParts(q.team) : null,
+      // עצה אחרת לתשובה מסוימת. המפתח: מקום התשובה ברשימה (0 = הראשונה)
+      byAnswer: q.byAnswer
+        ? Object.fromEntries(Object.entries(q.byAnswer).map(([k, part]) => [k, resolveParts(part)]))
         : null,
     })),
   ],
@@ -348,6 +352,12 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var q = config.questions[i];
       return q.team && isTeam() ? Object.assign({}, q, q.team) : q;
     }
+    // נתוני העצה לתשובה שנבחרה: לתשובה עם עצה משלה (byAnswer) מחליפים רק את מה שמוגדר בה
+    function QA(i, val) {
+      var q = Q(i);
+      var part = q.byAnswer && q.byAnswer[q.options.length - 1 - val];
+      return part ? Object.assign({}, q, part) : q;
+    }
     function variantHidden(n) {
       var box = n.closest('[data-variant]');
       return !!box && box.hidden;
@@ -458,7 +468,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     }
     // כרטיס עצה מלא: מה ענו, מה זה אומר, להתחיל מכאן, מה אפשר לעשות יחד, ולהעמקה באתר
     function tipCard(f, n) {
-      var q = Q(f.i);
+      var q = QA(f.i, f.v);
       var li = el('li', 'qz-tip');
       var h = el('h4', 'qz-tip__title');
       h.appendChild(el('span', 'qz-tip__n', String(n)));
@@ -547,7 +557,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         var tipsList = group.querySelector('[data-group-tips]');
         tipsList.textContent = '';
         finds.filter(function (f) { return f.area === o.id && top.indexOf(f) === -1; }).slice(0, 3).forEach(function (f) {
-          var q = Q(f.i);
+          var q = QA(f.i, f.v);
           var item = el('li');
           item.appendChild(el('strong', null, q.topic));
           item.appendChild(el('span', null, q.tip));
@@ -605,7 +615,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         ? 'התחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליו, כי את מה שכבר עובד חזק אפשר להגביר.'
         : 'יש כבר דברים שעובדים טוב בעסק. כדאי להישען עליהם, כי את מה שכבר עובד אפשר להגביר.';
 
-      var topNames = top.map(function (f) { return Q(f.i).topic; });
+      var topNames = top.map(function (f) { return QA(f.i, f.v).topic; });
       var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
       var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי' + who + '. ' +
         (topNames.length ? 'העצות שיצאו לי להתחיל מהן: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
