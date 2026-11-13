@@ -9,16 +9,19 @@
 // השאלות והטקסטים ב-src/data/quiz.ts (טיוטה לאישור נוגה).
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile } from '../../data/quiz';
+import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile, quizSessionLink } from '../../data/quiz';
+import type { QuizLink } from '../../data/quiz';
 import { contact } from '../../data/contact';
 
-// קישורים למדריכים שעוד מסומנים "בקרוב" לא מוצגים (אין להם עמוד), וחוזרים לבד כשהמדריך נפתח (נוגה, 2026-11-12)
 import { getCollection } from 'astro:content';
-// קישור לעמוד מדריך מוצג רק אם המדריך קיים ופתוח. קישורים אחרים (הדרכות, הרצאות, שירותים) תמיד מוצגים
+// מדריכים: מדריך פתוח מקבל קישור. מדריך "בקרוב" מוצג כקובייה בלי קישור, עם התג "בקרוב" (נוגה, 2026-11-13).
+// מדריך שלא קיים בכלל באתר לא מוצג. קישורים אחרים (הדרכות, הרצאות, שירותים) תמיד מוצגים
 const allGuides = await getCollection('guides');
 const openGuides = new Set(allGuides.filter((g) => !g.data.comingSoon).map((g) => `/guides/${g.id}/`));
+const soonGuides = new Set(allGuides.filter((g) => g.data.comingSoon).map((g) => `/guides/${g.id}/`));
 const isGuidePage = (href: string) => /^\/guides\/[^#/]+\/$/.test(href);
 const liveLink = (link?: { href: string; label: string }) => !!link && (!isGuidePage(link.href) || openGuides.has(link.href));
+const asCube = (l: QuizLink) => ({ ...l, soon: soonGuides.has(l.href) });
 // המסך הראשון הוא שאלת הפתיחה ("מי עובד בעסק?"): נספרת במספור, לא בציון.
 // בשאלה שיש לה נוסח לעסק עם עובדים (team.text או team.options) מוצגים שני נוסחים, ו-JavaScript מציג את המתאים
 const screens = [
@@ -38,11 +41,11 @@ const screens = [
 ];
 const total = screens.length;
 const resLinks = (keys?: (keyof typeof quizResources)[]) =>
-  (keys ?? []).map((k) => quizResources[k]).filter((l) => liveLink(l));
+  (keys ?? []).map((k) => quizResources[k] as QuizLink).filter((l) => liveLink(l) || soonGuides.has(l.href)).map(asCube);
 // חלק מנתוני שאלה (team / byAnswer): השירות והקישורים הופכים לקישורים מלאים
 const resolveParts = (part: { service?: keyof typeof quizServices; res?: (keyof typeof quizResources)[] } & Record<string, unknown>) => ({
   ...part,
-  ...(part.service ? { service: quizServices[part.service] } : {}),
+  ...(part.service ? { service: asCube(quizServices[part.service]) } : {}),
   ...(part.res ? { res: resLinks(part.res) } : {}),
 });
 const cheers = quizCheers(total);
@@ -53,8 +56,8 @@ const config = {
   points: quizPoints,
   strongFrom: quizStrongFrom,
   teamFrom: quizProfile.teamFrom,
-  // "להעמקה באתר" כשלא עלו נושאים לשיפור
-  generalRes: resLinks(['vidGrow', 'vidStrategy', 'guideAi']),
+  // הקוביות בסוף התוצאה כשלא עלו נושאים לשיפור
+  generalRes: [...resLinks(['vidGrow', 'vidStrategy', 'guideAi']), asCube(quizServices.strategy)],
   // מקום 0 הוא שאלת הפתיחה. בשאלה עם נוסח לעסק עם עובדים, team מחזיק רק את מה שמשתנה
   questions: [
     { profile: true, options: quizProfile.options },
@@ -64,9 +67,8 @@ const config = {
       options: q.options,
       topic: q.topic,
       insight: q.insight,
-      together: q.together,
       impact: q.impact,
-      service: quizServices[q.service],
+      service: asCube(quizServices[q.service]),
       res: resLinks(q.res),
       team: q.team ? resolveParts(q.team) : null,
       // עצה אחרת לתשובה מסוימת. המפתח: מקום התשובה ברשימה (0 = הראשונה)
@@ -246,6 +248,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           <div>
             <h2 class="qz-score__title" data-level-title></h2>
             <p class="qz-score__text" data-level-text></p>
+            {/* קישור לפגישת ייעוץ, בראש התוצאה ובסופה (נוגה, 2026-11-13) */}
+            <a class="qz-session-link" href={quizSessionLink.href}>
+              לפגישת ייעוץ על התוצאות <Icon name="arrow" size={16} />
+            </a>
           </div>
         </div>
 
@@ -319,17 +325,17 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           <ul class="qz-wins" data-wins></ul>
         </div>
 
-        {/* להעמקה באתר: פעם אחת בסוף התוצאה, לא בכל עצה (נוגה, 2026-11-13) */}
+        {/* קוביות בסוף התוצאה: מדריכים, מאמרים, הרצאות, הדרכות ושירותים לפי הנושאים שעלו, עם סוג התוכן על כל קובייה.
+            בלי כותרת "להעמקה באתר" (נוגה, 2026-11-13). מדריך "בקרוב" בלי קישור */}
         <div data-res-block hidden>
-          <h3 class="qz-h3">להעמקה באתר</h3>
-          <p class="qz-sum">מדריכים והרצאות שמתאימים לנושאים שעלו אצלך.</p>
-          <ul class="qz-res" data-res></ul>
+          <ul class="qz-cubes" data-res></ul>
         </div>
 
         <div class="qz-actions">
           <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
             <Icon name="whatsapp" size={20} /> לשיחה על האפשרויות שיצאו לי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
+          <a class="qz-actions__session" href={quizSessionLink.href}>{quizSessionLink.label}</a>
           <button type="button" class="qz-actions__again" data-again>למילוי מחדש</button>
         </div>
       </div>
@@ -477,8 +483,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var q = Q(i);
       return q.options[q.options.length - 1 - val];
     }
-    // כרטיס עצה: מה ענו, טקסט אחד (המשמעות ומאיפה מתחילים), ומה אפשר לעשות יחד.
-    // המדריכים וההרצאות מוצגים פעם אחת בסוף התוצאה, לא בכל עצה (נוגה, 2026-11-13)
+    // כרטיס עצה: מה ענו וטקסט אחד. בלי "מה אפשר לעשות יחד" (נוגה, 2026-11-13). השירותים, המדריכים וההרצאות
+    // מוצגים פעם אחת, כקוביות בסוף התוצאה
     function tipCard(f, n) {
       var q = QA(f.i, f.v);
       var li = el('li', 'qz-tip');
@@ -488,11 +494,17 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       li.appendChild(h);
       li.appendChild(el('p', 'qz-tip__said', 'ענית: "' + said(f.i, f.v) + '"'));
       li.appendChild(el('p', 'qz-tip__why', q.insight));
-      var withBox = el('div', 'qz-tip__box qz-tip__box--with');
-      withBox.appendChild(el('strong', null, 'מה אפשר לעשות יחד'));
-      withBox.appendChild(el('p', null, q.together));
-      withBox.appendChild(linkEl(q.service, 'qz-tip__service'));
-      li.appendChild(withBox);
+      return li;
+    }
+    // קובייה: סוג התוכן ושם. מדריך "בקרוב" בלי קישור
+    function cube(r) {
+      var li = el('li', 'qz-cube' + (r.soon ? ' qz-cube--soon' : ''));
+      var box = el(r.soon ? 'div' : 'a', 'qz-cube__in');
+      if (!r.soon) box.href = r.href;
+      box.appendChild(el('span', 'qz-cube__type', r.type || ''));
+      box.appendChild(el('span', 'qz-cube__title', r.label));
+      if (r.soon) box.appendChild(el('span', 'qz-cube__soon', 'בקרוב'));
+      li.appendChild(box);
       return li;
     }
     // המשפט הראשון של הטקסט, לעצות הקצרות בכרטיס של תחום
@@ -616,23 +628,24 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         ? 'התחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליו, כי את מה שכבר עובד חזק אפשר להגביר.'
         : 'יש כבר דברים שעובדים טוב בעסק. כדאי להישען עליהם, כי את מה שכבר עובד אפשר להגביר.';
 
-      // להעמקה באתר: פעם אחת בסוף, מדריכים והרצאות לפי הנושאים שעלו (מהחלש לחזק), עד 5. אם לא עלו נושאים, רשימה כללית
+      // הקוביות בסוף: לפי הנושאים שעלו (מהחלש לחזק). עד 6 תכנים (מדריכים, מאמרים, הרצאות, הדרכות) ועד 2 שירותים,
+      // בלי כפילויות. אם לא עלו נושאים לשיפור, רשימה כללית
       var seen = {};
-      var resList = [];
+      var content = [];
+      var services = [];
       finds.forEach(function (f) {
-        (QA(f.i, f.v).res || []).forEach(function (r) {
-          if (!seen[r.href] && resList.length < 5) { seen[r.href] = true; resList.push(r); }
+        var q = QA(f.i, f.v);
+        (q.res || []).forEach(function (r) {
+          if (!seen[r.href] && content.length < 6) { seen[r.href] = true; content.push(r); }
         });
+        if (q.service && !seen[q.service.href] && services.length < 2) { seen[q.service.href] = true; services.push(q.service); }
       });
-      if (!resList.length) resList = config.generalRes;
+      var cubes = content.concat(services);
+      if (!cubes.length) cubes = config.generalRes;
       var resBox = document.querySelector('[data-res]');
       resBox.textContent = '';
-      resList.forEach(function (r) {
-        var item = el('li');
-        item.appendChild(linkEl(r));
-        resBox.appendChild(item);
-      });
-      document.querySelector('[data-res-block]').hidden = !resList.length;
+      cubes.forEach(function (r) { resBox.appendChild(cube(r)); });
+      document.querySelector('[data-res-block]').hidden = !cubes.length;
 
       var topNames = top.map(function (f) { return QA(f.i, f.v).topic; });
       var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
@@ -1611,31 +1624,74 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     font-weight: 800;
     color: var(--teal-dark);
   }
-  /* להעמקה באתר: תגיות קישור בסוף התוצאה */
-  .qz-res {
+  /* קוביות בסוף התוצאה: סוג התוכן ושם */
+  .qz-cubes {
     list-style: none;
-    margin: 0.3rem 0 0;
+    margin: 2rem 0 0;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.8rem;
   }
-  .qz-res :global(li) {
+  .qz-cubes :global(.qz-cube) {
     margin: 0;
+    display: flex;
   }
-  .qz-res :global(a) {
-    display: inline-block;
-    padding: 0.35rem 0.8rem;
-    border-radius: 999px;
-    background: var(--mist);
+  .qz-cubes :global(.qz-cube__in) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
     border: 1px solid var(--line);
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--teal-dark);
+    background: var(--white);
+    color: var(--navy);
     text-decoration: none;
+    box-shadow: 0 0.4rem 1rem rgb(11 26 51 / 0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .qz-res :global(a:hover) {
+  .qz-cubes :global(a.qz-cube__in:hover) {
     border-color: var(--teal);
+    box-shadow: 0 0.6rem 1.4rem rgb(11 26 51 / 0.1);
+  }
+  .qz-cubes :global(.qz-cube__type) {
+    align-self: flex-start;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+    background: rgb(25 154 181 / 0.1);
+  }
+  .qz-cubes :global(.qz-cube__title) {
+    font-weight: 800;
+    line-height: 1.4;
+  }
+  .qz-cubes :global(.qz-cube--soon .qz-cube__in) {
+    background: var(--mist);
+    color: rgb(11 26 51 / 0.65);
+  }
+  .qz-cubes :global(.qz-cube__soon) {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+  /* קישור לפגישת ייעוץ בראש התוצאה ובסופה */
+  .qz-session-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .qz-actions__session {
+    align-self: center;
+    font-weight: 800;
+    color: var(--teal-dark);
   }
 
   /* עוד עצות בתוך כרטיס של תחום: הנושא והעצה להתחלה */
