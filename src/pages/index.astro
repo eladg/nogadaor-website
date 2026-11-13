@@ -18,7 +18,7 @@ import Icon from '../components/Icon.astro';
 import { contact } from '../data/contact';
 import { services, situations, steps } from '../data/services';
 import { homeReviews } from '../data/reviews';
-import WaysGrid from '../components/WaysGrid.astro';
+import { ways } from '../data/principles';
 import ContentCover from '../components/ContentCover.astro';
 import Star from '../components/Star.astro';
 import { quizYear, quizAreas } from '../data/quiz';
@@ -26,7 +26,8 @@ import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח: התמונה החלופית שנוגה הכינה (2026-11-08, בלי השקעים), עם מסך המקרן מוכהה לכחול כהה.
 // המקור: "חומרים גרפיים לאתר/תמונות לפתיח הבית 2026-11-07/noga-replacement-2026-11-08.webp"
 // stage-noga-2 (2026-11-08): המסך הכחול נבנה מחדש סביב היד, המיקרופון והשרוול (היה קצה שבור), והפינה ליד השיער נוקתה
-import heroPhoto from '../assets/hero/stage-noga-2.jpg';
+// עדכון (נוגה, 2026-11-13): תמונת קאבר חדשה שנוגה הכינה. נוגה בצד ימין, והצד השמאלי כחול כהה, לטקסט.
+import heroPhoto from '../assets/hero/noga-cover-2026-11-13.webp';
 // "נעים להכיר": אחת משתי התמונות שנוגה שלחה (2026-11-07). השנייה (על הספסל) כבר בעמוד צור קשר.
 import introPhoto from '../assets/hero/headshot.webp';
 // תמונות אווירה (AI) ששלחה נוגה. הדמות המצוירת: רק במקומות מתאימים ובאזורים בהירים (רקע לבן).
@@ -69,13 +70,16 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
 >
   <!-- 1. פתיח (נוגה, 2026-11-07): התמונה מימין, כך שהפנים פונות אל הטקסט; רואים גם את הדוכן.
        הכותרת ממורכזת, והפתיח לא תופס את כל המסך הראשון. "מקדמים יחד" עבר לסרט הנע שמתחת. -->
+  <!-- עדכון (נוגה, 2026-11-13, אחרי השיחה עם המעצבת): תמונת הקאבר שנוגה הכינה, נוגה בצד ימין והטקסט על הכחול משמאל.
+       בלי כפתורים לשירותים ולשיחת היכרות (שיחת ההיכרות עברה לכפתור הקבוע בתפריט). במקומם הנעה לשאלון,
+       עם משפט שמסביר למה למלא אותו, וכפתור שגולל למטה אל השאלון. המשפטים הם הצעה שלי, ממתינים לאישור. -->
   <section class="h-hero">
     <div class="h-hero__media">
       <Image
         src={heroPhoto}
-        alt="נוגה דיין אור מרצה על הבמה בכנס עסקים במקסימום"
-        widths={[640, 1024, 1600, 2000]}
-        sizes="(min-width: 52rem) 58vw, 100vw"
+        alt="נוגה דיין אור מחייכת, בחולצה שחורה על רקע כחול"
+        widths={[640, 1024, 1672]}
+        sizes="100vw"
         loading="eager"
         fetchpriority="high"
       />
@@ -84,9 +88,10 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <div class="h-hero__text">
         <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
-        <div class="h-hero__actions">
-          <a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-          <a class="btn btn--ghost" href="/services/">לשירותים</a>
+        <div class="h-hero__quiz">
+          <p class="h-hero__punch">כמה הכנסות כבר מחכות בתוך העסק שלך?</p>
+          <p class="h-hero__why">שאלון קצר על העסק שלך, ובסופו תמונה ברורה של ההזדמנויות להגדלת הכנסות ומאיפה כדאי להתחיל.</p>
+          <a class="btn h-hero__btn" href="#quiz">לבדיקת העסק שלך <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </div>
@@ -125,6 +130,27 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     <QuoteMarquee reviews={homeReviews} />
   </section>
 
+  <!-- 3ב. האתגרים (לשעבר "מתקדמים עם נוגה"), אחרי "לקוחות משתפים" ולפני "נעים להכיר" (נוגה, 2026-11-13).
+       רשימה ממורכזת עם הכוכב כתבליט, והנוסח הוא האתגר כפי שבעל העסק מכיר אותו. הכותרת הצעה שלי, ממתינה לאישור. -->
+  <section class="section section--deep atmo h-when" style={linesStyle} aria-labelledby="when-title">
+    <div class="container">
+      <div class="h-head reveal">
+        <h2 id="when-title" class="h-title h-title--split">אתגרים שאיתם עסקים <span class="hl">מגיעים לליווי</span></h2>
+      </div>
+      <ul class="challenges">
+        {
+          situations.map((m) => (
+            <li class="challenge reveal">
+              <Star size={18} class="challenge__star" />
+              <span>{m.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="h-when__cta reveal"><a class="btn" href={contact.whatsapp} target="_blank" rel="noopener">לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+    </div>
+  </section>
+
   <!-- 3א. נעים להכיר: מיד אחרי "לקוחות משתפים" (נוגה, 2026-11-08). אזור בהיר, התמונה קטנה יותר כרקע בצד (נוגה מעדיפה תמונה כרקע ולא במסגרת,
        ו"לא באה לדגמן"). בלי 9.4 במספרים, בלי סוגריים ל-MBA, ובלי משפט המספרים שחזר על עצמו. -->
   <section class="h-meet">
@@ -134,10 +160,9 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     <div class="container h-meet__inner">
       <div class="h-meet__text reveal">
         <h2 class="h-meet__hi">נעים להכיר, <span class="hl--mark">נוגה דיין אור</span></h2>
+        <!-- נוגה (2026-11-13): בלי טקסט צבעוני באמצע, והמשפט על "היהלום של כל עסק" נמחק -->
         <p class="h-meet__voice">חיה ונושמת פיתוח עסקים והגדלת הכנסות! אוהבת להיכנס לעסק, להכיר את האנשים, להבין איך דברים עובדים, לגלות הזדמנויות עסקיות, לחבר בין רעיונות, לעשות סדר ובעיקר לגרום לדברים טובים לקרות.</p>
-        <p class="h-meet__cred">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, בעלת תואר שני במנהל עסקים.</p>
-        <!-- מתוך המילים של נוגה (2026-11-08), בלי גוף ראשון ובלי שפה "קואצ'רית". הניסוח שלי, ממתין לאישור. -->
-        <p class="h-meet__belief">כל עסק וכל בעל עסק הם מיוחדים, ולכן ייעוץ טוב לא מחלק מתכונים להצלחה. הוא מלטש את היהלום של כל עסק, כדי שיבלוט, יתחבר ללקוחות עם הצעות מדויקות ויפרוץ תקרות של הכנסות וצמיחה.</p>
+        <p class="h-meet__voice">יועצת עסקית וארגונית להגדלת הכנסות ושיפור רווחיות, בעלת תואר שני במנהל עסקים.</p>
         <ul class="stats">
           {
             stats.map((s) => (
@@ -160,7 +185,18 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <div class="h-head reveal">
         <h2 class="h-title h-title--split">הצלחה עסקית בדרך שלך{' '}<span class="hl">עם נוסחה מיוחדת משלך</span></h2>
       </div>
-      <WaysGrid />
+      <!-- נוגה (2026-11-13): בבית רק הכותרות, בלי הסברים ובלי אייקונים. העקרונות המלאים באודות -->
+      <ol class="ways-lite">
+        {
+          ways.map((w, i) => (
+            <li class="ways-lite__item reveal">
+              <span class="ways-lite__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="ways-lite__title">{w.short}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="more more--dark center reveal"><a href="/about/#principles">לעקרונות הליווי המלאים ←</a></p>
     </div>
   </section>
 
@@ -175,28 +211,6 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <!-- משפט הסיום של נוגה (2026-11-08) -->
       <p class="h-goal reveal">תובנות, החלטות ופעולות פשוטות וישימות שמקדמות את העסק בכל פגישה.</p>
       <p class="more center"><a href="/services/#process">לפירוט תהליך הליווי ←</a></p>
-    </div>
-  </section>
-
-  <!-- 6. מתי נכון לבוא לייעוץ עסקי: 6 מצבים בריבועים בולטים (נוגה, 2026-11-07) -->
-  <section class="section section--deep atmo h-when" style={linesStyle}>
-    <div class="container">
-      <div class="h-head reveal">
-        <!-- הכותרת של נוגה (2026-11-08): הסיבות להתקדם דווקא עם נוגה, לא סיבות כלליות לייעוץ. הכרטיסים משלימים את המשפט ("כש...") -->
-        <h2 class="h-title">מתקדמים <span class="hl">עם נוגה</span></h2>
-      </div>
-      <ul class="moments">
-        {
-          situations.map((m, i) => (
-            <li class="moment reveal" style={`transition-delay: ${(i % 3) * 0.1}s`}>
-              <span class="moment__icon" aria-hidden="true">
-                <Icon name={m.icon} size={28} />
-              </span>
-              <p>{m.text}</p>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </section>
 
@@ -217,12 +231,18 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   <!-- 7. השאלון: הדבר הכי מרשים באתר, כי הוא מביא לידים (נוגה, 2026-11-08). אזור כהה בכחול של האתר עם זוהר טורקיז וזהב,
        כרטיס עם מסגרת זוהרת, הדמות (בלי רקע) ממורכזת מעל הכותרת, וכפתור זהב גדול. בלי מספר שאלות (עשוי להשתנות).
        מספר המסלולים נלקח מהנתונים. הנוסח מתאר את מה שהשאלון באמת נותן: פרופיל, חוזקות ושלושה מיקודים. הצעה שלי, ממתינה לאישור. -->
-  <section class="h-quiz" aria-labelledby="quiz-title">
+  <section id="quiz" class="h-quiz" aria-labelledby="quiz-title">
     <div class="container">
       <div class="h-quiz__card">
         <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
         <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">מה המיקוד הנכון{' '}<span class="hl">לעסק שלך ב-{quizYear}?</span></h2>
-        <p class="h-quiz__text reveal">שאלון קצר שמסתכל על העסק מלמעלה ומראה איפה הוא חזק, ואילו אפשרויות להגדלת הכנסות כבר נמצאות בו.</p>
+        <p class="h-quiz__text reveal">שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
+        <!-- מה מקבלים, בבולטים בולטים (נוגה, 2026-11-13: "לתת יותר דגש למה מקבלים"). אותם שלושה דברים כמו בפתיח של השאלון -->
+        <ul class="h-quiz__gets reveal">
+          <li><Star size={18} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
+          <li><Star size={18} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
+          <li><Star size={18} /> מה כבר עובד אצלך ושווה לחזק</li>
+        </ul>
         <a class="h-quiz__btn reveal" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
       </div>
     </div>
@@ -277,110 +297,115 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
 </BaseLayout>
 
 <style>
-  /* ---------- 1. פתיח: התמונה בצד ימין (נוגה פונה אל הטקסט), הטקסט ממורכז משמאל ---------- */
+  /* ---------- 1. פתיח (נוגה, 2026-11-13): תמונת הקאבר, נוגה בצד ימין והטקסט על הכחול משמאל ---------- */
   .h-hero {
     position: relative;
     overflow: hidden;
-    /* הכחול הכהה של האתר (לא שחור, נוגה 2026-11-08), עם הילת טורקיז עדינה מאחורי הטקסט */
-    background:
-      radial-gradient(36rem 22rem at 30% 45%, rgb(25 154 181 / 0.16), transparent 70%),
-      var(--navy);
+    background: #01112b;
     color: var(--on-dark);
   }
+  /* טלפון: התמונה למעלה (נוגה והכחול סביבה), והטקסט מתחתיה */
   .h-hero__media {
     position: relative;
-    /* ההאדר השקוף יושב מעל החלק העליון של התמונה */
-    height: calc(min(64vw, 19rem) + var(--header-h));
+    height: calc(min(78vw, 26rem) + var(--header-h));
   }
-  .h-hero__media img {
+  .h-hero__media :global(img) {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* בנייד: נוגה והדוכן */
-    object-position: 78% 30%;
+    object-position: 82% 20%;
   }
   .h-hero__media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(11 26 51 / 0.75) 0%, rgb(11 26 51 / 0.05) 32%, rgb(11 26 51 / 0.05) 55%, var(--navy) 100%);
+    background: linear-gradient(180deg, rgb(1 17 43 / 0.7) 0%, rgb(1 17 43 / 0) 22%, rgb(1 17 43 / 0) 70%, #01112b 100%);
   }
   .h-hero__inner {
     position: relative;
-    padding-block: 0.25rem 2.25rem;
+    padding-block: 0.25rem 2.5rem;
   }
   .h-hero__text {
     text-align: center;
   }
-  .h-hero__kicker {
-    margin: 0 0 1rem;
-    font-weight: 800;
-    color: var(--gold-light);
-  }
   .h-hero__title {
-    margin: 0 0 1.15rem;
+    margin: 0 0 1rem;
     color: var(--white);
-    font-size: clamp(1.8rem, 3.8vw, 2.7rem);
+    font-size: clamp(1.8rem, 3.3vw, 2.6rem);
     font-weight: 900;
-    line-height: 1.28;
+    line-height: 1.25;
   }
   .h-hero__title .hl {
     display: block;
-    text-shadow: none;
   }
   .h-hero__lead {
-    max-width: 29rem;
-    margin: 0 auto 1.9rem;
-    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    max-width: 30rem;
+    margin: 0 auto 1.6rem;
+    font-size: clamp(1.02rem, 1.7vw, 1.15rem);
     line-height: 1.7;
+    color: var(--on-dark-soft);
   }
-  .h-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.6rem;
+  /* ההנעה לשאלון: משפט מחץ, משפט תועלת וכפתור שגולל אל השאלון */
+  .h-hero__quiz {
+    max-width: 31rem;
+    margin-inline: auto;
+    padding-top: 1.4rem;
+    border-top: 1px solid rgb(252 220 109 / 0.3);
   }
-  /* כפתורים קטנים יותר (נוגה, 2026-11-08) */
-  .h-hero__actions .btn {
-    padding: 0.6em 1.35em;
-    font-size: 0.95rem;
+  .h-hero__punch {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    font-weight: 800;
+    line-height: 1.35;
+    color: var(--gold-light);
+  }
+  .h-hero__why {
+    margin: 0 0 1.25rem;
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: var(--on-dark);
+  }
+  .h-hero__btn {
+    padding: 0.75em 1.9em;
+    font-size: 1.05rem;
+    font-weight: 800;
+    box-shadow: 0 14px 34px -14px rgb(252 220 109 / 0.65);
   }
   @media (min-width: 52rem) {
     .h-hero {
       display: flex;
       align-items: center;
-      min-height: calc(clamp(24rem, 54vh, 30rem) + var(--header-h));
+      min-height: calc(clamp(27rem, 62vh, 36rem) + var(--header-h));
       padding-top: var(--header-h);
     }
-    /* התמונה בצד ימין, נעלמת לכיוון הטקסט שמשמאל. הוזזה ימינה (נוגה, 2026-11-08) כדי שהכותרת תהיה קרובה למרכז:
-       התמונה נדחפת מעט מעבר לקצה הימני, והרווח שנפתח משמאל שלה נבלע במעבר לכחול. */
+    /* התמונה על כל הרוחב. נוגה בצד ימין, והצד השמאלי כחול כהה אחיד שעליו יושב הטקסט */
     .h-hero__media {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      width: 52%;
+      inset: 0;
       height: auto;
     }
-    .h-hero__media img {
-      object-position: right -6rem top 32%;
+    .h-hero__media :global(img) {
+      object-position: right 25%;
     }
     .h-hero__media::after {
       background:
-        linear-gradient(to right, var(--navy) 0%, rgb(11 26 51 / 0.75) 16%, rgb(11 26 51 / 0) 45%),
-        linear-gradient(to bottom, rgb(11 26 51 / 0.82) 0%, rgb(11 26 51 / 0.55) 12%, rgb(11 26 51 / 0) 38%),
-        linear-gradient(0deg, rgb(11 26 51 / 0.45) 0%, rgb(11 26 51 / 0) 25%);
+        linear-gradient(to bottom, rgb(1 17 43 / 0.7) 0%, rgb(1 17 43 / 0) 20%),
+        linear-gradient(to right, rgb(1 17 43 / 0.55) 0%, rgb(1 17 43 / 0) 45%);
     }
-    /* מרווח שווה מעל ומתחת, כך שהטקסט ממורכז גם לגובה (נוגה, 2026-11-08) */
     .h-hero__inner {
-      padding-block: 3.75rem;
+      padding-block: 3rem;
     }
-    /* הטקסט במרכז העמוד. מסך המקרן בתמונה הוכהה, ולכן הרקע מאחורי הטקסט אחיד */
+    /* הטקסט בצד שמאל (מעל הכחול), נוגה בימין */
     .h-hero__text {
-      max-width: min(34rem, 46vw);
-      margin-inline: auto;
-      transform: translateX(-3%);
-      text-shadow: 0 2px 18px rgb(11 26 51 / 0.6);
+      max-width: min(38rem, 50vw);
+      margin-right: auto;
+      margin-left: 0;
+    }
+  }
+  @media (min-width: 90rem) {
+    .h-hero__text {
+      margin-left: 4%;
     }
   }
 
@@ -474,6 +499,15 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   .h-reviews .more {
     margin-top: 2rem;
   }
+  /* רקע עדין ומושך מאחורי ההמלצות: הילות רכות בטורקיז ובזהב ורשת נקודות דקה (נוגה, 2026-11-13) */
+  .h-reviews {
+    position: relative;
+    background:
+      radial-gradient(36rem 18rem at 85% 15%, rgb(12 138 168 / 0.1), transparent 70%),
+      radial-gradient(30rem 16rem at 10% 90%, rgb(252 220 109 / 0.14), transparent 70%),
+      radial-gradient(rgb(11 26 51 / 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px,
+      var(--mist);
+  }
 
   /* ---------- 5. תהליך ---------- */
   .h-process {
@@ -490,96 +524,102 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     color: var(--teal-dark);
   }
 
-  /* ---------- 6. מתי נכון לבוא לייעוץ עסקי: ריבועים בולטים ---------- */
-  .moments {
+  /* ---------- 3ב. האתגרים: רשימה ממורכזת עם כוכב (נוגה, 2026-11-13) ---------- */
+  .challenges {
     list-style: none;
-    margin: 0;
+    max-width: 44rem;
+    margin: 0 auto;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.1rem;
+    gap: 0.25rem;
   }
-  @media (max-width: 62rem) {
-    .moments {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  /* טלפון: קוביה אחת בשורה, האייקון קטן ומימין לטקסט (נוגה, 2026-11-12) */
-  @media (max-width: 36rem) {
-    .moments {
-      grid-template-columns: 1fr;
-      gap: 0.7rem;
-    }
-    .moments .moment {
-      flex-direction: row;
-      align-items: center;
-      gap: 0.9rem;
-      padding: 0.95rem 1.1rem;
-      border-top: 1px solid rgb(255 255 255 / 0.16);
-      border-inline-start: 3px solid var(--gold-light);
-    }
-    .moments .moment__icon {
-      flex: none;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 0.7rem;
-    }
-    .moment__icon :global(svg) {
-      width: 22px;
-      height: 22px;
-    }
-    .moments .moment p {
-      font-size: 1rem;
-      line-height: 1.45;
-    }
-  }
-  .moment {
+  .challenge {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.7rem;
     margin: 0;
-    padding: 1.6rem 1.5rem;
-    border-radius: 1.25rem;
-    background: linear-gradient(160deg, rgb(255 255 255 / 0.11), rgb(255 255 255 / 0.03));
-    border: 1px solid rgb(255 255 255 / 0.16);
-    border-top: 3px solid var(--gold-light);
-    transition:
-      opacity 0.7s ease,
-      transform 0.35s ease,
-      border-color 0.3s ease;
-  }
-  .moment:hover {
-    border-color: rgb(252 220 109 / 0.6);
-  }
-  /* הרמה רק במחשב עם עכבר, בטלפון הקוביות לא זזות */
-  @media (hover: hover) {
-    .moment:hover {
-      transform: translateY(-4px);
-    }
-  }
-  .moment__icon {
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .moment p {
-    margin: 0;
-    font-size: clamp(1.08rem, 1.9vw, 1.22rem);
+    padding: 0.85rem 0.5rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+    text-align: center;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
     font-weight: 500;
     line-height: 1.5;
     color: var(--white);
   }
+  .challenge:last-child {
+    border-bottom: 0;
+  }
+  /* בטלפון השורות נשברות, ולכן מיישרים לימין עם הכוכב בתחילת השורה */
+  @media (max-width: 40rem) {
+    .challenge {
+      justify-content: flex-start;
+      text-align: start;
+      padding-inline: 0;
+      font-size: 1.05rem;
+    }
+  }
+  .challenge :global(.challenge__star) {
+    flex: none;
+    position: relative;
+    top: 0.15em;
+  }
+  .h-when__cta {
+    margin: 2rem 0 0;
+    text-align: center;
+  }
 
+  /* ---------- 4. עקרונות הליווי בבית: רק הכותרות, בלי אייקונים (נוגה, 2026-11-13) ---------- */
+  .ways-lite {
+    list-style: none;
+    max-width: 58rem;
+    margin: 0 auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 2rem;
+  }
+  .ways-lite__item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 1.15rem 0;
+    border-top: 1px solid rgb(255 255 255 / 0.16);
+  }
+  .ways-lite__num {
+    flex: none;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--gold-light);
+    font-variant-numeric: tabular-nums;
+  }
+  .ways-lite__title {
+    font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--white);
+  }
+  @media (max-width: 52rem) {
+    .ways-lite {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 34rem) {
+    .ways-lite {
+      grid-template-columns: 1fr;
+    }
+    .ways-lite__item {
+      padding: 0.85rem 0;
+    }
+  }
 
   /* ---------- 7. שאלון: הדבר הכי מרשים באתר (נוגה, 2026-11-08) ---------- */
   .h-quiz {
+    scroll-margin-top: var(--header-h);
     padding-block: clamp(3rem, 7vw, 5rem);
     background:
-      radial-gradient(40rem 26rem at 15% 20%, rgb(25 154 181 / 0.32), transparent 70%),
+      radial-gradient(40rem 26rem at 15% 20%, rgb(12 138 168 / 0.32), transparent 70%),
       radial-gradient(36rem 24rem at 85% 90%, rgb(252 220 109 / 0.2), transparent 70%),
       var(--navy);
     color: var(--on-dark);
@@ -595,7 +635,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     background: linear-gradient(160deg, rgb(19 40 74 / 0.95), rgb(11 26 51 / 0.95));
     box-shadow:
       0 0 0 1px rgb(252 220 109 / 0.35),
-      0 30px 80px -30px rgb(25 154 181 / 0.55),
+      0 30px 80px -30px rgb(12 138 168 / 0.55),
       0 0 60px -20px rgb(252 220 109 / 0.35);
   }
   .h-quiz :global(.h-quiz__toon) {
@@ -624,9 +664,34 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     font-weight: 900;
     line-height: 1.2;
   }
+  .h-quiz__gets {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 2rem;
+    padding: 1.1rem 1.4rem;
+    border-radius: 1.1rem;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(252 220 109 / 0.25);
+    text-align: start;
+  }
+  .h-quiz__gets li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    font-size: clamp(1.05rem, 1.9vw, 1.2rem);
+    font-weight: 700;
+    color: var(--white);
+  }
+  .h-quiz__gets :global(svg) {
+    flex: none;
+  }
   .h-quiz__text {
     max-width: 36rem;
-    margin: 1rem auto 1.75rem;
+    margin: 1rem auto 1rem;
     font-size: clamp(1.05rem, 1.9vw, 1.2rem);
     line-height: 1.7;
     color: var(--on-dark-soft);
@@ -687,21 +752,23 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     background: var(--white);
     color: var(--navy);
   }
+  /* טלפון (נוגה, 2026-11-13): רואים את קו הכתפיים ולא חותכים בסנטר, והטשטוש רק בתחתית, רחוק מהפנים */
   .h-meet__media {
     position: relative;
-    height: min(56vw, 15rem);
+    height: min(92vw, 24rem);
   }
   .h-meet__media :global(img) {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 28%;
+    object-position: 50% 15%;
   }
   .h-meet__media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgb(255 255 255 / 0) 55%, var(--white) 100%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0) 82%, var(--white) 100%);
   }
   .h-meet__inner {
     position: relative;
@@ -719,41 +786,53 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     line-height: 1.7;
     color: var(--navy);
   }
-  .h-meet__cred {
-    margin: 0 0 0.75rem;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
-  .h-meet__belief {
-    margin: 0;
-    line-height: 1.75;
-    color: #33445c;
-  }
+  /* המספרים בריבועים כחולים כהים, כמו האזורים הכהים באתר (נוגה, 2026-11-13) */
   .stats {
     list-style: none;
-    margin: 1.5rem 0 0.5rem;
-    padding: 1.25rem 0 0;
+    margin: 1.75rem 0 0.5rem;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    border-top: 1px solid var(--line);
+    gap: 0.85rem;
   }
   .stat {
     margin: 0;
+    padding: 1.15rem 0.9rem 1.05rem;
+    border-radius: 1.1rem;
+    text-align: center;
+    background:
+      radial-gradient(10rem 6rem at 100% 0, rgb(12 138 168 / 0.38), transparent 70%),
+      linear-gradient(165deg, var(--navy-soft), var(--navy) 75%);
+    box-shadow: 0 18px 36px -22px rgb(11 26 51 / 0.65);
   }
   .stat__num {
     display: block;
-    font-size: clamp(2rem, 4.5vw, 2.6rem);
+    font-size: clamp(2.1rem, 4.5vw, 2.8rem);
     font-weight: 900;
     line-height: 1;
-    color: var(--teal-dark);
+    font-variant-numeric: tabular-nums;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .stat__label {
     display: block;
-    margin-top: 0.35rem;
+    margin-top: 0.45rem;
     font-size: 0.9rem;
     line-height: 1.35;
-    color: #4a5b73;
+    color: var(--on-dark);
+  }
+  @media (max-width: 30rem) {
+    .stats {
+      gap: 0.5rem;
+    }
+    .stat {
+      padding: 0.95rem 0.5rem 0.9rem;
+    }
+    .stat__label {
+      font-size: 0.8rem;
+    }
   }
   @media (min-width: 52rem) {
     .h-meet {
@@ -768,8 +847,9 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       width: 34%;
       height: auto;
     }
+    /* הטשטוש רק בקצה שליד הטקסט, רחוק מהפנים (נוגה, 2026-11-13) */
     .h-meet__media::after {
-      background: linear-gradient(to left, var(--white) 0%, rgb(255 255 255 / 0.7) 22%, rgb(255 255 255 / 0) 55%);
+      background: linear-gradient(to left, var(--white) 0%, rgb(255 255 255 / 0.45) 9%, rgb(255 255 255 / 0) 24%);
     }
     .h-meet__inner {
       padding-block: 3.25rem;
@@ -916,29 +996,33 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
 
 <script>
   // ספירה עולה של המספרים ב"נעים להכיר". מי שביקש פחות תנועה רואה את המספרים הסופיים.
+  // נוגה (2026-11-13): הספירה התחילה הרבה לפני שהגיעו לאזור. עכשיו היא מתחילה רק כשכל שורת המספרים
+  // כבר בתוך המסך (ולא בתחתית שלו), ואחרי שהטקסט סביבה הופיע.
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const nums = document.querySelectorAll<HTMLElement>('[data-count]');
-  if (!calm && 'IntersectionObserver' in window) {
+  const row = document.querySelector<HTMLElement>('.stats');
+  const nums = [...document.querySelectorAll<HTMLElement>('[data-count]')];
+  if (row && !calm && 'IntersectionObserver' in window) {
+    nums.forEach((el) => (el.textContent = '0'));
+    const run = () =>
+      nums.forEach((el) => {
+        const target = Number(el.dataset.count);
+        const start = performance.now();
+        const step = (t: number) => {
+          const p = Math.min(1, (t - start) / 1600);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = String(Math.round(target * eased));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          io.unobserve(e.target);
-          const el = e.target as HTMLElement;
-          const target = Number(el.dataset.count);
-          const decimals = String(el.dataset.count).includes('.') ? 1 : 0;
-          const start = performance.now();
-          const step = (t: number) => {
-            const p = Math.min(1, (t - start) / 1400);
-            const eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = (target * eased).toFixed(decimals);
-            if (p < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        });
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        setTimeout(run, 350);
       },
-      { threshold: 0.6 },
+      { threshold: 1, rootMargin: '0px 0px -18% 0px' },
     );
-    nums.forEach((n) => io.observe(n));
+    io.observe(row);
   }
 </script>

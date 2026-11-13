@@ -73,20 +73,21 @@ import { ways, icons } from '../data/principles';
   .wg__item:hover .wg__inner {
     border-color: rgb(252 220 109 / 0.55);
   }
+  /* בלי ריבוע זהב (נוגה, 2026-11-13: הזהב תפס את תשומת הלב במקום הכותרת). רק האייקון, בזהב, והכותרת גדולה יותר */
   .wg__icon {
-    display: grid;
-    place-items: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    margin-bottom: 1rem;
-    border-radius: 0.9rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
+    display: block;
+    margin-bottom: 0.8rem;
+    color: var(--gold-light);
+  }
+  .wg__icon :global(svg) {
+    width: 34px;
+    height: 34px;
   }
   .wg__title {
-    margin: 0 0 0.45rem;
+    margin: 0 0 0.5rem;
     color: var(--white);
-    font-size: 1.2rem;
+    font-size: clamp(1.3rem, 2vw, 1.45rem);
+    font-weight: 900;
   }
   .wg__text {
     margin: 0;
@@ -144,14 +145,15 @@ import { ways, icons } from '../data/principles';
       border: 1px solid rgb(255 255 255 / 0.14);
     }
     .wg__icon {
-      width: 2.75rem;
-      height: 2.75rem;
-      margin-bottom: 0.7rem;
-      border-radius: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .wg__icon :global(svg) {
+      width: 30px;
+      height: 30px;
     }
     .wg__title {
       margin: 0;
-      font-size: 1.02rem;
+      font-size: 1.1rem;
       line-height: 1.35;
     }
     .wg__text {

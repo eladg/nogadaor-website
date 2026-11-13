@@ -10,8 +10,8 @@
 
 :root {
   /* צבעי מותג */
-  --teal: #199ab5; /* הכחול של נוגה (מהקטלוג, 2026-11-05; קרוב ללוגו #1c9d9f) – לכותרות, הדגשות ורכיבים גדולים. על לבן חלש לטקסט קטן (3.3:1) */
-  --teal-dark: #13778c; /* אותו כחול, כהה יותר – לטקסט קטן וקישורים (5.2:1 על לבן, עובר AA). החליף את הירוק #0f7478 */
+  --teal: #0c8aa8; /* טורקיז עמוק וחזק יותר (נוגה, 2026-11-13, אחרי השיחה עם המעצבת; היה #199ab5) – לכותרות, הדגשות ורכיבים גדולים */
+  --teal-dark: #08677f; /* אותו כחול, כהה יותר – לטקסט קטן וקישורים (היה #13778c) */
   --gold-light: #fcdc6d; /* זהב מהלוגו – תחילת המעבר */
   --gold-dark: #d19a4a; /* זהב מהלוגו – סוף המעבר */
   --gold-gradient: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
@@ -74,6 +74,22 @@ h2 {
 }
 h3 {
   font-size: 1.25rem;
+}
+
+/* כותרות במעבר צבע (נוגה, 2026-11-13, אחרי השיחה עם המעצבת).
+   על רקע לבן: כחול עמוק שעובר לטורקיז. על רקע כהה: לבן שעובר בעדינות לזהב.
+   אין צורך לסמן איפה הרקע כהה: המעבר מתחיל מצבע הכותרת עצמה (currentColor). כותרת כהה (כחול) מסתיימת בטורקיז,
+   וכותרת בהירה (לבן, כפי שכבר מוגדר בכל אזור כהה) מסתיימת בזהב בהיר. הגוון והבהירות של הסוף מחושבים מהבהירות של הצבע.
+   דפדפן שלא מכיר את החישוב מציג את הכותרת בצבע רגיל.
+   כותרת שלא צריכה מעבר: class="no-grad". */
+@supports (color: oklch(from red l c h)) {
+  :where(h1, h2):not(.no-grad) {
+    --h-end: oklch(from currentColor calc(l * 0.42 + 0.44) calc(0.13 - l * 0.02) calc(250 - l * 160));
+    background-image: linear-gradient(165deg, currentColor 38%, var(--h-end) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 p {
@@ -179,7 +195,7 @@ a {
 .section--deep {
   color: var(--on-dark);
   background:
-    radial-gradient(40rem 24rem at 100% 0, rgb(25 154 181 / 0.22), transparent 70%),
+    radial-gradient(40rem 24rem at 100% 0, rgb(12 138 168 / 0.22), transparent 70%),
     radial-gradient(34rem 22rem at 0 100%, rgb(209 154 74 / 0.14), transparent 72%),
     var(--navy-deep);
 }
@@ -303,21 +319,11 @@ a {
 /* הדגשה על רקע בהיר: טורקיז, עם קו זהב מעוגל שנמתח מתחת למילים כשמגיעים לאזור
    (בהשראת חץ הזהב שבמיתוג של נוגה). נוגה לא אהבה "מרקר" (2026-11-05).
    בשורה ששוברת לשתיים, כל שורה מקבלת קו משלה. */
+/* עדכון (נוגה, 2026-11-13): בלי קו זהב מתחת לכותרות. בתוך כותרת המילים מקבלות את מעבר הצבע של הכותרת,
+   ומחוץ לכותרת הן טורקיז מודגש. */
 .hl--mark {
   color: var(--teal-dark);
   font-weight: 800;
-  padding-bottom: 0.14em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 55 3, 130 2, 197 8' fill='none' stroke='%23d19a4a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  background-size: 100% 0.36em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  transition: background-size 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s;
-}
-/* לפני שהאזור מופיע הקו עוד לא מצויר, והוא נמתח מימין לשמאל */
-.js .reveal:not(.is-in) .hl--mark {
-  background-size: 0% 0.36em;
 }
 
 /* הופעה עדינה בגלילה. הסקריפט ב-BaseLayout מוסיף את המחלקה is-in.
@@ -350,11 +356,6 @@ a {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .hl--mark,
-  .js .reveal:not(.is-in) .hl--mark {
-    transition: none;
-    background-size: 100% 0.36em;
   }
 }
 

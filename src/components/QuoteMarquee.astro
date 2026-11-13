@@ -120,7 +120,8 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     display: flex;
     width: max-content;
     margin: 0;
-    padding: 0.25rem 0;
+    /* מקום לצל של הכרטיסים, כדי שלא ייחתך */
+    padding: 0.9rem 0 2.25rem;
     list-style: none;
     animation: qm-scroll var(--dur, 90s) linear infinite;
   }
@@ -146,9 +147,13 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     margin: 0 0 0 1rem;
     padding: 1rem 1.1rem 0.9rem;
     background: var(--white);
-    border: 1px solid var(--line);
+    border: 1px solid rgb(214 229 234 / 0.7);
     border-radius: 1.1rem;
-    box-shadow: 0 12px 28px -22px rgb(11 26 51 / 0.45);
+    /* צל רך ועמוק יותר (נוגה, 2026-11-13) */
+    box-shadow:
+      0 1px 2px rgb(11 26 51 / 0.06),
+      0 10px 24px -10px rgb(11 26 51 / 0.18),
+      0 26px 46px -28px rgb(8 103 127 / 0.35);
   }
   /* גרש זהב מבריק (נוגה, 2026-11-08: לא חום-כתום) */
   .qm__mark {
@@ -183,13 +188,17 @@ const rows = rowCount === 2 ? [reviews.filter((_, i) => i % 2 === 0), reviews.fi
     border: 0;
     background: none;
     font: inherit;
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: var(--teal-dark);
+    font-size: 0.86rem;
+    /* לא צבעוני ולא מודגש (נוגה, 2026-11-13) */
+    font-weight: 400;
+    color: #5b6b82;
+    text-decoration: underline;
+    text-decoration-color: rgb(91 107 130 / 0.4);
+    text-underline-offset: 0.2em;
     cursor: pointer;
   }
   .qm__more:hover {
-    text-decoration: underline;
+    color: var(--navy);
   }
   .qm__more.is-empty {
     visibility: hidden;

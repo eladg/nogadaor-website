@@ -163,7 +163,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
   </section>
 
   <!-- 4. עקרונות הליווי שלי: שש קוביות על רקע כחול. בגוף יחיד: זה האתר של נוגה -->
-  <section class="a-ways atmo" style={stairsStyle}>
+  <section id="principles" class="a-ways atmo" style={stairsStyle}>
     <div class="container">
       <!-- TODO: הכותרת היא הצעה. נוגה ביקשה כותרת בגוף יחיד שמתאימה לתוכן הקוביות -->
       <h2 class="a-ways__title reveal">עקרונות <span class="hl">הליווי שלי</span></h2>
@@ -474,12 +474,9 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
 
   /* ---------- 4. מה מניע אותי ---------- */
   /* הכותרת מעל והטקסט לרוחב (נוגה לא אהבה כותרת בצד עם חצי עמוד ריק) */
-  .a-drive {
-    text-align: center;
-  }
+  /* מיושר לימין (נוגה, 2026-11-13: טקסט ארוך לא ממרכזים) */
   .a-drive__text {
     max-width: 58rem;
-    margin-inline: auto;
     font-size: 1.2rem;
     line-height: 1.9;
   }
@@ -512,7 +509,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
     color: var(--on-dark);
     text-align: center;
     background:
-      radial-gradient(40rem 22rem at 50% 0, rgb(25 154 181 / 0.25), transparent 70%),
+      radial-gradient(40rem 22rem at 50% 0, rgb(12 138 168 / 0.25), transparent 70%),
       radial-gradient(30rem 18rem at 50% 100%, rgb(209 154 74 / 0.16), transparent 72%),
       var(--navy-deep);
   }
@@ -611,7 +608,7 @@ const schema = [{ '@type': 'AboutPage', name: 'אודות נוגה דיין או
     padding-block: clamp(2.5rem, 6vw, 4rem);
     color: var(--on-dark);
     background:
-      radial-gradient(40rem 24rem at 100% 0, rgb(25 154 181 / 0.22), transparent 70%),
+      radial-gradient(40rem 24rem at 100% 0, rgb(12 138 168 / 0.22), transparent 70%),
       radial-gradient(34rem 22rem at 0 100%, rgb(209 154 74 / 0.14), transparent 72%),
       linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 45%);
     border-top: 1px solid rgb(252 220 109 / 0.18); /* קו זהב עדין שמפריד מהפתיח */
