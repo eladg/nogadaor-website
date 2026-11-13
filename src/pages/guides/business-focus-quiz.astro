@@ -13,6 +13,8 @@ import Star from '../../components/Star.astro';
 import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile, quizSessionLink } from '../../data/quiz';
 import type { QuizLink } from '../../data/quiz';
 import { contact } from '../../data/contact';
+import ContentCover from '../../components/ContentCover.astro';
+import type { CoverMotif } from '../../components/ContentCover.astro';
 
 import { getCollection } from 'astro:content';
 // מדריכים: מדריך פתוח מקבל קישור. מדריך "בקרוב" מוצג כקובייה בלי קישור, עם התג "בקרוב" (נוגה, 2026-11-13).
@@ -38,6 +40,22 @@ const coverFor = (href: string) => {
   return null;
 };
 const asCube = (l: QuizLink) => ({ ...l, soon: soonGuides.has(l.href), img: coverFor(l.href) });
+// לכל קובייה תמונה (נוגה, 2026-11-13: "צריך שלהכל יהיה תמונות"). למי שאין קובץ כריכה (שירותים, ומדריך חדש שעוד לא יוצא)
+// מציירים את הכריכה באותו סגנון של כל הכריכות באתר. מדריך: הכותרת והחפץ מה-frontmatter שלו. שירות: הכותרת והחפץ כאן.
+const serviceCovers: Record<string, { title: string; motif: CoverMotif }> = {
+  '/services/business-consulting/': { title: 'אסטרטגיה|*ושיווק*', motif: 'target' },
+  '/services/financial/': { title: 'ליווי|*פיננסי*', motif: 'growth' },
+  '/services/ai-automation/': { title: 'ייעול תהליכים|*עם AI*', motif: 'ai' },
+  '/services/organizational-consulting/': { title: 'ייעוץ|*ארגוני*', motif: 'compass' },
+  '/services/consulting-session/': { title: 'פגישת|*ייעוץ*', motif: 'chat' },
+  '/services/consulting-session/#digital': { title: 'נוכחות שיווקית|*בדיגיטל*', motif: 'screen' },
+};
+const drawnCovers = new Map<string, { title: string; motif: CoverMotif; star?: 'start' | 'end' | false }>();
+for (const [href, c] of Object.entries(serviceCovers)) drawnCovers.set(href, c);
+for (const g of allGuides) {
+  const href = `/guides/${g.id}/`;
+  if (!coverFor(href) && g.data.coverMotif) drawnCovers.set(href, { title: g.data.coverTitle ?? g.data.title, motif: g.data.coverMotif as CoverMotif, star: g.data.coverStar });
+}
 // המסך הראשון הוא שאלת הפתיחה ("מי עובד בעסק?"): נספרת במספור, לא בציון.
 // בשאלה שיש לה נוסח לעסק עם עובדים (team.text או team.options) מוצגים שני נוסחים, ו-JavaScript מציג את המתאים
 const screens = [
@@ -306,10 +324,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           </ul>
         </section>
 
-        {/* 2. מה שווה לשמור: הנושאים שהתשובה בהם חזקה, בבולטים עם הכוכב של נוגה */}
+        {/* 2. מה שווה לשמור: פסקה אחת שמחברת את כל הנקודות החזקות, מחמיאה ומעודדת (נוגה, 2026-11-13) */}
         <section class="qz-keep" data-keep-block>
-          <h3 class="qz-h3 no-grad">מה שווה לשמור</h3>
-          <ul class="qz-stars" data-wins></ul>
+          <h3 class="qz-h3 no-grad"><Star size={22} /> מה שווה לשמור</h3>
+          <p class="qz-keep__text" data-wins></p>
         </section>
 
         {/* 3. מה לשפר: לכל תחום מתחת ל-70, מהחלש לחזק, שתי עצות מתוך השאלות */}
@@ -318,15 +336,28 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           <div class="qz-areas" data-groups></div>
         </section>
 
-        {/* 4. להעמקה: כריכות המדריכים, ההרצאות וההדרכות לפי הנושאים שעלו, והשירות המתאים */}
+        {/* 4. שיחת היכרות ללא עלות, לפני כל החומרים מהאתר (נוגה, 2026-11-13) */}
+        <section class="qz-talk" aria-labelledby="qz-talk-title">
+          <div>
+            <h3 class="qz-talk__title no-grad" id="qz-talk-title">בואו נדבר</h3>
+            <p class="qz-talk__text">מגיעה לך שיחת היכרות ללא עלות, כדי לעבור יחד על התוצאות ולבחור מאיפה מתחילים.</p>
+          </div>
+          <a class="btn qz-talk__btn" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
+            <Icon name="whatsapp" size={20} /> לשיחת היכרות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+        </section>
+
+        {/* 5. להעמקה: כריכות המדריכים, ההרצאות וההדרכות לפי הנושאים שעלו, והשירות המתאים */}
         <div data-res-block hidden>
           <ul class="qz-cubes" data-res></ul>
         </div>
 
         <div class="qz-actions">
-          <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
-            <Icon name="whatsapp" size={20} /> לשיחה על התוצאות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
+          {/* שיתוף המשוב (נוגה, 2026-11-13): בטלפון תפריט השיתוף של המכשיר, ובמחשב וואטסאפ, או העתקה כשאין וואטסאפ */}
+          <button type="button" class="btn qz-actions__share" data-share>
+            <Icon name="share" size={18} /> לשיתוף התוצאה
+          </button>
+          <span class="qz-actions__copied" data-copied role="status" hidden>הקישור הועתק</span>
           <a class="qz-actions__session" href={quizSessionLink.href}>{quizSessionLink.label} <Icon name="arrow" size={16} /></a>
           <button type="button" class="qz-actions__again" data-again>למילוי מחדש</button>
         </div>
@@ -336,6 +367,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         {quizAreas.map((a) => <template data-tpl-icon={a.id}><Icon name={a.icon as 'target'} size={20} /></template>)}
         <template data-tpl-icon="service"><Icon name="rocket" size={30} /></template>
         <template data-tpl-icon="guide"><Icon name="list" size={30} /></template>
+        {[...drawnCovers].map(([href, c]) => (
+          <template data-cover={href}><ContentCover title={c.title} motif={c.motif} star={c.star} kind="guide" fit /></template>
+        ))}
       </div>
     </div>
   </section>
@@ -498,11 +532,15 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     function levelIdx(p) { return p >= 70 ? 2 : p >= 40 ? 1 : 0; }
     // קובייה: הכריכה המקורית (או אריח צבעוני לשירות), סוג התוכן ושם. מדריך "בקרוב" בלי קישור
     function cube(r) {
-      var li = el('li', 'qz-cube' + (r.soon ? ' qz-cube--soon' : '') + (r.img ? '' : ' qz-cube--tile'));
+      var hasCover = r.img || document.querySelector('template[data-cover="' + r.href + '"]');
+      var li = el('li', 'qz-cube' + (r.soon ? ' qz-cube--soon' : '') + (hasCover ? '' : ' qz-cube--tile'));
       var box = el(r.soon ? 'div' : 'a', 'qz-cube__in');
       if (!r.soon) box.href = r.href;
       var media = el('span', 'qz-cube__media');
-      if (r.img) {
+      var drawn = !r.img && document.querySelector('template[data-cover="' + r.href + '"]');
+      if (drawn) {
+        media.appendChild(drawn.content.firstElementChild.cloneNode(true));
+      } else if (r.img) {
         var img = document.createElement('img');
         img.src = r.img;
         img.alt = '';
@@ -529,6 +567,23 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       return out;
     }
     var targets = []; // הפסים והמספרים שמונפשים כשהתוצאה נפתחת
+    var shareText = '';
+    // שיתוף: תפריט השיתוף של המכשיר, ואם אין, וואטסאפ. אם גם זה נחסם, מעתיקים את הטקסט והקישור
+    document.querySelector('[data-share]').addEventListener('click', function () {
+      var url = location.origin + location.pathname;
+      if (navigator.share) {
+        navigator.share({ title: document.title, text: shareText, url: url }).catch(function () {});
+        return;
+      }
+      var w = window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + url), '_blank', 'noopener');
+      if (!w && navigator.clipboard) {
+        navigator.clipboard.writeText(shareText + ' ' + url).then(function () {
+          var c = document.querySelector('[data-copied]');
+          c.hidden = false;
+          setTimeout(function () { c.hidden = true; }, 2500);
+        });
+      }
+    });
     function finish() {
       var v = values();
       var sums = {};
@@ -565,15 +620,15 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var wins = [];
       v.forEach(function (val, i) { if (!config.questions[i].profile && val !== null && val >= 3) wins.push({ i: i, v: val, impact: config.questions[i].impact }); });
       wins.sort(function (a, b) { return b.v - a.v || b.impact - a.impact || a.i - b.i; });
+      // פסקה אחת שמחברת את הנקודות החזקות, מחמיאה ומעודדת (נוגה, 2026-11-13). טיוטה לאישור
       var winsBox = document.querySelector('[data-wins]');
-      winsBox.textContent = '';
-      wins.slice(0, 6).forEach(function (w) {
-        var item = el('li');
-        item.appendChild(tpl('[data-tpl-star]'));
-        item.appendChild(el('span', null, Q(w.i).topic));
-        winsBox.appendChild(item);
-      });
-      document.querySelector('[data-keep-block]').hidden = !winsBox.children.length;
+      var winNames = wins.slice(0, 6).map(function (w) { return Q(w.i).topic; });
+      winsBox.textContent = !winNames.length ? '' :
+        'כל הכבוד על ' + list(winNames) + '. ' +
+        (winNames.length > 1 ? 'אלה דברים שכבר עובדים אצלך' : 'זה כבר עובד אצלך') +
+        ', וזה ממש לא מובן מאליו. זה מראה על עסק שנבנה בהתמדה, בהחלטות נכונות ובעבודה עקבית. ' +
+        'כדאי לשמור על מה שכבר עובד ולהמשיך לחזק אותו, כי משם הכי קל לצמוח.';
+      document.querySelector('[data-keep-block]').hidden = !winNames.length;
 
       // מה לשפר: כל תחום מתחת ל-70, מהחלש לחזק, ובו 2 העצות החלשות מהשאלות של התחום (נושא + משפט אחד)
       var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
@@ -587,6 +642,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         if (!mine.length) return;
         var art = el('article', 'qz-area');
         art.setAttribute('data-z', levelIdx(o.p));
+        // שם התחום מחוץ לריבוע, והעצות לרוחב (נוגה, 2026-11-13)
         var head = el('header', 'qz-area__head');
         var ic = el('span', 'qz-area__icon');
         ic.appendChild(tpl('[data-tpl-icon="' + o.id + '"]'));
@@ -632,7 +688,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
       var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי' + who + '. ' +
         (topNames.length ? 'מה שיצא לי לשפר: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
-      document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
+      document.querySelectorAll('[data-wa]').forEach(function (a) { a.href = config.whatsapp + '?text=' + encodeURIComponent(text); });
+      shareText = 'מילאתי את שאלון המיקוד העסקי של נוגה דיין אור, ויצא לי ' + overall + '% (' + level.title + '). ' +
+        'שווה לבדוק גם את העסק שלך';
 
       // השורה לגיליון של נוגה: מי עובד בעסק, הציונים, והתשובה (בטקסט) לכל שאלה לפי שם הנושא
       var row = { 'מי עובד בעסק': v[0] !== null ? config.questions[0].options[v[0]] : '', 'ציון כללי': overall };
@@ -1660,82 +1718,62 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     }
   }
 
-  /* 2. מה שווה לשמור: שורה קומפקטית של נושאים עם הכוכב */
+  /* 2. מה שווה לשמור: פסקה אחת מחמיאה ומעודדת (נוגה, 2026-11-13) */
   .qz-h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
     margin: 0 0 0.6rem;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 900;
     color: var(--navy);
   }
   .qz-keep {
     margin-top: 1.6rem;
   }
-  .qz-stars {
-    list-style: none;
+  .qz-keep__text {
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem 1.25rem;
-  }
-  .qz-stars :global(li) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--navy);
-  }
-  .qz-stars :global(svg) {
-    flex: none;
-    width: 16px;
-    height: 16px;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #33445c;
   }
 
-  /* 3. מה לשפר: תחום בכרטיס קטן, שני כרטיסים בשורה, עצות בשורות קצרות */
+  /* 3. מה לשפר: שם התחום מחוץ לריבוע, והעצות לרוחב, אחת מתחת לשנייה (נוגה, 2026-11-13) */
   .qz-improve {
-    margin-top: 1.6rem;
+    margin-top: 1.75rem;
   }
   .qz-areas {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
-    gap: 0.75rem;
+    gap: 1.25rem;
   }
   .qz-areas :global(.qz-area) {
     margin: 0;
-    padding: 0.85rem 1rem 0.9rem;
-    border-radius: 1rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--teal);
-  }
-  .qz-areas :global(.qz-area[data-z='0']) {
-    border-top-color: var(--gold-dark);
   }
   .qz-areas :global(.qz-area__head) {
     display: flex;
     align-items: center;
     gap: 0.45rem;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.5rem;
   }
   .qz-areas :global(.qz-area__icon) {
     flex: none;
     display: inline-flex;
     color: var(--teal-dark);
   }
+  .qz-areas :global(.qz-area[data-z='0'] .qz-area__icon) {
+    color: var(--gold-dark);
+  }
   .qz-areas :global(.qz-area__icon svg) {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
   .qz-areas :global(.qz-area__title) {
     margin: 0;
-    font-size: 0.98rem;
+    font-size: 1.02rem;
     font-weight: 900;
     color: var(--navy);
   }
   .qz-areas :global(.qz-area__pct) {
-    margin-inline-start: auto;
     font-weight: 800;
     font-size: 0.85rem;
     color: #4a5b73;
@@ -1745,19 +1783,68 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 0.5rem;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--teal);
+  }
+  .qz-areas :global(.qz-area[data-z='0'] .qz-area__tips) {
+    border-inline-start-color: var(--gold-dark);
   }
   .qz-areas :global(.qz-area__tips li) {
     margin: 0;
-    font-size: 0.86rem;
-    line-height: 1.5;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
     color: #4a5b73;
   }
+  .qz-areas :global(.qz-area__tips li + li) {
+    border-top: 1px solid var(--line);
+  }
   .qz-areas :global(.qz-area__tips strong) {
-    display: block;
-    font-size: 0.9rem;
+    display: inline;
+    margin-inline-end: 0.35rem;
     color: var(--navy);
+  }
+  .qz-areas :global(.qz-area__tips strong + span::before) {
+    content: '· ';
+    color: var(--teal);
+  }
+
+  /* 4. שיחת היכרות ללא עלות, לפני החומרים */
+  .qz-talk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin-top: 1.75rem;
+    padding: 1.15rem 1.4rem;
+    border-radius: 1.1rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(18rem 10rem at 0 0, rgb(252 220 109 / 0.16), transparent 70%),
+      linear-gradient(120deg, var(--navy-soft), var(--navy));
+    box-shadow: 0 1rem 2rem -1.3rem rgb(11 26 51 / 0.6);
+  }
+  .qz-talk__title {
+    margin: 0 0 0.15rem;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--gold-light);
+  }
+  .qz-talk__text {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--on-dark);
+  }
+  .qz-talk__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex: none;
   }
 
   /* 4. קוביות להעמקה: קטנות יותר, 4 בשורה במחשב */
@@ -1862,10 +1949,22 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     gap: 0.9rem 1.25rem;
     margin-top: 2rem;
   }
-  .qz-actions__wa {
+  .qz-actions__share {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    background: var(--navy);
+    color: var(--white);
+  }
+  .qz-actions__copied {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  /* כריכה מצוירת בתוך הקובייה */
+  .qz-cubes :global(.qz-cube__media .cc) {
+    height: 100%;
+    border-radius: 0;
   }
   .qz-actions__session {
     display: inline-flex;
