@@ -9,6 +9,7 @@
 // השאלות והטקסטים ב-src/data/quiz.ts (טיוטה לאישור נוגה).
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
+import Star from '../../components/Star.astro';
 import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile, quizSessionLink } from '../../data/quiz';
 import type { QuizLink } from '../../data/quiz';
 import { contact } from '../../data/contact';
@@ -21,7 +22,22 @@ const openGuides = new Set(allGuides.filter((g) => !g.data.comingSoon).map((g) =
 const soonGuides = new Set(allGuides.filter((g) => g.data.comingSoon).map((g) => `/guides/${g.id}/`));
 const isGuidePage = (href: string) => /^\/guides\/[^#/]+\/$/.test(href);
 const liveLink = (link?: { href: string; label: string }) => !!link && (!isGuidePage(link.href) || openGuides.has(link.href));
-const asCube = (l: QuizLink) => ({ ...l, soon: soonGuides.has(l.href) });
+// הכריכה המקורית של כל מדריך, מאמר, הרצאה והדרכה (public/images/covers), לקוביות הצבעוניות בסוף התוצאה
+// (נוגה, 2026-11-13). לשירותים אין כריכה, והם מקבלים אריח צבעוני עם אייקון
+import fs from 'node:fs';
+import path from 'node:path';
+const coverFile = (name: string) =>
+  fs.existsSync(path.join(process.cwd(), 'public/images/covers', `${name}.jpg`)) ? `/images/covers/${name}.jpg` : null;
+const coverFor = (href: string) => {
+  const lec = href.match(/^\/guides\/#lecture-(.+)$/);
+  if (lec) return coverFile(`lecture-${lec[1]}`);
+  const guide = href.match(/^\/guides\/([^#/]+)\/$/);
+  if (guide) return coverFile(`guide-${guide[1]}`) ?? coverFile(`article-${guide[1]}`);
+  const tr = href.match(/^\/trainings\/([^/]+)\/$/);
+  if (tr) return coverFile(`training-${tr[1]}`);
+  return null;
+};
+const asCube = (l: QuizLink) => ({ ...l, soon: soonGuides.has(l.href), img: coverFor(l.href) });
 // המסך הראשון הוא שאלת הפתיחה ("מי עובד בעסק?"): נספרת במספור, לא בציון.
 // בשאלה שיש לה נוסח לעסק עם עובדים (team.text או team.options) מוצגים שני נוסחים, ו-JavaScript מציג את המתאים
 const screens = [
@@ -78,6 +94,7 @@ const config = {
     })),
   ],
   levels: quizLevels,
+  icons: Object.fromEntries(quizAreas.map((a) => [a.id, a.icon])),
   whatsapp: contact.whatsapp,
 };
 // תמונת אווירה בפתיח (2026-11-07, קו רציף בכל האתר)
@@ -111,7 +128,18 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     </div>
   </header>
 
-  <section class="section qz-body">
+  {/* הרקע של השאלון, "גאות" (2026-11-13): לבן פנינה עם ברק שעובר עליו, ומים בתכלת שעולים מלמטה ככל שעונים.
+      --prog (0 עד 1) נקבע ב-JavaScript לפי מספר התשובות. בתוצאה הרקע כולו תכלת */}
+  <section class="section qz-body" data-stage>
+    <div class="qz-tide" aria-hidden="true">
+      <span class="qz-tide__glow"></span>
+      <span class="qz-tide__water">
+        <span class="qz-tide__wave qz-tide__wave--back"></span>
+        <span class="qz-tide__wave qz-tide__wave--front"></span>
+      </span>
+      <span class="qz-tide__sheen"></span>
+      <span class="qz-tide__bubbles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    </div>
     <div class="container qz-wrap">
       <form id="quiz" class="qz" novalidate>
         <!-- פס התקדמות (מוצג רק עם JavaScript) -->
@@ -240,104 +268,73 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           <button class="btn qz-gate__btn" type="submit" data-gate-btn>לפתיחת התוצאה</button>
         </form>
       </div>
+      {/* התוצאה, עיצוב 2026-11-13 (נוגה): קודם הגרף, אחריו "מה שווה לשמור" (בולטים עם הכוכב, בלי מה שענו),
+          אחריו "מה לשפר" לפי תחומים עם 2 עצות בכל תחום, ובסוף קוביות צבעוניות עם הכריכות של המדריכים וההרצאות */}
       <div class="qz-result" data-result hidden tabindex="-1">
-        <div class="qz-score">
-          <div class="qz-score__ring" data-ring>
-            <span class="qz-score__num" dir="ltr"><span data-percent>0</span>%</span>
+        {/* 1. הגרף: הציון הכללי, פס לכל תחום, וסקלה עם משמעות */}
+        <section class="qz-chart" aria-labelledby="qz-chart-title">
+          <div class="qz-chart__head">
+            <div class="qz-chart__score" dir="ltr"><span data-percent>0</span><small>%</small></div>
+            <div>
+              <h2 class="qz-chart__title no-grad" id="qz-chart-title" data-level-title></h2>
+              <p class="qz-chart__text" data-level-text></p>
+            </div>
           </div>
-          <div>
-            <h2 class="qz-score__title" data-level-title></h2>
-            <p class="qz-score__text" data-level-text></p>
-            {/* קישור לפגישת ייעוץ, בראש התוצאה ובסופה (נוגה, 2026-11-13) */}
-            <a class="qz-session-link" href={quizSessionLink.href}>
-              לפגישת ייעוץ על התוצאות <Icon name="arrow" size={16} />
-            </a>
-          </div>
-        </div>
-
-        {/* העצות שכדאי להתחיל מהן: 3 התשובות החלשות, לכל היותר 2 מאותו תחום (נוגה, 2026-11-12) */}
-        <div data-tips-block>
-          <h3 class="qz-h3">העצות שכדאי להתחיל מהן</h3>
-          <p class="qz-sum">לפי התשובות שלך, אלה המקומות שבהם צעד קטן יכול להביא הכי הרבה.</p>
-          <ol class="qz-tips" data-tips></ol>
-        </div>
-
-        <h3 class="qz-h3">איך נראה העסק בכל תחום</h3>
-        <ul class="qz-bars" data-bars>
-          {
-            quizAreas.map((a) => (
-              <li class="qz-bar" data-bar={a.id}>
-                <span class="qz-bar__label">
-                  <Icon name={a.icon as 'target'} size={18} /> {a.title}
-                </span>
-                <span class="qz-bar__track">
-                  <span class="qz-bar__fill" />
-                </span>
-                <span class="qz-bar__pct" />
-              </li>
-            ))
-          }
-        </ul>
-
-        {/* אפשרויות להגדלת הכנסות: טקסט grow לכל תחום חלש, מהחלש לחזק (נוגה, 2026-11-12: ברמת התחום, לא לכל שאלה) */}
-        <div data-grow-block>
-          <h3 class="qz-h3">אפשרויות להגדלת הכנסות בעסק שלך</h3>
-          <p class="qz-sum" data-grow-sum></p>
-          <div class="qz-groups" data-groups>
+          <ul class="qz-bars" data-bars>
             {
-              quizAreas.map((a) => (
-                <article class="qz-group" data-group={a.id} hidden>
-                  <h4 class="qz-group__title">
-                    <span class="qz-group__icon">
-                      <Icon name={a.icon as 'target'} size={20} />
-                    </span>
-                    {a.title} <span class="qz-group__pct" />
-                  </h4>
-                  <p class="qz-group__text">{a.grow}</p>
-                  <ul class="qz-group__tips" data-group-tips></ul>
-                  {liveLink(a.link) && a.link && (
-                    <a class="qz-group__link" href={a.link.href}>
-                      {a.link.label} <Icon name="arrow" size={16} />
-                    </a>
-                  )}
-                </article>
+              quizAreas.map((a, i) => (
+                <li class="qz-bar" data-bar={a.id} style={`--i:${i}`}>
+                  <span class="qz-bar__label">
+                    <Icon name={a.icon as 'target'} size={17} /> {a.title}
+                  </span>
+                  <span class="qz-bar__track">
+                    <span class="qz-bar__fill" />
+                  </span>
+                  <span class="qz-bar__pct" dir="ltr" />
+                  <span class="qz-bar__level" />
+                </li>
               ))
             }
-          </div>
-        </div>
-
-        {/* מה כבר עובד: טקסט keep לכל תחום חזק */}
-        <div data-keep-block>
-          <h3 class="qz-h3">מה כבר עובד ושווה לשמור</h3>
-          <p class="qz-sum" data-keep-sum></p>
-          <ul class="qz-keep" data-keep>
-            {quizAreas.map((a) => (
-              <li data-keep-item={a.id} hidden>
-                <Icon name="check" size={18} />
-                <span>
-                  <strong>{a.title}</strong>
-                  <br />
-                  {a.keep}
-                </span>
+          </ul>
+          <ul class="qz-scale" aria-label="משמעות הסקלה">
+            {[...quizLevels].reverse().map((l, k) => (
+              <li class={`qz-scale__z qz-scale__z--${k}`}>
+                <b dir="ltr">{k === 0 ? '0-40' : k === 1 ? '40-70' : '70-100'}</b> {l.title}
               </li>
             ))}
           </ul>
-          <ul class="qz-wins" data-wins></ul>
-        </div>
+        </section>
 
-        {/* קוביות בסוף התוצאה: מדריכים, מאמרים, הרצאות, הדרכות ושירותים לפי הנושאים שעלו, עם סוג התוכן על כל קובייה.
-            בלי כותרת "להעמקה באתר" (נוגה, 2026-11-13). מדריך "בקרוב" בלי קישור */}
+        {/* 2. מה שווה לשמור: הנושאים שהתשובה בהם חזקה, בבולטים עם הכוכב של נוגה */}
+        <section class="qz-keep" data-keep-block>
+          <h3 class="qz-h3 no-grad">מה שווה לשמור</h3>
+          <ul class="qz-stars" data-wins></ul>
+        </section>
+
+        {/* 3. מה לשפר: לכל תחום מתחת ל-70, מהחלש לחזק, שתי עצות מתוך השאלות */}
+        <section class="qz-improve" data-grow-block>
+          <h3 class="qz-h3 no-grad">מה כדאי לשפר</h3>
+          <div class="qz-areas" data-groups></div>
+        </section>
+
+        {/* 4. להעמקה: כריכות המדריכים, ההרצאות וההדרכות לפי הנושאים שעלו, והשירות המתאים */}
         <div data-res-block hidden>
           <ul class="qz-cubes" data-res></ul>
         </div>
 
         <div class="qz-actions">
           <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
-            <Icon name="whatsapp" size={20} /> לשיחה על האפשרויות שיצאו לי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+            <Icon name="whatsapp" size={20} /> לשיחה על התוצאות<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
-          <a class="qz-actions__session" href={quizSessionLink.href}>{quizSessionLink.label}</a>
+          <a class="qz-actions__session" href={quizSessionLink.href}>{quizSessionLink.label} <Icon name="arrow" size={16} /></a>
           <button type="button" class="qz-actions__again" data-again>למילוי מחדש</button>
         </div>
+
+        {/* תבניות שה-JavaScript משכפל: הכוכב, ואייקון לכל תחום ולאריח שירות */}
+        <template data-tpl-star><Star size={24} /></template>
+        {quizAreas.map((a) => <template data-tpl-icon={a.id}><Icon name={a.icon as 'target'} size={20} /></template>)}
+        <template data-tpl-icon="service"><Icon name="rocket" size={30} /></template>
+        <template data-tpl-icon="guide"><Icon name="list" size={30} /></template>
       </div>
     </div>
   </section>
@@ -356,6 +353,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     var back = document.querySelector('[data-back]');
     var next = document.querySelector('[data-next]');
     var result = document.querySelector('[data-result]');
+    var stage = document.querySelector('[data-stage]');
     var titles = {};
     config.areas.forEach(function (a) { titles[a.id] = a.title; });
     var idx = 0;
@@ -455,6 +453,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var v = values();
       var answered = v.filter(function (x) { return x !== null; }).length;
       fill.style.width = (answered / qs.length) * 100 + '%';
+      // הרקע מתמלא בתכלת ככל שעונים
+      stage.style.setProperty('--prog', (answered / qs.length).toFixed(3));
       back.disabled = idx === 0;
       next.disabled = v[idx] === null;
       next.innerHTML = idx === qs.length - 1 ? 'לתוצאה <span aria-hidden="true">←</span>' : 'הבאה <span aria-hidden="true">←</span>';
@@ -483,35 +483,49 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var q = Q(i);
       return q.options[q.options.length - 1 - val];
     }
-    // כרטיס עצה: מה ענו וטקסט אחד. בלי "מה אפשר לעשות יחד" (נוגה, 2026-11-13). השירותים, המדריכים וההרצאות
-    // מוצגים פעם אחת, כקוביות בסוף התוצאה
-    function tipCard(f, n) {
-      var q = QA(f.i, f.v);
-      var li = el('li', 'qz-tip');
-      var h = el('h4', 'qz-tip__title');
-      h.appendChild(el('span', 'qz-tip__n', String(n)));
-      h.appendChild(document.createTextNode(q.topic));
-      li.appendChild(h);
-      li.appendChild(el('p', 'qz-tip__said', 'ענית: "' + said(f.i, f.v) + '"'));
-      li.appendChild(el('p', 'qz-tip__why', q.insight));
-      return li;
+    // משכפל תבנית (הכוכב, אייקון של תחום)
+    function tpl(sel) {
+      var t = document.querySelector(sel);
+      return t ? t.content.firstElementChild.cloneNode(true) : document.createTextNode('');
     }
-    // קובייה: סוג התוכן ושם. מדריך "בקרוב" בלי קישור
+    // הרמה לפי האחוז (הסקלה של נוגה: עד 40, 40-70, מעל 70)
+    function levelOf(p) {
+      return config.levels.find(function (l) { return p >= l.min; });
+    }
+    function levelIdx(p) { return p >= 70 ? 2 : p >= 40 ? 1 : 0; }
+    // קובייה: הכריכה המקורית (או אריח צבעוני לשירות), סוג התוכן ושם. מדריך "בקרוב" בלי קישור
     function cube(r) {
-      var li = el('li', 'qz-cube' + (r.soon ? ' qz-cube--soon' : ''));
+      var li = el('li', 'qz-cube' + (r.soon ? ' qz-cube--soon' : '') + (r.img ? '' : ' qz-cube--tile'));
       var box = el(r.soon ? 'div' : 'a', 'qz-cube__in');
       if (!r.soon) box.href = r.href;
-      box.appendChild(el('span', 'qz-cube__type', r.type || ''));
-      box.appendChild(el('span', 'qz-cube__title', r.label));
-      if (r.soon) box.appendChild(el('span', 'qz-cube__soon', 'בקרוב'));
+      var media = el('span', 'qz-cube__media');
+      if (r.img) {
+        var img = document.createElement('img');
+        img.src = r.img;
+        img.alt = '';
+        img.loading = 'lazy';
+        media.appendChild(img);
+      } else {
+        // מדריך בלי קובץ כריכה (עוד לא יוצא) מקבל אייקון רשימה, ושירות אייקון רקטה
+        media.appendChild(tpl('[data-tpl-icon="' + (r.type === 'מדריך' || r.type === 'מאמר' ? 'guide' : 'service') + '"]'));
+      }
+      if (r.soon) media.appendChild(el('span', 'qz-cube__soon', 'בקרוב'));
+      box.appendChild(media);
+      var body = el('span', 'qz-cube__body');
+      body.appendChild(el('span', 'qz-cube__type', r.type || ''));
+      body.appendChild(el('span', 'qz-cube__title', r.label));
+      box.appendChild(body);
       li.appendChild(box);
       return li;
     }
-    // המשפט הראשון של הטקסט, לעצות הקצרות בכרטיס של תחום
+    // תחילת הטקסט, לעצות הקצרות: שני משפטים, או משפט אחד אם הוא כבר ארוך (המשפט הראשון לבד לא תמיד ברור)
     function firstSentence(t) {
-      var m = t.match(/^.+?[.?!](\s|$)/);
-      return m ? m[0].trim() : t;
+      var parts = t.match(/[^.?!]+[.?!]+(\s|$)/g) || [t];
+      var out = parts[0].trim();
+      if (out.length < 75 && parts[1] && out.length + parts[1].length <= 160) out += ' ' + parts[1].trim();
+      return out;
     }
+    var targets = []; // הפסים והמספרים שמונפשים כשהתוצאה נפתחת
     function finish() {
       var v = values();
       var sums = {};
@@ -524,78 +538,27 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       // הציון הכללי: ממוצע של אחוזי התחומים, כך שכל תחום שוקל אותו דבר, בלי קשר למספר השאלות בו
       var overall = Math.round(config.areas.reduce(function (s, a) { return s + pct[a.id]; }, 0) / config.areas.length);
 
-      document.querySelector('[data-percent]').textContent = overall;
-      document.querySelector('[data-ring]').style.setProperty('--p', overall);
-      var level = config.levels.find(function (l) { return overall >= l.min; });
+      var level = levelOf(overall);
       document.querySelector('[data-level-title]').textContent = level.title;
       document.querySelector('[data-level-text]').textContent = level.text;
+      targets = [{ num: document.querySelector('[data-percent]'), to: overall }];
 
-      // העצות: כל תשובה בשלוש הדרגות החלשות (2 ומטה), מהחלשה לחזקה, ובתיקו לפי הקרבה לכסף (impact)
+      // הגרף: כל הפסים באותו צבע, ומתחת לכל פס המשמעות שלו בסקלה
+      config.areas.forEach(function (a) {
+        var bar = document.querySelector('[data-bar="' + a.id + '"]');
+        bar.querySelector('.qz-bar__level').textContent = levelOf(pct[a.id]).title;
+        bar.setAttribute('data-z', levelIdx(pct[a.id]));
+        targets.push({ fill: bar.querySelector('.qz-bar__fill'), num: bar.querySelector('.qz-bar__pct'), to: pct[a.id], pct: true });
+      });
+
+      // התשובות החלשות (2 ומטה), מהחלשה לחזקה, ובתיקו לפי הקרבה לכסף (impact)
       var finds = [];
       v.forEach(function (val, i) {
         if (!config.questions[i].profile && val !== null && val <= 2) finds.push({ i: i, v: val, area: config.questions[i].area, impact: config.questions[i].impact });
       });
       finds.sort(function (a, b) { return a.v - b.v || b.impact - a.impact || a.i - b.i; });
-      // 3 העצות הראשונות, לכל היותר 2 מאותו תחום, כדי שהתמונה תהיה רחבה
-      var top = [], perArea = {};
-      finds.forEach(function (f) {
-        if (top.length < 3 && (perArea[f.area] || 0) < 2) {
-          top.push(f);
-          perArea[f.area] = (perArea[f.area] || 0) + 1;
-        }
-      });
-      var tipsBox = document.querySelector('[data-tips]');
-      tipsBox.textContent = '';
-      top.forEach(function (f, k) { tipsBox.appendChild(tipCard(f, k + 1)); });
-      document.querySelector('[data-tips-block]').hidden = !top.length;
 
-      // התחומים מהחלש לחזק (בתיקו: לפי סדר התחומים)
-      var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
-        .sort(function (a, b) { return a.p - b.p || a.i - b.i; });
-
-      // תחום מתחת לסף: עוד עצות בתחום (מהחלש לחזק). תחום מעל הסף: מה ששווה לשמור (מהחזק לחלש).
-      // אם אף תחום לא עבר את הסף, התחום החזק ביותר עדיין מוצג כמה ששווה לשמור, אם הוא 50% ומעלה
-      var strongest = order[order.length - 1];
-      var isStrong = function (o) {
-        return o.p >= config.strongFrom || (o.id === strongest.id && o.p >= 50);
-      };
-      var groupsBox = document.querySelector('[data-groups]');
-      var growAreas = [];
-      var anyGroupTips = false;
-      order.forEach(function (o) {
-        var group = groupsBox.querySelector('[data-group="' + o.id + '"]');
-        group.hidden = isStrong(o);
-        group.querySelector('.qz-group__pct').textContent = '(' + o.p + '%)';
-        // עוד עצות בתחום, שלא הופיעו למעלה (עד 3): הנושא והמשפט הראשון של הטקסט
-        var tipsList = group.querySelector('[data-group-tips]');
-        tipsList.textContent = '';
-        finds.filter(function (f) { return f.area === o.id && top.indexOf(f) === -1; }).slice(0, 3).forEach(function (f) {
-          var q = QA(f.i, f.v);
-          var item = el('li');
-          item.appendChild(el('strong', null, q.topic));
-          item.appendChild(el('span', null, firstSentence(q.insight)));
-          tipsList.appendChild(item);
-        });
-        var hasTips = tipsList.children.length > 0;
-        tipsList.hidden = !hasTips;
-        // הטקסט הכללי של התחום מוצג רק כשאין עצות ספציפיות להראות בו
-        group.querySelector('.qz-group__text').hidden = hasTips;
-        groupsBox.appendChild(group);
-        if (!group.hidden) {
-          growAreas.push(o.id);
-          if (hasTips) anyGroupTips = true;
-        }
-      });
-      var keepBox = document.querySelector('[data-keep]');
-      var keepAreas = [];
-      order.slice().reverse().forEach(function (o) {
-        var li = keepBox.querySelector('[data-keep-item="' + o.id + '"]');
-        li.hidden = !isStrong(o);
-        keepBox.appendChild(li);
-        if (!li.hidden) keepAreas.push(o.id);
-      });
-      keepBox.hidden = !keepAreas.length;
-      // מה כבר עובד: התשובות החזקות (שתי הדרגות העליונות), עד 6, מהחזקה ביותר
+      // מה שווה לשמור: הנושאים שהתשובה בהם חזקה (שתי הדרגות העליונות), עד 6, עם הכוכב. בלי מה שענו (נוגה)
       var wins = [];
       v.forEach(function (val, i) { if (!config.questions[i].profile && val !== null && val >= 3) wins.push({ i: i, v: val, impact: config.questions[i].impact }); });
       wins.sort(function (a, b) { return b.v - a.v || b.impact - a.impact || a.i - b.i; });
@@ -603,30 +566,44 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       winsBox.textContent = '';
       wins.slice(0, 6).forEach(function (w) {
         var item = el('li');
-        item.appendChild(el('strong', null, Q(w.i).topic));
-        item.appendChild(el('span', null, 'ענית: "' + said(w.i, w.v) + '"'));
+        item.appendChild(tpl('[data-tpl-star]'));
+        item.appendChild(el('span', null, Q(w.i).topic));
         winsBox.appendChild(item);
       });
-      winsBox.hidden = !winsBox.children.length;
+      document.querySelector('[data-keep-block]').hidden = !winsBox.children.length;
 
-      config.areas.forEach(function (a) {
-        var bar = document.querySelector('[data-bar="' + a.id + '"]');
-        bar.querySelector('.qz-bar__fill').style.width = pct[a.id] + '%';
-        bar.querySelector('.qz-bar__pct').textContent = pct[a.id] + '%';
-        bar.classList.toggle('is-focus', growAreas.slice(0, 2).indexOf(a.id) !== -1);
+      // מה לשפר: כל תחום מתחת ל-70, מהחלש לחזק, ובו 2 העצות החלשות מהשאלות של התחום (נושא + משפט אחד)
+      var order = config.areas.map(function (a, i) { return { id: a.id, p: pct[a.id], i: i }; })
+        .sort(function (a, b) { return a.p - b.p || a.i - b.i; });
+      var groupsBox = document.querySelector('[data-groups]');
+      groupsBox.textContent = '';
+      var picked = [];
+      order.forEach(function (o) {
+        if (o.p >= config.strongFrom) return;
+        var mine = finds.filter(function (f) { return f.area === o.id; }).slice(0, 2);
+        if (!mine.length) return;
+        var art = el('article', 'qz-area');
+        art.setAttribute('data-z', levelIdx(o.p));
+        var head = el('header', 'qz-area__head');
+        var ic = el('span', 'qz-area__icon');
+        ic.appendChild(tpl('[data-tpl-icon="' + o.id + '"]'));
+        head.appendChild(ic);
+        head.appendChild(el('h4', 'qz-area__title', titles[o.id]));
+        head.appendChild(el('span', 'qz-area__pct', o.p + '%'));
+        art.appendChild(head);
+        var ul = el('ul', 'qz-area__tips');
+        mine.forEach(function (f) {
+          var q = QA(f.i, f.v);
+          var item = el('li');
+          item.appendChild(el('strong', null, q.topic));
+          item.appendChild(el('span', null, firstSentence(q.insight)));
+          ul.appendChild(item);
+          picked.push(f);
+        });
+        art.appendChild(ul);
+        groupsBox.appendChild(art);
       });
-
-      var topAreas = growAreas.slice(0, 2).map(function (id) { return quoted(titles[id]); });
-      document.querySelector('[data-grow-block]').hidden = !growAreas.length;
-      document.querySelector('[data-grow-sum]').textContent = growAreas.length
-        ? 'הכי הרבה פוטנציאל להגדלת הכנסות נמצא ב' +
-          (topAreas.length === 2 ? 'תחומים ' + topAreas[0] + ' ו' + topAreas[1] : 'תחום ' + topAreas[0]) +
-          (anyGroupTips ? '. אלה עוד עצות לפי התשובות שלך, כולן מתוך מה שכבר קיים בעסק.' : ', וכל האפשרויות כאן הן מתוך מה שכבר קיים בעסק, בלי להוציא עוד כסף על לידים.')
-        : '';
-      document.querySelector('[data-keep-block]').hidden = !keepAreas.length && !wins.length;
-      document.querySelector('[data-keep-sum]').textContent = keepAreas.length
-        ? 'התחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליו, כי את מה שכבר עובד חזק אפשר להגביר.'
-        : 'יש כבר דברים שעובדים טוב בעסק. כדאי להישען עליהם, כי את מה שכבר עובד אפשר להגביר.';
+      document.querySelector('[data-grow-block]').hidden = !groupsBox.children.length;
 
       // הקוביות בסוף: לפי הנושאים שעלו (מהחלש לחזק). עד 6 תכנים (מדריכים, מאמרים, הרצאות, הדרכות) ועד 2 שירותים,
       // בלי כפילויות. אם לא עלו נושאים לשיפור, רשימה כללית
@@ -647,10 +624,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       cubes.forEach(function (r) { resBox.appendChild(cube(r)); });
       document.querySelector('[data-res-block]').hidden = !cubes.length;
 
+      var top = picked.slice(0, 3);
       var topNames = top.map(function (f) { return QA(f.i, f.v).topic; });
       var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
       var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי' + who + '. ' +
-        (topNames.length ? 'העצות שיצאו לי להתחיל מהן: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
+        (topNames.length ? 'מה שיצא לי לשפר: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
       document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
 
       // השורה לגיליון של נוגה: מי עובד בעסק, הציונים, והתשובה (בטקסט) לכל שאלה לפי שם הנושא
@@ -710,8 +688,32 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       form.hidden = true;
       gate.hidden = true;
       result.hidden = false;
+      stage.style.setProperty('--prog', 1);
+      stage.classList.add('is-done');
       result.focus({ preventScroll: true });
       result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      animateChart();
+    }
+    // הפסים נמתחים בזה אחר זה והמספרים רצים איתם
+    function animateChart() {
+      targets.forEach(function (t) {
+        if (t.fill) t.fill.style.width = '0%';
+        if (t.num) t.num.textContent = t.pct ? '0%' : '0';
+      });
+      var start = null;
+      var dur = reduce ? 1 : 1400;
+      requestAnimationFrame(function () {
+        targets.forEach(function (t) { if (t.fill) t.fill.style.width = t.to + '%'; });
+        requestAnimationFrame(function tick(now) {
+          if (start === null) start = now;
+          var k = Math.min(1, (now - start) / dur);
+          var e = 1 - Math.pow(1 - k, 3);
+          targets.forEach(function (t) {
+            if (t.num) t.num.textContent = Math.round(t.to * e) + (t.pct ? '%' : '');
+          });
+          if (k < 1) requestAnimationFrame(tick);
+        });
+      });
     }
     function gateError(msg, field) {
       gateErr.textContent = msg;
@@ -817,6 +819,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       result.hidden = true;
       gate.hidden = true;
       form.hidden = false;
+      stage.classList.remove('is-done');
       show(0);
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -952,12 +955,17 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     position: relative;
     margin: 0;
     padding: clamp(1.25rem, 4vw, 2rem);
-    border: 1px solid var(--line);
+    /* זכוכית: הכרטיס שקוף למחצה, והגאות והברק נראים דרכו */
+    border: 1px solid rgb(255 255 255 / 0.85);
     border-radius: 1.5rem;
     background:
       radial-gradient(18rem 10rem at 100% 0, rgb(12 138 168 / 0.1), transparent 70%),
-      var(--white);
-    box-shadow: 0 26px 50px -42px rgb(11 26 51 / 0.6);
+      rgb(255 255 255 / 0.72);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    backdrop-filter: blur(14px) saturate(1.3);
+    box-shadow:
+      0 30px 60px -40px rgb(11 26 51 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.9);
   }
   .qz-q legend {
     display: contents;
@@ -1341,297 +1349,446 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     font-weight: 700;
   }
 
+  /* ---------- הרקע: "גאות" (2026-11-13) ----------
+     לבן פנינה עם ברק שעובר עליו באלכסון, ומים בתכלת שעולים מלמטה לפי --prog (0 עד 1). בתוצאה הכול תכלת */
+  @property --prog {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  .qz-body {
+    --prog: 0;
+    position: relative;
+    isolation: isolate;
+    min-height: 44rem;
+    background: linear-gradient(180deg, #ffffff, #f2f9fc 60%, #e8f5fa);
+    transition: --prog 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .qz-body > .container {
+    position: relative;
+    z-index: 1;
+  }
+  .qz-tide {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* זוהר רך בתכלת למעלה, שמתחזק ככל שמתקדמים */
+  .qz-tide__glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(40rem 22rem at 85% 8%, rgb(108 195 213 / calc(0.12 + var(--prog) * 0.3)), transparent 70%),
+      radial-gradient(34rem 20rem at 10% 30%, rgb(252 220 109 / 0.14), transparent 70%);
+  }
+  /* המים: עולים מ-12% עד 78% מגובה האזור */
+  .qz-tide__water {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: calc(12% + var(--prog) * 66%);
+    background: linear-gradient(180deg, rgb(173 226 240 / 0.55), rgb(108 195 213 / 0.5) 55%, rgb(12 138 168 / 0.35));
+  }
+  .qz-tide__wave {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    height: 3.2rem;
+    bottom: 100%;
+    margin-bottom: -1px;
+    background-repeat: repeat-x;
+    background-size: 50% 100%;
+    animation: qz-wave 14s linear infinite;
+  }
+  .qz-tide__wave--back {
+    height: 4rem;
+    opacity: 0.55;
+    animation-duration: 22s;
+    animation-direction: reverse;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 64' preserveAspectRatio='none'%3E%3Cpath d='M0 40 C 133 8 266 8 400 36 C 533 64 666 64 800 40 L800 64 L0 64Z' fill='%23bfe8f2'/%3E%3C/svg%3E");
+  }
+  .qz-tide__wave--front {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 64' preserveAspectRatio='none'%3E%3Cpath d='M0 34 C 160 4 240 60 400 30 C 560 0 640 56 800 34 L800 64 L0 64Z' fill='%23b0e2ef' fill-opacity='.9'/%3E%3C/svg%3E");
+  }
+  @keyframes qz-wave {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  /* הברק: פס אור שעובר באלכסון על כל הרקע */
+  .qz-tide__sheen {
+    position: absolute;
+    inset: -20% -60%;
+    background: linear-gradient(115deg, transparent 42%, rgb(255 255 255 / 0.75) 50%, transparent 58%);
+    mix-blend-mode: soft-light;
+    animation: qz-sheen 7s ease-in-out infinite;
+  }
+  @keyframes qz-sheen {
+    0% {
+      transform: translateX(45%);
+    }
+    55%,
+    100% {
+      transform: translateX(-45%);
+    }
+  }
+  /* בועות קטנות שעולות מתוך המים */
+  .qz-tide__bubbles i {
+    position: absolute;
+    bottom: -1rem;
+    width: var(--s, 0.6rem);
+    height: var(--s, 0.6rem);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, rgb(255 255 255 / 0.25) 60%, transparent 70%);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    opacity: calc(0.25 + var(--prog) * 0.6);
+    animation: qz-bubble var(--d, 11s) ease-in infinite;
+    animation-delay: var(--w, 0s);
+  }
+  .qz-tide__bubbles i:nth-child(1) { left: 8%; --s: 0.5rem; --d: 10s; }
+  .qz-tide__bubbles i:nth-child(2) { left: 22%; --s: 0.9rem; --d: 13s; --w: -4s; }
+  .qz-tide__bubbles i:nth-child(3) { left: 41%; --s: 0.4rem; --d: 9s; --w: -2s; }
+  .qz-tide__bubbles i:nth-child(4) { left: 58%; --s: 0.7rem; --d: 12s; --w: -7s; }
+  .qz-tide__bubbles i:nth-child(5) { left: 73%; --s: 0.5rem; --d: 11s; --w: -5s; }
+  .qz-tide__bubbles i:nth-child(6) { left: 86%; --s: 1rem; --d: 15s; --w: -9s; }
+  .qz-tide__bubbles i:nth-child(7) { left: 94%; --s: 0.45rem; --d: 10s; --w: -1s; }
+  @keyframes qz-bubble {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(0.6rem, calc(-1 * (8rem + var(--prog) * 18rem)));
+    }
+    100% {
+      transform: translate(-0.4rem, calc(-1 * (16rem + var(--prog) * 30rem)));
+      opacity: 0;
+    }
+  }
+
   /* ---------- התוצאה ---------- */
+  .qz-result {
+    font-size: 0.97rem;
+  }
   .qz-result:focus {
     outline: none;
   }
-  .qz-score {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: clamp(1.4rem, 4vw, 2rem);
-    border-radius: 1.75rem;
-    color: var(--on-dark);
-    background:
-      radial-gradient(20rem 12rem at 100% 0, rgb(12 138 168 / 0.5), transparent 70%),
-      radial-gradient(18rem 12rem at 0 100%, rgb(209 154 74 / 0.3), transparent 70%),
-      var(--navy);
-  }
-  .qz-score__ring {
-    --p: 0;
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 7.5rem;
-    height: 7.5rem;
-    border-radius: 50%;
-    background: conic-gradient(var(--gold-light) calc(var(--p) * 1%), rgb(255 255 255 / 0.12) 0);
-  }
-  .qz-score__num {
-    display: flex; /* המספר וסימן האחוז באותה שורה */
-    align-items: center;
-    justify-content: center;
-    width: 5.9rem;
-    height: 5.9rem;
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--white);
-    font-size: 1.7rem;
-    font-weight: 900;
-  }
-  .qz-score__kicker {
-    margin: 0 0 0.2rem;
-    color: var(--gold-light);
-    font-weight: 800;
-    font-size: 0.95rem;
-  }
-  .qz-score__title {
-    margin: 0 0 0.3rem;
-    color: var(--white);
-    font-size: clamp(1.45rem, 3.5vw, 1.9rem);
-    font-weight: 900;
-  }
-  .qz-score__text {
-    margin: 0;
-    line-height: 1.6;
-  }
-  @media (max-width: 30rem) {
-    .qz-score {
-      flex-direction: column;
-      text-align: center;
-    }
-  }
-  .qz-h3 {
-    margin: 2rem 0 0.75rem;
-    font-size: 1.35rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-  .qz-bars {
-    list-style: none;
-    margin: 0;
-    padding: 1.1rem 1.2rem;
-    display: grid;
-    gap: 0.65rem;
-    border-radius: 1.25rem;
-    background: var(--mist);
-    border: 1px solid var(--line);
-  }
-  .qz-bar {
-    display: grid;
-    grid-template-columns: minmax(9rem, 13rem) 1fr 3rem;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0;
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-  .qz-bar__label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .qz-bar__label :global(svg) {
-    flex: none;
-    color: var(--teal-dark);
-  }
-  .qz-bar__track {
-    height: 0.75rem;
-    border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    overflow: hidden;
-  }
-  .qz-bar__fill {
-    display: block;
-    height: 100%;
-    width: 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #6cc3d5, var(--teal));
-    transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-  .qz-bar.is-focus .qz-bar__fill {
-    background: var(--gold-gradient);
-  }
-  .qz-bar.is-focus .qz-bar__label {
-    color: #8a5a17;
-  }
-  .qz-bar__pct {
-    text-align: end;
-    font-variant-numeric: tabular-nums;
-  }
-  @media (max-width: 34rem) {
-    .qz-bar {
-      grid-template-columns: 1fr 2.8rem;
-    }
-    .qz-bar__track {
-      grid-column: 1 / -1;
-      grid-row: 2;
-    }
-  }
-  /* משפט מסכם מעל כל רשימה בתוצאה, לפי התשובות */
-  .qz-sum {
-    margin: -0.25rem 0 1rem;
-    font-size: 1.05rem;
-    line-height: 1.7;
-  }
-
-  /* ---------- אפשרויות להגדלת הכנסות, לפי תחומים ---------- */
-  .qz-groups {
-    display: grid;
-    gap: 1rem;
-  }
-  .qz-group {
-    padding: 1.2rem 1.4rem 1.15rem;
-    border-radius: 1.25rem;
-    background: linear-gradient(160deg, var(--white) 40%, rgb(252 220 109 / 0.22));
-    border: 1px solid rgb(209 154 74 / 0.45);
-  }
-  .qz-group__title {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin: 0 0 0.75rem;
-    font-size: 1.15rem;
-    font-weight: 900;
-    color: var(--navy);
-  }
-  .qz-group__icon {
-    display: grid;
-    place-items: center;
-    width: 2.3rem;
-    height: 2.3rem;
-    border-radius: 0.75rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-  }
-  .qz-group__pct {
-    font-weight: 700;
-    color: #8a5a17;
-    font-size: 0.95rem;
-  }
-  .qz-group__text {
-    margin: 0;
-    line-height: 1.7;
-  }
-  .qz-group__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    margin-top: 0.8rem;
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-
-  /* ---------- מה כבר עובד ---------- */
-  .qz-keep {
-    list-style: none;
-    margin: 0;
-    padding: 1.1rem 1.2rem;
-    display: grid;
-    gap: 0.7rem;
-    border-radius: 1.25rem;
-    background: rgb(12 138 168 / 0.08);
-    border: 1px solid rgb(12 138 168 / 0.25);
-  }
-  .qz-keep li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    margin: 0;
-    line-height: 1.65;
-  }
-  .qz-keep :global(svg) {
-    flex: none;
-    margin-top: 0.25em;
-    color: var(--teal-dark);
-  }
-  /* בתוצאה, מה שמוסתר נשאר מוסתר גם כשלאלמנט יש display משלו */
   .qz-result :global([hidden]) {
     display: none !important;
   }
-
-  /* ---------- העצות שכדאי להתחיל מהן (נבנות ב-JavaScript, ולכן :global) ---------- */
-  .qz-tips {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.1rem;
-  }
-  .qz-tips :global(.qz-tip) {
-    margin: 0;
-    padding: 1.3rem 1.4rem 1.2rem;
-    border-radius: 1.25rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-    box-shadow: 0 10px 28px -18px rgb(11 26 51 / 0.35);
-  }
-  .qz-tips :global(.qz-tip__title) {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    margin: 0 0 0.35rem;
+  .qz-h3 {
+    margin: 0 0 0.9rem;
     font-size: 1.2rem;
     font-weight: 900;
     color: var(--navy);
   }
-  .qz-tips :global(.qz-tip__n) {
+
+  /* 1. הגרף: כרטיס כהה מבריק */
+  .qz-chart {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.3rem, 4vw, 2rem);
+    border-radius: 1.75rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(24rem 14rem at 100% 0, rgb(12 138 168 / 0.55), transparent 70%),
+      radial-gradient(20rem 12rem at 0 100%, rgb(108 195 213 / 0.22), transparent 70%),
+      linear-gradient(160deg, var(--navy-deep), var(--navy) 60%, #12385e);
+    box-shadow: 0 2rem 3.5rem -1.8rem rgb(11 26 51 / 0.55);
+  }
+  .qz-chart::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 40%, rgb(255 255 255 / 0.07) 50%, transparent 60%);
+    pointer-events: none;
+  }
+  .qz-chart__head {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-bottom: 1.4rem;
+  }
+  .qz-chart__score {
+    flex: none;
+    display: flex;
+    align-items: baseline;
+    font-size: clamp(2.6rem, 8vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #ffffff, #9fe0ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .qz-chart__score small {
+    font-size: 0.5em;
+    margin-inline-start: 0.1em;
+  }
+  .qz-chart__title {
+    margin: 0 0 0.15rem;
+    font-size: clamp(1.2rem, 3.2vw, 1.45rem);
+    font-weight: 900;
+    color: var(--white);
+  }
+  .qz-chart__text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--on-dark-soft);
+  }
+  .qz-bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .qz-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'label pct'
+      'track track'
+      'level level';
+    gap: 0.35rem 0.75rem;
+    margin: 0;
+  }
+  .qz-bar__label {
+    grid-area: label;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .qz-bar__label :global(svg) {
+    flex: none;
+    color: #9fe0ee;
+  }
+  .qz-bar__pct {
+    grid-area: pct;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    color: var(--white);
+  }
+  /* המסלול, עם סימונים עדינים ב-40 וב-70 (הסקלה) */
+  .qz-bar__track {
+    grid-area: track;
+    position: relative;
+    height: 0.85rem;
+    border-radius: 999px;
+    background:
+      linear-gradient(to left, transparent calc(40% - 1px), rgb(255 255 255 / 0.28) 0 calc(40% + 1px), transparent 0),
+      linear-gradient(to left, transparent calc(70% - 1px), rgb(255 255 255 / 0.28) 0 calc(70% + 1px), transparent 0),
+      rgb(255 255 255 / 0.08);
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.35);
+  }
+  /* הפס: אותו צבע לכל התחומים, מעבר מטורקיז לתכלת, ברק שזורם לאורכו ונקודת אור בקצה */
+  .qz-bar__fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.45), transparent 55%),
+      linear-gradient(to left, var(--teal-dark), var(--teal) 45%, #8fdcec);
+    box-shadow: 0 0 1rem rgb(108 195 213 / 0.55);
+    transition: width 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 0.12s);
+    overflow: hidden;
+  }
+  .qz-bar__fill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.65) 50%, transparent 70%);
+    background-size: 220% 100%;
+    animation: qz-flow 2.6s ease-in-out infinite;
+  }
+  .qz-bar__fill::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: 0.15rem;
+    top: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    box-shadow: 0 0 0.6rem 0.2rem rgb(255 255 255 / 0.8);
+  }
+  @keyframes qz-flow {
+    from {
+      background-position: 120% 0;
+    }
+    to {
+      background-position: -120% 0;
+    }
+  }
+  .qz-bar__level {
+    grid-area: level;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--on-dark-soft);
+  }
+  .qz-bar[data-z='2'] .qz-bar__level {
+    color: #9fe0ee;
+  }
+  .qz-bar[data-z='0'] .qz-bar__level {
+    color: var(--gold-light);
+  }
+  /* מקרא הסקלה */
+  .qz-scale {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    margin: 1.3rem 0 0;
+    padding: 0.9rem 0 0;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    font-size: 0.85rem;
+    color: var(--on-dark-soft);
+  }
+  .qz-scale__z {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .qz-scale__z b {
+    padding: 0.05rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--navy);
+  }
+  .qz-scale__z--0 b {
+    background: var(--gold-light);
+  }
+  .qz-scale__z--1 b {
+    background: #cfeef5;
+  }
+  .qz-scale__z--2 b {
+    background: #8fdcec;
+  }
+
+  /* 2. מה שווה לשמור: רשימה פתוחה עם הכוכב, בלי קופסאות */
+  .qz-keep {
+    margin-top: 2.2rem;
+  }
+  .qz-stars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.55rem 1.5rem;
+  }
+  .qz-stars :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .qz-stars :global(svg) {
+    flex: none;
+  }
+
+  /* 3. מה לשפר: לכל תחום כותרת עם אייקון ואחוז, ומתחתיה העצות, מחוברות בקו לכותרת שלהן */
+  .qz-improve {
+    margin-top: 2.2rem;
+  }
+  .qz-areas {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .qz-areas :global(.qz-area) {
+    margin: 0;
+  }
+  .qz-areas :global(.qz-area__head) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.55rem;
+  }
+  .qz-areas :global(.qz-area__icon) {
     flex: none;
     display: grid;
     place-items: center;
-    width: 2.1rem;
-    height: 2.1rem;
+    width: 2.3rem;
+    height: 2.3rem;
     border-radius: 50%;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-size: 1.05rem;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal) 60%, #8fdcec);
+    box-shadow: 0 0.4rem 1rem -0.3rem rgb(12 138 168 / 0.6);
   }
-  .qz-tips :global(.qz-tip__said) {
-    margin: 0 0 0.7rem;
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #8a5a17;
-  }
-  .qz-tips :global(.qz-tip__why) {
-    margin: 0 0 0.9rem;
-    line-height: 1.7;
-  }
-  .qz-tips :global(.qz-tip__box) {
-    margin-top: 0.6rem;
-    padding: 0.8rem 1rem;
-    border-radius: 0.9rem;
-  }
-  .qz-tips :global(.qz-tip__box--with) {
-    background: rgb(12 138 168 / 0.08);
-    border-inline-start: 4px solid var(--teal);
-  }
-  .qz-tips :global(.qz-tip__box strong) {
-    display: block;
-    margin-bottom: 0.2rem;
-    font-size: 0.85rem;
+  .qz-areas :global(.qz-area__title) {
+    margin: 0;
+    font-size: 1.08rem;
     font-weight: 900;
     color: var(--navy);
   }
-  .qz-tips :global(.qz-tip__box p) {
-    margin: 0;
-    line-height: 1.65;
-  }
-  .qz-tips :global(.qz-tip__service) {
-    display: inline-block;
-    margin-top: 0.45rem;
+  .qz-areas :global(.qz-area__pct) {
     font-weight: 800;
+    font-size: 0.9rem;
     color: var(--teal-dark);
+    font-variant-numeric: tabular-nums;
   }
-  /* קוביות בסוף התוצאה: סוג התוכן ושם */
+  .qz-areas :global(.qz-area__tips) {
+    list-style: none;
+    margin: 0;
+    margin-inline-start: 1.12rem;
+    padding: 0.1rem 0 0.1rem 0;
+    padding-inline-start: 1.6rem;
+    border-inline-start: 2px solid rgb(12 138 168 / 0.35);
+    display: grid;
+    gap: 0.75rem;
+  }
+  .qz-areas :global(.qz-area__tips li) {
+    position: relative;
+    margin: 0;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: rgb(11 26 51 / 0.82);
+  }
+  .qz-areas :global(.qz-area__tips li::before) {
+    content: '';
+    position: absolute;
+    inset-inline-start: -2.02rem;
+    top: 0.5em;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--teal);
+  }
+  .qz-areas :global(.qz-area__tips strong) {
+    display: block;
+    color: var(--navy);
+  }
+
+  /* 4. קוביות עם הכריכות המקוריות */
   .qz-cubes {
     list-style: none;
-    margin: 2rem 0 0;
+    margin: 2.4rem 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
-    gap: 0.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(12rem, 42%), 1fr));
+    gap: 1rem;
+  }
+  @media (max-width: 30rem) {
+    .qz-cubes {
+      gap: 0.7rem;
+    }
+    .qz-cubes :global(.qz-cube__title) {
+      font-size: 0.88rem;
+    }
   }
   .qz-cubes :global(.qz-cube) {
     margin: 0;
@@ -1641,113 +1798,91 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    padding: 1rem 1.1rem;
-    border-radius: 1rem;
-    border: 1px solid var(--line);
-    background: var(--white);
-    color: var(--navy);
+    overflow: hidden;
+    border-radius: 1.1rem;
+    background: var(--navy);
+    color: var(--white);
     text-decoration: none;
-    box-shadow: 0 0.4rem 1rem rgb(11 26 51 / 0.06);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0.9rem 1.8rem -1rem rgb(11 26 51 / 0.55);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
   }
-  .qz-cubes :global(a.qz-cube__in:hover) {
-    border-color: var(--teal);
-    box-shadow: 0 0.6rem 1.4rem rgb(11 26 51 / 0.1);
+  @media (hover: hover) {
+    .qz-cubes :global(a.qz-cube__in:hover) {
+      transform: translateY(-4px);
+      box-shadow: 0 1.2rem 2.2rem -1rem rgb(12 138 168 / 0.6);
+    }
+  }
+  .qz-cubes :global(.qz-cube__media) {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .qz-cubes :global(.qz-cube__media img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .qz-cubes :global(.qz-cube--tile .qz-cube__media) {
+    display: grid;
+    place-items: center;
+    color: var(--navy);
+    background:
+      radial-gradient(10rem 6rem at 80% 10%, rgb(255 255 255 / 0.5), transparent 70%),
+      linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  }
+  .qz-cubes :global(.qz-cube__body) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.75rem 0.9rem 0.9rem;
   }
   .qz-cubes :global(.qz-cube__type) {
-    align-self: flex-start;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #9fe0ee;
+  }
+  .qz-cubes :global(.qz-cube__title) {
+    font-weight: 800;
+    line-height: 1.35;
+    color: var(--gold-light);
+  }
+  .qz-cubes :global(.qz-cube--soon .qz-cube__media img) {
+    filter: saturate(0.6) brightness(0.8);
+  }
+  .qz-cubes :global(.qz-cube__soon) {
+    position: absolute;
+    top: 0.5rem;
+    inset-inline-start: 0.5rem;
     padding: 0.1rem 0.6rem;
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 800;
-    color: var(--teal-dark);
-    background: rgb(12 138 168 / 0.1);
-  }
-  .qz-cubes :global(.qz-cube__title) {
-    font-weight: 800;
-    line-height: 1.4;
-  }
-  .qz-cubes :global(.qz-cube--soon .qz-cube__in) {
-    background: var(--mist);
-    color: rgb(11 26 51 / 0.65);
-  }
-  .qz-cubes :global(.qz-cube__soon) {
-    margin-top: auto;
-    align-self: flex-start;
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--gold-dark);
-  }
-  /* קישור לפגישת ייעוץ בראש התוצאה ובסופה */
-  .qz-session-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: 0.6rem;
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  .qz-actions__session {
-    align-self: center;
-    font-weight: 800;
-    color: var(--teal-dark);
+    color: var(--navy);
+    background: var(--gold-light);
   }
 
-  /* עוד עצות בתוך כרטיס של תחום: הנושא והעצה להתחלה */
-  .qz-group__tips {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.6rem;
-  }
-  .qz-group__tips :global(li) {
-    margin: 0;
-    line-height: 1.6;
-  }
-  .qz-group__tips :global(strong) {
-    display: block;
-    color: var(--navy);
-  }
-
-  /* התשובות החזקות, ב"מה כבר עובד" */
-  .qz-wins {
-    list-style: none;
-    margin: 0.8rem 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: 0.6rem;
-  }
-  .qz-wins :global(li) {
-    margin: 0;
-    padding: 0.75rem 0.95rem;
-    border-radius: 0.9rem;
-    background: rgb(12 138 168 / 0.08);
-    border: 1px solid rgb(12 138 168 / 0.25);
-    line-height: 1.5;
-  }
-  .qz-wins :global(strong) {
-    display: block;
-    color: var(--navy);
-  }
-  .qz-wins :global(span) {
-    font-size: 0.9rem;
-    color: var(--teal-dark);
-    font-weight: 700;
-  }
   .qz-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.9rem 1.25rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
   }
   .qz-actions__wa {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+  }
+  .qz-actions__session {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 800;
+    color: var(--teal-dark);
   }
   @media (prefers-reduced-motion: reduce) {
     .qz-progress__fill,
@@ -1758,7 +1893,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     .qz-q.is-in fieldset,
     .qz-q.is-in .qz-num,
     .qz-q.is-in .qz-cheer,
-    .qz-q.is-in .qz-opt {
+    .qz-q.is-in .qz-opt,
+    .qz-tide__wave,
+    .qz-tide__sheen,
+    .qz-tide__bubbles i,
+    .qz-bar__fill::before {
       animation: none;
     }
   }
