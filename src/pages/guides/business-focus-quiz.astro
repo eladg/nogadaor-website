@@ -96,7 +96,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       </ul>
       <ul class="qz-meta">
         <li><Icon name="clock" size={16} /> כ-7 דקות</li>
-        <li><Icon name="heart" size={16} /> התשובות נשמרות רק במכשיר שלך</li>
+        <li><Icon name="heart" size={16} /> התוצאה נפתחת מיד בסוף</li>
       </ul>
     </div>
   </header>
@@ -195,6 +195,41 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       </form>
 
       <!-- התוצאה -->
+      {/* שער התוצאה (נוגה, 2026-11-13): כדי לפתוח את התוצאה משאירים שם ומייל. הטלפון לא חובה.
+          התשובות נשמרות בגיליון של נוגה כבר כשמסיימים את השאלות (בלי פרטים), והפרטים נוספים לאותה שורה.
+          אם השמירה נכשלת, התוצאה נפתחת בכל זאת, כדי לא להעניש את מי שמילא */}
+      <div class="qz-gate" data-gate hidden tabindex="-1">
+        <span class="qz-gate__icon" aria-hidden="true"><Icon name="chart" size={30} /></span>
+        <h2 class="qz-gate__title">התוצאה שלך <span class="hl">מוכנה</span></h2>
+        <p class="qz-gate__text">כדי לפתוח אותה, נשאר רק להשאיר שם ומייל.</p>
+        <form class="qz-gate__form" data-gate-form novalidate>
+          <label>
+            <span class="qz-gate__label">שם</span>
+            <input type="text" name="name" autocomplete="name" maxlength="100" required />
+          </label>
+          <label>
+            <span class="qz-gate__label">אימייל</span>
+            <input type="email" name="email" autocomplete="email" maxlength="200" dir="ltr" required />
+          </label>
+          <label>
+            <span class="qz-gate__label">טלפון <small>(לא חובה)</small></span>
+            <input type="tel" name="phone" autocomplete="tel" maxlength="30" dir="ltr" />
+          </label>
+          {/* TODO: נוסח ההסכמה לדיוור ונוסח היידוע לבדוק עם איש מקצוע, ולכתוב את מדיניות הפרטיות לפני פרסום */}
+          <label class="qz-gate__check">
+            <input type="checkbox" name="marketing" />
+            <span>אני מאשר/ת לקבל תכנים ועדכונים במייל</span>
+          </label>
+          <div class="qz-hp" aria-hidden="true">
+            <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <p class="qz-gate__legal">
+            הפרטים נשמרים אצל נוגה דיין אור, לחזרה בנושא השאלון. <a href="/privacy/">למדיניות הפרטיות</a>
+          </p>
+          <p class="qz-gate__error" data-gate-error role="alert" hidden></p>
+          <button class="btn qz-gate__btn" type="submit" data-gate-btn>לפתיחת התוצאה</button>
+        </form>
+      </div>
       <div class="qz-result" data-result hidden tabindex="-1">
         <div class="qz-score">
           <div class="qz-score__ring" data-ring>
@@ -576,11 +611,103 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         (topNames.length ? 'העצות שיצאו לי להתחיל מהן: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
       document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
 
+      // השורה לגיליון של נוגה: מי עובד בעסק, הציונים, והתשובה (בטקסט) לכל שאלה לפי שם הנושא
+      var row = { 'מי עובד בעסק': v[0] !== null ? config.questions[0].options[v[0]] : '', 'ציון כללי': overall };
+      config.areas.forEach(function (a) { row['ציון ' + a.title] = pct[a.id]; });
+      v.forEach(function (val, i) { if (!config.questions[i].profile) row[Q(i).topic] = said(i, val); });
+      lastRow = row;
+      var id = runId();
+      if (sentId() !== id) {
+        completeSent = send({ type: 'complete', id: id, answers: row });
+        try { localStorage.setItem(KEY + '-sent', id); } catch (e) {}
+      }
+      if (isOpen()) reveal();
+      else showGate();
+    }
+
+    // ---------- שמירה בגיליון ושער התוצאה ----------
+    var gate = document.querySelector('[data-gate]');
+    var gateForm = document.querySelector('[data-gate-form]');
+    var gateBtn = document.querySelector('[data-gate-btn]');
+    var gateErr = document.querySelector('[data-gate-error]');
+    var lastRow = {};
+    var completeSent = Promise.resolve();
+    function store(k, val) { try { if (val === null) localStorage.removeItem(KEY + k); else localStorage.setItem(KEY + k, val); } catch (e) {} }
+    function read(k) { try { return localStorage.getItem(KEY + k); } catch (e) { return null; } }
+    // מזהה למילוי הזה, כדי שהפרטים ייכתבו באותה שורה בגיליון
+    function runId() {
+      var id = read('-id');
+      if (!id) {
+        id = 'q' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+        store('-id', id);
+      }
+      return id;
+    }
+    function sentId() { return read('-sent'); }
+    function isOpen() { return read('-open') === '1'; } // כבר השאירו פרטים במכשיר הזה
+    // שליחה לפונקציה בשרת (/api/quiz). כל כישלון נבלע: התשובות לא נשמרות, אבל השאלון ממשיך לעבוד
+    function send(body) {
+      return fetch('/api/quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        keepalive: true,
+      }).then(function (r) { return r.ok; }, function () { return false; });
+    }
+    function showGate() {
       form.hidden = true;
+      result.hidden = true;
+      gate.hidden = false;
+      gateErr.hidden = true;
+      gateBtn.disabled = false;
+      gateBtn.textContent = 'לפתיחת התוצאה';
+      gate.focus({ preventScroll: true });
+      gate.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function reveal() {
+      form.hidden = true;
+      gate.hidden = true;
       result.hidden = false;
       result.focus({ preventScroll: true });
       result.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    function gateError(msg, field) {
+      gateErr.textContent = msg;
+      gateErr.hidden = false;
+      if (field) field.focus();
+    }
+    gateForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = function (n) { return gateForm.querySelector('[name="' + n + '"]'); };
+      var name = f('name').value.trim();
+      var email = f('email').value.trim();
+      if (!name) return gateError('נשאר למלא שם', f('name'));
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateError('כתובת המייל לא נראית תקינה', f('email'));
+      gateErr.hidden = true;
+      gateBtn.disabled = true;
+      gateBtn.textContent = 'פותחים את התוצאה...';
+      var done = false;
+      var open = function () {
+        if (done) return;
+        done = true;
+        store('-open', '1');
+        reveal();
+      };
+      // קודם מחכים שהשורה "הושלם" תישמר, כדי שהפרטים ייכתבו באותה שורה
+      completeSent.then(function () {
+        return send({
+          type: 'lead',
+          id: runId(),
+          name: name,
+          email: email,
+          phone: f('phone').value.trim(),
+          marketing: f('marketing').checked,
+          website: f('website').value,
+          answers: lastRow,
+        });
+      }).then(open, open);
+      setTimeout(open, 8000); // לא משאירים אף אחד מחכה
+    });
 
     // מצב "שאלה אחת בכל מסך" (רק עם JavaScript)
     form.classList.add('is-wizard');
@@ -643,7 +770,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       form.reset();
       applyVariant();
       try { localStorage.removeItem(KEY); } catch (e) {}
+      store('-id', null); // מילוי חדש = שורה חדשה בגיליון. מי שכבר השאיר פרטים לא נשאל שוב
+      store('-sent', null);
       result.hidden = true;
+      gate.hidden = true;
       form.hidden = false;
       show(0);
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -950,6 +1080,126 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     display: grid;
     gap: 0.6rem;
   }
+  /* ---------- שער התוצאה: שם ומייל ---------- */
+  .qz-gate {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.75rem, 5vw, 2.75rem);
+    border-radius: 1.5rem;
+    color: var(--on-dark);
+    text-align: center;
+    background:
+      radial-gradient(26rem 16rem at 100% 0, rgb(25 154 181 / 0.4), transparent 70%),
+      radial-gradient(22rem 14rem at 0 100%, rgb(209 154 74 / 0.25), transparent 72%),
+      linear-gradient(160deg, var(--navy-deep), var(--navy));
+    box-shadow: 0 1.5rem 3rem rgb(11 26 51 / 0.25);
+  }
+  .qz-gate[hidden] {
+    display: none;
+  }
+  .qz-gate:focus {
+    outline: none;
+  }
+  .qz-gate__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 3.75rem;
+    height: 3.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 1rem;
+    color: var(--navy);
+    background: var(--gold-gradient);
+  }
+  .qz-gate__title {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+    font-weight: 900;
+    color: var(--white);
+  }
+  .qz-gate__text {
+    margin: 0 0 1.5rem;
+    font-size: 1.1rem;
+  }
+  .qz-gate__form {
+    display: grid;
+    gap: 0.9rem;
+    max-width: 26rem;
+    margin-inline: auto;
+    text-align: start;
+  }
+  .qz-gate__label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+  }
+  .qz-gate__label small {
+    font-weight: 400;
+    color: var(--on-dark-soft);
+  }
+  .qz-gate__form input[type='text'],
+  .qz-gate__form input[type='email'],
+  .qz-gate__form input[type='tel'] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(255 255 255 / 0.25);
+    border-radius: 0.75rem;
+    font: inherit;
+    color: var(--white);
+    background: rgb(255 255 255 / 0.08);
+  }
+  .qz-gate__form input:focus-visible {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 2px;
+  }
+  .qz-gate__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+  }
+  .qz-gate__check input {
+    flex: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.2rem;
+    accent-color: var(--gold-dark);
+  }
+  .qz-gate__legal {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--on-dark-soft);
+  }
+  .qz-gate__legal a {
+    color: var(--gold-light);
+  }
+  .qz-gate__error {
+    margin: 0;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+  .qz-gate__error[hidden] {
+    display: none;
+  }
+  .qz-gate__btn {
+    justify-self: center;
+    margin-top: 0.3rem;
+    border: 0;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .qz-gate__btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+  .qz-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
   /* נוסח שלא מתאים לשאלת הפתיחה (עצמאי לבד / עסק עם עובדים) מוסתר לגמרי */
   .qz-q [data-variant][hidden] {
     display: none !important;
