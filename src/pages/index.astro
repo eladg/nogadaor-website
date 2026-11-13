@@ -88,11 +88,21 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
       <div class="h-hero__text">
         <h1 class="h-hero__title">העולם משתנה בקצב מהיר{' '}<span class="hl">וזה הזמן של העסק שלך לגדול</span></h1>
         <p class="h-hero__lead">להגדיל הכנסות ולשפר רווחיות באמצעות אסטרטגיה, שיווק ושיפור תהליכי עבודה עם בינה מלאכותית.</p>
-        <div class="h-hero__quiz">
-          <p class="h-hero__punch">כמה הכנסות כבר מחכות בתוך העסק שלך?</p>
-          <p class="h-hero__why">שאלון קצר על העסק שלך, ובסופו תמונה ברורה של ההזדמנויות להגדלת הכנסות ומאיפה כדאי להתחיל.</p>
-          <a class="btn h-hero__btn" href="#quiz">לבדיקת העסק שלך <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. ההנעה לשאלון: כרטיס לרוחב מתחת לתמונת הבית, שעולה מעט על הפתיח (נוגה, 2026-11-13: "לא באמצע",
+       "שלא יכער את עמוד הבית אבל יתן דגש לשאלון"). הנוסח של נוגה, מילה במילה. הכפתור גולל למטה אל השאלון. -->
+  <section class="h-qcall" aria-labelledby="qcall-title">
+    <div class="container">
+      <div class="h-qcall__card">
+        <Star size={34} class="h-qcall__star" />
+        <div class="h-qcall__text">
+          <h2 id="qcall-title" class="h-qcall__title no-grad">עשרות דרכים להגדיל הכנסות בעסק{' '}<span class="hl">בלי שקל אחד נוסף לתקציב הפרסום</span></h2>
+          <p class="h-qcall__sub">עונים לשאלון ומקבלים מלא טיפים פרקטיים ליישום בהתאמה אישית לכל עסק</p>
         </div>
+        <a class="h-qcall__btn" href="#quiz">לבדיקת העסק שלך <span aria-hidden="true">↓</span></a>
       </div>
     </div>
   </section>
@@ -341,36 +351,131 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
   }
   .h-hero__lead {
     max-width: 30rem;
-    margin: 0 auto 1.6rem;
+    margin: 0 auto;
     font-size: clamp(1.02rem, 1.7vw, 1.15rem);
     line-height: 1.7;
     color: var(--on-dark-soft);
   }
-  /* ההנעה לשאלון: משפט מחץ, משפט תועלת וכפתור שגולל אל השאלון */
-  .h-hero__quiz {
-    max-width: 31rem;
+  /* ---------- ההנעה לשאלון: כרטיס לרוחב שעולה מעט על הפתיח (נוגה, 2026-11-13) ---------- */
+  /* חצי עליון בצבע הפתיח וחצי תחתון לבן, כך שהכרטיס "צף" על הגבול ביניהם */
+  .h-qcall {
+    position: relative;
+    z-index: 2;
+    margin-top: -1px;
+    padding-bottom: clamp(1.75rem, 4vw, 2.5rem);
+    background: linear-gradient(180deg, #01112b 0 50%, var(--white) 50% 100%);
+  }
+  .h-qcall__card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.25rem 1.75rem;
+    max-width: 66rem;
     margin-inline: auto;
-    padding-top: 1.4rem;
-    border-top: 1px solid rgb(252 220 109 / 0.3);
+    padding: clamp(1.4rem, 3vw, 1.9rem) clamp(1.4rem, 3.5vw, 2.5rem);
+    border-radius: 1.75rem;
+    color: var(--white);
+    background:
+      radial-gradient(26rem 12rem at 0% 0%, rgb(252 220 109 / 0.2), transparent 70%),
+      linear-gradient(120deg, var(--teal) 0%, var(--teal-dark) 45%, #043d4e 100%);
+    box-shadow:
+      0 0 0 1px rgb(252 220 109 / 0.45),
+      0 26px 56px -26px rgb(4 61 78 / 0.85);
   }
-  .h-hero__punch {
-    margin: 0 0 0.4rem;
-    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
-    font-weight: 800;
-    line-height: 1.35;
-    color: var(--gold-light);
+  /* ברק עדין שעובר על הכרטיס מדי פעם */
+  .h-qcall__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.14) 50%, transparent 65%);
+    transform: translateX(120%);
+    animation: qcall-shine 7s ease-in-out infinite;
   }
-  .h-hero__why {
-    margin: 0 0 1.25rem;
-    font-size: 1.02rem;
-    line-height: 1.6;
-    color: var(--on-dark);
+  @keyframes qcall-shine {
+    0%,
+    70% {
+      transform: translateX(120%);
+    }
+    100% {
+      transform: translateX(-120%);
+    }
   }
-  .h-hero__btn {
-    padding: 0.75em 1.9em;
-    font-size: 1.05rem;
-    font-weight: 800;
-    box-shadow: 0 14px 34px -14px rgb(252 220 109 / 0.65);
+  .h-qcall :global(.h-qcall__star) {
+    flex: none;
+    filter: drop-shadow(0 4px 12px rgb(252 220 109 / 0.5));
+  }
+  .h-qcall__title {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.25rem, 2.3vw, 1.65rem);
+    font-weight: 900;
+    line-height: 1.3;
+    color: var(--white);
+  }
+  .h-qcall__title .hl {
+    display: block;
+  }
+  .h-qcall__sub {
+    margin: 0;
+    font-size: clamp(1rem, 1.6vw, 1.1rem);
+    line-height: 1.55;
+    color: rgb(255 255 255 / 0.88);
+  }
+  .h-qcall__btn {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    padding: 0.85em 1.9em;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 1.08rem;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.55);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  @media (hover: hover) {
+    .h-qcall__btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px -14px rgb(0 0 0 / 0.6);
+    }
+  }
+  /* טלפון וטאבלט צר: הכול ממורכז, זה מתחת לזה */
+  @media (max-width: 52rem) {
+    .h-qcall__card {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      gap: 0.75rem;
+    }
+    .h-qcall :global(.h-qcall__star) {
+      width: 26px;
+      height: 26px;
+    }
+  }
+  @media (max-width: 30rem) {
+    .h-qcall__title {
+      font-size: 1.12rem;
+      text-wrap: balance;
+    }
+    .h-qcall__sub {
+      font-size: 0.95rem;
+      text-wrap: balance;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .h-qcall__card::after {
+      animation: none;
+      display: none;
+    }
   }
   @media (min-width: 52rem) {
     .h-hero {
@@ -390,7 +495,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     }
     .h-hero__media::after {
       background:
-        linear-gradient(to bottom, rgb(1 17 43 / 0.7) 0%, rgb(1 17 43 / 0) 20%),
+        linear-gradient(to bottom, rgb(1 17 43 / 0.7) 0%, rgb(1 17 43 / 0) 20%, rgb(1 17 43 / 0) 82%, #01112b 100%),
         linear-gradient(to right, rgb(1 17 43 / 0.55) 0%, rgb(1 17 43 / 0) 45%);
     }
     .h-hero__inner {
