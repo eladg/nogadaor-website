@@ -84,30 +84,35 @@ const crumbs = [
     </div>
   </section>
 
-  <!-- 2. מה הכי בוער: כל שורה היא אתגר, ומובילה לפגישה שפותרת אותו -->
-  <section class="section cs-choose" id="choose" aria-labelledby="choose-title">
+  <!-- 2. ארבעה סוגי פגישות (נוגה, 2026-11-13: ריבועים שמניעים לפעולה, בלי כותרת). לחיצה מורידה לפרק של הפגישה. -->
+  <section class="section cs-choose" id="choose" aria-label="סוגי פגישות הייעוץ">
     <div class="container">
-      <h2 id="choose-title" class="sec-title center reveal">מה הכי <span class="hl--mark">בוער</span> בעסק עכשיו?</h2>
-      <ol class="picks">
+      <ul class="picks">
         {
-          topics.map((t, i) => (
-            <li>
-              <a class="pick reveal" href={`#${t.id}`}>
-                <span class="pick__num" aria-hidden="true">{num(i)}</span>
-                <span class="pick__text">
+          topics.map((t) => {
+            const photo = photos[t.id];
+            return (
+              <li class="reveal">
+                <a class="pick" href={`#${t.id}`}>
+                  <span class="pick__media">
+                    {photo && (
+                      <Image src={photo.src} alt="" widths={[400, 640]} sizes="(min-width: 64rem) 22vw, (min-width: 40rem) 45vw, 100vw" style={`object-position: ${photo.pos}`} />
+                    )}
+                    <span class="pick__icon" aria-hidden="true"><Icon name={t.icon} size={22} /></span>
+                  </span>
+                  <span class="pick__title">{t.title}</span>
                   <span class="pick__pain">{t.pain}</span>
                   <span class="pick__promise">{t.promise}</span>
-                </span>
-                <span class="pick__go">
-                  <Icon name={t.icon} size={20} />
-                  {t.title}
-                  <span class="pick__arrow" aria-hidden="true">←</span>
-                </span>
-              </a>
-            </li>
-          ))
+                  <span class="pick__go">
+                    לפרטי הפגישה
+                    <span class="pick__arrow" aria-hidden="true">↓</span>
+                  </span>
+                </a>
+              </li>
+            );
+          })
         }
-      </ol>
+      </ul>
     </div>
   </section>
 
@@ -329,105 +334,122 @@ const crumbs = [
     color: var(--teal-dark);
   }
 
-  /* ---------- מה הכי בוער: רשימה טיפוגרפית, בלי קופסאות ---------- */
-  .cs-eyebrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    margin: 0 0 0.5rem;
-    font-weight: 800;
-    color: var(--gold-dark);
-  }
-  .cs-eyebrow::before,
-  .cs-eyebrow::after {
-    content: '';
-    width: 2rem;
-    height: 2px;
-    background: var(--gold-gradient);
+  /* ---------- ארבעה סוגי פגישות: כרטיסים כהים עם תמונה, הכול באותו גובה (subgrid) ---------- */
+  .cs-choose {
+    padding-block: clamp(2.5rem, 6vw, 4rem);
   }
   .picks {
     list-style: none;
-    max-width: 62rem;
-    margin: 2rem auto 0;
+    margin: 0;
     padding: 0;
-    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .picks {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .picks {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
   .picks li {
     margin: 0;
-    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
   }
   .pick {
     display: grid;
-    grid-template-columns: 3.2rem 1fr;
-    gap: 0.35rem 1rem;
-    align-items: center;
-    padding: 1.25rem 0.75rem;
-    color: inherit;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 0.5rem;
+    overflow: hidden;
+    border-radius: 1.4rem;
+    padding-bottom: 1.25rem;
+    color: var(--on-dark);
     text-decoration: none;
-    background: linear-gradient(270deg, var(--mist), var(--mist)) no-repeat right / 0% 100%;
-    transition: background-size 0.45s ease;
+    background:
+      radial-gradient(14rem 9rem at 100% 100%, rgb(25 154 181 / 0.32), transparent 70%),
+      var(--navy);
+    box-shadow: 0 1.25rem 2.5rem -1.5rem rgb(11 26 51 / 0.55);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
-  @media (min-width: 48rem) {
-    .pick {
-      grid-template-columns: 4.5rem 1fr auto;
-      padding: 1.6rem 1rem;
-    }
+  .pick > span:not(.pick__media) {
+    padding-inline: 1.25rem;
   }
-  .pick:hover,
-  .pick:focus-visible {
-    background-size: 100% 100%;
+  .pick__media {
+    position: relative;
+    display: block;
+    margin-bottom: 0.5rem;
   }
-  .pick__num {
-    grid-row: span 2;
-    font-size: clamp(1.9rem, 4vw, 2.6rem);
-    font-weight: 900;
-    line-height: 1;
+  .pick__media :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .pick__icon {
+    position: absolute;
+    inset-block-end: -1.2rem;
+    inset-inline-start: 1.25rem;
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.85rem;
     background: var(--gold-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--navy);
+    box-shadow: 0 0.5rem 1rem -0.4rem rgb(0 0 0 / 0.5);
   }
-  @media (min-width: 48rem) {
-    .pick__num {
-      grid-row: auto;
-    }
-  }
-  .pick__text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+  .pick__title {
+    margin-top: 0.6rem;
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--gold-light);
   }
   .pick__pain {
-    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
-    font-weight: 800;
-    line-height: 1.4;
-    color: var(--navy);
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--white);
   }
   .pick__promise {
-    font-size: 1.02rem;
+    font-size: 0.98rem;
     line-height: 1.55;
-    color: #4a5b73;
+    color: var(--on-dark-soft);
   }
   .pick__go {
+    align-self: end;
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
     font-weight: 800;
-    color: var(--teal-dark);
-  }
-  @media (min-width: 48rem) {
-    .pick__go {
-      white-space: nowrap;
-    }
+    color: var(--gold-light);
   }
   .pick__arrow {
     display: inline-block;
     transition: transform 0.3s ease;
   }
-  .pick:hover .pick__arrow,
-  .pick:focus-visible .pick__arrow {
-    transform: translateX(-0.4rem);
+  .pick:focus-visible {
+    outline: 3px solid var(--gold-dark);
+    outline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .pick:hover {
+      transform: translateY(-0.4rem);
+      box-shadow: 0 1.75rem 3rem -1.5rem rgb(11 26 51 / 0.7);
+    }
+    .pick:hover .pick__arrow {
+      transform: translateY(0.25rem);
+    }
   }
 
   /* ---------- פרק לכל פגישה ---------- */
