@@ -9,14 +9,33 @@
 // השאלות והטקסטים ב-src/data/quiz.ts (טיוטה לאישור נוגה).
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources } from '../../data/quiz';
+import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile } from '../../data/quiz';
 import { contact } from '../../data/contact';
 
 // קישורים למדריכים שעוד מסומנים "בקרוב" לא מוצגים (אין להם עמוד), וחוזרים לבד כשהמדריך נפתח (נוגה, 2026-11-12)
 import { getCollection } from 'astro:content';
 const soonGuides = new Set((await getCollection('guides')).filter((g) => g.data.comingSoon).map((g) => `/guides/${g.id}/`));
 const liveLink = (link?: { href: string; label: string }) => !!link && !soonGuides.has(link.href);
-const total = quizQuestions.length;
+// המסך הראשון הוא שאלת הפתיחה ("מי עובד בעסק?"): נספרת במספור, לא בציון.
+// בשאלה שיש לה נוסח לעסק עם עובדים (team.text או team.options) מוצגים שני נוסחים, ו-JavaScript מציג את המתאים
+const screens = [
+  { profile: true, multi: false, options: quizProfile.options, variants: [{ v: null, text: quizProfile.text, options: quizProfile.options }] },
+  ...quizQuestions.map((q) => ({
+    profile: false,
+    multi: !!q.multi,
+    options: q.options,
+    variants:
+      q.team && (q.team.text || q.team.options)
+        ? [
+            { v: 'solo', text: q.text, options: q.options },
+            { v: 'team', text: q.team.text ?? q.text, options: q.team.options ?? q.options },
+          ]
+        : [{ v: null, text: q.text, options: q.options }],
+  })),
+];
+const total = screens.length;
+const resLinks = (keys?: (keyof typeof quizResources)[]) =>
+  (keys ?? []).map((k) => quizResources[k]).filter((l) => !soonGuides.has(l.href));
 const cheers = quizCheers(total);
 const MAX = 4; // הניקוד המרבי לשאלה
 const config = {
@@ -24,18 +43,30 @@ const config = {
   max: MAX,
   points: quizPoints,
   strongFrom: quizStrongFrom,
-  questions: quizQuestions.map((q) => ({
-    area: q.area,
-    multi: !!q.multi,
-    options: q.options,
-    topic: q.topic,
-    why: q.why,
-    tip: q.tip,
-    together: q.together,
-    impact: q.impact,
-    service: quizServices[q.service],
-    res: (q.res ?? []).map((k) => quizResources[k]).filter((l) => !soonGuides.has(l.href)),
-  })),
+  teamFrom: quizProfile.teamFrom,
+  // מקום 0 הוא שאלת הפתיחה. בשאלה עם נוסח לעסק עם עובדים, team מחזיק רק את מה שמשתנה
+  questions: [
+    { profile: true, options: quizProfile.options },
+    ...quizQuestions.map((q) => ({
+      area: q.area,
+      multi: !!q.multi,
+      options: q.options,
+      topic: q.topic,
+      why: q.why,
+      tip: q.tip,
+      together: q.together,
+      impact: q.impact,
+      service: quizServices[q.service],
+      res: resLinks(q.res),
+      team: q.team
+        ? {
+            ...q.team,
+            ...(q.team.service ? { service: quizServices[q.team.service] } : {}),
+            ...(q.team.res ? { res: resLinks(q.team.res) } : {}),
+          }
+        : null,
+    })),
+  ],
   levels: quizLevels,
   whatsapp: contact.whatsapp,
 };
@@ -80,7 +111,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
         <ol class="qz-list">
           {
-            quizQuestions.map((q, i) => {
+            screens.map((q, i) => {
               const cheer = cheers[i];
               return (
                 <li class={`qz-q qz-q--c${i % 3}`} data-q={i}>
@@ -98,16 +129,33 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
                     )}
                     <legend>
                       <span class="sr-only">שאלה {i + 1} מתוך {total}.</span>
-                      {/* השאלה מופיעה באפקט הקלדה. העותק השקוף שומר את הגובה, כדי שהתשובות לא יקפצו */}
-                      <span class="qz-q__text">
-                        <span class="qz-ghost" aria-hidden="true">{q.text}</span>
-                        <span class="qz-type" aria-hidden="true" data-text={q.text}>{q.text}</span>
-                        <span class="sr-only">{q.text}</span>
-                      </span>
+                      {/* השאלה מופיעה באפקט הקלדה. העותק השקוף שומר את הגובה, כדי שהתשובות לא יקפצו.
+                          בשאלה עם נוסח לעסק עם עובדים יש שני נוסחים, ומוצג רק המתאים לשאלת הפתיחה */}
+                      {q.variants.map((vr) => (
+                        <span class="qz-q__text" data-variant={vr.v ?? undefined} hidden={vr.v === 'team'}>
+                          <span class="qz-ghost" aria-hidden="true">{vr.text}</span>
+                          <span class="qz-type" aria-hidden="true" data-text={vr.text}>{vr.text}</span>
+                          <span class="sr-only">{vr.text}</span>
+                        </span>
+                      ))}
                     </legend>
                     {q.multi && <p class="qz-hint">אפשר לסמן כמה תשובות</p>}
                     <div class="qz-opts">
-                      {q.options.map((opt, k) =>
+                      {q.profile && q.options.map((opt, k) => (
+                        <label class="qz-opt" style={`--k:${k}`}>
+                          <input type="radio" name={`q${i}`} value={k} />
+                          <span class="qz-opt__mark" aria-hidden="true" />
+                          <span class="qz-opt__text">{opt}</span>
+                        </label>
+                      ))}
+                      {!q.profile && !q.multi && q.variants.map((vr) => vr.options.map((opt, k) => (
+                        <label class="qz-opt" style={`--k:${k}`} data-variant={vr.v ?? undefined} hidden={vr.v === 'team'}>
+                          <input type="radio" name={`q${i}`} value={vr.options.length - 1 - k} />
+                          <span class="qz-opt__mark" aria-hidden="true" />
+                          <span class="qz-opt__text">{opt}</span>
+                        </label>
+                      )))}
+                      {!q.profile && q.multi && q.options.map((opt, k) =>
                         q.multi ? (
                           <label class="qz-opt qz-opt--multi" style={`--k:${k}`}>
                             <input
@@ -241,7 +289,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
 <script is:inline define:vars={{ config }}>
   (function () {
-    var KEY = 'focus-quiz-2027-v7'; // גרסה 7: 4 תחומים, 32 שאלות בסדר מעורבב
+    var KEY = 'focus-quiz-2027-v8'; // גרסה 8: שאלת פתיחה + 32 שאלות, נוסח חלופי לעסק עם עובדים
     var form = document.getElementById('quiz');
     var qs = Array.prototype.slice.call(form.querySelectorAll('.qz-q'));
     var progress = document.querySelector('[data-progress]');
@@ -255,6 +303,30 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     var titles = {};
     config.areas.forEach(function (a) { titles[a.id] = a.title; });
     var idx = 0;
+    // שאלת הפתיחה (מסך 0): מהתשובה config.teamFrom והלאה העסק מקבל את הנוסח לעסק עם עובדים
+    function isTeam() {
+      var c = qs[0].querySelector('input:checked');
+      return !!c && Number(c.value) >= config.teamFrom;
+    }
+    // נתוני השאלה לפי הנוסח המתאים (team מחזיק רק את מה שמשתנה)
+    function Q(i) {
+      var q = config.questions[i];
+      return q.team && isTeam() ? Object.assign({}, q, q.team) : q;
+    }
+    function variantHidden(n) {
+      var box = n.closest('[data-variant]');
+      return !!box && box.hidden;
+    }
+    // מציג בכל שאלה רק את הנוסח המתאים. תשובה שסומנה בנוסח שהוסתר עוברת לאותה תשובה בנוסח המוצג
+    function applyVariant() {
+      var want = isTeam() ? 'team' : 'solo';
+      form.querySelectorAll('[data-variant]').forEach(function (n) { n.hidden = n.getAttribute('data-variant') !== want; });
+      qs.forEach(function (q) {
+        var c = q.querySelector('input:checked');
+        if (!c || !variantHidden(c)) return;
+        q.querySelectorAll('input[value="' + c.value + '"]').forEach(function (x) { if (!variantHidden(x)) x.checked = true; });
+      });
+    }
 
     // הניקוד של כל שאלה (null אם עוד לא נענתה).
     // שאלה עם כמה תשובות: מספר הדרכים שסומנו, עד הניקוד המרבי. "אף אחת" לבד = 0.
@@ -291,7 +363,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     }
     function typeIn(li) {
       stopTyping();
-      var el = li.querySelector('.qz-type');
+      var el = Array.prototype.filter.call(li.querySelectorAll('.qz-type'), function (n) { return !variantHidden(n); })[0];
       var full = el.dataset.text;
       if (reduce) { el.textContent = full; return 0; }
       var step = Math.max(10, Math.min(28, 1000 / full.length));
@@ -346,12 +418,12 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     }
     // מה שנבחר בשאלה (הניקוד 4 הוא התשובה הראשונה)
     function said(i, val) {
-      var q = config.questions[i];
+      var q = Q(i);
       return q.options[q.options.length - 1 - val];
     }
     // כרטיס עצה מלא: מה ענו, מה זה אומר, להתחיל מכאן, מה אפשר לעשות יחד, ולהעמקה באתר
     function tipCard(f, n) {
-      var q = config.questions[f.i];
+      var q = Q(f.i);
       var li = el('li', 'qz-tip');
       var h = el('h4', 'qz-tip__title');
       h.appendChild(el('span', 'qz-tip__n', String(n)));
@@ -387,7 +459,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var sums = {};
       config.areas.forEach(function (a) { sums[a.id] = 0; });
       // כל תשובה שווה אחוז (config.points), ואחוז התחום הוא הממוצע
-      v.forEach(function (val, i) { sums[config.questions[i].area] += config.points[val || 0]; });
+      // שאלת הפתיחה (config.questions[0].profile) לא נספרת בציון, ולכן מדלגים עליה בכל החישובים
+      v.forEach(function (val, i) { if (!config.questions[i].profile) sums[config.questions[i].area] += config.points[val || 0]; });
       var pct = {};
       config.areas.forEach(function (a) { pct[a.id] = Math.round(sums[a.id] / a.count); });
       // הציון הכללי: ממוצע של אחוזי התחומים, כך שכל תחום שוקל אותו דבר, בלי קשר למספר השאלות בו
@@ -402,7 +475,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       // העצות: כל תשובה בשלוש הדרגות החלשות (2 ומטה), מהחלשה לחזקה, ובתיקו לפי הקרבה לכסף (impact)
       var finds = [];
       v.forEach(function (val, i) {
-        if (val !== null && val <= 2) finds.push({ i: i, v: val, area: config.questions[i].area, impact: config.questions[i].impact });
+        if (!config.questions[i].profile && val !== null && val <= 2) finds.push({ i: i, v: val, area: config.questions[i].area, impact: config.questions[i].impact });
       });
       finds.sort(function (a, b) { return a.v - b.v || b.impact - a.impact || a.i - b.i; });
       // 3 העצות הראשונות, לכל היותר 2 מאותו תחום, כדי שהתמונה תהיה רחבה
@@ -439,7 +512,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         var tipsList = group.querySelector('[data-group-tips]');
         tipsList.textContent = '';
         finds.filter(function (f) { return f.area === o.id && top.indexOf(f) === -1; }).slice(0, 3).forEach(function (f) {
-          var q = config.questions[f.i];
+          var q = Q(f.i);
           var item = el('li');
           item.appendChild(el('strong', null, q.topic));
           item.appendChild(el('span', null, q.tip));
@@ -466,13 +539,13 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       keepBox.hidden = !keepAreas.length;
       // מה כבר עובד: התשובות החזקות (שתי הדרגות העליונות), עד 6, מהחזקה ביותר
       var wins = [];
-      v.forEach(function (val, i) { if (val !== null && val >= 3) wins.push({ i: i, v: val, impact: config.questions[i].impact }); });
+      v.forEach(function (val, i) { if (!config.questions[i].profile && val !== null && val >= 3) wins.push({ i: i, v: val, impact: config.questions[i].impact }); });
       wins.sort(function (a, b) { return b.v - a.v || b.impact - a.impact || a.i - b.i; });
       var winsBox = document.querySelector('[data-wins]');
       winsBox.textContent = '';
       wins.slice(0, 6).forEach(function (w) {
         var item = el('li');
-        item.appendChild(el('strong', null, config.questions[w.i].topic));
+        item.appendChild(el('strong', null, Q(w.i).topic));
         item.appendChild(el('span', null, 'ענית: "' + said(w.i, w.v) + '"'));
         winsBox.appendChild(item);
       });
@@ -497,8 +570,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         ? 'התחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליו, כי את מה שכבר עובד חזק אפשר להגביר.'
         : 'יש כבר דברים שעובדים טוב בעסק. כדאי להישען עליהם, כי את מה שכבר עובד אפשר להגביר.';
 
-      var topNames = top.map(function (f) { return config.questions[f.i].topic; });
-      var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי. ' +
+      var topNames = top.map(function (f) { return Q(f.i).topic; });
+      var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
+      var text = 'היי נוגה, מילאתי את שאלון המיקוד העסקי' + who + '. ' +
         (topNames.length ? 'העצות שיצאו לי להתחיל מהן: ' + list(topNames) + '. ' : '') + 'אשמח לשיחה';
       document.querySelector('[data-wa]').href = config.whatsapp + '?text=' + encodeURIComponent(text);
 
@@ -526,6 +600,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         });
       }
     } catch (e) {}
+    applyVariant();
     var firstOpen = values().indexOf(null);
     show(firstOpen === -1 ? qs.length - 1 : firstOpen);
 
@@ -544,6 +619,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         show(idx);
         return; // בשאלה עם כמה תשובות ממשיכים בכפתור "הבאה"
       }
+      if (t.name === 'q0') applyVariant(); // שאלת הפתיחה קובעת את הנוסח של השאר
       save();
       show(idx);
       // מעבר אוטומטי לשאלה הבאה אחרי בחירה
@@ -565,6 +641,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     });
     document.querySelector('[data-again]').addEventListener('click', function () {
       form.reset();
+      applyVariant();
       try { localStorage.removeItem(KEY); } catch (e) {}
       result.hidden = true;
       form.hidden = false;
@@ -872,6 +949,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   .qz-opts {
     display: grid;
     gap: 0.6rem;
+  }
+  /* נוסח שלא מתאים לשאלת הפתיחה (עצמאי לבד / עסק עם עובדים) מוסתר לגמרי */
+  .qz-q [data-variant][hidden] {
+    display: none !important;
   }
   .qz-opt {
     position: relative;
