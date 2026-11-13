@@ -14,8 +14,11 @@ import { contact } from '../../data/contact';
 
 // קישורים למדריכים שעוד מסומנים "בקרוב" לא מוצגים (אין להם עמוד), וחוזרים לבד כשהמדריך נפתח (נוגה, 2026-11-12)
 import { getCollection } from 'astro:content';
-const soonGuides = new Set((await getCollection('guides')).filter((g) => g.data.comingSoon).map((g) => `/guides/${g.id}/`));
-const liveLink = (link?: { href: string; label: string }) => !!link && !soonGuides.has(link.href);
+// קישור לעמוד מדריך מוצג רק אם המדריך קיים ופתוח. קישורים אחרים (הדרכות, הרצאות, שירותים) תמיד מוצגים
+const allGuides = await getCollection('guides');
+const openGuides = new Set(allGuides.filter((g) => !g.data.comingSoon).map((g) => `/guides/${g.id}/`));
+const isGuidePage = (href: string) => /^\/guides\/[^#/]+\/$/.test(href);
+const liveLink = (link?: { href: string; label: string }) => !!link && (!isGuidePage(link.href) || openGuides.has(link.href));
 // המסך הראשון הוא שאלת הפתיחה ("מי עובד בעסק?"): נספרת במספור, לא בציון.
 // בשאלה שיש לה נוסח לעסק עם עובדים (team.text או team.options) מוצגים שני נוסחים, ו-JavaScript מציג את המתאים
 const screens = [
@@ -35,7 +38,7 @@ const screens = [
 ];
 const total = screens.length;
 const resLinks = (keys?: (keyof typeof quizResources)[]) =>
-  (keys ?? []).map((k) => quizResources[k]).filter((l) => !soonGuides.has(l.href));
+  (keys ?? []).map((k) => quizResources[k]).filter((l) => liveLink(l));
 // חלק מנתוני שאלה (team / byAnswer): השירות והקישורים הופכים לקישורים מלאים
 const resolveParts = (part: { service?: keyof typeof quizServices; res?: (keyof typeof quizResources)[] } & Record<string, unknown>) => ({
   ...part,
@@ -50,6 +53,8 @@ const config = {
   points: quizPoints,
   strongFrom: quizStrongFrom,
   teamFrom: quizProfile.teamFrom,
+  // "להעמקה באתר" כשלא עלו נושאים לשיפור
+  generalRes: resLinks(['vidGrow', 'vidStrategy', 'guideAi']),
   // מקום 0 הוא שאלת הפתיחה. בשאלה עם נוסח לעסק עם עובדים, team מחזיק רק את מה שמשתנה
   questions: [
     { profile: true, options: quizProfile.options },
@@ -58,8 +63,7 @@ const config = {
       multi: !!q.multi,
       options: q.options,
       topic: q.topic,
-      why: q.why,
-      tip: q.tip,
+      insight: q.insight,
       together: q.together,
       impact: q.impact,
       service: quizServices[q.service],
@@ -315,6 +319,13 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           <ul class="qz-wins" data-wins></ul>
         </div>
 
+        {/* להעמקה באתר: פעם אחת בסוף התוצאה, לא בכל עצה (נוגה, 2026-11-13) */}
+        <div data-res-block hidden>
+          <h3 class="qz-h3">להעמקה באתר</h3>
+          <p class="qz-sum">מדריכים והרצאות שמתאימים לנושאים שעלו אצלך.</p>
+          <ul class="qz-res" data-res></ul>
+        </div>
+
         <div class="qz-actions">
           <a class="btn qz-actions__wa" data-wa href={contact.whatsapp} target="_blank" rel="noopener">
             <Icon name="whatsapp" size={20} /> לשיחה על האפשרויות שיצאו לי<span class="sr-only"> (נפתח בלשונית חדשה)</span>
@@ -466,7 +477,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var q = Q(i);
       return q.options[q.options.length - 1 - val];
     }
-    // כרטיס עצה מלא: מה ענו, מה זה אומר, להתחיל מכאן, מה אפשר לעשות יחד, ולהעמקה באתר
+    // כרטיס עצה: מה ענו, טקסט אחד (המשמעות ומאיפה מתחילים), ומה אפשר לעשות יחד.
+    // המדריכים וההרצאות מוצגים פעם אחת בסוף התוצאה, לא בכל עצה (נוגה, 2026-11-13)
     function tipCard(f, n) {
       var q = QA(f.i, f.v);
       var li = el('li', 'qz-tip');
@@ -475,29 +487,18 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       h.appendChild(document.createTextNode(q.topic));
       li.appendChild(h);
       li.appendChild(el('p', 'qz-tip__said', 'ענית: "' + said(f.i, f.v) + '"'));
-      li.appendChild(el('p', 'qz-tip__why', q.why));
-      var start = el('div', 'qz-tip__box qz-tip__box--start');
-      start.appendChild(el('strong', null, 'להתחיל מכאן'));
-      start.appendChild(el('p', null, q.tip));
-      li.appendChild(start);
+      li.appendChild(el('p', 'qz-tip__why', q.insight));
       var withBox = el('div', 'qz-tip__box qz-tip__box--with');
       withBox.appendChild(el('strong', null, 'מה אפשר לעשות יחד'));
       withBox.appendChild(el('p', null, q.together));
       withBox.appendChild(linkEl(q.service, 'qz-tip__service'));
       li.appendChild(withBox);
-      if (q.res.length) {
-        var more = el('div', 'qz-tip__more');
-        more.appendChild(el('strong', null, 'להעמקה באתר'));
-        var ul = el('ul');
-        q.res.forEach(function (r) {
-          var item = el('li');
-          item.appendChild(linkEl(r));
-          ul.appendChild(item);
-        });
-        more.appendChild(ul);
-        li.appendChild(more);
-      }
       return li;
+    }
+    // המשפט הראשון של הטקסט, לעצות הקצרות בכרטיס של תחום
+    function firstSentence(t) {
+      var m = t.match(/^.+?[.?!](\s|$)/);
+      return m ? m[0].trim() : t;
     }
     function finish() {
       var v = values();
@@ -553,14 +554,14 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         var group = groupsBox.querySelector('[data-group="' + o.id + '"]');
         group.hidden = isStrong(o);
         group.querySelector('.qz-group__pct').textContent = '(' + o.p + '%)';
-        // עוד עצות בתחום, שלא הופיעו למעלה (עד 3): הנושא והעצה להתחלה
+        // עוד עצות בתחום, שלא הופיעו למעלה (עד 3): הנושא והמשפט הראשון של הטקסט
         var tipsList = group.querySelector('[data-group-tips]');
         tipsList.textContent = '';
         finds.filter(function (f) { return f.area === o.id && top.indexOf(f) === -1; }).slice(0, 3).forEach(function (f) {
           var q = QA(f.i, f.v);
           var item = el('li');
           item.appendChild(el('strong', null, q.topic));
-          item.appendChild(el('span', null, q.tip));
+          item.appendChild(el('span', null, firstSentence(q.insight)));
           tipsList.appendChild(item);
         });
         var hasTips = tipsList.children.length > 0;
@@ -614,6 +615,24 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       document.querySelector('[data-keep-sum]').textContent = keepAreas.length
         ? 'התחום החזק ביותר הוא ' + quoted(titles[strongest.id]) + '. כדאי להישען עליו, כי את מה שכבר עובד חזק אפשר להגביר.'
         : 'יש כבר דברים שעובדים טוב בעסק. כדאי להישען עליהם, כי את מה שכבר עובד אפשר להגביר.';
+
+      // להעמקה באתר: פעם אחת בסוף, מדריכים והרצאות לפי הנושאים שעלו (מהחלש לחזק), עד 5. אם לא עלו נושאים, רשימה כללית
+      var seen = {};
+      var resList = [];
+      finds.forEach(function (f) {
+        (QA(f.i, f.v).res || []).forEach(function (r) {
+          if (!seen[r.href] && resList.length < 5) { seen[r.href] = true; resList.push(r); }
+        });
+      });
+      if (!resList.length) resList = config.generalRes;
+      var resBox = document.querySelector('[data-res]');
+      resBox.textContent = '';
+      resList.forEach(function (r) {
+        var item = el('li');
+        item.appendChild(linkEl(r));
+        resBox.appendChild(item);
+      });
+      document.querySelector('[data-res-block]').hidden = !resList.length;
 
       var topNames = top.map(function (f) { return QA(f.i, f.v).topic; });
       var who = v[0] !== null ? ' (מי עובד בעסק: ' + config.questions[0].options[v[0]] + ')' : '';
@@ -1571,16 +1590,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     padding: 0.8rem 1rem;
     border-radius: 0.9rem;
   }
-  .qz-tips :global(.qz-tip__box--start) {
-    background: rgb(252 220 109 / 0.22);
-    border-inline-start: 4px solid var(--gold-dark);
-  }
   .qz-tips :global(.qz-tip__box--with) {
     background: rgb(25 154 181 / 0.08);
     border-inline-start: 4px solid var(--teal);
   }
-  .qz-tips :global(.qz-tip__box strong),
-  .qz-tips :global(.qz-tip__more strong) {
+  .qz-tips :global(.qz-tip__box strong) {
     display: block;
     margin-bottom: 0.2rem;
     font-size: 0.85rem;
@@ -1597,21 +1611,19 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     font-weight: 800;
     color: var(--teal-dark);
   }
-  .qz-tips :global(.qz-tip__more) {
-    margin-top: 0.9rem;
-  }
-  .qz-tips :global(.qz-tip__more ul) {
+  /* להעמקה באתר: תגיות קישור בסוף התוצאה */
+  .qz-res {
     list-style: none;
     margin: 0.3rem 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 0.5rem;
   }
-  .qz-tips :global(.qz-tip__more li) {
+  .qz-res :global(li) {
     margin: 0;
   }
-  .qz-tips :global(.qz-tip__more a) {
+  .qz-res :global(a) {
     display: inline-block;
     padding: 0.35rem 0.8rem;
     border-radius: 999px;
@@ -1622,7 +1634,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     color: var(--teal-dark);
     text-decoration: none;
   }
-  .qz-tips :global(.qz-tip__more a:hover) {
+  .qz-res :global(a:hover) {
     border-color: var(--teal);
   }
 
