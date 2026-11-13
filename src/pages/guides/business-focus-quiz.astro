@@ -289,6 +289,13 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       {/* התוצאה, עיצוב 2026-11-13 (נוגה): קודם הגרף, אחריו "מה שווה לשמור" (בולטים עם הכוכב, בלי מה שענו),
           אחריו "מה לשפר" לפי תחומים עם 2 עצות בכל תחום, ובסוף קוביות צבעוניות עם הכריכות של המדריכים וההרצאות */}
       <div class="qz-result" data-result hidden tabindex="-1">
+        {/* 0. פתיחה מרימה (נוגה, 2026-11-13): עצם המילוי כבר אומר הרבה על החשיבה קדימה ועל החשיבות של פיתוח עסקי. הניסוח שלי, לאישור */}
+        <header class="qz-hi">
+          <span class="qz-hi__star" aria-hidden="true"><Star size={34} /></span>
+          <h2 class="qz-hi__title">כל הכבוד שעצרת{' '}<span>להסתכל על העסק מלמעלה</span></h2>
+          <p class="qz-hi__text">עצם זה שמילאת את השאלון אומר הרבה. זו חשיבה קדימה של מי שמתייחס לפיתוח העסק ברצינות, ולא מחכה שהצמיחה תגיע לבד. וזה בדיוק המקום שממנו עסקים מתחילים לגדול.</p>
+        </header>
+
         {/* 1. הגרף: הציון הכללי, פס לכל תחום, וסקלה עם משמעות */}
         <section class="qz-chart" aria-labelledby="qz-chart-title">
           <div class="qz-chart__head">
@@ -326,13 +333,22 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
         {/* 2. מה שווה לשמור: פסקה אחת שמחברת את כל הנקודות החזקות, מחמיאה ומעודדת (נוגה, 2026-11-13) */}
         <section class="qz-keep" data-keep-block>
-          <h3 class="qz-h3 no-grad"><Star size={22} /> מה שווה לשמור</h3>
-          <p class="qz-keep__text" data-wins></p>
+          {/* כותרות מעניינות יותר (נוגה, 2026-11-13: "משעמם פה!"). הצעה שלי, לאישור */}
+          <span class="qz-keep__star" aria-hidden="true"><Star size={30} /></span>
+          <div>
+            <h3 class="qz-h3 no-grad">מה כבר עובד אצלך</h3>
+            <p class="qz-keep__text" data-wins></p>
+          </div>
         </section>
 
         {/* 3. מה לשפר: לכל תחום מתחת ל-70, מהחלש לחזק, שתי עצות מתוך השאלות */}
         <section class="qz-improve" data-grow-block>
-          <h3 class="qz-h3 no-grad">מה כדאי לשפר</h3>
+          {/* נצנצים: כוכבים קטנים של נוגה שמנצנצים ברקע */}
+          <span class="qz-sparks" aria-hidden="true">
+            <Star size={14} /><Star size={10} /><Star size={18} /><Star size={11} /><Star size={13} /><Star size={9} />
+          </span>
+          <h3 class="qz-h3 qz-improve__title no-grad">איפה מחכה <span class="hl">הצמיחה הבאה שלך</span></h3>
+          <p class="qz-improve__lead">התחומים שבהם שינוי קטן יכול להזיז הכי הרבה, ומאיפה כדאי להתחיל בכל אחד</p>
           <div class="qz-areas" data-groups></div>
         </section>
 
@@ -624,7 +640,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var winsBox = document.querySelector('[data-wins]');
       var winNames = wins.slice(0, 6).map(function (w) { return Q(w.i).topic; });
       winsBox.textContent = !winNames.length ? '' :
-        'כל הכבוד על ' + list(winNames) + '. ' +
+        'יש לך יסודות טובים לבנות עליהם, ובראשם ' + list(winNames) + '. ' +
         (winNames.length > 1 ? 'אלה דברים שכבר עובדים אצלך' : 'זה כבר עובד אצלך') +
         ', וזה ממש לא מובן מאליו. זה מראה על עסק שנבנה בהתמדה, בהחלטות נכונות ובעבודה עקבית. ' +
         'כדאי לשמור על מה שכבר עובד ולהמשיך לחזק אותו, כי משם הכי קל לצמוח.';
@@ -654,8 +670,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         mine.forEach(function (f) {
           var q = QA(f.i, f.v);
           var item = el('li');
-          item.appendChild(el('strong', null, q.topic));
-          item.appendChild(el('span', null, firstSentence(q.insight)));
+          var tHead = el('span', 'qz-tip__head');
+          tHead.appendChild(tpl('[data-tpl-star]'));
+          tHead.appendChild(el('strong', null, q.topic));
+          item.appendChild(tHead);
+          item.appendChild(el('span', 'qz-tip__text', firstSentence(q.insight)));
           ul.appendChild(item);
           picked.push(f);
         });
@@ -1718,18 +1737,67 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     }
   }
 
-  /* 2. מה שווה לשמור: פסקה אחת מחמיאה ומעודדת (נוגה, 2026-11-13) */
+  /* 2. מה כבר עובד: הכוכב של נוגה גדול בצד, ולידו כותרת ופסקה מחמיאה (נוגה, 2026-11-13) */
   .qz-h3 {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin: 0 0 0.6rem;
-    font-size: 1.1rem;
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
     font-weight: 900;
+    line-height: 1.25;
     color: var(--navy);
   }
   .qz-keep {
-    margin-top: 1.6rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 1.75rem;
+    padding: 1.2rem 1.4rem;
+    border-radius: 1.25rem;
+    background:
+      radial-gradient(16rem 8rem at 100% 0, rgb(252 220 109 / 0.22), transparent 70%),
+      var(--white);
+    border: 1px solid rgb(209 154 74 / 0.35);
+    box-shadow: 0 1rem 2rem -1.5rem rgb(209 154 74 / 0.6);
+  }
+  .qz-keep__star {
+    flex: none;
+    margin-top: 0.15rem;
+    filter: drop-shadow(0 4px 10px rgb(252 220 109 / 0.6));
+    animation: qz-spin 6s ease-in-out infinite;
+  }
+  @keyframes qz-spin {
+    0%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(20deg) scale(1.12);
+    }
+  }
+  /* 0. הפתיחה המרימה */
+  .qz-hi {
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+  .qz-hi__star {
+    display: inline-block;
+    filter: drop-shadow(0 4px 12px rgb(252 220 109 / 0.6));
+    animation: qz-spin 6s ease-in-out infinite;
+  }
+  .qz-hi__title {
+    margin: 0.35rem 0 0.6rem;
+    font-size: clamp(1.6rem, 4.6vw, 2.3rem);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .qz-hi__title span {
+    display: block;
+  }
+  .qz-hi__text {
+    max-width: 36rem;
+    margin: 0 auto;
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    line-height: 1.7;
+    color: #33445c;
   }
   .qz-keep__text {
     margin: 0;
@@ -1738,13 +1806,67 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     color: #33445c;
   }
 
-  /* 3. מה לשפר: שם התחום מחוץ לריבוע, והעצות לרוחב, אחת מתחת לשנייה (נוגה, 2026-11-13) */
+  /* 3. איפה מחכה הצמיחה: אזור בכחול חזק עם מעבר צבע ונצנצים. שם התחום בכותרת עם אייקון,
+     ובכל עצה הכותרת בטור אחד וההסבר בטור שני, בלי קווי טבלה (נוגה, 2026-11-13) */
   .qz-improve {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     margin-top: 1.75rem;
+    padding: clamp(1.4rem, 4vw, 2.2rem) clamp(1.1rem, 4vw, 2.2rem);
+    border-radius: 1.5rem;
+    color: var(--on-dark);
+    background:
+      radial-gradient(26rem 14rem at 100% 0, rgb(12 138 168 / 0.75), transparent 70%),
+      radial-gradient(22rem 14rem at 0 100%, rgb(209 154 74 / 0.22), transparent 70%),
+      linear-gradient(160deg, #075a70, #08304f 55%, var(--navy));
+    box-shadow: 0 1.6rem 3rem -1.8rem rgb(8 48 79 / 0.85);
+  }
+  .qz-improve__title {
+    color: var(--white);
+    font-size: clamp(1.4rem, 3.6vw, 1.85rem);
+  }
+  .qz-improve__title .hl {
+    display: block;
+  }
+  .qz-improve__lead {
+    margin: 0 0 1.4rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--on-dark-soft);
+  }
+  /* נצנצים: כוכבים קטנים מפוזרים שמנצנצים */
+  .qz-sparks {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .qz-sparks :global(svg) {
+    position: absolute;
+    opacity: 0.7;
+    animation: qz-twinkle 3.6s ease-in-out infinite;
+  }
+  .qz-sparks :global(svg:nth-child(1)) { top: 8%; left: 6%; animation-delay: -0.4s; }
+  .qz-sparks :global(svg:nth-child(2)) { top: 22%; left: 24%; animation-delay: -1.6s; }
+  .qz-sparks :global(svg:nth-child(3)) { top: 12%; left: 46%; animation-delay: -2.4s; }
+  .qz-sparks :global(svg:nth-child(4)) { top: 58%; left: 4%; animation-delay: -0.9s; }
+  .qz-sparks :global(svg:nth-child(5)) { bottom: 8%; left: 30%; animation-delay: -2.9s; }
+  .qz-sparks :global(svg:nth-child(6)) { bottom: 14%; right: 6%; animation-delay: -1.2s; }
+  @keyframes qz-twinkle {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.8) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1) rotate(20deg);
+    }
   }
   .qz-areas {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
   .qz-areas :global(.qz-area) {
     margin: 0;
@@ -1752,64 +1874,94 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   .qz-areas :global(.qz-area__head) {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 0.5rem;
+    gap: 0.55rem;
+    margin-bottom: 0.65rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.16);
   }
   .qz-areas :global(.qz-area__icon) {
     flex: none;
-    display: inline-flex;
-    color: var(--teal-dark);
-  }
-  .qz-areas :global(.qz-area[data-z='0'] .qz-area__icon) {
-    color: var(--gold-dark);
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    color: var(--gold-light);
+    background: rgb(255 255 255 / 0.1);
+    border: 1px solid rgb(252 220 109 / 0.4);
   }
   .qz-areas :global(.qz-area__icon svg) {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
   .qz-areas :global(.qz-area__title) {
     margin: 0;
-    font-size: 1.02rem;
+    font-size: 1.12rem;
     font-weight: 900;
-    color: var(--navy);
+    color: var(--white);
   }
   .qz-areas :global(.qz-area__pct) {
+    margin-inline-start: auto;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
     font-weight: 800;
-    font-size: 0.85rem;
-    color: #4a5b73;
+    font-size: 0.82rem;
     font-variant-numeric: tabular-nums;
+    color: var(--navy);
+    background: #8fd0de;
+  }
+  .qz-areas :global(.qz-area[data-z='0'] .qz-area__pct) {
+    background: var(--gold-light);
   }
   .qz-areas :global(.qz-area__tips) {
     list-style: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    border-radius: 0.9rem;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-inline-start: 3px solid var(--teal);
+    display: grid;
+    gap: 0.85rem;
   }
-  .qz-areas :global(.qz-area[data-z='0'] .qz-area__tips) {
-    border-inline-start-color: var(--gold-dark);
-  }
+  /* שני טורים: הכוכב והכותרת בטור אחד, ההסבר בטור השני */
   .qz-areas :global(.qz-area__tips li) {
+    display: grid;
+    grid-template-columns: minmax(9rem, 13rem) 1fr;
+    gap: 0.3rem 1.4rem;
+    align-items: start;
     margin: 0;
-    padding: 0.65rem 1rem;
-    font-size: 0.9rem;
-    line-height: 1.55;
-    color: #4a5b73;
   }
-  .qz-areas :global(.qz-area__tips li + li) {
-    border-top: 1px solid var(--line);
+  .qz-areas :global(.qz-tip__head) {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
   }
-  .qz-areas :global(.qz-area__tips strong) {
-    display: inline;
-    margin-inline-end: 0.35rem;
-    color: var(--navy);
+  .qz-areas :global(.qz-tip__head svg) {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin-top: 0.2rem;
   }
-  .qz-areas :global(.qz-area__tips strong + span::before) {
-    content: '· ';
-    color: var(--teal);
+  .qz-areas :global(.qz-tip__head strong) {
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: var(--gold-light);
+  }
+  .qz-areas :global(.qz-tip__text) {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--on-dark);
+  }
+  @media (max-width: 34rem) {
+    .qz-areas :global(.qz-area__tips li) {
+      grid-template-columns: 1fr;
+    }
+    .qz-areas :global(.qz-tip__text) {
+      padding-inline-start: 1.6rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qz-sparks :global(svg),
+    .qz-keep__star {
+      animation: none;
+    }
   }
 
   /* 4. שיחת היכרות ללא עלות, לפני החומרים */
