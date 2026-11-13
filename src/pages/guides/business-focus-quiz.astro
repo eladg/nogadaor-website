@@ -293,7 +293,8 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         <header class="qz-hi">
           <span class="qz-hi__star" aria-hidden="true"><Star size={34} /></span>
           <h2 class="qz-hi__title">כל הכבוד שעצרת{' '}<span>להסתכל על העסק מלמעלה</span></h2>
-          <p class="qz-hi__text">עצם זה שמילאת את השאלון אומר הרבה. זו חשיבה קדימה של מי שמתייחס לפיתוח העסק ברצינות, ולא מחכה שהצמיחה תגיע לבד. וזה בדיוק המקום שממנו עסקים מתחילים לגדול.</p>
+          {/* הנוסח של נוגה (2026-11-13), כמשפט אחד ובלי גוף זכר */}
+          <p class="qz-hi__text">כבר ברור שיש כאן חשיבה קדימה ויחס רציני לפיתוח העסק, בלי לחכות שהצמיחה תגיע לבד, וזה בדיוק המקום שממנו עסקים מתחילים לגדול.</p>
         </header>
 
         {/* 1. הגרף: הציון הכללי, פס לכל תחום, וסקלה עם משמעות */}
@@ -334,6 +335,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         {/* 2. מה שווה לשמור: פסקה אחת שמחברת את כל הנקודות החזקות, מחמיאה ומעודדת (נוגה, 2026-11-13) */}
         <section class="qz-keep" data-keep-block>
           {/* כותרות מעניינות יותר (נוגה, 2026-11-13: "משעמם פה!"). הצעה שלי, לאישור */}
+          {/* נצנצים: כוכבים קטנים של נוגה שמנצנצים ברקע */}
+          <span class="qz-sparks" aria-hidden="true">
+            <Star size={14} /><Star size={10} /><Star size={18} /><Star size={11} /><Star size={13} /><Star size={9} />
+          </span>
           <span class="qz-keep__star" aria-hidden="true"><Star size={30} /></span>
           <div>
             <h3 class="qz-h3 no-grad">מה כבר עובד אצלך</h3>
@@ -343,10 +348,6 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 
         {/* 3. מה לשפר: לכל תחום מתחת ל-70, מהחלש לחזק, שתי עצות מתוך השאלות */}
         <section class="qz-improve" data-grow-block>
-          {/* נצנצים: כוכבים קטנים של נוגה שמנצנצים ברקע */}
-          <span class="qz-sparks" aria-hidden="true">
-            <Star size={14} /><Star size={10} /><Star size={18} /><Star size={11} /><Star size={13} /><Star size={9} />
-          </span>
           <h3 class="qz-h3 qz-improve__title no-grad">איפה מחכה <span class="hl">הצמיחה הבאה שלך</span></h3>
           <p class="qz-improve__lead">התחומים שבהם שינוי קטן יכול להזיז הכי הרבה, ומאיפה כדאי להתחיל בכל אחד</p>
           <div class="qz-areas" data-groups></div>
@@ -1745,18 +1746,26 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     line-height: 1.25;
     color: var(--navy);
   }
+  /* הכחול החזק עם הנצנצים על "מה כבר עובד" (נוגה, 2026-11-13) */
   .qz-keep {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
     margin-top: 1.75rem;
-    padding: 1.2rem 1.4rem;
-    border-radius: 1.25rem;
+    padding: clamp(1.3rem, 4vw, 1.9rem) clamp(1.1rem, 4vw, 2rem);
+    border-radius: 1.5rem;
+    color: var(--on-dark);
     background:
-      radial-gradient(16rem 8rem at 100% 0, rgb(252 220 109 / 0.22), transparent 70%),
-      var(--white);
-    border: 1px solid rgb(209 154 74 / 0.35);
-    box-shadow: 0 1rem 2rem -1.5rem rgb(209 154 74 / 0.6);
+      radial-gradient(26rem 14rem at 100% 0, rgb(12 138 168 / 0.75), transparent 70%),
+      radial-gradient(22rem 14rem at 0 100%, rgb(209 154 74 / 0.22), transparent 70%),
+      linear-gradient(160deg, #075a70, #08304f 55%, var(--navy));
+    box-shadow: 0 1.6rem 3rem -1.8rem rgb(8 48 79 / 0.85);
+  }
+  .qz-keep .qz-h3 {
+    color: var(--white);
   }
   .qz-keep__star {
     flex: none;
@@ -1802,38 +1811,33 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   .qz-keep__text {
     margin: 0;
     font-size: 1rem;
+    font-weight: 400;
     line-height: 1.75;
-    color: #33445c;
+    color: var(--on-dark);
   }
 
   /* 3. איפה מחכה הצמיחה: אזור בכחול חזק עם מעבר צבע ונצנצים. שם התחום בכותרת עם אייקון,
      ובכל עצה הכותרת בטור אחד וההסבר בטור שני, בלי קווי טבלה (נוגה, 2026-11-13) */
+  /* "איפה מחכה הצמיחה" על רקע בהיר (נוגה, 2026-11-13): כותרות התחומים בזהב, כל השאר בשחור,
+     כותרות העצות מודגשות וההסברים בלי הדגשה */
   .qz-improve {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
     margin-top: 1.75rem;
-    padding: clamp(1.4rem, 4vw, 2.2rem) clamp(1.1rem, 4vw, 2.2rem);
-    border-radius: 1.5rem;
-    color: var(--on-dark);
-    background:
-      radial-gradient(26rem 14rem at 100% 0, rgb(12 138 168 / 0.75), transparent 70%),
-      radial-gradient(22rem 14rem at 0 100%, rgb(209 154 74 / 0.22), transparent 70%),
-      linear-gradient(160deg, #075a70, #08304f 55%, var(--navy));
-    box-shadow: 0 1.6rem 3rem -1.8rem rgb(8 48 79 / 0.85);
   }
   .qz-improve__title {
-    color: var(--white);
     font-size: clamp(1.4rem, 3.6vw, 1.85rem);
+    color: var(--navy);
   }
   .qz-improve__title .hl {
     display: block;
+    background: none;
+    color: var(--navy);
   }
   .qz-improve__lead {
     margin: 0 0 1.4rem;
     font-size: 0.95rem;
+    font-weight: 400;
     line-height: 1.55;
-    color: var(--on-dark-soft);
+    color: var(--navy);
   }
   /* נצנצים: כוכבים קטנים מפוזרים שמנצנצים */
   .qz-sparks {
@@ -1877,7 +1881,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     gap: 0.55rem;
     margin-bottom: 0.65rem;
     padding-bottom: 0.55rem;
-    border-bottom: 1px solid rgb(255 255 255 / 0.16);
+    border-bottom: 1px solid var(--line);
   }
   .qz-areas :global(.qz-area__icon) {
     flex: none;
@@ -1886,9 +1890,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     width: 2.2rem;
     height: 2.2rem;
     border-radius: 50%;
-    color: var(--gold-light);
-    background: rgb(255 255 255 / 0.1);
-    border: 1px solid rgb(252 220 109 / 0.4);
+    color: var(--gold-dark);
+    background: rgb(252 220 109 / 0.16);
+    border: 1px solid rgb(209 154 74 / 0.45);
   }
   .qz-areas :global(.qz-area__icon svg) {
     width: 18px;
@@ -1896,9 +1900,12 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   }
   .qz-areas :global(.qz-area__title) {
     margin: 0;
-    font-size: 1.12rem;
+    font-size: 1.2rem;
     font-weight: 900;
-    color: var(--white);
+    background: linear-gradient(135deg, #e0aa45, #b57c22);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .qz-areas :global(.qz-area__pct) {
     margin-inline-start: auto;
@@ -1941,13 +1948,15 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   }
   .qz-areas :global(.qz-tip__head strong) {
     font-size: 0.98rem;
+    font-weight: 800;
     line-height: 1.4;
-    color: var(--gold-light);
+    color: var(--navy);
   }
   .qz-areas :global(.qz-tip__text) {
     font-size: 0.93rem;
+    font-weight: 400;
     line-height: 1.6;
-    color: var(--on-dark);
+    color: var(--navy);
   }
   @media (max-width: 34rem) {
     .qz-areas :global(.qz-area__tips li) {
