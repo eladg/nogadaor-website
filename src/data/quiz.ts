@@ -80,7 +80,7 @@ export const quizServices = {
   financial: { href: '/services/financial/', label: 'ליווי פיננסי', type: 'ליווי' },
   ai: { href: '/services/ai-automation/', label: 'ייעול תהליכים עם AI', type: 'ליווי' },
   org: { href: '/services/organizational-consulting/', label: 'ייעוץ ארגוני', type: 'ליווי' },
-  session: { href: '/services/consulting-session/', label: 'פגישת ייעוץ ממוקדת', type: 'פגישת ייעוץ' },
+  session: { href: '/services/consulting-session/', label: 'פגישת ייעוץ', type: 'פגישת ייעוץ' },
   sessionDigital: { href: '/services/consulting-session/#digital', label: 'נוכחות שיווקית בדיגיטל', type: 'פגישת ייעוץ' },
 } satisfies Record<string, QuizLink>;
 export type ServiceKey = keyof typeof quizServices;
