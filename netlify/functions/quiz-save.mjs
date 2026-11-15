@@ -9,8 +9,8 @@
 // שני סוגים:
 // - complete: מישהו סיים את כל השאלות. נשלחות התשובות והציונים, בלי פרטים אישיים.
 // - lead: אותו אדם השאיר שם ומייל כדי לפתוח את התוצאה. הפרטים נכתבים באותה שורה (לפי המזהה).
-//   אם סימן "אני מאשר/ת לקבל תכנים ועדכונים במייל", הוא נכנס גם לסמוב (נוגה, 2026-11-15).
-//   בלי הסימון, לא נשלח כלום לסמוב.
+//   שם, מייל, טלפון וסימון ההסכמה חובה (נוגה, 2026-11-15). הפרטים נכתבים לגיליון יחד עם התשובות,
+//   ונכנסים גם לסמוב. התשובות נשמרות בגיליון גם בשורת "הושלם", כך שהסטטיסטיקה כוללת גם מי שלא השאיר פרטים.
 
 import { addToSmoove, env, smooveContact } from '../lib/smoove.mjs';
 
@@ -57,7 +57,10 @@ export function buildPayload(data) {
   if (!name) return { error: 'missing_name' };
   if (!email) return { error: 'missing_email' };
   if (!EMAIL_RE.test(email)) return { error: 'invalid_email' };
+  if (phone.replace(/\D/g, '').length < 9) return { error: 'missing_phone' };
+  // האישור חובה בטופס (נוגה, 2026-11-15), ולכן גם כאן
   const marketing = data.marketing === true;
+  if (!marketing) return { error: 'missing_consent' };
 
   return {
     payload: {

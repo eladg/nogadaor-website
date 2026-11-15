@@ -251,13 +251,14 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       </form>
 
       <!-- התוצאה -->
-      {/* שער התוצאה (נוגה, 2026-11-13): כדי לפתוח את התוצאה משאירים שם ומייל. הטלפון לא חובה.
+      {/* שער התוצאה (נוגה, 2026-11-13; עודכן 2026-11-15): כדי לפתוח את התוצאה משאירים שם, מייל וטלפון ומסמנים הסכמה (חובה, לא מסומן מראש).
+          נוסח ההסכמה הוא של נוגה, מילה במילה. מי שמשאיר פרטים נכנס גם לסמוב (netlify/functions/quiz-save.mjs).
           התשובות נשמרות בגיליון של נוגה כבר כשמסיימים את השאלות (בלי פרטים), והפרטים נוספים לאותה שורה.
           אם השמירה נכשלת, התוצאה נפתחת בכל זאת, כדי לא להעניש את מי שמילא */}
       <div class="qz-gate" data-gate hidden tabindex="-1">
         <span class="qz-gate__icon" aria-hidden="true"><Icon name="chart" size={30} /></span>
         <h2 class="qz-gate__title">התוצאה שלך <span class="hl">מוכנה</span></h2>
-        <p class="qz-gate__text">כדי לפתוח אותה, נשאר רק להשאיר שם ומייל.</p>
+        <p class="qz-gate__text">כדי לפתוח אותה, נשאר רק להשאיר פרטים.</p>
         <form class="qz-gate__form" data-gate-form novalidate>
           <label>
             <span class="qz-gate__label">שם</span>
@@ -268,20 +269,22 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
             <input type="email" name="email" autocomplete="email" maxlength="200" dir="ltr" required />
           </label>
           <label>
-            <span class="qz-gate__label">טלפון <small>(לא חובה)</small></span>
-            <input type="tel" name="phone" autocomplete="tel" maxlength="30" dir="ltr" />
+            <span class="qz-gate__label">טלפון</span>
+            <input type="tel" name="phone" autocomplete="tel" maxlength="30" dir="ltr" required />
           </label>
-          {/* TODO: נוסח ההסכמה לדיוור ונוסח היידוע לבדוק עם איש מקצוע, ולכתוב את מדיניות הפרטיות לפני פרסום */}
           <label class="qz-gate__check">
-            <input type="checkbox" name="marketing" />
-            <span>אני מאשר/ת לקבל תכנים ועדכונים במייל</span>
+            <input type="checkbox" name="marketing" required />
+            <span>
+              אני מאשר/ת מרצוני החופשי את מסירת הפרטים והשימוש בהם כדי ליצור איתי קשר, לרבות באמצעות דיוור, ווטסאפ
+              וסמס. על הפרטים יחולו <a href="/terms/" target="_blank" rel="noopener">תנאי השימוש</a>{' '}ו<a
+                href="/privacy/"
+                target="_blank"
+                rel="noopener">מדיניות הפרטיות</a>{' '}של האתר, לרבות אפשרות לביטול הרישום בכל עת.
+            </span>
           </label>
           <div class="qz-hp" aria-hidden="true">
             <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
           </div>
-          <p class="qz-gate__legal">
-            הפרטים נשמרים אצל נוגה דיין אור, לחזרה בנושא השאלון. <a href="/privacy/">למדיניות הפרטיות</a>
-          </p>
           <p class="qz-gate__error" data-gate-error role="alert" hidden></p>
           <button class="btn qz-gate__btn" type="submit" data-gate-btn>לפתיחת התוצאה</button>
         </form>
@@ -810,6 +813,9 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       var email = f('email').value.trim();
       if (!name) return gateError('נשאר למלא שם', f('name'));
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateError('כתובת המייל לא נראית תקינה', f('email'));
+      var phone = f('phone').value.trim();
+      if (phone.replace(/\D/g, '').length < 9) return gateError('נשאר למלא מספר טלפון', f('phone'));
+      if (!f('marketing').checked) return gateError('כדי לפתוח את התוצאה צריך לסמן את האישור', f('marketing'));
       gateErr.hidden = true;
       gateBtn.disabled = true;
       gateBtn.textContent = 'פותחים את התוצאה...';
@@ -827,7 +833,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
           id: runId(),
           name: name,
           email: email,
-          phone: f('phone').value.trim(),
+          phone: phone,
           marketing: f('marketing').checked,
           website: f('website').value,
           answers: lastRow,
@@ -1298,12 +1304,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     margin-top: 0.2rem;
     accent-color: var(--gold-dark);
   }
-  .qz-gate__legal {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--on-dark-soft);
-  }
-  .qz-gate__legal a {
+  .qz-gate__check a {
     color: var(--gold-light);
   }
   .qz-gate__error {
