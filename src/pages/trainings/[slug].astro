@@ -38,7 +38,8 @@ const crumbs = [
 ];
 ---
 
-<BaseLayout title={training.title} description={pageDescription} schema={schema} crumbs={crumbs} image={cover}>
+{/* בכותרת בגוגל ובלשונית: "– הרצאה וסדנה", כדי להבדיל ממדריך באותו שם (נוגה, 2026-11-15) */}
+<BaseLayout title={`${training.title} – הרצאה וסדנה`} description={pageDescription} schema={schema} crumbs={crumbs} image={cover}>
   <!-- עמוד ההדרכה כולו ממורכז (נוגה, 2026-11-08) -->
   <LightHero image={heroImage} title={training.title} center crumbs={{ href: '/trainings/', label: 'קטלוג הדרכות', current: 'הדרכה' }}>
     <p>{training.short}</p>

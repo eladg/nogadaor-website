@@ -130,7 +130,7 @@ const deskStyle = await atmoStyle(deskAtmo, 0.35);
 
       <article class="c-ig c-ig--featured">
         <a class="c-ig__media" href={featuredPost.href} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-          <Image src={featuredPost.image} alt="" widths={[400, 640]} sizes="(min-width: 52rem) 24rem, 90vw" />
+          <Image src={featuredPost.image} alt={featuredPost.alt} widths={[400, 640]} sizes="(min-width: 52rem) 24rem, 90vw" />
         </a>
         <div class="c-ig__content">
           <ReadMore class="c-ig__text" preview={featuredPost.preview} more={featuredPost.more} />

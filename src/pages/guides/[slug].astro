@@ -81,7 +81,8 @@ const crumbs = [
 ];
 ---
 
-<BaseLayout title={d.title} description={description} schema={schema} crumbs={crumbs} image={cover} ogType="article">
+{/* בכותרת בגוגל ובלשונית מוסיפים את סוג התוכן, כדי להבדיל ממדריך / הדרכה באותו שם (נוגה, 2026-11-15) */}
+<BaseLayout title={`${d.title} – ${d.type === 'article' ? 'מאמר' : 'מדריך'}`} description={description} schema={schema} crumbs={crumbs} image={cover} ogType="article">
   <!-- סימן מים להדפסה: המונוגרמה OR עם הכוכב, שקופה מאוד, בכל עמוד מודפס (מוסתרת במסך).
        נוגה (2026-11-06): שלא ישתמשו במדריך המודפס כאילו הוא שלהם. -->
   <div class="print-mark" aria-hidden="true"><img src="/images/or-mark.webp" alt="" width="800" height="565" /></div>

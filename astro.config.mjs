@@ -11,5 +11,5 @@ export default defineConfig({
   // ולכן כשיחובר דומיין הכול יתעדכן לבד. בבנייה מקומית אין URL, והתגיות לא נכתבות (כמו קודם).
   site: process.env.URL || undefined,
   // מפת אתר לגוגל (2026-11-15, האתר באוויר בדומיין). בלי עמודים מוסתרים מגוגל (noindex)
-  integrations: [mdx(), sitemap({ filter: (page) => !/\/(accessibility|404)\/?$/.test(page) })]
+  integrations: [mdx(), sitemap({ filter: (page) => !/\/(404)\/?$/.test(page) })]
 });
