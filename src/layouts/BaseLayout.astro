@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SiteIndex from '../components/SiteIndex.astro';
 import { launch } from '../data/launch';
+import { seo } from '../data/seo';
 import { graph, breadcrumbSchema, type Schema } from '../utils/schema';
 // טעינה מוקדמת של הגופן (בדיקת SEO, 2026-11-08): בלי זה הטקסט מוצג קודם בגופן אחר, ואז מתחלף ל-Heebo,
 // הכותרת בפתיח של הבית יורדת שורה וכל העמוד "קופץ" (CLS 0.257 במחשב). אלה אותם קבצים שה-CSS טוען.
@@ -36,7 +37,11 @@ const defaultImage = {
   width: 1200,
   height: 630,
 };
-const { title, description: fullDescription = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image = defaultImage, ogType = 'website' } = Astro.props;
+const { title: pageTitle, description: pageDescription = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image = defaultImage, ogType = 'website' } = Astro.props;
+// כותרת ותיאור לגוגל מ-src/data/seo.ts (לפי כתובת העמוד), אם הוגדרו שם. אחרת מה שהעמוד העביר
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : Astro.url.pathname + '/';
+const title = seo[path]?.title ?? pageTitle;
+const fullDescription = seo[path]?.description ?? pageDescription;
 // גוגל חותך תיאור ארוך מ-160 תווים. מקצרים בסוף מילה (התיאור המלא נשאר בעמוד עצמו)
 const description = fullDescription.length > 160 ? fullDescription.slice(0, 157).replace(/\s+\S*$/, '') + '…' : fullDescription;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
