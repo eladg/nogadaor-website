@@ -9,14 +9,13 @@
 // שני סוגים:
 // - complete: מישהו סיים את כל השאלות. נשלחות התשובות והציונים, בלי פרטים אישיים.
 // - lead: אותו אדם השאיר שם ומייל כדי לפתוח את התוצאה. הפרטים נכתבים באותה שורה (לפי המזהה).
+//   אם סימן "אני מאשר/ת לקבל תכנים ועדכונים במייל", הוא נכנס גם לסמוב (נוגה, 2026-11-15).
+//   בלי הסימון, לא נשלח כלום לסמוב.
+
+import { addToSmoove, env, smooveContact } from '../lib/smoove.mjs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_FIELDS = 80;
-
-function env(name) {
-  const value = globalThis.Netlify?.env?.get(name) ?? process.env[name];
-  return typeof value === 'string' ? value.trim() : '';
-}
 
 function clean(value, max) {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
@@ -78,13 +77,6 @@ export function buildPayload(data) {
 export default async (req) => {
   if (req.method !== 'POST') return json(405, { ok: false, error: 'method_not_allowed' });
 
-  const url = env('QUIZ_SHEET_URL');
-  const secret = env('QUIZ_SHEET_SECRET');
-  if (!url || !secret) {
-    console.error('QUIZ_SHEET_URL or QUIZ_SHEET_SECRET is not set');
-    return json(500, { ok: false, error: 'not_configured' });
-  }
-
   let data;
   try {
     data = await req.json();
@@ -99,6 +91,34 @@ export default async (req) => {
   const { payload, error } = buildPayload(data);
   if (error) return json(400, { ok: false, error });
 
+  // הגיליון והדיוור בסמוב נשלחים במקביל. כישלון באחד לא עוצר את השני
+  const wantsMail = payload.type === 'lead' && data.marketing === true;
+  const [sheet, smoove] = await Promise.all([
+    saveToSheet(payload),
+    wantsMail
+      ? addToSmoove(
+          smooveContact({
+            name: payload.row['שם'],
+            email: payload.row['מייל'],
+            phone: payload.row['טלפון'],
+            source: 'אתר: שאלון המיקוד',
+          }),
+        )
+      : null,
+  ]);
+
+  if (sheet === 'ok') return json(200, { ok: true, smoove });
+  return json(sheet === 'not_configured' ? 500 : 502, { ok: false, error: sheet, smoove });
+};
+
+// מחזיר 'ok', 'not_configured', 'sheet_error' או 'sheet_unreachable'
+async function saveToSheet(payload) {
+  const url = env('QUIZ_SHEET_URL');
+  const secret = env('QUIZ_SHEET_SECRET');
+  if (!url || !secret) {
+    console.error('QUIZ_SHEET_URL or QUIZ_SHEET_SECRET is not set');
+    return 'not_configured';
+  }
   try {
     // Apps Script עונה בהפניה (302) לכתובת של גוגל. fetch עוקב אחריה, והכתיבה לגיליון כבר בוצעה
     const res = await fetch(url, {
@@ -114,13 +134,13 @@ export default async (req) => {
     } catch {}
     if (!res.ok || !body?.ok) {
       console.error('Sheet error', res.status, text.slice(0, 300));
-      return json(502, { ok: false, error: 'sheet_error' });
+      return 'sheet_error';
     }
-    return json(200, { ok: true });
+    return 'ok';
   } catch (err) {
     console.error('Sheet request failed', err);
-    return json(502, { ok: false, error: 'sheet_unreachable' });
+    return 'sheet_unreachable';
   }
-};
+}
 
 export const config = { path: '/api/quiz' };
