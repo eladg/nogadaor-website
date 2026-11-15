@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,5 +10,6 @@ export default defineConfig({
   // Netlify מעביר בזמן הבנייה את הכתובת הראשית של האתר במשתנה URL (הדומיין הפרטי כשיוגדר, אחרת כתובת netlify.app),
   // ולכן כשיחובר דומיין הכול יתעדכן לבד. בבנייה מקומית אין URL, והתגיות לא נכתבות (כמו קודם).
   site: process.env.URL || undefined,
-  integrations: [mdx()]
+  // מפת אתר לגוגל (2026-11-15, האתר באוויר בדומיין). בלי עמודים מוסתרים מגוגל (noindex)
+  integrations: [mdx(), sitemap({ filter: (page) => !/\/(accessibility|404)\/?$/.test(page) })]
 });

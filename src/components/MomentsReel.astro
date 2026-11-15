@@ -45,7 +45,7 @@ const rows = rowNums.map((row) => row.map((n) => ({ src: pic(n), alt: alts[n] ??
 
 {
   rows.map((row, r) => (
-    <div class={`reel reel--${r % 2 ? 'b' : 'a'}`}>
+    <div class={`reel reel--${r % 2 ? 'b' : 'a'}`} role="region" aria-label="תמונות מהכנסים" tabindex="0">
       <div class="reel__track">
         {[0, 1].map((copy) => (
           <ul class="reel__set" aria-hidden={copy === 1 ? 'true' : undefined}>

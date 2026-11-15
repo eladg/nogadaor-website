@@ -112,8 +112,12 @@ const { items, label, tone = 'gold' } = Astro.props;
     .ribbon__track {
       animation: none;
     }
-    .ribbon__viewport {
-      overflow-x: auto;
+    /* בלי תנועה: כל הנושאים בשורות, בלי גלילה לצדדים (נגישות למקלדת) */
+    .ribbon__track,
+    .ribbon__set {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: auto;
     }
     .ribbon__set + .ribbon__set {
       display: none;

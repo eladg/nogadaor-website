@@ -36,7 +36,9 @@ const defaultImage = {
   width: 1200,
   height: 630,
 };
-const { title, description = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image = defaultImage, ogType = 'website' } = Astro.props;
+const { title, description: fullDescription = 'נוגה דיין אור – הצלחה עסקית בדרך שלך', noindex = false, schema = [], crumbs = [], image = defaultImage, ogType = 'website' } = Astro.props;
+// גוגל חותך תיאור ארוך מ-160 תווים. מקצרים בסוף מילה (התיאור המלא נשאר בעמוד עצמו)
+const description = fullDescription.length > 160 ? fullDescription.slice(0, 157).replace(/\s+\S*$/, '') + '…' : fullDescription;
 const fullTitle = title === 'בית' ? 'נוגה דיין אור' : `${title} | נוגה דיין אור`;
 // כתובת קנונית: רק כשמוגדר site ב-astro.config.mjs (כשיהיה דומיין). אז היא מופיעה לבד בכל העמודים.
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;

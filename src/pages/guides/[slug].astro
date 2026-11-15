@@ -791,3 +791,10 @@ const crumbs = [
     }
   }
 </style>
+
+<script>
+  // טבלה רחבה נגללת לצדדים בטלפון. מאפשרים להגיע אליה במקלדת כדי לגלול (נגישות)
+  document.querySelectorAll<HTMLTableElement>('.prose table').forEach((t) => {
+    t.tabIndex = 0;
+  });
+</script>
