@@ -3,7 +3,8 @@
 //
 // משתני סביבה (Netlify: Site configuration > Environment variables):
 //   SMOOVE_API_KEY             חובה. מפתח ה-API של סמוב.
-//   SMOOVE_NEWSLETTER_LIST_ID  לא חובה. מספר הרשימה בסמוב (אפשר כמה, מופרדים בפסיק).
+//   SMOOVE_NEWSLETTER_LIST_ID  לא חובה. מספר הרשימה בסמוב לטופס ההרשמה בצור קשר (אפשר כמה, מופרדים בפסיק).
+//   SMOOVE_QUIZ_LIST_ID        לא חובה. מספר הרשימה "שאלון אבחון באתר" (נוגה, 2026-11-16). בלעדיו השאלון נכנס לרשימת הדיוור.
 //
 // לא משנה שום הגדרה בסמוב. רק יוצר איש קשר, או מעדכן איש קשר שכבר קיים (409).
 // תיעוד ה-API: https://rest.smoove.io (POST /v1/Contacts, הרשאה: Authorization: Bearer <key>)
@@ -16,15 +17,15 @@ export function env(name) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function listIds() {
-  return env('SMOOVE_NEWSLETTER_LIST_ID')
+function listIds(name) {
+  return env(name)
     .split(',')
     .map((s) => Number.parseInt(s.trim(), 10))
     .filter((n) => Number.isInteger(n) && n > 0);
 }
 
 // בונה איש קשר מהפרטים (השם מתפצל לפרטי ומשפחה). טלפון לא חובה
-export function smooveContact({ name, email, phone, source }) {
+export function smooveContact({ name, email, phone, source, listEnv = 'SMOOVE_NEWSLETTER_LIST_ID' }) {
   const [firstName, ...rest] = (name || '').split(/\s+/).filter(Boolean);
   const contact = {
     firstName: firstName || undefined,
@@ -33,7 +34,8 @@ export function smooveContact({ name, email, phone, source }) {
     cellPhone: phone || undefined,
     campaignSource: source,
   };
-  const lists = listIds();
+  // רשימה ייעודית אם הוגדרה, אחרת רשימת הדיוור הכללית
+  const lists = listIds(listEnv).length ? listIds(listEnv) : listIds('SMOOVE_NEWSLETTER_LIST_ID');
   if (lists.length) contact.lists_ToSubscribe = lists;
   return contact;
 }

@@ -10,7 +10,8 @@
 // (למשל 30 אותיות ומספרים באנגלית, בלי רווחים). לא שולחים אותה בצ'אט.
 const SECRET = 'להחליף-במחרוזת-ארוכה';
 const SHEET_NAME = 'תשובות';
-const FIRST_COLUMNS = ['תאריך', 'מזהה', 'סטטוס'];
+// שם, מייל וטלפון בהתחלה, כדי שיהיה נוח לראות (נוגה, 2026-11-16)
+const FIRST_COLUMNS = ['תאריך', 'מזהה', 'סטטוס', 'שם', 'מייל', 'טלפון', 'מאשר דיוור'];
 
 function doPost(e) {
   let data;
@@ -56,6 +57,17 @@ function getSheet() {
     sheet.setFrozenRows(1);
     sheet.setRightToLeft(true);
   }
+  // גיליון קיים: עמודות הפרטים שחסרות נוספות מיד אחרי "סטטוס"
+  const head = headers(sheet);
+  let at = head.indexOf('סטטוס') + 1;
+  FIRST_COLUMNS.slice(3).forEach((name) => {
+    const i = headers(sheet).indexOf(name);
+    if (i === -1) {
+      sheet.insertColumnAfter(at);
+      sheet.getRange(1, at + 1).setValue(name).setFontWeight('bold');
+    }
+    at = headers(sheet).indexOf(name) + 1;
+  });
   return sheet;
 }
 

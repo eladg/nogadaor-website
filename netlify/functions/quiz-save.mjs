@@ -105,6 +105,7 @@ export default async (req) => {
             email: payload.row['מייל'],
             phone: payload.row['טלפון'],
             source: 'אתר: שאלון המיקוד',
+            listEnv: 'SMOOVE_QUIZ_LIST_ID',
           }),
         )
       : null,
