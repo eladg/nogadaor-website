@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# חומרי עבודה של נוגה וצילומי טיוטה, נשארים רק במחשב
+/חומרים גרפיים לאתר/
+/drafts/hero-mockups-walkway/
