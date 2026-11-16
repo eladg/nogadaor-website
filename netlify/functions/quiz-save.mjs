@@ -106,6 +106,8 @@ export default async (req) => {
             phone: payload.row['טלפון'],
             source: 'אתר: שאלון המיקוד',
             listEnv: 'SMOOVE_QUIZ_LIST_ID',
+            // הרשימה "שאלון אבחון באתר" בסמוב (נוגה פתחה, 2026-11-16). מספר רשימה אינו סוד
+            defaultLists: [1187164],
           }),
         )
       : null,
