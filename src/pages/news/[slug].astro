@@ -1,11 +1,10 @@
 ---
 // עמוד גיליון של המבזק השבועי (נוגה, 2026-11-17). הנתונים ב-src/data/news.ts
-// מבנה: ראש גיליון (בסגנון עיתון) ← "בגיליון הזה" ← חלק 1 המשק והעסקים ← חלק 2 אצל נוגה (עדכונים ובקרוב) ← הרשמה לדיוור
+// מבנה: ראש גיליון (בסגנון עיתון) ← "בגיליון הזה" ← חלק 1 המשק והעסקים ← חלק 2 אצל נוגה (עדכונים ובקרוב) ← שאלון האבחון וקבוצת הוואטסאפ
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShareBar from '../../components/ShareBar.astro';
 import Star from '../../components/Star.astro';
-import Icon from '../../components/Icon.astro';
 import { issues, hebDate, type Issue } from '../../data/news';
 import { contact } from '../../data/contact';
 
@@ -23,6 +22,7 @@ const img = (p?: string) => (p ? assets[`/src/assets/${p}`]?.default : undefined
 // אירוע שהתאריך שלו עבר לא מוצג (נבדק בזמן הבנייה)
 const today = new Date().toISOString().slice(0, 10);
 const events = issue.events.filter((e) => e.date >= today || e.date >= issue.date);
+const dates = issue.dates.filter((k) => k.date >= today || k.date >= issue.date);
 
 const newer = issues.find((i) => i.number === issue.number + 1);
 const older = issues.find((i) => i.number === issue.number - 1);
@@ -61,6 +61,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         {issue.economy.map((n, i) => (
           <li><a href={`#${n.id}`}><span class="nw-toc__n">{pad(i + 1)}</span>{n.title}</a></li>
         ))}
+        {dates.length > 0 && <li><a href="#dates"><span class="nw-toc__n"><Star size={11} /></span>תאריכים לסמן ביומן</a></li>}
       </ol>
     </div>
     <div class="nw-toc__col">
@@ -96,6 +97,35 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </div>
         </article>
       ))}
+
+      {dates.length > 0 && (
+        <div id="dates" class="nw-dates">
+          <h3 class="nw-dates__title">תאריכים לסמן ביומן</h3>
+          <ul class="nw-dates__list">
+            {dates.map((k) => {
+              const kd = hebDate(k.date);
+              return (
+                <li class="nw-date">
+                  <div class="nw-ev__date" aria-hidden="true">
+                    <span class="nw-ev__day">{kd.day}</span>
+                    <span class="nw-ev__month">{kd.month}</span>
+                  </div>
+                  <div>
+                    <h4 class="nw-date__title"><time datetime={k.date} class="sr-only">{kd.full} </time>{k.title}</h4>
+                    <p class="nw-date__text">
+                      {k.text}
+                      {k.href && <> <a href={k.href}>לידיעה</a></>}
+                      {k.source && (
+                        <> <a href={k.source.url} target="_blank" rel="noopener">מקור, {k.source.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></>
+                      )}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   </section>
 
@@ -170,11 +200,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <section class="section nw-end">
     <div class="container">
       <div class="nw-sub">
-        <Icon name="mail" size={30} />
-        <h2 class="nw-sub__title">המבזק הבא, ישר למייל</h2>
-        <p>פעם בשבוע, הידיעות שחשוב לעסק להכיר, בקצרה ועם המקורות</p>
+        <Star size={26} />
+        <h2 class="nw-sub__title">ומה עם העסק שלך?</h2>
+        <p>שאלון האבחון מראה מה שווה לשמור ומה כדאי לשפר כדי להגדיל הכנסות. ובקבוצת הוואטסאפ מגיע המבזק הבא, ראשון</p>
         <div class="nw-sub__actions">
-          <a class="btn" href="/contact/#news-title">להרשמה לדיוור</a>
+          <a class="btn" href="/guides/business-focus-quiz/">לשאלון האבחון</a>
           <a class="btn btn--ghost nw-sub__ghost" href={contact.whatsappGroup} target="_blank" rel="noopener">
             לקבוצת הוואטסאפ<span class="sr-only"> (נפתח בלשונית חדשה)</span>
           </a>
@@ -556,7 +586,54 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
   }
 
-  /* הרשמה: כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה */
+  /* תאריכים לסמן ביומן */
+  .nw-dates {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold-dark);
+    border-radius: var(--radius);
+    background: var(--white);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  .nw-dates__title {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  .nw-dates__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .nw-date {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding-block: 0.9rem;
+    border-top: 1px solid var(--line);
+  }
+  .nw-date:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .nw-date__title {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    color: var(--navy);
+  }
+  .nw-date__text {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .nw-date__text a {
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
+  /* סיום: כרטיס כהה בתוך אזור בהיר, כי הפוטר כהה */
   .nw-sub {
     max-width: 46rem;
     margin: 0 auto;
