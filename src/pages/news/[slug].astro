@@ -141,7 +141,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
             <article id={u.id} class="nw-up">
               <div class:list={['nw-up__media', isToon && 'nw-up__media--toon']}>
                 {im ? (
-                  <Image src={im} alt="" widths={[480, 800]} sizes="(min-width: 60rem) 30vw, 100vw" class:list={[isToon && 'toon']} />
+                  <Image src={im} alt={u.imageAlt ?? ''} widths={[480, 800]} sizes="(min-width: 60rem) 30vw, 100vw" class:list={[isToon && 'toon', u.id === 'lecturers' && 'nw-up__img--faces']} />
                 ) : (
                   <div class="nw-up__ph">{u.imagePending ?? 'תמונה'}</div>
                 )}
@@ -169,10 +169,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
               const ed = hebDate(e.date);
               return (
                 <li id={e.id} class="nw-ev">
-                  <div class="nw-ev__date" aria-hidden="true">
-                    <span class="nw-ev__day">{ed.day}</span>
-                    <span class="nw-ev__month">{ed.month}</span>
-                  </div>
+                  {img(e.image) ? (
+                    <Image src={img(e.image)!} alt="" widths={[160, 320]} sizes="7rem" class="nw-ev__img" />
+                  ) : (
+                    <div class="nw-ev__date" aria-hidden="true">
+                      <span class="nw-ev__day">{ed.day}</span>
+                      <span class="nw-ev__month">{ed.month}</span>
+                    </div>
+                  )}
                   <div class="nw-ev__body">
                     <p class="nw-ev__meta">
                       <time datetime={e.date}>{ed.full}</time>
@@ -547,6 +551,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
     background: var(--navy);
     color: var(--white);
     text-align: center;
+  }
+  .nw-ev__img {
+    width: 7rem;
+    height: 7rem;
+    object-fit: cover;
+    border-radius: 0.6rem;
+  }
+  .nw-up__img--faces {
+    object-position: 50% 30%;
   }
   .nw-ev__day {
     font-size: 1.9rem;
