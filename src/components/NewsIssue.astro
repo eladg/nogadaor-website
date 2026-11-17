@@ -1,14 +1,18 @@
 ---
-// גיליון של המבזק השבועי (נוגה, 2026-11-17, סבב 3). משמש את /news/ (הגיליון החדש) ואת /news/<slug>/ (כתובת קבועה).
-// סדר העדיפויות מלמעלה: פתיח בהיר ומזמין ← ההדרכה הקרובה ושאלון האבחון ← המפגשים בראשון לציון ←
-// השבוע בעסקים (כרטיסים 3 בשורה, כמו ההרצאות באתר) ← עוד מנוגה ← שיתוף וגיליונות קודמים.
-// אזור כהה אחד לא נוגע באחר: הפתיח בהיר, והאזור האחרון לפני הפוטר בהיר.
+// גיליון של המבזק השבועי (נוגה, 2026-11-17, סבב 4). משמש את /news/ (הגיליון החדש) ואת /news/<slug>/ (כתובת קבועה).
+// סדר העמוד: פתיח (הדמות, הכותרת והתגיות, נוגה אהבה) ← אצל נוגה, ארבעה כרטיסים אחידים ← באנר השאלון (בולט, כמו בעמוד הבית)
+// ← חדשות מעניינות מהשבוע, כרטיסים בהירים כמו באתר חדשות ← באנר רחב לקבוצת הוואטסאפ ← שיתוף.
+// שפה גרפית אחת: כל הכרטיסים באותו מבנה (תמונה 16:9, כותרת, טקסט קצר, "להמשך קריאה", כפתור בתחתית).
+// אזורים: בהיר, בהיר, כהה (השאלון), בהיר, בהיר. כך אין שני אזורים כהים צמודים, והאזור שלפני הפוטר בהיר.
 import { Image } from 'astro:assets';
 import ShareBar from './ShareBar.astro';
 import Star from './Star.astro';
 import Icon from './Icon.astro';
 import ContentCover from './ContentCover.astro';
 import { issues, hebDate, type Issue } from '../data/news';
+import { quizYear, quizAreas } from '../data/quiz';
+import { communityIntro } from '../data/community';
+import { contact } from '../data/contact';
 
 interface Props {
   issue: Issue;
@@ -17,15 +21,13 @@ const { issue } = Astro.props;
 const d = hebDate(issue.date);
 
 const assets = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{webp,jpg,jpeg,png}', { eager: true });
-const img = (p?: string) => (p ? assets[`/src/assets/${p}`]?.default : undefined);
-const heroImg = img('character/phone-surprised.webp')!;
+const img = (p: string) => assets[`/src/assets/${p}`]!.default;
 
 const others = issues.filter((i) => i.slug !== issue.slug);
-const [webinar, quiz] = issue.featured;
-const m = issue.meetup;
+const has = (id: string) => issue.cards.some((c) => c.id === id);
 ---
 
-<!-- פתיח: בהיר, עם הדמות של נוגה וקיצורי דרך -->
+<!-- פתיח -->
 <header class="nx-hero">
   <div class="container nx-hero__grid">
     <div class="nx-hero__text">
@@ -33,108 +35,61 @@ const m = issue.meetup;
         <Star size={13} /> גיליון {issue.number} <span aria-hidden="true">·</span> <time datetime={issue.date}>{d.full}</time>
       </p>
       <h1 class="nx-hero__title no-grad">המבזק <span>השבועי</span></h1>
-      <p class="nx-hero__sub">מה חם השבוע בעסקים, בכלכלה וב-AI, ומה זה אומר לעסק שלך. חמש דקות, קפה, ויוצאים לדרך</p>
+      <p class="nx-hero__sub">מה חם השבוע בעסקים, בכלכלה וב-AI. חמש דקות, קפה, ויוצאים לדרך</p>
       <nav class="nx-jump" aria-label="בגיליון הזה">
-        {webinar && <a href={`#${webinar.id}`}><Icon name="calendar" size={16} />הדרכה חינמית ב-25.11</a>}
-        {quiz && <a href={`#${quiz.id}`}><Icon name="target" size={16} />שאלון האבחון</a>}
-        {m && <a href={`#${m.id}`}><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
-        <a href="#news"><Icon name="book-open" size={16} />השבוע בעסקים</a>
+        {has('bizlive') && <a href="#bizlive"><Icon name="calendar" size={16} />הדרכה חינמית ב-25.11</a>}
+        <a href="#quiz"><Icon name="target" size={16} />שאלון האבחון</a>
+        {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
+        <a href="#news"><Icon name="book-open" size={16} />חדשות השבוע</a>
       </nav>
     </div>
     <div class="nx-hero__art" aria-hidden="true">
-      <span class="nx-hero__blob"></span>
-      <Image src={heroImg} alt="" widths={[300, 520]} sizes="(min-width: 60rem) 22rem, 60vw" class="toon nx-hero__toon" loading="eager" />
+      <Image src={img('character/phone-surprised.webp')} alt="" widths={[300, 520]} sizes="(min-width: 52rem) 19rem, 42vw" class="toon nx-hero__toon" loading="eager" />
     </div>
-  </div>
-
-  <!-- 1. הכי חשוב: ההדרכה הקרובה ושאלון האבחון -->
-  <div class="container nx-feat">
-    {issue.featured.map((f) => {
-      const im = img(f.image);
-      return (
-        <article id={f.id} class:list={['nx-fcard', `nx-fcard--${f.tone}`]}>
-          {im && (
-            <div class:list={['nx-fcard__media', f.toon && 'nx-fcard__media--toon']}>
-              <Image src={im} alt={f.imageAlt ?? ''} widths={[320, 560]} sizes="(min-width: 60rem) 16rem, 80vw" class:list={[f.toon && 'toon']} />
-            </div>
-          )}
-          <div class="nx-fcard__body">
-            <p class="nx-fcard__meta">
-              {f.meta}
-              {f.time && <> · <span dir="ltr">{f.time}</span></>}
-            </p>
-            <h2 class="nx-fcard__title no-grad">{f.title}</h2>
-            <p class="nx-fcard__text">{f.text}</p>
-            <a class="btn nx-fcard__btn" href={f.cta.href} target={f.cta.external ? '_blank' : undefined} rel={f.cta.external ? 'noopener' : undefined}>
-              {f.cta.label}
-              {f.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
-            </a>
-          </div>
-        </article>
-      );
-    })}
   </div>
 </header>
 
-<!-- 2. המפגשים: נוגה גדולה, המפגשים בקטן -->
-{m && (
-  <section id={m.id} class="section section--mist nx-meet" aria-labelledby={`${m.id}-title`}>
-    <div class="container nx-meet__grid">
-      <figure class="nx-meet__photo">
-        <Image src={img(m.image)!} alt={m.imageAlt} widths={[300]} sizes="18rem" />
-        <figcaption>{m.host}</figcaption>
-      </figure>
-      <div class="nx-meet__body">
-        <h2 id={`${m.id}-title`} class="nx-meet__title">{m.title}</h2>
-        {m.text.map((p) => <p>{p}</p>)}
-        {m.question && <h3 class="nx-meet__q">{m.question}</h3>}
-        <ul class="nx-sessions">
-          {m.sessions.map((s) => (
-            <li class="nx-ses">
-              <span class="nx-ses__date">{s.date}</span>
-              <span class="nx-ses__day">יום {s.day} · <span dir="ltr">{s.time}</span></span>
-              <strong class="nx-ses__areas">{s.areas}</strong>
-              <span class="nx-ses__place">{s.place}</span>
-            </li>
-          ))}
-        </ul>
-        <div class="nx-meet__cta">
-          <a class="btn" href={m.cta.href} target="_blank" rel="noopener">
-            {m.cta.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span>
-          </a>
-          {m.note && <p>{m.note}</p>}
-        </div>
-      </div>
-    </div>
-  </section>
-)}
-
-<!-- 3. השבוע בעסקים: כרטיסים 3 בשורה -->
-<section id="news" class="section nx-news" aria-labelledby="news-title">
+<!-- אצל נוגה: כרטיסים אחידים -->
+<section class="section nx-noga" aria-labelledby="noga-title">
   <div class="container">
-    <h2 id="news-title" class="nx-sec-title">השבוע בעסקים</h2>
-    <p class="nx-sec-sub">כל ידיעה עם המקור, ועם מה שזה אומר לעסק שלך</p>
-    <ul class="nx-grid">
-      {issue.news.map((n, i) => (
-        <li id={n.id} class="nx-card reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
-          <div class="nx-card__cover">
-            <ContentCover title={n.cover.title} motif={n.cover.motif} tone={n.cover.tone} ratio="16/9" size="l" />
-            {n.badge && <span class="nx-card__badge">{n.badge}</span>}
+    <h2 id="noga-title" class="nx-sec-title">מה חדש אצל נוגה</h2>
+    <ul class="nx-cards">
+      {issue.cards.map((c) => (
+        <li id={c.id} class="nx-c reveal">
+          <div class:list={['nx-c__media', c.contain && 'nx-c__media--contain']}>
+            <Image src={img(c.image)} alt={c.imageAlt ?? ''} widths={[480, 800]} sizes="(min-width: 48rem) 45vw, 92vw" />
           </div>
-          <div class="nx-card__body">
-            <p class="nx-card__topic">{n.topic}</p>
-            <h3 class="nx-card__title">{n.title}</h3>
-            <p class="nx-card__text">{n.text}</p>
-            <div class="nx-biz">
-              <p class="nx-biz__title"><Star size={13} /> מה זה אומר לעסק שלך</p>
-              <p>{n.forBusiness}</p>
-            </div>
-            <p class="nx-card__src">
-              <span>מקור</span>
-              {n.sources.map((s) => (
-                <a href={s.url} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-              ))}
-            </p>
+          <div class="nx-c__body">
+            {c.meta && (
+              <p class="nx-c__meta">
+                {c.meta}
+                {c.time && <> · <span dir="ltr">{c.time}</span></>}
+              </p>
+            )}
+            <h3 class="nx-c__title">{c.title}</h3>
+            <p class="nx-c__text">{c.text}</p>
+            {(c.more || c.sessions) && (
+              <details class="nx-more">
+                <summary><span class="nx-more__open">להמשך קריאה</span><span class="nx-more__close">סגירה</span></summary>
+                {c.more?.map((p) => <p>{p}</p>)}
+                {c.sessions && (
+                  <ul class="nx-ses">
+                    {c.sessions.map((s) => (
+                      <li>
+                        <strong>{s.date} · יום {s.day} · <span dir="ltr">{s.time}</span></strong>
+                        <span>{s.areas}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </details>
+            )}
+            {c.cta && (
+              <a class="btn nx-c__btn" href={c.cta.href} target={c.cta.external ? '_blank' : undefined} rel={c.cta.external ? 'noopener' : undefined}>
+                {c.cta.label}
+                {c.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
+              </a>
+            )}
           </div>
         </li>
       ))}
@@ -142,45 +97,77 @@ const m = issue.meetup;
   </div>
 </section>
 
-<!-- 4. עוד מנוגה, בקטן -->
-{issue.more.length > 0 && (
-  <section class="section section--mist nx-more" aria-labelledby="more-title">
-    <div class="container">
-      <h2 id="more-title" class="nx-sec-title">עוד מנוגה</h2>
-      <ul class="nx-more__grid">
-        {issue.more.map((u) => {
-          const im = img(u.image);
-          return (
-            <li id={u.id} class="nx-up">
-              <div class:list={['nx-up__media', u.toon && 'nx-up__media--toon']}>
-                {im && <Image src={im} alt={u.imageAlt ?? ''} widths={[400, 700]} sizes="(min-width: 60rem) 30vw, 90vw" class:list={[u.toon && 'toon']} />}
-              </div>
-              <div class="nx-up__body">
-                <h3 class="nx-up__title">{u.title}</h3>
-                <p>{u.text}</p>
-                {u.draft && <p class="nx-draft">{u.draft}</p>}
-                {u.link && (
-                  <a class="nx-up__link" href={u.link.href} target={u.link.external ? '_blank' : undefined} rel={u.link.external ? 'noopener' : undefined}>
-                    {u.link.label} <span aria-hidden="true">←</span>
-                    {u.link.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
-                  </a>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  </section>
-)}
-
-<!-- שיתוף וגיליונות קודמים (אזור בהיר לפני הפוטר הכהה) -->
-<section class="section nx-end">
+<!-- השאלון: באנר כהה ובולט, בסגנון הבאנר שבעמוד הבית -->
+<section id="quiz" class="nx-quiz" aria-labelledby="quiz-title">
   <div class="container">
+    <div class="nx-quiz__card">
+      <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
+      <div class="nx-quiz__body">
+        <h2 id="quiz-title" class="nx-quiz__title no-grad">מה המיקוד הנכון <span>לעסק שלך ב-{quizYear}?</span></h2>
+        <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
+        <ul class="nx-quiz__gets">
+          <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
+          <li><Star size={16} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
+          <li><Star size={16} /> מה כבר עובד אצלך ושווה לחזק</li>
+        </ul>
+        <a class="nx-quiz__btn" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- חדשות מעניינות מהשבוע: כרטיסים בהירים, כותרת אחת, משפט אחד, והשאר ב"להמשך קריאה" -->
+<section id="news" class="section nx-news" aria-labelledby="news-title">
+  <div class="container">
+    <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהשבוע</h2>
+    <p class="nx-sec-sub">מה שקרה במשק, ב-AI ובכלים הדיגיטליים, עם המקור של כל ידיעה</p>
+    <ul class="nx-grid">
+      {issue.news.map((n, i) => (
+        <li id={n.id} class="nx-n reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
+          <div class="nx-n__media">
+            <ContentCover title=" " motif={n.motif} tone={n.tone} ratio="16/9" />
+            {n.badge && <span class="nx-n__badge">{n.badge}</span>}
+          </div>
+          <div class="nx-n__body">
+            <h3 class="nx-n__title">{n.title}</h3>
+            <p class="nx-n__teaser">{n.teaser}</p>
+            <details class="nx-more">
+              <summary><span class="nx-more__open">להמשך קריאה</span><span class="nx-more__close">סגירה</span></summary>
+              <p>{n.text}</p>
+              <p class="nx-n__src">
+                <span>מקור</span>
+                {n.sources.map((s) => (
+                  <a href={s.url} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+                ))}
+              </p>
+            </details>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- באנר רחב לקבוצת הוואטסאפ (הטקסט של הקהילה מעמוד צור קשר, src/data/community.ts) -->
+<section class="section nx-group-sec" aria-labelledby="group-title">
+  <div class="container">
+    <div class="nx-group">
+      <Image src={img('news/community-group.webp')} alt="תודעה עסקית מנצחת, פתרונות והזדמנויות להגדלת הכנסות" widths={[320, 600]} sizes="(min-width: 48rem) 20rem, 80vw" class="nx-group__img" />
+      <div class="nx-group__body">
+        <h2 id="group-title" class="nx-group__title no-grad">בואו לקבוצה <span>"תודעה עסקית מנצחת"</span></h2>
+        <p class="nx-group__sub">קבוצת הוואטסאפ החינמית של נוגה. המבזק הבא מגיע לשם ראשון</p>
+        {communityIntro.map((p) => <p>{p}</p>)}
+        <a class="btn nx-group__btn" href={contact.whatsappGroup} target="_blank" rel="noopener">
+          <Icon name="whatsapp" size={20} /> להצטרפות לקבוצה<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+        </a>
+      </div>
+    </div>
+
     <div class="nx-share">
       <p>אהבת? שווה לשלוח למי שיש לו עסק</p>
       <ShareBar title={`המבזק השבועי של נוגה דיין אור, ${d.full}`} print={false} />
     </div>
+
     {others.length > 0 && (
       <nav class="nx-archive" aria-labelledby="archive-title">
         <h2 id="archive-title" class="nx-archive__title">גיליונות נוספים</h2>
@@ -200,11 +187,11 @@ const m = issue.meetup;
 </section>
 
 <style>
-  /* ---------- פתיח ---------- */
+  /* ---------- פתיח (נוגה אהבה, בלי שינוי) ---------- */
   .nx-hero {
     position: relative;
     overflow: hidden;
-    padding-block: 2rem 3.5rem;
+    padding-block: 2rem 2.5rem;
     background:
       radial-gradient(38rem 26rem at 8% 0%, rgb(12 138 168 / 0.16), transparent 65%),
       radial-gradient(34rem 24rem at 95% 30%, rgb(209 154 74 / 0.2), transparent 65%),
@@ -285,7 +272,6 @@ const m = issue.meetup;
       border-color: var(--teal);
     }
   }
-  /* הדמות עד המותניים בלבד, בתוך עיגול צבעוני, כדי שהכרטיסים החשובים ייראו כבר בפתיחה */
   .nx-hero__art {
     position: relative;
     justify-self: center;
@@ -295,9 +281,6 @@ const m = issue.meetup;
     overflow: hidden;
     background: linear-gradient(150deg, rgb(12 138 168 / 0.25), rgb(209 154 74 / 0.4));
     box-shadow: 0 0 0 8px rgb(255 255 255 / 0.7), 0 30px 50px -30px rgb(11 26 51 / 0.5);
-  }
-  .nx-hero__blob {
-    display: none;
   }
   .nx-hero__art :global(.nx-hero__toon) {
     position: absolute;
@@ -320,360 +303,95 @@ const m = issue.meetup;
     }
   }
 
-  /* ---------- שני הכרטיסים החשובים ---------- */
-  .nx-feat {
-    position: relative;
-    display: grid;
-    gap: 1.25rem;
-    margin-top: 1.5rem;
-  }
-  @media (min-width: 72rem) {
-    .nx-feat {
-      grid-template-columns: 1.2fr 1fr;
-    }
-  }
-  .nx-fcard {
-    display: grid;
-    gap: 1.25rem;
-    align-items: start;
-    padding: 1.5rem;
-    border-radius: 22px;
-    scroll-margin-top: calc(var(--header-h) + 1rem);
-  }
-  @media (min-width: 36rem) {
-    .nx-fcard {
-      grid-template-columns: auto 1fr;
-    }
-  }
-  .nx-fcard--dark {
-    background:
-      radial-gradient(26rem 14rem at 0% 0%, rgb(12 138 168 / 0.35), transparent 65%),
-      linear-gradient(165deg, #0f2d50, var(--navy) 55%);
-    color: var(--on-dark-soft);
-    box-shadow: 0 26px 50px -30px rgb(7 17 31 / 0.7);
-  }
-  .nx-fcard--light {
-    background: var(--white);
-    border: 2px solid rgb(209 154 74 / 0.55);
-    box-shadow: 0 22px 44px -30px rgb(11 26 51 / 0.45);
-  }
-  .nx-fcard__media {
-    width: 9rem;
-    aspect-ratio: 1;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 0 0 3px rgb(209 154 74 / 0.7);
-  }
-  .nx-fcard__media :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .nx-fcard__media--toon {
-    box-shadow: none;
-    background: linear-gradient(160deg, var(--mist), rgb(209 154 74 / 0.25));
-  }
-  .nx-fcard__media--toon :global(img) {
-    object-position: 50% 8%;
-  }
-  @media (max-width: 35.99rem) {
-    .nx-fcard__media {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-    }
-    .nx-fcard--dark .nx-fcard__media :global(img) {
-      object-position: 50% 30%;
-    }
-  }
-  .nx-fcard__meta {
-    margin: 0 0 0.35rem;
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
-  .nx-fcard--dark .nx-fcard__meta {
-    color: #7fd3e6;
-  }
-  .nx-fcard__title {
-    margin: 0 0 0.6rem;
-    font-size: clamp(1.35rem, 2.6vw, 1.7rem);
-    line-height: 1.25;
-    color: var(--navy);
-  }
-  .nx-fcard--dark .nx-fcard__title {
-    color: var(--gold-light);
-  }
-  .nx-fcard__text {
-    margin: 0 0 1.1rem;
-    line-height: 1.65;
-  }
-
-  /* ---------- המפגשים ---------- */
-  .nx-meet {
-    scroll-margin-top: var(--header-h);
-  }
-  .nx-meet__grid {
-    display: grid;
-    gap: 2rem;
-    align-items: start;
-  }
-  @media (min-width: 56rem) {
-    .nx-meet__grid {
-      grid-template-columns: 18rem 1fr;
-      gap: 3rem;
-    }
-  }
-  .nx-meet__photo {
-    margin: 0 auto;
-    max-width: 18rem;
-    text-align: center;
-  }
-  .nx-meet__photo :global(img) {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    object-fit: cover;
-    object-position: 50% 20%;
-    border-radius: 50%;
-    border: 6px solid var(--white);
-    box-shadow: 0 0 0 3px var(--gold-dark), 0 24px 40px -24px rgb(11 26 51 / 0.6);
-  }
-  .nx-meet__photo figcaption {
-    margin-top: 1rem;
-    font-weight: 700;
-    line-height: 1.5;
-    color: var(--navy);
-  }
-  .nx-meet__title {
-    margin: 0 0 1rem;
-    font-size: clamp(1.6rem, 3.6vw, 2.3rem);
-    line-height: 1.2;
-  }
-  .nx-meet__body > p {
-    margin: 0 0 0.75rem;
-    line-height: 1.7;
-    max-width: 44rem;
-  }
-  .nx-meet__q {
-    margin: 1.5rem 0 0.9rem;
-    font-size: 1.25rem;
-    color: var(--navy);
-  }
-  .nx-sessions {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
-    gap: 0.75rem;
-  }
-  .nx-ses {
-    display: grid;
-    gap: 0.2rem;
-    align-content: start;
-    padding: 0.9rem 1rem;
-    border-radius: 14px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-top: 4px solid var(--gold-dark);
-    line-height: 1.4;
-  }
-  .nx-ses__date {
-    font-size: 1.7rem;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--navy);
-  }
-  .nx-ses__day {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
-  .nx-ses__areas {
-    margin-top: 0.25rem;
-    color: var(--navy);
-  }
-  .nx-ses__place {
-    font-size: 0.85rem;
-    color: #4a5b73;
-  }
-  .nx-meet__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.25rem;
-    margin-top: 1.5rem;
-  }
-  .nx-meet__cta p {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #4a5b73;
-  }
-
-  /* ---------- השבוע בעסקים ---------- */
-  .nx-news {
-    scroll-margin-top: var(--header-h);
-  }
+  /* ---------- כותרות האזורים ---------- */
   .nx-sec-title {
     margin: 0;
     text-align: center;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-size: clamp(1.9rem, 4.5vw, 2.7rem);
+    font-weight: 900;
+    line-height: 1.15;
   }
   .nx-sec-sub {
-    margin: 0.5rem 0 0;
+    margin: 0.6rem auto 0;
+    max-width: 36rem;
     text-align: center;
     color: #4a5b73;
   }
-  .nx-grid {
+
+  /* ---------- "להמשך קריאה" (משותף לכל הכרטיסים) ---------- */
+  .nx-more summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .nx-more summary::-webkit-details-marker {
+    display: none;
+  }
+  .nx-more summary::after {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-inline-end: 2px solid currentColor;
+    border-block-end: 2px solid currentColor;
+    rotate: 45deg;
+    translate: 0 -0.15em;
+    transition: rotate 0.2s ease;
+  }
+  .nx-more[open] summary::after {
+    rotate: 225deg;
+    translate: 0 0.1em;
+  }
+  .nx-more__close,
+  .nx-more[open] .nx-more__open {
+    display: none;
+  }
+  .nx-more[open] .nx-more__close {
+    display: inline;
+  }
+  .nx-more p {
+    margin: 0.75rem 0 0;
+    line-height: 1.65;
+  }
+
+  /* ---------- אצל נוגה ---------- */
+  .nx-noga {
+    background: var(--mist);
+    padding-top: 1.5rem;
+  }
+  .nx-cards {
     list-style: none;
     margin: 2rem 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.75rem;
   }
-  @media (max-width: 62rem) {
-    .nx-grid {
-      grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 47.99rem) {
+    .nx-cards {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
-  @media (max-width: 36rem) {
-    .nx-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  .nx-card {
+  .nx-c {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border-radius: 22px;
-    background: linear-gradient(165deg, #0f2d50, var(--navy) 45%);
-    border: 1px solid rgb(12 138 168 / 0.25);
-    box-shadow: 0 22px 40px -28px rgb(7 17 31 / 0.55);
-    color: var(--on-dark-soft);
-    scroll-margin-top: calc(var(--header-h) + 1rem);
-  }
-  @media (hover: hover) {
-    .nx-card {
-      transition: opacity 0.6s ease, translate 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .nx-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 30px 50px -28px rgb(7 17 31 / 0.65);
-    }
-  }
-  .nx-card__cover {
-    position: relative;
-  }
-  .nx-card__badge {
-    position: absolute;
-    top: 0.75rem;
-    inset-inline-start: 0.75rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-    background: var(--gold-light);
-    color: var(--navy);
-    font-weight: 900;
-    font-size: 0.95rem;
-    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5);
-  }
-  .nx-card__body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 1.1rem 1.3rem 1.3rem;
-  }
-  .nx-card__topic {
-    margin: 0 0 0.35rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #7fd3e6;
-  }
-  .nx-card__title {
-    margin: 0 0 0.55rem;
-    font-size: 1.15rem;
-    line-height: 1.35;
-    font-weight: 800;
-    color: var(--gold-light);
-    text-wrap: balance;
-  }
-  .nx-card__text {
-    margin: 0 0 1rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-  .nx-biz {
-    margin-top: auto;
-    padding: 0.8rem 0.95rem;
-    border-radius: 14px;
-    background: rgb(209 154 74 / 0.12);
-    border: 1px solid rgb(209 154 74 / 0.35);
-  }
-  .nx-biz p {
-    margin: 0;
-    font-size: 0.93rem;
-    line-height: 1.6;
-    color: var(--white);
-  }
-  .nx-biz .nx-biz__title {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin-bottom: 0.3rem;
-    font-weight: 800;
-    color: var(--gold-light);
-  }
-  .nx-card__src {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 0.75rem;
-    margin: 0.9rem 0 0;
-    font-size: 0.8rem;
-  }
-  .nx-card__src span {
-    font-weight: 700;
-  }
-  .nx-card__src a {
-    color: #a9dceb;
-  }
-
-  /* ---------- עוד מנוגה ---------- */
-  .nx-more__grid {
-    list-style: none;
-    margin: 2rem 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  @media (max-width: 62rem) {
-    .nx-more__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 36rem) {
-    .nx-more__grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  .nx-up {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 18px;
     background: var(--white);
     border: 1px solid var(--line);
-    box-shadow: 0 16px 34px -26px rgb(11 26 51 / 0.45);
+    box-shadow: 0 20px 40px -30px rgb(11 26 51 / 0.5);
     scroll-margin-top: calc(var(--header-h) + 1rem);
   }
-  .nx-up__media {
+  .nx-c__media {
     position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--mist);
   }
-  .nx-up__media :global(img) {
+  .nx-c__media :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -681,52 +399,343 @@ const m = issue.meetup;
     object-fit: cover;
     object-position: 50% 30%;
   }
-  .nx-up__media--toon {
-    background: linear-gradient(160deg, var(--mist), rgb(12 138 168 / 0.2));
+  .nx-c__media--contain {
+    background: radial-gradient(60% 80% at 50% 50%, #12305a, #071427);
   }
-  .nx-up__media--toon :global(img) {
+  .nx-c__media--contain :global(img) {
     object-fit: contain;
-    object-position: 50% 100%;
-    top: 8%;
-    height: 92%;
+    object-position: 50% 50%;
   }
-  .nx-up__body {
+  .nx-c__body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 1.1rem 1.25rem 1.25rem;
+    padding: 1.35rem 1.5rem 1.5rem;
   }
-  .nx-up__title {
-    margin: 0 0 0.45rem;
-    font-size: 1.15rem;
-    color: var(--navy);
+  .nx-c__meta [dir="ltr"],
+  .nx-ses [dir="ltr"] {
+    white-space: nowrap;
   }
-  .nx-up__body p {
-    margin: 0 0 0.75rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-  .nx-up__link {
-    margin-top: auto;
-    font-weight: 800;
+  .nx-c__meta {
+    margin: 0 0 0.4rem;
+    font-size: 0.92rem;
+    font-weight: 700;
     color: var(--teal-dark);
   }
-  .nx-draft {
-    padding: 0.5rem 0.75rem;
-    border: 2px dashed var(--gold-dark);
+  .nx-c__title {
+    margin: 0 0 0.55rem;
+    font-size: clamp(1.35rem, 2.6vw, 1.65rem);
+    font-weight: 900;
+    line-height: 1.25;
+    color: var(--navy);
+    text-wrap: balance;
+  }
+  .nx-c__text {
+    margin: 0 0 0.75rem;
+    line-height: 1.65;
+  }
+  .nx-c .nx-more {
+    margin-bottom: 1rem;
+  }
+  .nx-c__btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .nx-ses {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .nx-ses li {
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.6rem 0.85rem;
+    border-inline-start: 3px solid var(--gold-dark);
+    background: var(--mist);
     border-radius: 0.5rem;
-    font-size: 0.9rem;
-    color: #7a5a1e;
+    line-height: 1.45;
+  }
+  .nx-ses strong {
+    color: var(--navy);
+  }
+  @media (hover: hover) {
+    .nx-c,
+    .nx-n {
+      transition: opacity 0.6s ease, translate 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .nx-c:hover,
+    .nx-n:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 28px 48px -30px rgb(11 26 51 / 0.6);
+    }
   }
 
-  /* ---------- סוף ---------- */
-  .nx-end {
-    padding-block: 2.5rem;
+  /* ---------- השאלון ---------- */
+  .nx-quiz {
+    scroll-margin-top: var(--header-h);
+    padding-block: clamp(3rem, 7vw, 4.5rem);
+    background:
+      radial-gradient(40rem 26rem at 15% 20%, rgb(12 138 168 / 0.32), transparent 70%),
+      radial-gradient(36rem 24rem at 85% 90%, rgb(252 220 109 / 0.2), transparent 70%),
+      var(--navy);
+    color: var(--on-dark);
   }
+  .nx-quiz__card {
+    display: grid;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    max-width: 58rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 28px;
+    background: linear-gradient(160deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+    border: 1px solid rgb(252 220 109 / 0.45);
+    box-shadow: 0 0 0 1px rgb(12 138 168 / 0.25), 0 30px 60px -30px rgb(0 0 0 / 0.6), inset 0 0 60px -30px rgb(12 138 168 / 0.6);
+    text-align: center;
+  }
+  @media (min-width: 48rem) {
+    .nx-quiz__card {
+      grid-template-columns: 12rem 1fr;
+      text-align: start;
+    }
+  }
+  .nx-quiz :global(.nx-quiz__toon) {
+    justify-self: center;
+    width: 12rem;
+    height: auto;
+  }
+  @media (max-width: 47.99rem) {
+    .nx-quiz :global(.nx-quiz__toon) {
+      width: 8rem;
+    }
+  }
+  .nx-quiz__title {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--white);
+  }
+  .nx-quiz__title span {
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .nx-quiz__text {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
+  }
+  .nx-quiz__gets {
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 1.5rem;
+    padding: 0;
+    text-align: start;
+    font-weight: 700;
+    color: var(--white);
+  }
+  @media (min-width: 48rem) {
+    .nx-quiz__gets {
+      margin-inline: 0;
+    }
+  }
+  .nx-quiz__gets li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nx-quiz__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9em 2.4em;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 16px 40px -14px rgb(252 220 109 / 0.7);
+  }
+  @media (hover: hover) {
+    .nx-quiz__btn {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nx-quiz__btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 46px -14px rgb(252 220 109 / 0.85);
+    }
+  }
+
+  /* ---------- חדשות מעניינות מהשבוע ---------- */
+  .nx-news {
+    scroll-margin-top: var(--header-h);
+  }
+  .nx-grid {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.75rem;
+    align-items: start;
+  }
+  @media (max-width: 62rem) {
+    .nx-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 36rem) {
+    .nx-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .nx-n {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 36px -28px rgb(11 26 51 / 0.45);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  .nx-grid:has(details[open]) .nx-n {
+    height: auto;
+  }
+  .nx-n__media {
+    position: relative;
+  }
+  /* תמונה בלבד, בלי כותרת על התמונה (נוגה: כותרת אחת לכל ידיעה) */
+  .nx-n__media :global(.cc) {
+    border-radius: 0;
+  }
+  .nx-n__media :global(.cc__text) {
+    display: none;
+  }
+  .nx-n__media :global(.cc__obj) {
+    left: 50%;
+    width: 46%;
+    translate: -50% -50%;
+  }
+  .nx-n__badge {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-start: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--gold-light);
+    color: var(--navy);
+    font-weight: 900;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5);
+  }
+  .nx-n__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.1rem 1.3rem 1.3rem;
+  }
+  .nx-n__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 900;
+    line-height: 1.35;
+    color: var(--navy);
+    text-wrap: balance;
+  }
+  .nx-n__teaser {
+    margin: 0 0 0.85rem;
+    line-height: 1.6;
+    color: #33445d;
+  }
+  .nx-n .nx-more {
+    margin-top: auto;
+  }
+  .nx-n__src {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  .nx-n__src span {
+    font-weight: 700;
+  }
+  .nx-n__src a {
+    color: var(--teal-dark);
+  }
+
+  /* ---------- קבוצת הוואטסאפ ---------- */
+  .nx-group-sec {
+    background: linear-gradient(180deg, #fff, var(--mist));
+  }
+  .nx-group {
+    display: grid;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    padding: clamp(1.25rem, 3.5vw, 2.25rem);
+    border-radius: 28px;
+    background:
+      radial-gradient(30rem 18rem at 100% 0%, rgb(12 138 168 / 0.14), transparent 70%),
+      radial-gradient(26rem 16rem at 0% 100%, rgb(209 154 74 / 0.18), transparent 70%),
+      var(--white);
+    border: 2px solid rgb(209 154 74 / 0.5);
+    box-shadow: 0 30px 60px -40px rgb(11 26 51 / 0.55);
+  }
+  @media (min-width: 48rem) {
+    .nx-group {
+      grid-template-columns: 20rem 1fr;
+    }
+  }
+  .nx-group :global(.nx-group__img) {
+    width: 100%;
+    max-width: 20rem;
+    height: auto;
+    justify-self: center;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -26px rgb(11 26 51 / 0.6);
+  }
+  .nx-group__title {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--navy);
+  }
+  .nx-group__title span {
+    color: var(--teal-dark);
+  }
+  .nx-group__sub {
+    margin: 0 0 0.9rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+  .nx-group__body p:not(.nx-group__sub) {
+    margin: 0 0 0.75rem;
+    line-height: 1.7;
+  }
+  .nx-group__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  /* ---------- שיתוף וגיליונות ---------- */
   .nx-share {
     display: grid;
     justify-items: center;
     gap: 0.75rem;
+    margin-top: 2.5rem;
     text-align: center;
   }
   .nx-share p {
