@@ -1,0 +1,757 @@
+---
+// גיליון של המבזק השבועי (נוגה, 2026-11-17, סבב 3). משמש את /news/ (הגיליון החדש) ואת /news/<slug>/ (כתובת קבועה).
+// סדר העדיפויות מלמעלה: פתיח בהיר ומזמין ← ההדרכה הקרובה ושאלון האבחון ← המפגשים בראשון לציון ←
+// השבוע בעסקים (כרטיסים 3 בשורה, כמו ההרצאות באתר) ← עוד מנוגה ← שיתוף וגיליונות קודמים.
+// אזור כהה אחד לא נוגע באחר: הפתיח בהיר, והאזור האחרון לפני הפוטר בהיר.
+import { Image } from 'astro:assets';
+import ShareBar from './ShareBar.astro';
+import Star from './Star.astro';
+import Icon from './Icon.astro';
+import ContentCover from './ContentCover.astro';
+import { issues, hebDate, type Issue } from '../data/news';
+
+interface Props {
+  issue: Issue;
+}
+const { issue } = Astro.props;
+const d = hebDate(issue.date);
+
+const assets = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{webp,jpg,jpeg,png}', { eager: true });
+const img = (p?: string) => (p ? assets[`/src/assets/${p}`]?.default : undefined);
+const heroImg = img('character/phone-surprised.webp')!;
+
+const others = issues.filter((i) => i.slug !== issue.slug);
+const [webinar, quiz] = issue.featured;
+const m = issue.meetup;
+---
+
+<!-- פתיח: בהיר, עם הדמות של נוגה וקיצורי דרך -->
+<header class="nx-hero">
+  <div class="container nx-hero__grid">
+    <div class="nx-hero__text">
+      <p class="nx-issue">
+        <Star size={13} /> גיליון {issue.number} <span aria-hidden="true">·</span> <time datetime={issue.date}>{d.full}</time>
+      </p>
+      <h1 class="nx-hero__title no-grad">המבזק <span>השבועי</span></h1>
+      <p class="nx-hero__sub">מה חם השבוע בעסקים, בכלכלה וב-AI, ומה זה אומר לעסק שלך. חמש דקות, קפה, ויוצאים לדרך</p>
+      <nav class="nx-jump" aria-label="בגיליון הזה">
+        {webinar && <a href={`#${webinar.id}`}><Icon name="calendar" size={16} />הדרכה חינמית ב-25.11</a>}
+        {quiz && <a href={`#${quiz.id}`}><Icon name="target" size={16} />שאלון האבחון</a>}
+        {m && <a href={`#${m.id}`}><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
+        <a href="#news"><Icon name="book-open" size={16} />השבוע בעסקים</a>
+      </nav>
+    </div>
+    <div class="nx-hero__art" aria-hidden="true">
+      <span class="nx-hero__blob"></span>
+      <Image src={heroImg} alt="" widths={[300, 520]} sizes="(min-width: 60rem) 22rem, 60vw" class="toon nx-hero__toon" loading="eager" />
+    </div>
+  </div>
+
+  <!-- 1. הכי חשוב: ההדרכה הקרובה ושאלון האבחון -->
+  <div class="container nx-feat">
+    {issue.featured.map((f) => {
+      const im = img(f.image);
+      return (
+        <article id={f.id} class:list={['nx-fcard', `nx-fcard--${f.tone}`]}>
+          {im && (
+            <div class:list={['nx-fcard__media', f.toon && 'nx-fcard__media--toon']}>
+              <Image src={im} alt={f.imageAlt ?? ''} widths={[320, 560]} sizes="(min-width: 60rem) 16rem, 80vw" class:list={[f.toon && 'toon']} />
+            </div>
+          )}
+          <div class="nx-fcard__body">
+            <p class="nx-fcard__meta">
+              {f.meta}
+              {f.time && <> · <span dir="ltr">{f.time}</span></>}
+            </p>
+            <h2 class="nx-fcard__title no-grad">{f.title}</h2>
+            <p class="nx-fcard__text">{f.text}</p>
+            <a class="btn nx-fcard__btn" href={f.cta.href} target={f.cta.external ? '_blank' : undefined} rel={f.cta.external ? 'noopener' : undefined}>
+              {f.cta.label}
+              {f.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
+            </a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</header>
+
+<!-- 2. המפגשים: נוגה גדולה, המפגשים בקטן -->
+{m && (
+  <section id={m.id} class="section section--mist nx-meet" aria-labelledby={`${m.id}-title`}>
+    <div class="container nx-meet__grid">
+      <figure class="nx-meet__photo">
+        <Image src={img(m.image)!} alt={m.imageAlt} widths={[300]} sizes="18rem" />
+        <figcaption>{m.host}</figcaption>
+      </figure>
+      <div class="nx-meet__body">
+        <h2 id={`${m.id}-title`} class="nx-meet__title">{m.title}</h2>
+        {m.text.map((p) => <p>{p}</p>)}
+        {m.question && <h3 class="nx-meet__q">{m.question}</h3>}
+        <ul class="nx-sessions">
+          {m.sessions.map((s) => (
+            <li class="nx-ses">
+              <span class="nx-ses__date">{s.date}</span>
+              <span class="nx-ses__day">יום {s.day} · <span dir="ltr">{s.time}</span></span>
+              <strong class="nx-ses__areas">{s.areas}</strong>
+              <span class="nx-ses__place">{s.place}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="nx-meet__cta">
+          <a class="btn" href={m.cta.href} target="_blank" rel="noopener">
+            {m.cta.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span>
+          </a>
+          {m.note && <p>{m.note}</p>}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- 3. השבוע בעסקים: כרטיסים 3 בשורה -->
+<section id="news" class="section nx-news" aria-labelledby="news-title">
+  <div class="container">
+    <h2 id="news-title" class="nx-sec-title">השבוע בעסקים</h2>
+    <p class="nx-sec-sub">כל ידיעה עם המקור, ועם מה שזה אומר לעסק שלך</p>
+    <ul class="nx-grid">
+      {issue.news.map((n, i) => (
+        <li id={n.id} class="nx-card reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
+          <div class="nx-card__cover">
+            <ContentCover title={n.cover.title} motif={n.cover.motif} tone={n.cover.tone} ratio="16/9" size="l" />
+            {n.badge && <span class="nx-card__badge">{n.badge}</span>}
+          </div>
+          <div class="nx-card__body">
+            <p class="nx-card__topic">{n.topic}</p>
+            <h3 class="nx-card__title">{n.title}</h3>
+            <p class="nx-card__text">{n.text}</p>
+            <div class="nx-biz">
+              <p class="nx-biz__title"><Star size={13} /> מה זה אומר לעסק שלך</p>
+              <p>{n.forBusiness}</p>
+            </div>
+            <p class="nx-card__src">
+              <span>מקור</span>
+              {n.sources.map((s) => (
+                <a href={s.url} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+              ))}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- 4. עוד מנוגה, בקטן -->
+{issue.more.length > 0 && (
+  <section class="section section--mist nx-more" aria-labelledby="more-title">
+    <div class="container">
+      <h2 id="more-title" class="nx-sec-title">עוד מנוגה</h2>
+      <ul class="nx-more__grid">
+        {issue.more.map((u) => {
+          const im = img(u.image);
+          return (
+            <li id={u.id} class="nx-up">
+              <div class:list={['nx-up__media', u.toon && 'nx-up__media--toon']}>
+                {im && <Image src={im} alt={u.imageAlt ?? ''} widths={[400, 700]} sizes="(min-width: 60rem) 30vw, 90vw" class:list={[u.toon && 'toon']} />}
+              </div>
+              <div class="nx-up__body">
+                <h3 class="nx-up__title">{u.title}</h3>
+                <p>{u.text}</p>
+                {u.draft && <p class="nx-draft">{u.draft}</p>}
+                {u.link && (
+                  <a class="nx-up__link" href={u.link.href} target={u.link.external ? '_blank' : undefined} rel={u.link.external ? 'noopener' : undefined}>
+                    {u.link.label} <span aria-hidden="true">←</span>
+                    {u.link.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+)}
+
+<!-- שיתוף וגיליונות קודמים (אזור בהיר לפני הפוטר הכהה) -->
+<section class="section nx-end">
+  <div class="container">
+    <div class="nx-share">
+      <p>אהבת? שווה לשלוח למי שיש לו עסק</p>
+      <ShareBar title={`המבזק השבועי של נוגה דיין אור, ${d.full}`} print={false} />
+    </div>
+    {others.length > 0 && (
+      <nav class="nx-archive" aria-labelledby="archive-title">
+        <h2 id="archive-title" class="nx-archive__title">גיליונות נוספים</h2>
+        <ul>
+          {others.map((o) => (
+            <li>
+              <a href={`/news/${o.slug}/`}>
+                <strong>גיליון {o.number}</strong> · <time datetime={o.date}>{hebDate(o.date).full}</time>
+                <span>{o.headline}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </div>
+</section>
+
+<style>
+  /* ---------- פתיח ---------- */
+  .nx-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 2rem 3.5rem;
+    background:
+      radial-gradient(38rem 26rem at 8% 0%, rgb(12 138 168 / 0.16), transparent 65%),
+      radial-gradient(34rem 24rem at 95% 30%, rgb(209 154 74 / 0.2), transparent 65%),
+      linear-gradient(180deg, #fff 0%, var(--mist) 100%);
+  }
+  .nx-hero__grid {
+    display: grid;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+  @media (min-width: 52rem) {
+    .nx-hero__grid {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+  .nx-issue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 1rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid rgb(209 154 74 / 0.45);
+    box-shadow: 0 6px 18px -12px rgb(11 26 51 / 0.4);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .nx-hero__title {
+    margin: 0;
+    font-size: clamp(2.6rem, 7.5vw, 4.8rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .nx-hero__title span {
+    background: linear-gradient(90deg, var(--gold-dark), var(--teal));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .nx-hero__sub {
+    margin: 1rem 0 1.5rem;
+    max-width: 32rem;
+    font-size: clamp(1.1rem, 2.3vw, 1.3rem);
+    line-height: 1.55;
+    color: #33445d;
+  }
+  .nx-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .nx-jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+    text-decoration: none;
+    box-shadow: 0 6px 16px -12px rgb(11 26 51 / 0.45);
+  }
+  .nx-jump a :global(svg) {
+    color: var(--teal-dark);
+  }
+  @media (hover: hover) {
+    .nx-jump a {
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .nx-jump a:hover {
+      transform: translateY(-2px);
+      border-color: var(--teal);
+    }
+  }
+  /* הדמות עד המותניים בלבד, בתוך עיגול צבעוני, כדי שהכרטיסים החשובים ייראו כבר בפתיחה */
+  .nx-hero__art {
+    position: relative;
+    justify-self: center;
+    width: min(19rem, 70vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(150deg, rgb(12 138 168 / 0.25), rgb(209 154 74 / 0.4));
+    box-shadow: 0 0 0 8px rgb(255 255 255 / 0.7), 0 30px 50px -30px rgb(11 26 51 / 0.5);
+  }
+  .nx-hero__blob {
+    display: none;
+  }
+  .nx-hero__art :global(.nx-hero__toon) {
+    position: absolute;
+    inset: 6% 0 auto;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+  }
+  @media (max-width: 51.99rem) {
+    .nx-hero__art {
+      width: min(9.5rem, 42vw);
+      order: -1;
+    }
+    .nx-jump {
+      gap: 0.45rem;
+    }
+    .nx-jump a {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.86rem;
+    }
+  }
+
+  /* ---------- שני הכרטיסים החשובים ---------- */
+  .nx-feat {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 72rem) {
+    .nx-feat {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+  .nx-fcard {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+    padding: 1.5rem;
+    border-radius: 22px;
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  @media (min-width: 36rem) {
+    .nx-fcard {
+      grid-template-columns: auto 1fr;
+    }
+  }
+  .nx-fcard--dark {
+    background:
+      radial-gradient(26rem 14rem at 0% 0%, rgb(12 138 168 / 0.35), transparent 65%),
+      linear-gradient(165deg, #0f2d50, var(--navy) 55%);
+    color: var(--on-dark-soft);
+    box-shadow: 0 26px 50px -30px rgb(7 17 31 / 0.7);
+  }
+  .nx-fcard--light {
+    background: var(--white);
+    border: 2px solid rgb(209 154 74 / 0.55);
+    box-shadow: 0 22px 44px -30px rgb(11 26 51 / 0.45);
+  }
+  .nx-fcard__media {
+    width: 9rem;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px rgb(209 154 74 / 0.7);
+  }
+  .nx-fcard__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .nx-fcard__media--toon {
+    box-shadow: none;
+    background: linear-gradient(160deg, var(--mist), rgb(209 154 74 / 0.25));
+  }
+  .nx-fcard__media--toon :global(img) {
+    object-position: 50% 8%;
+  }
+  @media (max-width: 35.99rem) {
+    .nx-fcard__media {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+    }
+    .nx-fcard--dark .nx-fcard__media :global(img) {
+      object-position: 50% 30%;
+    }
+  }
+  .nx-fcard__meta {
+    margin: 0 0 0.35rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .nx-fcard--dark .nx-fcard__meta {
+    color: #7fd3e6;
+  }
+  .nx-fcard__title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+    line-height: 1.25;
+    color: var(--navy);
+  }
+  .nx-fcard--dark .nx-fcard__title {
+    color: var(--gold-light);
+  }
+  .nx-fcard__text {
+    margin: 0 0 1.1rem;
+    line-height: 1.65;
+  }
+
+  /* ---------- המפגשים ---------- */
+  .nx-meet {
+    scroll-margin-top: var(--header-h);
+  }
+  .nx-meet__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 56rem) {
+    .nx-meet__grid {
+      grid-template-columns: 18rem 1fr;
+      gap: 3rem;
+    }
+  }
+  .nx-meet__photo {
+    margin: 0 auto;
+    max-width: 18rem;
+    text-align: center;
+  }
+  .nx-meet__photo :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border-radius: 50%;
+    border: 6px solid var(--white);
+    box-shadow: 0 0 0 3px var(--gold-dark), 0 24px 40px -24px rgb(11 26 51 / 0.6);
+  }
+  .nx-meet__photo figcaption {
+    margin-top: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+  .nx-meet__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.6rem, 3.6vw, 2.3rem);
+    line-height: 1.2;
+  }
+  .nx-meet__body > p {
+    margin: 0 0 0.75rem;
+    line-height: 1.7;
+    max-width: 44rem;
+  }
+  .nx-meet__q {
+    margin: 1.5rem 0 0.9rem;
+    font-size: 1.25rem;
+    color: var(--navy);
+  }
+  .nx-sessions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+    gap: 0.75rem;
+  }
+  .nx-ses {
+    display: grid;
+    gap: 0.2rem;
+    align-content: start;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold-dark);
+    line-height: 1.4;
+  }
+  .nx-ses__date {
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .nx-ses__day {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .nx-ses__areas {
+    margin-top: 0.25rem;
+    color: var(--navy);
+  }
+  .nx-ses__place {
+    font-size: 0.85rem;
+    color: #4a5b73;
+  }
+  .nx-meet__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .nx-meet__cta p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #4a5b73;
+  }
+
+  /* ---------- השבוע בעסקים ---------- */
+  .nx-news {
+    scroll-margin-top: var(--header-h);
+  }
+  .nx-sec-title {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+  }
+  .nx-sec-sub {
+    margin: 0.5rem 0 0;
+    text-align: center;
+    color: #4a5b73;
+  }
+  .nx-grid {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+  }
+  @media (max-width: 62rem) {
+    .nx-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .nx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .nx-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(165deg, #0f2d50, var(--navy) 45%);
+    border: 1px solid rgb(12 138 168 / 0.25);
+    box-shadow: 0 22px 40px -28px rgb(7 17 31 / 0.55);
+    color: var(--on-dark-soft);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  @media (hover: hover) {
+    .nx-card {
+      transition: opacity 0.6s ease, translate 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .nx-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 50px -28px rgb(7 17 31 / 0.65);
+    }
+  }
+  .nx-card__cover {
+    position: relative;
+  }
+  .nx-card__badge {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-start: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: var(--gold-light);
+    color: var(--navy);
+    font-weight: 900;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5);
+  }
+  .nx-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.1rem 1.3rem 1.3rem;
+  }
+  .nx-card__topic {
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #7fd3e6;
+  }
+  .nx-card__title {
+    margin: 0 0 0.55rem;
+    font-size: 1.15rem;
+    line-height: 1.35;
+    font-weight: 800;
+    color: var(--gold-light);
+    text-wrap: balance;
+  }
+  .nx-card__text {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .nx-biz {
+    margin-top: auto;
+    padding: 0.8rem 0.95rem;
+    border-radius: 14px;
+    background: rgb(209 154 74 / 0.12);
+    border: 1px solid rgb(209 154 74 / 0.35);
+  }
+  .nx-biz p {
+    margin: 0;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--white);
+  }
+  .nx-biz .nx-biz__title {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.3rem;
+    font-weight: 800;
+    color: var(--gold-light);
+  }
+  .nx-card__src {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.75rem;
+    margin: 0.9rem 0 0;
+    font-size: 0.8rem;
+  }
+  .nx-card__src span {
+    font-weight: 700;
+  }
+  .nx-card__src a {
+    color: #a9dceb;
+  }
+
+  /* ---------- עוד מנוגה ---------- */
+  .nx-more__grid {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 62rem) {
+    .nx-more__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 36rem) {
+    .nx-more__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .nx-up {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 16px 34px -26px rgb(11 26 51 / 0.45);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  .nx-up__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--mist);
+  }
+  .nx-up__media :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+  .nx-up__media--toon {
+    background: linear-gradient(160deg, var(--mist), rgb(12 138 168 / 0.2));
+  }
+  .nx-up__media--toon :global(img) {
+    object-fit: contain;
+    object-position: 50% 100%;
+    top: 8%;
+    height: 92%;
+  }
+  .nx-up__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.1rem 1.25rem 1.25rem;
+  }
+  .nx-up__title {
+    margin: 0 0 0.45rem;
+    font-size: 1.15rem;
+    color: var(--navy);
+  }
+  .nx-up__body p {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .nx-up__link {
+    margin-top: auto;
+    font-weight: 800;
+    color: var(--teal-dark);
+  }
+  .nx-draft {
+    padding: 0.5rem 0.75rem;
+    border: 2px dashed var(--gold-dark);
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    color: #7a5a1e;
+  }
+
+  /* ---------- סוף ---------- */
+  .nx-end {
+    padding-block: 2.5rem;
+  }
+  .nx-share {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  .nx-share p {
+    margin: 0;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .nx-archive {
+    max-width: 46rem;
+    margin: 2.5rem auto 0;
+  }
+  .nx-archive__title {
+    font-size: 1.3rem;
+  }
+  .nx-archive ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nx-archive a {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--navy);
+    text-decoration: none;
+  }
+</style>

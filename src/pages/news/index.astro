@@ -1,155 +1,20 @@
 ---
-// ארכיון המבזק השבועי (נוגה, 2026-11-17). הגיליון החדש ביותר בולט למעלה, והקודמים ברשימה מתחתיו.
+// המבזק השבועי: הגיליון החדש ביותר מוצג כאן ישירות (נוגה, 2026-11-17: "למה צריך עמוד שמוביל לעמוד?").
+// הגיליונות הקודמים ברשימה בסוף העמוד, ולכל גיליון יש גם כתובת קבועה /news/<slug>/
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Star from '../../components/Star.astro';
-import { issues, hebDate } from '../../data/news';
+import NewsIssue from '../../components/NewsIssue.astro';
+import { issues } from '../../data/news';
 
-const [latest, ...older] = issues;
+const latest = issues[0];
 ---
 
 <BaseLayout
   title="המבזק השבועי"
-  description="המבזק השבועי של נוגה דיין אור. הידיעות שחשוב לעסקים להכיר במשק, בכלכלה, ב-AI ובכלים הדיגיטליים, עם המקורות ועם מה שזה אומר לעסק שלך."
+  description={`המבזק השבועי של נוגה דיין אור. ${latest.headline}`}
   crumbs={[
     { name: 'בית', path: '/' },
     { name: 'המבזק השבועי', path: '/news/' },
   ]}
 >
-  <header class="na-head">
-    <div class="container">
-      <h1 class="na-title">המבזק השבועי</h1>
-      <p class="na-sub">פעם בשבוע, מה שחשוב לדעת במשק ובעסקים, ומה זה אומר לעסק שלך</p>
-    </div>
-  </header>
-
-  <section class="section">
-    <div class="container na-wrap">
-      {latest && (
-        <a class="na-latest" href={`/news/${latest.slug}/`}>
-          <p class="na-latest__meta">
-            <span>הגיליון החדש</span> <Star size={12} /> <span>גיליון {latest.number}</span> <Star size={12} />
-            <time datetime={latest.date}>{hebDate(latest.date).full}</time>
-          </p>
-          <h2 class="na-latest__title no-grad">{latest.headline}</h2>
-          <ul class="na-latest__list">
-            {latest.economy.map((n) => <li>{n.title}</li>)}
-          </ul>
-          <span class="na-latest__go">לקריאת הגיליון <span aria-hidden="true">←</span></span>
-        </a>
-      )}
-
-      {older.length > 0 && (
-        <>
-          <h2 class="na-older__title">גיליונות קודמים</h2>
-          <ul class="na-older">
-            {older.map((i) => (
-              <li>
-                <a href={`/news/${i.slug}/`}>
-                  <span class="na-older__n">גיליון {i.number}</span>
-                  <time datetime={i.date}>{hebDate(i.date).full}</time>
-                  <span class="na-older__h">{i.headline}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-  </section>
+  <NewsIssue issue={latest} />
 </BaseLayout>
-
-<style>
-  .na-head {
-    background:
-      radial-gradient(60rem 22rem at 85% -10%, rgb(12 138 168 / 0.35), transparent 60%),
-      var(--navy);
-    color: var(--on-dark);
-    text-align: center;
-    padding-block: 2.5rem;
-  }
-  .na-title {
-    margin: 0;
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
-    font-weight: 900;
-    color: var(--white);
-  }
-  .na-sub {
-    margin: 0.6rem auto 0;
-    max-width: 34rem;
-    color: var(--on-dark-soft);
-    font-size: 1.1rem;
-  }
-  .na-wrap {
-    max-width: 52rem;
-  }
-  .na-latest {
-    display: block;
-    padding: 1.75rem;
-    border: 1px solid var(--line);
-    border-top: 4px solid var(--gold-dark);
-    border-radius: var(--radius);
-    background: var(--white);
-    color: var(--navy);
-    text-decoration: none;
-    box-shadow: 0 14px 34px -22px rgb(11 26 51 / 0.45);
-  }
-  .na-latest__meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0 0 0.75rem;
-    font-weight: 700;
-    color: var(--teal-dark);
-  }
-  .na-latest__title {
-    margin: 0 0 1rem;
-    font-size: clamp(1.35rem, 3vw, 1.75rem);
-    line-height: 1.35;
-  }
-  .na-latest__list {
-    margin: 0 0 1.25rem;
-    padding-inline-start: 1.2rem;
-    display: grid;
-    gap: 0.35rem;
-    line-height: 1.5;
-  }
-  .na-latest__go {
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  @media (hover: hover) {
-    .na-latest {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .na-latest:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 20px 40px -22px rgb(11 26 51 / 0.5);
-    }
-  }
-  .na-older__title {
-    margin: 2.5rem 0 1rem;
-    font-size: 1.4rem;
-  }
-  .na-older {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .na-older a {
-    display: grid;
-    gap: 0.2rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .na-older__n {
-    font-weight: 800;
-    color: var(--teal-dark);
-  }
-  .na-older time {
-    font-size: 0.9rem;
-    color: #4a5b73;
-  }
-</style>
