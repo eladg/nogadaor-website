@@ -52,7 +52,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 <!-- אצל נוגה: כרטיסים אחידים -->
 <section class="section nx-noga" aria-labelledby="noga-title">
   <div class="container">
-    <h2 id="noga-title" class="nx-sec-title">מה חדש אצל נוגה</h2>
+    <h2 id="noga-title" class="nx-sec-title">הודעות קהילה חשובות</h2>
     <ul class="nx-cards">
       {issue.cards.map((c) => (
         <li id={c.id} class="nx-c reveal">
@@ -120,7 +120,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 <section id="news" class="section nx-news" aria-labelledby="news-title">
   <div class="container">
     <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהשבוע</h2>
-    <p class="nx-sec-sub">מה שקרה במשק, ב-AI ובכלים הדיגיטליים, עם המקור של כל ידיעה</p>
+    <p class="nx-sec-sub">מה שקרה השבוע במשק, ב-AI ובכלים הדיגיטליים</p>
     <ul class="nx-grid">
       {issue.news.map((n, i) => (
         <li id={n.id} class="nx-n reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
@@ -134,6 +134,8 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
             <details class="nx-more">
               <summary><span class="nx-more__open">להמשך קריאה</span><span class="nx-more__close">סגירה</span></summary>
               <p>{n.text}</p>
+              {n.bullets && <ul class="nx-n__list">{n.bullets.map((b) => <li>{b}</li>)}</ul>}
+              {n.after && <p>{n.after}</p>}
               <p class="nx-n__src">
                 <span>מקור</span>
                 {n.sources.map((s) => (
@@ -660,6 +662,16 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
   }
   .nx-n .nx-more {
     margin-top: auto;
+  }
+  .nx-n__list {
+    margin: 0.6rem 0 0;
+    padding-inline-start: 1.2rem;
+    display: grid;
+    gap: 0.45rem;
+    line-height: 1.6;
+  }
+  .nx-n__list li::marker {
+    color: var(--gold-dark);
   }
   .nx-n__src {
     display: flex;
