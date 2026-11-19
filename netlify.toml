@@ -6,3 +6,10 @@
 
 [functions]
   directory = "netlify/functions"
+
+# קישור קצר להפצת השאלון (נוגה, 2026-11-19): nogadayanor.com/quiz מוביל לעמוד השאלון.
+# פרמטרים בכתובת (למשל ?src=facebook) עוברים הלאה לבד
+[[redirects]]
+  from = "/quiz"
+  to = "/guides/business-focus-quiz/"
+  status = 301

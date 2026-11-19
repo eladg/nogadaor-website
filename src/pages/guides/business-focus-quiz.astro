@@ -292,6 +292,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
       {/* התוצאה, עיצוב 2026-11-13 (נוגה): קודם הגרף, אחריו "מה שווה לשמור" (בולטים עם הכוכב, בלי מה שענו),
           אחריו "מה לשפר" לפי תחומים עם 2 עצות בכל תחום, ובסוף קוביות צבעוניות עם הכריכות של המדריכים וההרצאות */}
       <div class="qz-result" data-result hidden tabindex="-1">
+        {/* כותרת שמופיעה רק בשמירה כ-PDF / הדפסה (נוגה, 2026-11-19) */}
+        <div class="qz-print-head" aria-hidden="true">
+          <img src="/images/logo-color-trim.webp" alt="" width="900" height="313" />
+          <span>שאלון מיקוד פיתוח עסקי לשנת {quizYear} · <span data-print-date></span><br />nogadayanor.com/quiz</span>
+        </div>
         {/* 0. פתיחה מרימה (נוגה, 2026-11-13): עצם המילוי כבר אומר הרבה על החשיבה קדימה ועל החשיבות של פיתוח עסקי. הניסוח שלי, לאישור */}
         <header class="qz-hi">
           <span class="qz-hi__star" aria-hidden="true"><Star size={34} /></span>
@@ -373,6 +378,10 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         </div>
 
         <div class="qz-actions">
+          {/* שמירה כ-PDF (נוגה, 2026-11-19): התוצאה לא נשלחת במייל, ולכן שומרים אותה מיד. תפריט ההדפסה של הדפדפן, "שמירה כ-PDF" */}
+          <button type="button" class="btn qz-actions__pdf" data-pdf>
+            <Icon name="download" size={18} /> לשמירת התוצאה כ-PDF
+          </button>
           {/* שיתוף המשוב (נוגה, 2026-11-13): בטלפון תפריט השיתוף של המכשיר, ובמחשב וואטסאפ, או העתקה כשאין וואטסאפ */}
           <button type="button" class="btn qz-actions__share" data-share>
             <Icon name="share" size={18} /> לשיתוף התוצאה
@@ -898,6 +907,11 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         if (open === -1) finish();
         else show(open);
       } else show(idx + 1);
+    });
+    document.querySelector('[data-pdf]').addEventListener('click', function () {
+      var d = document.querySelector('[data-print-date]');
+      if (d) d.textContent = new Date().toLocaleDateString('he-IL');
+      window.print();
     });
     document.querySelector('[data-again]').addEventListener('click', function () {
       form.reset();
@@ -2150,6 +2164,53 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     .qz-tide__bubbles i,
     .qz-bar__fill::before {
       animation: none;
+    }
+  }
+  /* כפתור ה-PDF: הכפתור הבולט ביותר בסוף התוצאה */
+  .qz-actions__pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .qz-print-head {
+    display: none;
+  }
+  /* שמירה כ-PDF / הדפסה (נוגה, 2026-11-19): רק התוצאה, עם לוגו, תאריך והקישור לשאלון */
+  @media print {
+    .qz-hero,
+    .qz-tide,
+    .qz-gate,
+    #quiz,
+    .qz-actions,
+    :global(.site-index) {
+      display: none !important;
+    }
+    .qz-body {
+      padding: 0 !important;
+      background: #fff !important;
+    }
+    .qz-print-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6mm;
+      margin-bottom: 6mm;
+      padding-bottom: 4mm;
+      border-bottom: 1px solid var(--line);
+      font-size: 9pt;
+      color: var(--teal-dark);
+    }
+    .qz-print-head img {
+      width: 40mm;
+      height: auto;
+    }
+    .qz-chart,
+    .qz-cubes :global(li),
+    .qz-hi {
+      break-inside: avoid;
+    }
+    .qz-bar__fill::before {
+      animation: none !important;
     }
   }
 </style>
