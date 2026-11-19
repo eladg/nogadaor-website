@@ -8,8 +8,9 @@
   directory = "netlify/functions"
 
 # קישור קצר להפצת השאלון (נוגה, 2026-11-19): nogadayanor.com/quiz מוביל לעמוד השאלון.
-# פרמטרים בכתובת (למשל ?src=facebook) עוברים הלאה לבד
+# פרמטרים בכתובת (למשל ?src=facebook) עוברים הלאה לבד.
+# 200 ולא 301 (נוגה, 2026-11-19): העמוד מוגש ישירות בכתובת הקצרה, בלי הפניה, כדי שוואטסאפ יציג את התמונה בתצוגה המקדימה
 [[redirects]]
   from = "/quiz"
   to = "/guides/business-focus-quiz/"
-  status = 301
+  status = 200

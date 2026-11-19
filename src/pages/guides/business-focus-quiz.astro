@@ -118,7 +118,6 @@ const config = {
 // תמונת אווירה בפתיח (2026-11-07, קו רציף בכל האתר)
 import { Image } from 'astro:assets';
 import heroImg from '../../assets/consulting/cover-office-2026-11-13.webp';
-import headshot from '../../assets/hero/headshot.webp';
 ---
 
 <BaseLayout
@@ -150,7 +149,6 @@ import headshot from '../../assets/hero/headshot.webp';
           </ul>
         </div>
         <p class="qz-sign">
-          <Image src={headshot} alt="" widths={[96]} sizes="3rem" class="qz-sign__img" />
           <span><b>נוגה דיין אור</b> · ייעוץ להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
         </p>
       </div>
@@ -949,16 +947,22 @@ import headshot from '../../assets/hero/headshot.webp';
     background: #011430;
     color: var(--on-dark);
   }
+  /* בטלפון (נוגה, 2026-11-19): התמונה בערך בחצי עד שליש מהגודל הקודם, ממורכזת */
   .qz-hero__media {
     position: relative;
-    height: min(62vw, 19rem);
+    /* נוגה יושבת ברבע השמאלי של התמונה, ולכן חיתוך לאורך מהקצה השמאלי שם אותה במרכז */
+    width: 8.5rem;
+    height: 10rem;
+    margin: 1.25rem auto 0.75rem;
+    border-radius: 1rem;
+    overflow: hidden;
   }
   .qz-hero__media :global(img) {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 12% 20%;
+    object-position: 0% 15%;
   }
   .qz-hero__media::after {
     content: '';
@@ -979,7 +983,10 @@ import headshot from '../../assets/hero/headshot.webp';
     .qz-hero__media {
       position: absolute;
       inset: 0;
+      width: auto;
       height: auto;
+      margin: 0;
+      border-radius: 0;
     }
     .qz-hero__media :global(img) {
       object-position: left 25%;
@@ -1085,14 +1092,6 @@ import headshot from '../../assets/hero/headshot.webp';
   }
   .qz-sign b {
     color: var(--white);
-  }
-  .qz-sign :global(.qz-sign__img) {
-    flex: none;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.6rem; /* בלי עיגולים (נוגה) */
-    object-fit: cover;
-    border: 2px solid var(--gold-light);
   }
 
   /* ---------- השאלון ---------- */
