@@ -5,7 +5,7 @@
 import { getCollection } from 'astro:content';
 import { services } from '../data/services';
 import { trainings } from '../data/trainings';
-import { quizYear } from '../data/quiz';
+import { quizName } from '../data/quiz';
 
 const guides = (await getCollection('guides'))
   .filter((g) => !g.data.comingSoon)
@@ -18,7 +18,7 @@ const columns = [
   {
     title: 'עוד באתר',
     links: [
-      { href: '/guides/business-focus-quiz/', label: `שאלון מיקוד פיתוח עסקי ${quizYear}` },
+      { href: '/guides/business-focus-quiz/', label: quizName },
       { href: '/about/', label: 'אודות נוגה דיין אור' },
       { href: '/testimonials/', label: 'המלצות לקוחות' },
       { href: '/guides/', label: 'הרצאות לצפייה בחינם במרכז הידע' },

@@ -10,7 +10,7 @@ import Star from './Star.astro';
 import Icon from './Icon.astro';
 import ContentCover from './ContentCover.astro';
 import { issues, hebDate, type Issue } from '../data/news';
-import { quizYear, quizAreas } from '../data/quiz';
+import { quizAreas } from '../data/quiz';
 import { communityIntro } from '../data/community';
 import { contact } from '../data/contact';
 
@@ -103,7 +103,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
     <div class="nx-quiz__card">
       <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
       <div class="nx-quiz__body">
-        <h2 id="quiz-title" class="nx-quiz__title no-grad">מה המיקוד הנכון <span>לעסק שלך ב-{quizYear}?</span></h2>
+        <h2 id="quiz-title" class="nx-quiz__title no-grad">שאלון מיקוד פיתוח עסקי{' '}<span>להגדלת הכנסות בלי הוצאות פרסום</span></h2>
         <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
         <ul class="nx-quiz__gets">
           <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>

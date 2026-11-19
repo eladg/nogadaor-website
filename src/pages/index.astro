@@ -21,7 +21,7 @@ import { homeReviews } from '../data/reviews';
 import { ways } from '../data/principles';
 import ContentCover from '../components/ContentCover.astro';
 import Star from '../components/Star.astro';
-import { quizYear, quizAreas } from '../data/quiz';
+import { quizAreas } from '../data/quiz';
 import { atmoStyle } from '../utils/atmo';
 // תמונת הפתיח: התמונה החלופית שנוגה הכינה (2026-11-08, בלי השקעים), עם מסך המקרן מוכהה לכחול כהה.
 // המקור: "חומרים גרפיים לאתר/תמונות לפתיח הבית 2026-11-07/noga-replacement-2026-11-08.webp"
@@ -245,7 +245,7 @@ const schema = [personSchema(Astro.site), businessSchema(Astro.site), websiteSch
     <div class="container">
       <div class="h-quiz__card">
         <Image src={pointing} alt="" widths={[260, 420]} sizes="13rem" class="h-quiz__toon" />
-        <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">מה המיקוד הנכון{' '}<span class="hl">לעסק שלך ב-{quizYear}?</span></h2>
+        <h2 id="quiz-title" class="h-quiz__title h-title--split reveal">שאלון מיקוד פיתוח עסקי{' '}<span class="hl">להגדלת הכנסות בלי הוצאות פרסום</span></h2>
         <p class="h-quiz__text reveal">שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
         <!-- מה מקבלים, בבולטים בולטים (נוגה, 2026-11-13: "לתת יותר דגש למה מקבלים"). אותם שלושה דברים כמו בפתיח של השאלון -->
         <ul class="h-quiz__gets reveal">

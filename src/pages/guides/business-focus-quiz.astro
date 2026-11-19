@@ -10,7 +10,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Star from '../../components/Star.astro';
-import { quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile, quizSessionLink } from '../../data/quiz';
+import { quizName, quizAreas, quizQuestions, quizLevels, quizYear, quizCheers, quizStrongFrom, quizPoints, quizServices, quizResources, quizProfile, quizSessionLink } from '../../data/quiz';
 import type { QuizLink } from '../../data/quiz';
 import { contact } from '../../data/contact';
 import ContentCover from '../../components/ContentCover.astro';
@@ -116,33 +116,44 @@ const config = {
   whatsapp: contact.whatsapp,
 };
 // תמונת אווירה בפתיח (2026-11-07, קו רציף בכל האתר)
-import { atmoStyle } from '../../utils/atmo';
-import darkLinesQz from '../../assets/atmosphere/dark-lines.webp';
-const linesStyle = await atmoStyle(darkLinesQz, 0.5);
+import { Image } from 'astro:assets';
+import heroImg from '../../assets/consulting/cover-office-2026-11-13.webp';
+import headshot from '../../assets/hero/headshot.webp';
 ---
 
 <BaseLayout
-  title={`שאלון מיקוד פיתוח עסקי לשנת ${quizYear}`}
+  title={quizName}
   description="איפה מסתתר הכסף הבא של העסק? שאלון אבחון שמסתכל על העסק מלמעלה ונותן תמונת מצב, עצות להתחלה לפי התשובות, ומה כבר עובד ושווה לחזק."
 >
-  <header class="qz-hero atmo" style={linesStyle}>
+  {/* פתיח (נוגה, 2026-11-19): ברוח פתיח פגישת הייעוץ, נוגה משמאל על הכחול והטקסט מימין.
+      הכותרת והמשפט מתחתיה הם הנוסח של נוגה מעמוד הבית, מילה במילה. "כ-5 דקות" (נוגה, לא 7). החתימה בנוסח של נוגה */}
+  <header class="qz-hero">
+    <div class="qz-hero__media">
+      <Image src={heroImg} alt="נוגה דיין אור, מחייכת" widths={[640, 1024, 1672]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
     <div class="container qz-hero__inner">
-      <p class="qz-crumbs"><a href="/">בית</a> <span aria-hidden="true">/</span> שאלון</p>
-      <h1>שאלון מיקוד פיתוח עסקי לשנת <span class="hl">{quizYear}</span></h1>
-      {/* טיוטה לאישור נוגה. נוגה (2026-11-12): יותר התלהבות, בלי מספר השאלות, מה יוצא מזה ולמה כדאי */}
-      <p class="qz-hero__lead">
-        הכסף הבא של העסק לא תמיד מחכה בעוד לידים. הרבה פעמים הוא כבר כאן, בלקוחות שקנו פעם, בפניות שלא נסגרו ובשעות שהולכות על עבודה ידנית. השאלון מסתכל על העסק מלמעלה, ומראה בדיוק איפה זה מסתתר אצלך.
-      </p>
-      <p class="qz-get__title">מה מקבלים בסוף</p>
-      <ul class="qz-get">
-        <li><Icon name="chart" size={18} /> תמונת מצב של העסק בארבעה תחומים</li>
-        <li><Icon name="bulb" size={18} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
-        <li><Icon name="rocket" size={18} /> מה כבר עובד אצלך, ושווה לחזק</li>
-      </ul>
-      <ul class="qz-meta">
-        <li><Icon name="clock" size={16} /> כ-7 דקות</li>
-        <li><Icon name="heart" size={16} /> התוצאה נפתחת מיד בסוף</li>
-      </ul>
+      <div class="qz-hero__text">
+        <p class="qz-hero__name">{quizName}</p>
+        <h1 class="qz-hero__title no-grad">עשרות דרכים להגדיל הכנסות בעסק{' '}<span class="hl">בלי שקל אחד נוסף לתקציב הפרסום</span></h1>
+        <p class="qz-hero__lead">עונים לשאלון ומקבלים מלא טיפים פרקטיים ליישום בהתאמה אישית לכל עסק</p>
+        <ul class="qz-get">
+          <li><Star size={18} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
+          <li><Star size={18} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
+          <li><Star size={18} /> מה כבר עובד אצלך ושווה לחזק</li>
+        </ul>
+        <div class="qz-hero__go">
+          <a class="btn qz-hero__btn" href="#quiz">מתחילים <span aria-hidden="true">←</span></a>
+          <ul class="qz-meta">
+            <li><Icon name="heart" size={16} /> חינם</li>
+            <li><Icon name="clock" size={16} /> כ-5 דקות</li>
+            <li><Icon name="chart" size={16} /> התוצאה מיד בסוף</li>
+          </ul>
+        </div>
+        <p class="qz-sign">
+          <Image src={headshot} alt="" widths={[96]} sizes="3rem" class="qz-sign__img" />
+          <span><b>נוגה דיין אור</b> · ייעוץ להגדלת הכנסות ושיפור רווחיות באמצעות אסטרטגיה, שיווק ותהליכי עבודה</span>
+        </p>
+      </div>
     </div>
   </header>
 
@@ -295,7 +306,7 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
         {/* כותרת שמופיעה רק בשמירה כ-PDF / הדפסה (נוגה, 2026-11-19) */}
         <div class="qz-print-head" aria-hidden="true">
           <img src="/images/logo-color-trim.webp" alt="" width="900" height="313" />
-          <span>שאלון מיקוד פיתוח עסקי לשנת {quizYear} · <span data-print-date></span><br />nogadayanor.com/quiz</span>
+          <span>{quizName} · <span data-print-date></span><br />nogadayanor.com/quiz</span>
         </div>
         {/* 0. פתיחה מרימה (נוגה, 2026-11-13): עצם המילוי כבר אומר הרבה על החשיבה קדימה ועל החשיבות של פיתוח עסקי. הניסוח שלי, לאישור */}
         <header class="qz-hi">
@@ -931,53 +942,90 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
 </script>
 
 <style>
-  /* ---------- פתיח ---------- */
+  /* ---------- פתיח (2026-11-19): התמונה על כל הרוחב, נוגה משמאל והטקסט מימין על הכחול ---------- */
   .qz-hero {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(2rem, 6vw, 3.75rem);
+    background: #011430;
     color: var(--on-dark);
-    background:
-      radial-gradient(36rem 22rem at 100% 0, rgb(12 138 168 / 0.45), transparent 70%),
-      radial-gradient(28rem 20rem at 0 100%, rgb(209 154 74 / 0.28), transparent 72%),
-      linear-gradient(160deg, var(--navy-deep), var(--navy) 55%, #10345a);
+  }
+  .qz-hero__media {
+    position: relative;
+    height: min(62vw, 19rem);
+  }
+  .qz-hero__media :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 12% 20%;
+  }
+  .qz-hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(1 20 48 / 0) 55%, #011430 100%);
   }
   .qz-hero__inner {
-    max-width: 48rem;
+    position: relative;
+    padding-block: 0 2rem;
   }
-  .qz-crumbs {
-    margin: 0 0 0.75rem;
-    font-size: 0.95rem;
-    color: var(--on-dark-soft);
+  @media (min-width: 52rem) {
+    .qz-hero {
+      display: flex;
+      align-items: center;
+      min-height: clamp(26rem, 60vh, 34rem);
+    }
+    .qz-hero__media {
+      position: absolute;
+      inset: 0;
+      height: auto;
+    }
+    .qz-hero__media :global(img) {
+      object-position: left 25%;
+    }
+    .qz-hero__media::after {
+      background:
+        linear-gradient(to left, rgb(1 20 48 / 0.55) 0%, rgb(1 20 48 / 0) 45%),
+        linear-gradient(180deg, rgb(1 20 48 / 0) 75%, #011430 100%);
+    }
+    .qz-hero__inner {
+      padding-block: 3rem;
+    }
+    .qz-hero__text {
+      max-width: min(36rem, 52vw);
+    }
   }
-  .qz-crumbs a {
+  .qz-hero__name {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--gold-light);
   }
-  .qz-hero h1 {
+  .qz-hero__title {
     margin: 0 0 0.75rem;
-    font-size: clamp(2rem, 5.2vw, 3.1rem);
+    font-size: clamp(1.9rem, 4.4vw, 2.9rem);
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.15;
     color: var(--white);
   }
-  .qz-hero__lead {
-    font-size: 1.08rem;
-    line-height: 1.7;
-    max-width: 40rem;
+  .qz-hero__title .hl {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.72em;
+    line-height: 1.3;
   }
-  /* מה מקבלים בסוף */
-  .qz-get__title {
-    margin: 1.2rem 0 0.5rem;
-    font-weight: 900;
-    color: var(--gold-light);
+  .qz-hero__lead {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
   }
   .qz-get {
     list-style: none;
-    margin: 0;
+    margin: 1rem 0 0;
     padding: 0;
     display: grid;
     gap: 0.45rem;
-    max-width: 40rem;
   }
   .qz-get li {
     display: flex;
@@ -989,11 +1037,21 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
   }
   .qz-get :global(svg) {
     flex: none;
-    color: var(--gold-light);
+  }
+  .qz-hero__go {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem 1.2rem;
+    margin-top: 1.5rem;
+  }
+  .qz-hero__btn {
+    font-size: 1.15rem;
+    padding-inline: 2.2rem;
   }
   .qz-meta {
     list-style: none;
-    margin: 1.2rem 0 0;
+    margin: 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
@@ -1004,15 +1062,37 @@ const linesStyle = await atmoStyle(darkLinesQz, 0.5);
     align-items: center;
     gap: 0.4rem;
     margin: 0;
-    padding: 0.35rem 0.85rem;
+    padding: 0.3rem 0.8rem;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.08);
     border: 1px solid rgb(255 255 255 / 0.14);
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 700;
   }
   .qz-meta :global(svg) {
     color: var(--gold-light);
+  }
+  .qz-sign {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.6rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--on-dark-soft);
+  }
+  .qz-sign b {
+    color: var(--white);
+  }
+  .qz-sign :global(.qz-sign__img) {
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.6rem; /* בלי עיגולים (נוגה) */
+    object-fit: cover;
+    border: 2px solid var(--gold-light);
   }
 
   /* ---------- השאלון ---------- */
