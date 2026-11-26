@@ -25,23 +25,27 @@ const assets = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{w
 const img = (p: string) => assets[`/src/assets/${p}`]!.default;
 
 const others = issues.filter((i) => i.slug !== issue.slug);
-const has = (id: string) => issue.cards.some((c) => c.id === id) || issue.news.some((n) => n.id === id);
-// רצף הקריאה: המבצע, הכרטיסים והידיעות. בסוף כל "להמשך קריאה" יש קישור לפריט הבא
-const seq = [...(issue.promo ? [{ id: issue.promo.id, title: `${issue.promo.label}, ${issue.promo.title}` }] : []), ...issue.cards, ...issue.news].map((x) => ({ id: x.id, title: x.title }));
 const p = issue.promo;
-const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
+// המבצע (נוגה, 26.11): בלי אזור נפרד ובלי תאריך יעד. כפתור בפתיח וכפתור בהקלטה, שניהם לוואטסאפ עם הודעה מוכנה
+const promoLink = p?.cta2 ?? p?.cta;
 
-// ההודעה הראשונה (בדרך כלל ההקלטה) גדולה, השאר בשני טורים
+// סדר הקריאה (נוגה, 26.11): ההקלטה במרכז ← הידיעה החשובה (סוף השנה לעצמאים) ← שאר ההודעות ← שאר החדשות,
+// ברצף אחד בלי כותרות שמפרידות ביניהם
 const [lead, ...rest] = issue.cards;
+const hot = issue.news.find((n) => n.id === issue.highlight);
+const news = issue.news.filter((n) => n !== hot);
+// בסוף כל "להמשך קריאה" יש קישור לפריט הבא, לפי סדר הקריאה בעמוד
+const seq = [...(lead ? [lead] : []), ...(hot ? [hot] : []), ...rest, ...news].map((x) => ({ id: x.id, title: x.title }));
+const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
 // שורות מאוזנות (נוגה: "אין מצב 5 בשורה ו-1 בנפרד"): מספר זוגי של ידיעות = שתי ידיעות ראשיות זו לצד זו,
 // מספר אי-זוגי = ידיעה ראשית אחת לרוחב. השאר תמיד זוגי, בשני טורים
-const topCount = issue.news.length % 2 === 0 ? 2 : 1;
+const topCount = news.length % 2 === 0 ? 2 : 1;
 ---
 
 <!-- פתיח: כחול, תמונה של נוגה עם לקוחה בצד שנמוגה לתוך הכחול, ניצוצות, טיקר כותרות וגל -->
 <header class="nx-hero">
   <div class="nx-hero__photo" aria-hidden="true">
-    <Image src={img('consulting/laptop-laughing.webp')} alt="" widths={[640, 1000, 1400]} sizes="(min-width: 62rem) 55vw, 100vw" loading="eager" />
+    <Image src={img('news/noga-portrait-2026-11-26.webp')} alt="" widths={[640, 1000, 1400]} sizes="(min-width: 62rem) 55vw, 100vw" loading="eager" />
   </div>
   <div class="nx-hero__sky" aria-hidden="true">
     <span class="nx-spark nx-spark--1">✦</span>
@@ -53,15 +57,12 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
     <p class="nx-issue"><Star size={13} /> {issue.month}</p>
     <h1 class="nx-hero__title no-grad">המבזק <span class="nx-brush">החודשי</span></h1>
     <p class="nx-hero__sub">מה חם החודש בעסקים, בכלכלה וב-AI, ומה קורה בקהילה. חמש דקות, קפה, ויוצאים לדרך</p>
-    <nav class="nx-jump" aria-label="בגיליון הזה">
-      {p && <a href={`#${p.id}`} class="nx-jump__hot"><Icon name="gift" size={16} />מבצע {p.label}</a>}
-      {has('recording') && <a href="#recording"><Icon name="mic" size={16} />הקלטת ההדרכה</a>}
-      {has('reservists') && <a href="#reservists"><Icon name="gift" size={16} />מתנה למילואימניקים</a>}
-      {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
-      {has('year-end') && <a href="#year-end"><Icon name="calendar" size={16} />סוף שנה לעצמאים</a>}
-      <a href="#quiz"><Icon name="target" size={16} />שאלון האבחון</a>
-      <a href="#news"><Icon name="book-open" size={16} />חדשות החודש</a>
-    </nav>
+    {promoLink && (
+      <a class="nx-btn nx-btn--gold nx-btn--big nx-hero__deal" href={promoLink.href} target={promoLink.external ? '_blank' : undefined} rel={promoLink.external ? 'noopener' : undefined}>
+        <span>40% הנחה על פגישה ראשונה לכבוד {p!.label}</span>
+        {promoLink.external && <span class="sr-only"> (נפתח בוואטסאפ)</span>}
+      </a>
+    )}
     <p class="nx-community">
       <Icon name="heart" size={16} /> המבזק של "תודעה עסקית מנצחת", קהילה של מאות בעלי עסקים
       <a href="#group">להצטרפות <span aria-hidden="true">←</span></a>
@@ -81,69 +82,78 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
   <svg class="nx-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 C 180 6 360 58 560 30 C 760 4 940 52 1140 26 C 1260 10 1360 22 1440 30 L1440 60 L0 60 Z" /></svg>
 </header>
 
-<!-- מבצע: כרטיס כחול עם תמונה של נוגה בפגישה, ומדבקת כוכב 40% על פינת התמונה -->
-{p && (
-  <section id={p.id} class="nx-promo-sec" aria-labelledby={`${p.id}-title`}>
-    <div class="container">
-      <div class="nx-promo reveal">
-        <div class="nx-promo__photo">
-          <Image src={img('consulting/handshake-woman.webp')} alt="נוגה בפגישת ייעוץ עם לקוחה" widths={[480, 800]} sizes="(min-width: 48rem) 24rem, 92vw" />
-          {p.burst && <span class="nx-burst" aria-hidden="true">{p.burst}</span>}
-        </div>
-        <div class="nx-promo__body">
-          <span class="nx-promo__label">{p.label}</span>
-          <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
-          <p class="nx-promo__text">{p.text}</p>
-          {p.deadline && <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>}
-          <div class="nx-promo__actions">
-            <a class="nx-btn nx-btn--gold" href={p.cta.href}>{p.cta.label} <span aria-hidden="true">←</span></a>
-            {p.cta2 && (
-              <a class="nx-btn nx-btn--line" href={p.cta2.href} target="_blank" rel="noopener">
-                <Icon name="whatsapp" size={18} /> {p.cta2.label}<span class="sr-only"> (נפתח בוואטסאפ)</span>
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-)}
-
-<!-- הודעות קהילה: בלי קופסאות. ההודעה הראשונה גדולה, תמונה לצד הטקסט; השאר תמונה וטקסט בשני טורים -->
-<section class="section nx-noga" aria-labelledby="noga-title">
+<!-- כל התוכן ברצף אחד, בלי כותרות שמפרידות (נוגה, 26.11). ההקלטה במרכז, ואחריה הידיעה החשובה -->
+<section class="section nx-feed" aria-label={`המבזק החודשי, ${issue.month}`}>
   <div class="container">
-    <h2 id="noga-title" class="nx-sec-title no-grad"><span class="nx-brush">הודעות קהילה</span> חשובות</h2>
-
     {lead && (
       <article id={lead.id} class="nx-lead reveal" aria-labelledby={`${lead.id}-t`}>
         <div class="nx-media nx-media--lead">
           <span class="nx-tag">{lead.tag}</span>
           {lead.video ? (
             <YouTubeEmbed id={lead.video} title={lead.title}>
-              <ContentCover title={lead.cover!.title} motif={lead.cover!.motif} tone={lead.cover!.tone} kind="lecture" ratio="16/9" />
+              {lead.poster ? (
+                <span class="nx-poster">
+                  <Image src={img(lead.poster)} alt="" widths={[640, 1000, 1280]} sizes="(min-width: 62rem) 60vw, 92vw" />
+                  <span class="nx-play" aria-hidden="true"></span>
+                </span>
+              ) : (
+                <ContentCover title={lead.cover!.title} motif={lead.cover!.motif} tone={lead.cover!.tone} kind="lecture" ratio="16/9" />
+              )}
             </YouTubeEmbed>
-          ) : lead.cover ? (
-            <ContentCover title={lead.cover.title} motif={lead.cover.motif} tone={lead.cover.tone} ratio="16/9" />
           ) : (
-            <Image src={img(lead.image!)} alt={lead.imageAlt ?? ''} widths={[640, 1000]} sizes="(min-width: 62rem) 55vw, 92vw" />
+            <Image src={img(lead.image!)} alt={lead.imageAlt ?? ''} widths={[640, 1000]} sizes="(min-width: 62rem) 60vw, 92vw" />
           )}
         </div>
         <div class="nx-item">
           {lead.meta && <p class="nx-meta">{lead.meta}{lead.time && <> · <span dir="ltr">{lead.time}</span></>}</p>}
-          <h3 id={`${lead.id}-t`} class="nx-item__title nx-item__title--lead">{lead.title}</h3>
+          <h2 id={`${lead.id}-t`} class="nx-item__title nx-item__title--lead no-grad">{lead.title}</h2>
           <p class="nx-item__text">{lead.text}</p>
-          {(lead.more || lead.sessions) && (
+          {lead.more && (
             <details class="nx-more">
               <summary><span class="nx-more__open">להמשך קריאה</span><span class="nx-more__close">סגירה</span></summary>
-              {lead.more?.map((t) => <p>{t}</p>)}
+              {lead.more.map((t) => <p>{t}</p>)}
               {next(lead.id) && <a class="nx-next" href={`#${next(lead.id)!.id}`}>הבא בתור, {next(lead.id)!.title} <span aria-hidden="true">←</span></a>}
             </details>
           )}
-          {lead.cta && (
-            <a class="nx-btn nx-btn--gold nx-item__btn" href={lead.cta.href} target={lead.cta.external ? '_blank' : undefined} rel={lead.cta.external ? 'noopener' : undefined}>
-              {lead.cta.label}{lead.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
-            </a>
+          <div class="nx-actions">
+            {lead.promoCta && promoLink && (
+              <a class="nx-btn nx-btn--gold" href={promoLink.href} target={promoLink.external ? '_blank' : undefined} rel={promoLink.external ? 'noopener' : undefined}>
+                <span>40% הנחה על פגישה ראשונה</span>
+                {promoLink.external && <span class="sr-only"> (נפתח בוואטסאפ)</span>}
+              </a>
+            )}
+            {lead.cta && (
+              <a class="nx-btn nx-btn--soft" href={lead.cta.href} target={lead.cta.external ? '_blank' : undefined} rel={lead.cta.external ? 'noopener' : undefined}>
+                {lead.cta.label}{lead.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
+              </a>
+            )}
+          </div>
+        </div>
+      </article>
+    )}
+
+    {hot && (
+      <article id={hot.id} class="nx-hot reveal" aria-labelledby={`${hot.id}-t`}>
+        <div class="nx-hot__date" aria-hidden="true">
+          <span>עד</span>
+          <strong>{hot.badge}</strong>
+        </div>
+        <div class="nx-hot__body">
+          <p class="nx-hot__tag">{hot.tag}</p>
+          <h2 id={`${hot.id}-t`} class="nx-hot__title no-grad">{hot.title}</h2>
+          <p class="nx-hot__teaser">{hot.teaser}</p>
+          {hot.bullets && (
+            <ul class="nx-hot__list">
+              {hot.bullets.map((b) => <li><Star size={15} /> <span>{b}</span></li>)}
+            </ul>
           )}
+          {hot.after && <p>{hot.after}</p>}
+          <p class="nx-n__src">
+            <span>מקור</span>
+            {hot.sources.map((s) => (
+              <a href={s.url} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+            ))}
+          </p>
         </div>
       </article>
     )}
@@ -152,9 +162,20 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
       {rest.map((c: NogaCard) => (
         <li id={c.id} class="reveal">
           <article class="nx-card" aria-labelledby={`${c.id}-t`}>
-            <div class:list={['nx-media', c.contain && 'nx-media--contain']}>
-              <span class="nx-tag">{c.tag}</span>
-              {c.video ? (
+            <div class:list={['nx-media', c.contain && 'nx-media--contain', c.art && `nx-media--${c.art}`]}>
+              {!c.art && <span class="nx-tag">{c.tag}</span>}
+              {c.art === 'sba' ? (
+                <div class="nx-sba" aria-hidden="true">
+                  <span class="nx-sba__glow"></span>
+                  <span class="nx-sba__s nx-sba__s--1">✦</span>
+                  <span class="nx-sba__s nx-sba__s--2">✧</span>
+                  <span class="nx-sba__s nx-sba__s--3">✦</span>
+                  <span class="nx-sba__s nx-sba__s--4">✦</span>
+                  <span class="nx-sba__kicker">הקלטות שבוע היזמות 2026</span>
+                  <span class="nx-sba__big">הדרכות <b>AI</b></span>
+                  <span class="nx-sba__free">חינם!</span>
+                </div>
+              ) : c.video ? (
                 <YouTubeEmbed id={c.video} title={c.title}>
                   <ContentCover title={c.cover!.title} motif={c.cover!.motif} tone={c.cover!.tone} kind="lecture" ratio="16/9" />
                 </YouTubeEmbed>
@@ -166,7 +187,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
             </div>
             <div class="nx-item">
               {c.meta && <p class="nx-meta">{c.meta}{c.time && <> · <span dir="ltr">{c.time}</span></>}</p>}
-              <h3 id={`${c.id}-t`} class="nx-item__title">{c.title}</h3>
+              <h2 id={`${c.id}-t`} class="nx-item__title no-grad">{c.title}</h2>
               <p class="nx-item__text">{c.text}</p>
               {(c.more || c.sessions) && (
                 <details class="nx-more">
@@ -186,7 +207,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
                 </details>
               )}
               {c.cta && (
-                <a class="nx-btn nx-btn--soft nx-item__btn" href={c.cta.href} target={c.cta.external ? '_blank' : undefined} rel={c.cta.external ? 'noopener' : undefined}>
+                <a class:list={['nx-btn nx-item__btn', c.art === 'sba' ? 'nx-btn--sba' : 'nx-btn--soft']} href={c.cta.href} target={c.cta.external ? '_blank' : undefined} rel={c.cta.external ? 'noopener' : undefined}>
                   {c.cta.label} <span aria-hidden="true">←</span>
                   {c.cta.external && <span class="sr-only"> (נפתח בלשונית חדשה)</span>}
                 </a>
@@ -196,36 +217,10 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
         </li>
       ))}
     </ul>
-  </div>
-</section>
 
-<!-- השאלון: באנר כהה ובולט, בסגנון הבאנר שבעמוד הבית -->
-<section id="quiz" class="nx-quiz" aria-labelledby="quiz-title">
-  <div class="container">
-    <div class="nx-quiz__card">
-      <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
-      <div class="nx-quiz__body">
-        <h2 id="quiz-title" class="nx-quiz__title no-grad">שאלון מיקוד פיתוח עסקי{' '}<span>להגדלת הכנסות בלי הוצאות פרסום</span></h2>
-        <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
-        <ul class="nx-quiz__gets">
-          <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
-          <li><Star size={16} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
-          <li><Star size={16} /> מה כבר עובד אצלך ושווה לחזק</li>
-        </ul>
-        <a class="nx-btn nx-btn--gold nx-btn--big" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- חדשות החודש: רשימה עריכתית. ידיעה ראשית רחבה, ואחריה שורות עם תמונה קטנה, מופרדות בקו זהב עדין -->
-<section id="news" class="section nx-news" aria-labelledby="news-title">
-  <div class="container">
-    <h2 id="news-title" class="nx-sec-title no-grad"><span class="nx-brush">חדשות</span> מעניינות מהחודש</h2>
-    <p class="nx-sec-sub">מה שקרה החודש במשק, ב-AI ובכלים הדיגיטליים</p>
-
-    <ul class="nx-list">
-      {issue.news.map((n, i) => (
+    <!-- שאר החדשות ממשיכות ברצף, בלי כותרת. ידיעה ראשית ואחריה שורות עם תמונה קטנה -->
+    <ul id="news" class="nx-list">
+      {news.map((n, i) => (
         <li id={n.id} class:list={['nx-n reveal', i < topCount && 'nx-n--top', i < topCount && topCount === 2 && 'nx-n--pair']}>
           <div class="nx-n__media">
             <ContentCover title=" " motif={n.motif} tone={n.tone} ratio="16/9" />
@@ -233,7 +228,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
           </div>
           <div class="nx-n__body">
             <p class="nx-n__tag">{n.tag}</p>
-            <h3 class="nx-n__title">{n.title}</h3>
+            <h2 class="nx-n__title no-grad">{n.title}</h2>
             <p class="nx-n__teaser">{n.teaser}</p>
             <details class="nx-more">
               <summary><span class="nx-more__open">להמשך קריאה</span><span class="nx-more__close">סגירה</span></summary>
@@ -252,6 +247,25 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
         </li>
       ))}
     </ul>
+  </div>
+</section>
+
+<!-- השאלון: באנר כהה ובולט, בסגנון הבאנר שבעמוד הבית (אחרי כל התוכן, כדי לא לחתוך את רצף הקריאה) -->
+<section id="quiz" class="nx-quiz" aria-labelledby="quiz-title">
+  <div class="container">
+    <div class="nx-quiz__card">
+      <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
+      <div class="nx-quiz__body">
+        <h2 id="quiz-title" class="nx-quiz__title no-grad">שאלון מיקוד פיתוח עסקי{' '}<span>להגדלת הכנסות בלי הוצאות פרסום</span></h2>
+        <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
+        <ul class="nx-quiz__gets">
+          <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
+          <li><Star size={16} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
+          <li><Star size={16} /> מה כבר עובד אצלך ושווה לחזק</li>
+        </ul>
+        <a class="nx-btn nx-btn--gold nx-btn--big" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -336,14 +350,14 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
     position: absolute;
     inset-block: 0;
     left: 0;
-    width: 58%;
+    width: 60%;
     z-index: -2;
   }
   .nx-hero__photo :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 0% 30%;
+    object-position: 0% 35%;
     /* הלקוחה שבצד ימין של התמונה נעלמת לתוך הכחול, כדי שהטקסט יישב על רקע אחיד */
     -webkit-mask-image: linear-gradient(to left, transparent 0%, transparent 22%, #000 58%);
     mask-image: linear-gradient(to left, transparent 0%, transparent 22%, #000 58%);
@@ -363,7 +377,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
   .nx-hero__inner {
     display: grid;
     justify-items: start;
-    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 4vw, 2.75rem);
+    padding-block: clamp(2.5rem, 6vw, 4rem) clamp(2rem, 4vw, 2.5rem);
   }
   .nx-hero__inner > * {
     max-width: 34rem;
@@ -398,45 +412,6 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
     line-height: 1.6;
     color: var(--on-dark-soft);
   }
-  .nx-jump {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-  }
-  .nx-jump a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.1);
-    border: 1px solid rgb(255 255 255 / 0.22);
-    backdrop-filter: blur(6px);
-    font-weight: 700;
-    font-size: 0.93rem;
-    color: var(--white);
-    text-decoration: none;
-  }
-  .nx-jump a :global(svg) {
-    color: var(--gold-light);
-  }
-  .nx-jump .nx-jump__hot {
-    background: var(--gold-gradient);
-    border-color: transparent;
-    color: var(--navy);
-  }
-  .nx-jump .nx-jump__hot :global(svg) {
-    color: var(--navy);
-  }
-  @media (hover: hover) {
-    .nx-jump a {
-      transition: background 0.2s ease, border-color 0.2s ease;
-    }
-    .nx-jump a:not(.nx-jump__hot):hover {
-      background: rgb(255 255 255 / 0.16);
-      border-color: rgb(252 220 109 / 0.6);
-    }
-  }
   .nx-community {
     display: flex;
     flex-wrap: wrap;
@@ -459,10 +434,11 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
       position: relative;
       inset: auto;
       width: 100%;
-      height: clamp(15rem, 58vw, 24rem);
+      height: auto;
+      aspect-ratio: 16 / 9;
     }
     .nx-hero__photo :global(img) {
-      object-position: 30% 25%;
+      object-position: 0% 30%;
       -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
     }
@@ -473,12 +449,6 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
       margin-top: -3.5rem;
       position: relative;
       padding-top: 0;
-    }
-  }
-  @media (max-width: 36rem) {
-    .nx-jump a {
-      padding: 0.42rem 0.8rem;
-      font-size: 0.86rem;
     }
   }
 
@@ -624,124 +594,6 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
     }
   }
 
-  /* ---------- מבצע ---------- */
-  .nx-promo-sec {
-    padding-block: clamp(2.25rem, 5vw, 3.25rem) 0;
-    background: var(--mist);
-    scroll-margin-top: var(--header-h);
-  }
-  .nx-promo {
-    display: grid;
-    align-items: center;
-    gap: 1.5rem clamp(1.5rem, 4vw, 3rem);
-    max-width: 62rem;
-    margin-inline: auto;
-    padding: clamp(1rem, 2.5vw, 1.4rem);
-    border-radius: 32px;
-    color: var(--on-dark-soft);
-    background:
-      radial-gradient(28rem 16rem at 0% 0%, rgb(252 220 109 / 0.16), transparent 70%),
-      radial-gradient(26rem 16rem at 100% 100%, rgb(12 138 168 / 0.35), transparent 70%),
-      linear-gradient(160deg, #0f2d50, var(--navy) 60%);
-    box-shadow: 0 34px 60px -36px rgb(11 26 51 / 0.75);
-  }
-  @media (min-width: 48rem) {
-    .nx-promo {
-      grid-template-columns: 1.15fr 1fr;
-    }
-    .nx-promo__photo {
-      order: 2;
-    }
-  }
-  .nx-promo__photo {
-    position: relative;
-  }
-  .nx-promo__photo :global(img) {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 16rem;
-    max-height: 22rem;
-    object-fit: cover;
-    object-position: 40% 30%;
-    border-radius: 24px;
-  }
-  .nx-promo__body {
-    display: grid;
-    justify-items: start;
-    gap: 0.7rem;
-    padding: clamp(0.5rem, 2vw, 1.25rem);
-  }
-  .nx-promo__label {
-    padding: 0.3rem 1rem;
-    border-radius: 999px;
-    background: rgb(252 220 109 / 0.15);
-    border: 1px solid rgb(252 220 109 / 0.5);
-    color: var(--gold-light);
-    font-weight: 800;
-  }
-  .nx-promo__title {
-    margin: 0;
-    font-size: clamp(2rem, 4.6vw, 3rem);
-    font-weight: 900;
-    line-height: 1.12;
-    color: var(--white);
-  }
-  .nx-promo__text {
-    margin: 0;
-    font-size: 1.08rem;
-    line-height: 1.7;
-  }
-  .nx-promo__deadline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0 0 0.4rem;
-    color: var(--gold-light);
-    font-weight: 600;
-  }
-  .nx-promo__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-  }
-  .nx-burst {
-    position: absolute;
-    top: -1.4rem;
-    left: -1rem;
-    display: grid;
-    place-items: center;
-    width: 6.6rem;
-    height: 6.6rem;
-    background: var(--gold-gradient);
-    color: var(--navy);
-    font-size: 1.75rem;
-    font-weight: 900;
-    clip-path: polygon(50% 0%, 61% 14%, 79% 8%, 82% 26%, 100% 32%, 90% 50%, 100% 68%, 82% 74%, 79% 92%, 61% 86%, 50% 100%, 39% 86%, 21% 92%, 18% 74%, 0% 68%, 10% 50%, 0% 32%, 18% 26%, 21% 8%, 39% 14%);
-    animation: nx-wobble 4s ease-in-out infinite;
-  }
-  @keyframes nx-wobble {
-    0%, 100% { rotate: -10deg; scale: 1; }
-    50% { rotate: -3deg; scale: 1.07; }
-  }
-  @media (max-width: 47.99rem) {
-    .nx-burst { width: 5.2rem; height: 5.2rem; font-size: 1.4rem; top: -1.2rem; left: -0.4rem; }
-  }
-
-  /* ---------- כותרות האזורים ---------- */
-  .nx-sec-title {
-    margin: 0;
-    font-size: clamp(1.9rem, 4.5vw, 2.7rem);
-    font-weight: 900;
-    line-height: 1.2;
-    color: var(--navy);
-  }
-  .nx-sec-sub {
-    margin: 0.5rem 0 0;
-    max-width: 36rem;
-    color: #4a5b73;
-  }
-
   /* ---------- תגיות ומדבקות ---------- */
   .nx-tag {
     position: absolute;
@@ -813,7 +665,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
   }
 
   /* ---------- הודעות קהילה: תמונה וטקסט ישר על הרקע ---------- */
-  .nx-noga {
+  .nx-feed {
     background: var(--mist);
   }
   .nx-media {
@@ -1018,10 +870,6 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
   }
 
   /* ---------- חדשות: רשימה עריכתית ---------- */
-  .nx-news {
-    scroll-margin-top: var(--header-h);
-    background: var(--white);
-  }
   .nx-list {
     list-style: none;
     margin: 2rem 0 0;
@@ -1274,9 +1122,265 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
     text-decoration: none;
   }
 
+  /* ---------- כפתור המבצע בפתיח ---------- */
+  .nx-hero__deal {
+    margin: 0 0 0.25rem;
+    animation: nx-glow 2.6s ease-in-out infinite;
+  }
+  .nx-hero__pct {
+    font-size: 1.25em;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  @keyframes nx-glow {
+    0%, 100% { box-shadow: 0 14px 34px -16px rgb(209 154 74 / 0.9), 0 0 0 0 rgb(252 220 109 / 0.55); }
+    50% { box-shadow: 0 14px 34px -16px rgb(209 154 74 / 0.9), 0 0 0 10px rgb(252 220 109 / 0); }
+  }
+
+  /* ---------- ההקלטה: במרכז, גדולה ---------- */
+  .nx-feed .nx-lead {
+    margin-top: 0;
+  }
+  @media (min-width: 62rem) {
+    .nx-lead {
+      grid-template-columns: 1fr 1.5fr;
+    }
+  }
+  .nx-poster {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+  }
+  .nx-play {
+    position: absolute;
+    inset: auto auto 1.1rem 1.1rem;
+    width: 4.2rem;
+    height: 4.2rem;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: 0 14px 34px -10px rgb(0 0 0 / 0.6);
+  }
+  .nx-play::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 54%;
+    translate: -50% -50%;
+    border-block: 0.75rem solid transparent;
+    border-inline-end: 1.2rem solid var(--navy);
+  }
+  @media (max-width: 36rem) {
+    .nx-play {
+      width: 3rem;
+      height: 3rem;
+      inset: auto auto 0.7rem 0.7rem;
+    }
+    .nx-play::after {
+      border-block-width: 0.55rem;
+      border-inline-end-width: 0.9rem;
+    }
+  }
+  .nx-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  /* ---------- הידיעה החשובה: סוף השנה לעצמאים ---------- */
+  .nx-hot {
+    display: grid;
+    gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border-radius: 32px;
+    background:
+      radial-gradient(30rem 18rem at 100% 0%, rgb(252 220 109 / 0.45), transparent 70%),
+      linear-gradient(160deg, #fff8e1, #fff);
+    box-shadow: 0 30px 60px -44px rgb(209 154 74 / 0.9);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  @media (min-width: 48rem) {
+    .nx-hot {
+      grid-template-columns: auto 1fr;
+    }
+  }
+  .nx-hot__date {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    align-self: start;
+    width: 8.5rem;
+    aspect-ratio: 1;
+    border-radius: 28px;
+    background: var(--navy);
+    color: var(--gold-light);
+    box-shadow: 0 18px 34px -20px rgb(11 26 51 / 0.8);
+  }
+  .nx-hot__date span {
+    font-weight: 700;
+    color: var(--on-dark-soft);
+  }
+  .nx-hot__date strong {
+    font-size: 2.6rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  @media (max-width: 47.99rem) {
+    .nx-hot__date {
+      width: auto;
+      aspect-ratio: auto;
+      grid-auto-flow: column;
+      gap: 0.5rem;
+      justify-self: start;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+    }
+    .nx-hot__date strong {
+      font-size: 1.6rem;
+    }
+  }
+  .nx-hot__tag {
+    margin: 0 0 0.3rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+  .nx-hot__title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.7rem, 3.8vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--navy);
+    text-wrap: balance;
+  }
+  .nx-hot__teaser {
+    margin: 0 0 1.25rem;
+    font-size: 1.12rem;
+    line-height: 1.65;
+    color: #2c3b52;
+  }
+  .nx-hot__list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem 2.5rem;
+    line-height: 1.6;
+  }
+  @media (min-width: 62rem) {
+    .nx-hot__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .nx-hot__list li {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+  }
+  .nx-hot__list li :global(svg) {
+    flex: none;
+    margin-top: 0.3rem;
+  }
+
+  /* ---------- הדרכות AI חינם, בצבעי הסוכנות לעסקים קטנים (סגול וכחול) ---------- */
+  .nx-media--sba {
+    background: linear-gradient(135deg, #0072c6 0%, #5a5fc0 50%, #a751a9 100%);
+  }
+  .nx-sba {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    color: var(--white);
+    overflow: hidden;
+  }
+  .nx-sba__glow {
+    position: absolute;
+    inset: -40%;
+    background: conic-gradient(from 0deg, transparent 0 20%, rgb(255 255 255 / 0.22) 30%, transparent 40% 70%, rgb(63 159 230 / 0.4) 80%, transparent 90%);
+    animation: nx-spin 14s linear infinite;
+  }
+  @keyframes nx-spin {
+    to { rotate: 360deg; }
+  }
+  .nx-sba__kicker {
+    position: relative;
+    padding: 0.25rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.18);
+    font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+    font-weight: 700;
+  }
+  .nx-sba__big {
+    position: relative;
+    margin-top: 0.4rem;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    text-shadow: 0 6px 24px rgb(40 20 90 / 0.45);
+  }
+  .nx-sba__big b {
+    font-weight: 900;
+    background: linear-gradient(90deg, #fff, #ffe9a8, #fff);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: nx-shine 3s linear infinite;
+  }
+  @keyframes nx-shine {
+    to { background-position: -200% 0; }
+  }
+  .nx-sba__free {
+    position: absolute;
+    top: 0.9rem;
+    inset-inline-start: 0.9rem;
+    display: grid;
+    place-items: center;
+    width: 5.2rem;
+    height: 5.2rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 1.2rem;
+    font-weight: 900;
+    clip-path: polygon(50% 0%, 61% 14%, 79% 8%, 82% 26%, 100% 32%, 90% 50%, 100% 68%, 82% 74%, 79% 92%, 61% 86%, 50% 100%, 39% 86%, 21% 92%, 18% 74%, 0% 68%, 10% 50%, 0% 32%, 18% 26%, 21% 8%, 39% 14%);
+    animation: nx-wobble 4s ease-in-out infinite;
+  }
+  @keyframes nx-wobble {
+    0%, 100% { rotate: -10deg; scale: 1; }
+    50% { rotate: -3deg; scale: 1.07; }
+  }
+  .nx-sba__s {
+    position: absolute;
+    color: #fff;
+    animation: nx-twinkle 2.8s ease-in-out infinite;
+  }
+  .nx-sba__s--1 { top: 18%; right: 12%; font-size: 1.4rem; }
+  .nx-sba__s--2 { bottom: 16%; right: 22%; font-size: 1rem; animation-delay: 0.7s; }
+  .nx-sba__s--3 { bottom: 22%; left: 14%; font-size: 1.2rem; color: #ffe9a8; animation-delay: 1.4s; }
+  .nx-sba__s--4 { top: 30%; left: 30%; font-size: 0.8rem; animation-delay: 2s; }
+  .nx-btn--sba {
+    padding: 0.6em 1.3em;
+    font-size: 0.97rem;
+    background: linear-gradient(90deg, #0072c6, #a751a9);
+    color: var(--white);
+  }
+
+  /* שאר החדשות ממשיכות אחרי ההודעות, עם רווח וקו זהב דק בלבד */
+  .nx-list {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1.5px solid rgb(209 154 74 / 0.5);
+    scroll-margin-top: var(--header-h);
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .nx-hero__deal,
+    .nx-sba__glow,
+    .nx-sba__big b,
+    .nx-sba__free,
+    .nx-sba__s,
     .nx-spark,
-    .nx-burst,
     .nx-ticker__dot,
     .nx-ticker__row,
     .nx-brush::after {
@@ -1289,9 +1393,7 @@ const topCount = issue.news.length % 2 === 0 ? 2 : 1;
       display: none;
     }
   }
-  .nx-promo-sec,
-  .nx-noga,
-  .nx-news,
+  .nx-feed,
   .nx-group-sec {
     overflow-x: clip;
   }
