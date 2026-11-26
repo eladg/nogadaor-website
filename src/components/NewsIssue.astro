@@ -27,7 +27,8 @@ const img = (p: string) => assets[`/src/assets/${p}`]!.default;
 const others = issues.filter((i) => i.slug !== issue.slug);
 const has = (id: string) => issue.cards.some((c) => c.id === id) || issue.news.some((n) => n.id === id);
 // רצף הקריאה: כל הכרטיסים ואחריהם כל הידיעות. בסוף כל "להמשך קריאה" יש קישור לפריט הבא
-const seq = [...issue.cards, ...issue.news].map((x) => ({ id: x.id, title: x.title }));
+const seq = [...(issue.promo ? [{ id: issue.promo.id, title: `${issue.promo.label}, ${issue.promo.title}` }] : []), ...issue.cards, ...issue.news].map((x) => ({ id: x.id, title: x.title }));
+const p = issue.promo;
 const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
 ---
 
@@ -44,6 +45,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     <h1 class="nx-hero__title no-grad">המבזק <span>החודשי</span></h1>
     <p class="nx-hero__sub">מה חם החודש בעסקים, בכלכלה וב-AI, ומה קורה בקהילה. חמש דקות, קפה, ויוצאים לדרך</p>
     <nav class="nx-jump" aria-label="בגיליון הזה">
+      {p && <a href={`#${p.id}`} class="nx-jump__hot"><Icon name="gift" size={16} />מבצע {p.label}</a>}
       {has('recording') && <a href="#recording"><Icon name="mic" size={16} />הקלטת ההדרכה</a>}
       {has('reservists') && <a href="#reservists"><Icon name="gift" size={16} />מתנה למילואימניקים</a>}
       {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
@@ -68,6 +70,32 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     </div>
   </div>
 </header>
+
+<!-- מבצע מיוחד: כרטיס שחור-זהב בולט, מיד אחרי הפתיח (בתוך אזור בהיר, כי הפתיח כהה) -->
+{p && (
+  <section id={p.id} class="nx-promo-sec" aria-labelledby={`${p.id}-title`}>
+    <div class="container">
+      <div class="nx-promo reveal">
+        <span class="nx-promo__label">{p.label}</span>
+        <div class="nx-promo__main">
+          <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
+          <p class="nx-promo__text">{p.text}</p>
+          <ul class="nx-promo__points">
+            {p.points.map((x) => <li><Star size={15} /> {x}</li>)}
+          </ul>
+        </div>
+        <div class="nx-promo__deal">
+          <p class="nx-promo__price">{p.price}</p>
+          <p class="nx-promo__note">{p.priceNote}</p>
+          <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>
+          <a class="nx-promo__btn" href={p.cta.href} target="_blank" rel="noopener">
+            {p.cta.label} <span aria-hidden="true">←</span><span class="sr-only"> (נפתח בוואטסאפ)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
 
 <!-- אצל נוגה: כרטיסים אחידים -->
 <section class="section nx-noga" aria-labelledby="noga-title">
@@ -463,6 +491,143 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     }
     .nx-ticker__row--copy {
       display: none;
+    }
+  }
+
+  /* ---------- מבצע ---------- */
+  .nx-jump .nx-jump__hot {
+    background: var(--gold-gradient);
+    border-color: transparent;
+    color: var(--navy);
+  }
+  .nx-jump .nx-jump__hot :global(svg) {
+    color: var(--navy);
+  }
+  .nx-promo-sec {
+    padding-block: clamp(2rem, 5vw, 3rem) 0;
+    background: var(--mist);
+    scroll-margin-top: var(--header-h);
+  }
+  .nx-promo {
+    position: relative;
+    display: grid;
+    gap: 1.5rem 2.5rem;
+    align-items: center;
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    border-radius: 28px;
+    color: var(--on-dark-soft);
+    background:
+      radial-gradient(28rem 16rem at 100% 0%, rgb(252 220 109 / 0.22), transparent 70%),
+      radial-gradient(24rem 14rem at 0% 100%, rgb(12 138 168 / 0.25), transparent 70%),
+      linear-gradient(160deg, #11161f, #05070b);
+    border: 2px solid rgb(252 220 109 / 0.7);
+    box-shadow: 0 30px 60px -34px rgb(0 0 0 / 0.75), 0 0 0 6px rgb(252 220 109 / 0.12);
+  }
+  @media (min-width: 56rem) {
+    .nx-promo {
+      grid-template-columns: 1.5fr 1fr;
+    }
+  }
+  .nx-promo__label {
+    position: absolute;
+    top: -1rem;
+    inset-inline-start: 1.5rem;
+    padding: 0.35rem 1.1rem;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: #05070b;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 20px -8px rgb(252 220 109 / 0.8);
+  }
+  .nx-promo__title {
+    margin: 0.4rem 0 0.75rem;
+    font-size: clamp(1.8rem, 4.5vw, 2.7rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--white);
+  }
+  .nx-promo__text {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+  .nx-promo__points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .nx-promo__points li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .nx-promo__points :global(svg) {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--gold-light);
+  }
+  .nx-promo__deal {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    padding: 1.5rem 1.25rem;
+    border-radius: 20px;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    text-align: center;
+  }
+  .nx-promo__price {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .nx-promo__note {
+    margin: 0;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .nx-promo__deadline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.3rem 0 0.8rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    background: rgb(192 57 43 / 0.25);
+    color: #ffd2cc;
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+  .nx-promo__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9em 2em;
+    border-radius: 999px;
+    background: var(--gold-gradient);
+    color: #05070b;
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 16px 40px -14px rgb(252 220 109 / 0.7);
+  }
+  @media (hover: hover) {
+    .nx-promo__btn {
+      transition: transform 0.2s ease;
+    }
+    .nx-promo__btn:hover {
+      transform: translateY(-3px);
     }
   }
 
