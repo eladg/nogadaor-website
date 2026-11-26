@@ -80,13 +80,27 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
         <div class="nx-promo__main">
           <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
           <p class="nx-promo__text">{p.text}</p>
-          <ul class="nx-promo__points">
-            {p.points.map((x) => <li><Star size={15} /> {x}</li>)}
-          </ul>
+          <div class="nx-promo__cols">
+            <div>
+              <h3 class="nx-promo__h">זה בשבילך אם</h3>
+              <ul class="nx-promo__points nx-promo__points--problem">
+                {p.problem.map((x) => <li><span class="nx-promo__dot" aria-hidden="true"></span> {x}</li>)}
+              </ul>
+            </div>
+            <div>
+              <h3 class="nx-promo__h">בסוף חמש הפגישות יש לך</h3>
+              <ul class="nx-promo__points">
+                {p.outcomes.map((x) => <li><Icon name="check" size={16} /> {x}</li>)}
+              </ul>
+            </div>
+          </div>
         </div>
         <div class="nx-promo__deal">
           <p class="nx-promo__price">{p.price}</p>
           <p class="nx-promo__note">{p.priceNote}</p>
+          <ul class="nx-promo__incl">
+            {p.points.map((x) => <li><Star size={13} /> {x}</li>)}
+          </ul>
           <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>
           <a class="nx-promo__btn" href={p.cta.href} target="_blank" rel="noopener">
             {p.cta.label} <span aria-hidden="true">←</span><span class="sr-only"> (נפתח בוואטסאפ)</span>
@@ -525,7 +539,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
   }
   @media (min-width: 56rem) {
     .nx-promo {
-      grid-template-columns: 1.5fr 1fr;
+      grid-template-columns: 2fr 1fr;
     }
   }
   .nx-promo__label {
@@ -551,6 +565,51 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     margin: 0 0 1rem;
     font-size: 1.05rem;
     line-height: 1.65;
+  }
+  .nx-promo__cols {
+    display: grid;
+    gap: 1.25rem 2rem;
+  }
+  @media (min-width: 44rem) {
+    .nx-promo__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .nx-promo__h {
+    margin: 0 0 0.6rem;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--gold-light);
+  }
+  .nx-promo__dot {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.55rem;
+    border-radius: 50%;
+    background: #e5735f;
+  }
+  .nx-promo__points--problem {
+    color: var(--on-dark-soft);
+    font-weight: 500;
+  }
+  .nx-promo__incl {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.95rem;
+    color: var(--on-dark-soft);
+  }
+  .nx-promo__incl li {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .nx-promo__incl :global(svg) {
+    color: var(--gold-light);
   }
   .nx-promo__points {
     list-style: none;
