@@ -1,5 +1,5 @@
 ---
-// גיליון של המבזק השבועי (נוגה, 2026-11-17, סבב 4). משמש את /news/ (הגיליון החדש) ואת /news/<slug>/ (כתובת קבועה).
+// גיליון של המבזק החודשי (נוגה, 2026-11-17, סבב 4). משמש את /news/ (הגיליון החדש) ואת /news/<slug>/ (כתובת קבועה).
 // סדר העמוד: פתיח (הדמות, הכותרת והתגיות, נוגה אהבה) ← אצל נוגה, ארבעה כרטיסים אחידים ← באנר השאלון (בולט, כמו בעמוד הבית)
 // ← חדשות מעניינות מהשבוע, כרטיסים בהירים כמו באתר חדשות ← באנר רחב לקבוצת הוואטסאפ ← שיתוף.
 // שפה גרפית אחת: כל הכרטיסים באותו מבנה (תמונה 16:9, כותרת, טקסט קצר, "להמשך קריאה", כפתור בתחתית).
@@ -9,6 +9,7 @@ import ShareBar from './ShareBar.astro';
 import Star from './Star.astro';
 import Icon from './Icon.astro';
 import ContentCover from './ContentCover.astro';
+import YouTubeEmbed from './YouTubeEmbed.astro';
 import { issues, hebDate, type Issue } from '../data/news';
 import { quizAreas } from '../data/quiz';
 import { communityIntro } from '../data/community';
@@ -32,15 +33,16 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
   <div class="container nx-hero__grid">
     <div class="nx-hero__text">
       <p class="nx-issue">
-        <Star size={13} /> גיליון {issue.number} <span aria-hidden="true">·</span> <time datetime={issue.date}>{d.full}</time>
+        <Star size={13} /> {issue.month}
       </p>
-      <h1 class="nx-hero__title no-grad">המבזק <span>השבועי</span></h1>
-      <p class="nx-hero__sub">מה חם השבוע בעסקים, בכלכלה וב-AI. חמש דקות, קפה, ויוצאים לדרך</p>
+      <h1 class="nx-hero__title no-grad">המבזק <span>החודשי</span></h1>
+      <p class="nx-hero__sub">מה חם החודש בעסקים, בכלכלה וב-AI. חמש דקות, קפה, ויוצאים לדרך</p>
       <nav class="nx-jump" aria-label="בגיליון הזה">
-        {has('bizlive') && <a href="#bizlive"><Icon name="calendar" size={16} />הדרכה חינמית ב-25.11</a>}
+        {has('recording') && <a href="#recording"><Icon name="mic" size={16} />הקלטת ההדרכה</a>}
+        {has('reservists') && <a href="#reservists"><Icon name="gift" size={16} />מתנה למילואימניקים</a>}
         <a href="#quiz"><Icon name="target" size={16} />שאלון האבחון</a>
         {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
-        <a href="#news"><Icon name="book-open" size={16} />חדשות השבוע</a>
+        <a href="#news"><Icon name="book-open" size={16} />חדשות החודש</a>
       </nav>
     </div>
     <div class="nx-hero__art" aria-hidden="true">
@@ -56,8 +58,16 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
     <ul class="nx-cards">
       {issue.cards.map((c) => (
         <li id={c.id} class="nx-c reveal">
-          <div class:list={['nx-c__media', c.contain && 'nx-c__media--contain']}>
-            <Image src={img(c.image)} alt={c.imageAlt ?? ''} widths={[480, 800]} sizes="(min-width: 48rem) 45vw, 92vw" />
+          <div class:list={['nx-c__media', c.contain && 'nx-c__media--contain', (c.cover || c.video) && 'nx-c__media--cover']}>
+            {c.video ? (
+              <YouTubeEmbed id={c.video} title={c.title}>
+                <ContentCover title={c.cover!.title} motif={c.cover!.motif} tone={c.cover!.tone} kind="lecture" ratio="16/9" />
+              </YouTubeEmbed>
+            ) : c.cover ? (
+              <ContentCover title={c.cover.title} motif={c.cover.motif} tone={c.cover.tone} ratio="16/9" />
+            ) : (
+              <Image src={img(c.image!)} alt={c.imageAlt ?? ''} widths={[480, 800]} sizes="(min-width: 62rem) 30vw, (min-width: 48rem) 45vw, 92vw" />
+            )}
           </div>
           <div class="nx-c__body">
             {c.meta && (
@@ -119,8 +129,8 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 <!-- חדשות מעניינות מהשבוע: כרטיסים בהירים, כותרת אחת, משפט אחד, והשאר ב"להמשך קריאה" -->
 <section id="news" class="section nx-news" aria-labelledby="news-title">
   <div class="container">
-    <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהשבוע</h2>
-    <p class="nx-sec-sub">מה שקרה השבוע במשק, ב-AI ובכלים הדיגיטליים</p>
+    <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהחודש</h2>
+    <p class="nx-sec-sub">מה שקרה החודש במשק, ב-AI ובכלים הדיגיטליים</p>
     <ul class="nx-grid">
       {issue.news.map((n, i) => (
         <li id={n.id} class="nx-n reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
@@ -167,7 +177,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 
     <div class="nx-share">
       <p>אהבת? שווה לשלוח למי שיש לו עסק</p>
-      <ShareBar title={`המבזק השבועי של נוגה דיין אור, ${d.full}`} print={false} />
+      <ShareBar title={`המבזק החודשי של נוגה דיין אור, ${issue.month}`} print={false} />
     </div>
 
     {others.length > 0 && (
@@ -177,7 +187,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
           {others.map((o) => (
             <li>
               <a href={`/news/${o.slug}/`}>
-                <strong>גיליון {o.number}</strong> · <time datetime={o.date}>{hebDate(o.date).full}</time>
+                <strong>{o.month}</strong>
                 <span>{o.headline}</span>
               </a>
             </li>
@@ -369,8 +379,13 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
     margin: 2rem 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.75rem;
+  }
+  @media (max-width: 62rem) {
+    .nx-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (max-width: 47.99rem) {
     .nx-cards {
@@ -400,6 +415,14 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
     height: 100%;
     object-fit: cover;
     object-position: 50% 30%;
+  }
+  .nx-c__media--cover {
+    aspect-ratio: auto;
+    background: none;
+  }
+  .nx-c__media--cover :global(.cc),
+  .nx-c__media--cover :global(.yt-embed) {
+    border-radius: 0;
   }
   .nx-c__media--contain {
     background: radial-gradient(60% 80% at 50% 50%, #12305a, #071427);

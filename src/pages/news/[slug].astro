@@ -1,25 +1,24 @@
 ---
-// כתובת קבועה לכל גיליון של המבזק השבועי (לשיתוף בוואטסאפ ובפייסבוק). העיצוב ב-src/components/NewsIssue.astro,
+// כתובת קבועה לכל גיליון של המבזק החודשי (לשיתוף בוואטסאפ ובפייסבוק). העיצוב ב-src/components/NewsIssue.astro,
 // הנתונים ב-src/data/news.ts. הגיליון החדש מוצג גם ישירות ב-/news/ (נוגה: בלי "עמוד שמוביל לעמוד").
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NewsIssue from '../../components/NewsIssue.astro';
-import { issues, hebDate, type Issue } from '../../data/news';
+import { issues, type Issue } from '../../data/news';
 
 export function getStaticPaths() {
   return issues.map((issue) => ({ params: { slug: issue.slug }, props: { issue } }));
 }
 
 const { issue } = Astro.props as { issue: Issue };
-const d = hebDate(issue.date);
 ---
 
 <BaseLayout
-  title={`המבזק השבועי, ${d.full}`}
-  description={`גיליון ${issue.number} של המבזק השבועי של נוגה דיין אור. ${issue.headline}`}
+  title={`המבזק החודשי, ${issue.month}`}
+  description={`המבזק החודשי של נוגה דיין אור, ${issue.month}. ${issue.headline}`}
   crumbs={[
     { name: 'בית', path: '/' },
-    { name: 'המבזק השבועי', path: '/news/' },
-    { name: `גיליון ${issue.number}`, path: `/news/${issue.slug}/` },
+    { name: 'המבזק החודשי', path: '/news/' },
+    { name: issue.month, path: `/news/${issue.slug}/` },
   ]}
   ogType="article"
 >

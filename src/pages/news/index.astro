@@ -1,5 +1,5 @@
 ---
-// המבזק השבועי: הגיליון החדש ביותר מוצג כאן ישירות (נוגה, 2026-11-17: "למה צריך עמוד שמוביל לעמוד?").
+// המבזק החודשי: הגיליון החדש ביותר מוצג כאן ישירות (נוגה, 2026-11-17: "למה צריך עמוד שמוביל לעמוד?").
 // הגיליונות הקודמים ברשימה בסוף העמוד, ולכל גיליון יש גם כתובת קבועה /news/<slug>/
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NewsIssue from '../../components/NewsIssue.astro';
@@ -9,11 +9,11 @@ const latest = issues[0];
 ---
 
 <BaseLayout
-  title="המבזק השבועי"
-  description={`המבזק השבועי של נוגה דיין אור. ${latest.headline}`}
+  title="המבזק החודשי"
+  description={`המבזק החודשי של נוגה דיין אור. ${latest.headline}`}
   crumbs={[
     { name: 'בית', path: '/' },
-    { name: 'המבזק השבועי', path: '/news/' },
+    { name: 'המבזק החודשי', path: '/news/' },
   ]}
 >
   <NewsIssue issue={latest} />
