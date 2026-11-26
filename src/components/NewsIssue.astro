@@ -77,34 +77,16 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     <div class="container">
       <div class="nx-promo reveal">
         <span class="nx-promo__label">{p.label}</span>
-        <div class="nx-promo__main">
-          <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
-          <p class="nx-promo__text">{p.text}</p>
-          <div class="nx-promo__cols">
-            <div>
-              <h3 class="nx-promo__h">זה בשבילך אם</h3>
-              <ul class="nx-promo__points nx-promo__points--problem">
-                {p.problem.map((x) => <li><span class="nx-promo__dot" aria-hidden="true"></span> {x}</li>)}
-              </ul>
-            </div>
-            <div>
-              <h3 class="nx-promo__h">בסוף חמש הפגישות יש לך</h3>
-              <ul class="nx-promo__points">
-                {p.outcomes.map((x) => <li><Icon name="check" size={16} /> {x}</li>)}
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="nx-promo__deal">
-          <p class="nx-promo__price">{p.price}</p>
-          <p class="nx-promo__note">{p.priceNote}</p>
-          <ul class="nx-promo__incl">
-            {p.points.map((x) => <li><Star size={13} /> {x}</li>)}
-          </ul>
-          <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>
-          <a class="nx-promo__btn" href={p.cta.href} target="_blank" rel="noopener">
-            {p.cta.label} <span aria-hidden="true">←</span><span class="sr-only"> (נפתח בוואטסאפ)</span>
-          </a>
+        <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
+        <p class="nx-promo__text">{p.text}</p>
+        {p.deadline && <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>}
+        <div class="nx-promo__actions">
+          <a class="nx-promo__btn" href={p.cta.href}>{p.cta.label} <span aria-hidden="true">←</span></a>
+          {p.cta2 && (
+            <a class="nx-promo__btn2" href={p.cta2.href} target="_blank" rel="noopener">
+              <Icon name="whatsapp" size={18} /> {p.cta2.label}<span class="sr-only"> (נפתח בוואטסאפ)</span>
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -399,7 +381,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     align-items: center;
     gap: 0.4rem 0.6rem;
     margin: 1.6rem 0 0;
-    font-weight: 700;
+    font-weight: 500;
     color: #a9dceb;
   }
   .nx-community :global(svg) {
@@ -522,170 +504,94 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     background: var(--mist);
     scroll-margin-top: var(--header-h);
   }
+  /* כחול של האתר (נוגה: בלי שחור), זוהר זהב וטורקיז, טקסט רגיל ולא מודגש */
   .nx-promo {
     position: relative;
     display: grid;
-    gap: 1.5rem 2.5rem;
-    align-items: center;
-    padding: clamp(1.75rem, 4vw, 2.75rem);
+    justify-items: center;
+    gap: 0.75rem;
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 3rem);
     border-radius: 28px;
+    text-align: center;
     color: var(--on-dark-soft);
     background:
-      radial-gradient(28rem 16rem at 100% 0%, rgb(252 220 109 / 0.22), transparent 70%),
-      radial-gradient(24rem 14rem at 0% 100%, rgb(12 138 168 / 0.25), transparent 70%),
-      linear-gradient(160deg, #11161f, #05070b);
-    border: 2px solid rgb(252 220 109 / 0.7);
-    box-shadow: 0 30px 60px -34px rgb(0 0 0 / 0.75), 0 0 0 6px rgb(252 220 109 / 0.12);
-  }
-  @media (min-width: 56rem) {
-    .nx-promo {
-      grid-template-columns: 2fr 1fr;
-    }
+      radial-gradient(28rem 16rem at 100% 0%, rgb(252 220 109 / 0.2), transparent 70%),
+      radial-gradient(26rem 16rem at 0% 100%, rgb(12 138 168 / 0.35), transparent 70%),
+      linear-gradient(160deg, #0f2d50, var(--navy) 60%);
+    border: 2px solid rgb(252 220 109 / 0.6);
+    box-shadow: 0 30px 60px -34px rgb(11 26 51 / 0.7);
   }
   .nx-promo__label {
     position: absolute;
     top: -1rem;
-    inset-inline-start: 1.5rem;
     padding: 0.35rem 1.1rem;
     border-radius: 999px;
     background: var(--gold-gradient);
-    color: #05070b;
-    font-weight: 900;
-    letter-spacing: 0.02em;
+    color: var(--navy);
+    font-weight: 800;
     box-shadow: 0 8px 20px -8px rgb(252 220 109 / 0.8);
   }
   .nx-promo__title {
-    margin: 0.4rem 0 0.75rem;
-    font-size: clamp(1.8rem, 4.5vw, 2.7rem);
+    margin: 0.5rem 0 0;
+    font-size: clamp(2rem, 5.5vw, 3.2rem);
     font-weight: 900;
     line-height: 1.15;
     color: var(--white);
   }
   .nx-promo__text {
-    margin: 0 0 1rem;
-    font-size: 1.05rem;
-    line-height: 1.65;
-  }
-  .nx-promo__cols {
-    display: grid;
-    gap: 1.25rem 2rem;
-  }
-  @media (min-width: 44rem) {
-    .nx-promo__cols {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  .nx-promo__h {
-    margin: 0 0 0.6rem;
-    font-size: 1.15rem;
-    font-weight: 900;
-    color: var(--gold-light);
-  }
-  .nx-promo__dot {
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-top: 0.55rem;
-    border-radius: 50%;
-    background: #e5735f;
-  }
-  .nx-promo__points--problem {
-    color: var(--on-dark-soft);
-    font-weight: 500;
-  }
-  .nx-promo__incl {
-    list-style: none;
-    margin: 0.5rem 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0.3rem;
-    font-size: 0.95rem;
-    color: var(--on-dark-soft);
-  }
-  .nx-promo__incl li {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-    justify-content: center;
-  }
-  .nx-promo__incl :global(svg) {
-    color: var(--gold-light);
-  }
-  .nx-promo__points {
-    list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.5rem;
-    color: var(--white);
-    font-weight: 600;
-  }
-  .nx-promo__points li {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-start;
-    line-height: 1.5;
-  }
-  .nx-promo__points :global(svg) {
-    flex: none;
-    margin-top: 0.2rem;
-    color: var(--gold-light);
-  }
-  .nx-promo__deal {
-    display: grid;
-    justify-items: center;
-    gap: 0.4rem;
-    padding: 1.5rem 1.25rem;
-    border-radius: 20px;
-    background: rgb(255 255 255 / 0.06);
-    border: 1px solid rgb(255 255 255 / 0.14);
-    text-align: center;
-  }
-  .nx-promo__price {
-    margin: 0;
-    font-size: clamp(2rem, 5vw, 2.6rem);
-    font-weight: 900;
-    line-height: 1.1;
-    background: var(--gold-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .nx-promo__note {
-    margin: 0;
-    font-weight: 800;
-    color: var(--white);
+    max-width: 36rem;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.7;
   }
   .nx-promo__deadline {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    margin: 0.3rem 0 0.8rem;
-    padding: 0.3rem 0.85rem;
+    margin: 0.25rem 0 0.5rem;
+    padding: 0.3rem 0.9rem;
     border-radius: 999px;
-    background: rgb(192 57 43 / 0.25);
-    color: #ffd2cc;
-    font-weight: 800;
+    background: rgb(255 255 255 / 0.1);
+    color: var(--gold-light);
+    font-weight: 600;
     font-size: 0.95rem;
   }
-  .nx-promo__btn {
+  .nx-promo__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .nx-promo__btn,
+  .nx-promo__btn2 {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.9em 2em;
+    padding: 0.85em 1.9em;
     border-radius: 999px;
-    background: var(--gold-gradient);
-    color: #05070b;
-    font-size: 1.1rem;
-    font-weight: 900;
+    font-size: 1.05rem;
+    font-weight: 800;
     text-decoration: none;
+  }
+  .nx-promo__btn {
+    background: var(--gold-gradient);
+    color: var(--navy);
     box-shadow: 0 16px 40px -14px rgb(252 220 109 / 0.7);
   }
+  .nx-promo__btn2 {
+    color: var(--white);
+    border: 1px solid rgb(255 255 255 / 0.45);
+  }
   @media (hover: hover) {
-    .nx-promo__btn {
+    .nx-promo__btn,
+    .nx-promo__btn2 {
       transition: transform 0.2s ease;
     }
-    .nx-promo__btn:hover {
+    .nx-promo__btn:hover,
+    .nx-promo__btn2:hover {
       transform: translateY(-3px);
     }
   }
@@ -782,22 +688,29 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
   .nx-noga {
     background: var(--mist);
   }
+  /* flex ולא grid: שורה אחרונה חלקית (למשל 5 כרטיסים) נשארת ממורכזת */
   .nx-cards {
+    --cols: 3;
     list-style: none;
     margin: 2rem 0 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1.75rem;
+  }
+  .nx-cards > li {
+    flex: 0 0 calc((100% - (var(--cols) - 1) * 1.75rem) / var(--cols));
+    min-width: 0;
   }
   @media (max-width: 62rem) {
     .nx-cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      --cols: 2;
     }
   }
   @media (max-width: 47.99rem) {
     .nx-cards {
-      grid-template-columns: minmax(0, 1fr);
+      --cols: 1;
     }
   }
   .nx-c {
@@ -852,7 +765,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
   .nx-c__meta {
     margin: 0 0 0.4rem;
     font-size: 0.92rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--teal-dark);
   }
   .nx-c__title {
@@ -891,6 +804,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     line-height: 1.45;
   }
   .nx-ses strong {
+    font-weight: 600;
     color: var(--navy);
   }
   @media (hover: hover) {
@@ -972,7 +886,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     margin: 0 auto 1.5rem;
     padding: 0;
     text-align: start;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--white);
   }
   @media (min-width: 48rem) {
@@ -1159,7 +1073,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
   }
   .nx-group__sub {
     margin: 0 0 0.9rem;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--gold-dark);
   }
   .nx-group__body p:not(.nx-group__sub) {
