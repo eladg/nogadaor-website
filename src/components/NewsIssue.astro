@@ -25,28 +25,46 @@ const assets = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{w
 const img = (p: string) => assets[`/src/assets/${p}`]!.default;
 
 const others = issues.filter((i) => i.slug !== issue.slug);
-const has = (id: string) => issue.cards.some((c) => c.id === id);
+const has = (id: string) => issue.cards.some((c) => c.id === id) || issue.news.some((n) => n.id === id);
+// רצף הקריאה: כל הכרטיסים ואחריהם כל הידיעות. בסוף כל "להמשך קריאה" יש קישור לפריט הבא
+const seq = [...issue.cards, ...issue.news].map((x) => ({ id: x.id, title: x.title }));
+const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
 ---
 
-<!-- פתיח -->
+<!-- פתיח (נוגה, סבב 6): כחול ומרשים, בלי הפנים של נוגה. זוהר עדין שזז, תגיות לקפיצה, שורת קהילה,
+     וטיקר כותרות של כל הגיליון בתחתית, כמו פס מבזקים בחדשות -->
 <header class="nx-hero">
-  <div class="container nx-hero__grid">
-    <div class="nx-hero__text">
-      <p class="nx-issue">
-        <Star size={13} /> {issue.month}
-      </p>
-      <h1 class="nx-hero__title no-grad">המבזק <span>החודשי</span></h1>
-      <p class="nx-hero__sub">מה חם החודש בעסקים, בכלכלה וב-AI. חמש דקות, קפה, ויוצאים לדרך</p>
-      <nav class="nx-jump" aria-label="בגיליון הזה">
-        {has('recording') && <a href="#recording"><Icon name="mic" size={16} />הקלטת ההדרכה</a>}
-        {has('reservists') && <a href="#reservists"><Icon name="gift" size={16} />מתנה למילואימניקים</a>}
-        <a href="#quiz"><Icon name="target" size={16} />שאלון האבחון</a>
-        {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
-        <a href="#news"><Icon name="book-open" size={16} />חדשות החודש</a>
-      </nav>
-    </div>
-    <div class="nx-hero__art" aria-hidden="true">
-      <Image src={img('character/phone-surprised.webp')} alt="" widths={[300, 520]} sizes="(min-width: 52rem) 19rem, 42vw" class="toon nx-hero__toon" loading="eager" />
+  <div class="nx-hero__sky" aria-hidden="true">
+    <span class="nx-orb nx-orb--1"></span>
+    <span class="nx-orb nx-orb--2"></span>
+    <span class="nx-orb nx-orb--3"></span>
+  </div>
+  <div class="container nx-hero__inner">
+    <p class="nx-issue"><Star size={13} /> {issue.month}</p>
+    <h1 class="nx-hero__title no-grad">המבזק <span>החודשי</span></h1>
+    <p class="nx-hero__sub">מה חם החודש בעסקים, בכלכלה וב-AI, ומה קורה בקהילה. חמש דקות, קפה, ויוצאים לדרך</p>
+    <nav class="nx-jump" aria-label="בגיליון הזה">
+      {has('recording') && <a href="#recording"><Icon name="mic" size={16} />הקלטת ההדרכה</a>}
+      {has('reservists') && <a href="#reservists"><Icon name="gift" size={16} />מתנה למילואימניקים</a>}
+      {has('rishon') && <a href="#rishon"><Icon name="users" size={16} />מפגשים בראשון לציון</a>}
+      {has('year-end') && <a href="#year-end"><Icon name="calendar" size={16} />סוף שנה לעצמאים</a>}
+      <a href="#quiz"><Icon name="target" size={16} />שאלון האבחון</a>
+      <a href="#news"><Icon name="book-open" size={16} />חדשות החודש</a>
+    </nav>
+    <p class="nx-community">
+      <Icon name="heart" size={16} /> המבזק של "תודעה עסקית מנצחת", קהילה של מאות בעלי עסקים
+      <a href="#group">להצטרפות <span aria-hidden="true">←</span></a>
+    </p>
+  </div>
+  <div class="nx-ticker">
+    <span class="nx-ticker__label"><span class="nx-ticker__dot" aria-hidden="true"></span>מבזק</span>
+    <div class="nx-ticker__track">
+      <ul class="nx-ticker__row" aria-label="כותרות הגיליון">
+        {seq.map((x) => <li><a href={`#${x.id}`}>{x.title}</a></li>)}
+      </ul>
+      <ul class="nx-ticker__row nx-ticker__row--copy" aria-hidden="true">
+        {seq.map((x) => <li><a href={`#${x.id}`} tabindex="-1">{x.title}</a></li>)}
+      </ul>
     </div>
   </div>
 </header>
@@ -59,6 +77,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
       {issue.cards.map((c) => (
         <li id={c.id} class="nx-c reveal">
           <div class:list={['nx-c__media', c.contain && 'nx-c__media--contain', (c.cover || c.video) && 'nx-c__media--cover']}>
+            <span class="nx-tag">{c.tag}</span>
             {c.video ? (
               <YouTubeEmbed id={c.video} title={c.title}>
                 <ContentCover title={c.cover!.title} motif={c.cover!.motif} tone={c.cover!.tone} kind="lecture" ratio="16/9" />
@@ -92,6 +111,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
                     ))}
                   </ul>
                 )}
+                {next(c.id) && <a class="nx-next" href={`#${next(c.id)!.id}`}>הבא בתור, {next(c.id)!.title} <span aria-hidden="true">←</span></a>}
               </details>
             )}
             {c.cta && (
@@ -136,6 +156,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
         <li id={n.id} class="nx-n reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
           <div class="nx-n__media">
             <ContentCover title=" " motif={n.motif} tone={n.tone} ratio="16/9" />
+            <span class="nx-tag">{n.tag}</span>
             {n.badge && <span class="nx-n__badge">{n.badge}</span>}
           </div>
           <div class="nx-n__body">
@@ -152,6 +173,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
                   <a href={s.url} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
                 ))}
               </p>
+              {next(n.id) && <a class="nx-next" href={`#${next(n.id)!.id}`}>הבא בתור, {next(n.id)!.title} <span aria-hidden="true">←</span></a>}
             </details>
           </div>
         </li>
@@ -161,7 +183,7 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 </section>
 
 <!-- באנר רחב לקבוצת הוואטסאפ (הטקסט של הקהילה מעמוד צור קשר, src/data/community.ts) -->
-<section class="section nx-group-sec" aria-labelledby="group-title">
+<section id="group" class="section nx-group-sec" aria-labelledby="group-title">
   <div class="container">
     <div class="nx-group">
       <Image src={img('news/community-group.webp')} alt="תודעה עסקית מנצחת, פתרונות והזדמנויות להגדלת הכנסות" widths={[320, 600]} sizes="(min-width: 48rem) 20rem, 80vw" class="nx-group__img" />
@@ -199,120 +221,283 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
 </section>
 
 <style>
-  /* ---------- פתיח (נוגה אהבה, בלי שינוי) ---------- */
+  /* ---------- פתיח: כחול, זוהר שזז לאט, וטיקר ---------- */
   .nx-hero {
     position: relative;
     overflow: hidden;
-    padding-block: 2rem 2.5rem;
+    isolation: isolate;
+    color: var(--on-dark);
+    text-align: center;
     background:
-      radial-gradient(38rem 26rem at 8% 0%, rgb(12 138 168 / 0.16), transparent 65%),
-      radial-gradient(34rem 24rem at 95% 30%, rgb(209 154 74 / 0.2), transparent 65%),
-      linear-gradient(180deg, #fff 0%, var(--mist) 100%);
+      radial-gradient(1px 1px at 12% 22%, rgb(255 255 255 / 0.7), transparent 60%),
+      radial-gradient(1px 1px at 78% 14%, rgb(255 255 255 / 0.6), transparent 60%),
+      radial-gradient(1.5px 1.5px at 64% 70%, rgb(252 220 109 / 0.8), transparent 60%),
+      radial-gradient(1px 1px at 30% 80%, rgb(255 255 255 / 0.5), transparent 60%),
+      radial-gradient(1.5px 1.5px at 90% 52%, rgb(255 255 255 / 0.6), transparent 60%),
+      radial-gradient(1px 1px at 46% 36%, rgb(252 220 109 / 0.6), transparent 60%),
+      linear-gradient(170deg, #0f2d50 0%, var(--navy) 55%, #071427 100%);
   }
-  .nx-hero__grid {
-    display: grid;
-    align-items: center;
-    gap: 1rem 2rem;
+  .nx-hero__sky {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
   }
-  @media (min-width: 52rem) {
-    .nx-hero__grid {
-      grid-template-columns: 1.4fr 1fr;
+  .nx-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+    animation: nx-drift 18s ease-in-out infinite alternate;
+  }
+  .nx-orb--1 {
+    width: 26rem;
+    height: 26rem;
+    top: -8rem;
+    right: -6rem;
+    background: rgb(12 138 168 / 0.75);
+  }
+  .nx-orb--2 {
+    width: 22rem;
+    height: 22rem;
+    bottom: -9rem;
+    left: -5rem;
+    background: rgb(209 154 74 / 0.55);
+    animation-duration: 22s;
+  }
+  .nx-orb--3 {
+    width: 14rem;
+    height: 14rem;
+    top: 30%;
+    left: 38%;
+    background: rgb(12 138 168 / 0.35);
+    animation-duration: 26s;
+  }
+  @keyframes nx-drift {
+    to {
+      transform: translate(3rem, 2rem) scale(1.12);
     }
+  }
+  .nx-hero__inner {
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) clamp(2rem, 5vw, 3rem);
   }
   .nx-issue {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    margin: 0 0 1rem;
-    padding: 0.35rem 0.9rem;
+    margin: 0 0 1.1rem;
+    padding: 0.4rem 1rem;
     border-radius: 999px;
-    background: var(--white);
-    border: 1px solid rgb(209 154 74 / 0.45);
-    box-shadow: 0 6px 18px -12px rgb(11 26 51 / 0.4);
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--navy);
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(252 220 109 / 0.45);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--gold-light);
   }
   .nx-hero__title {
     margin: 0;
-    font-size: clamp(2.6rem, 7.5vw, 4.8rem);
+    font-size: clamp(3rem, 10vw, 6rem);
     font-weight: 900;
     line-height: 1;
-    color: var(--navy);
+    letter-spacing: -0.01em;
+    color: var(--white);
   }
   .nx-hero__title span {
-    background: linear-gradient(90deg, var(--gold-dark), var(--teal));
+    background: var(--gold-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .nx-hero__sub {
-    margin: 1rem 0 1.5rem;
-    max-width: 32rem;
-    font-size: clamp(1.1rem, 2.3vw, 1.3rem);
+    margin: 1.1rem auto 1.75rem;
+    max-width: 36rem;
+    font-size: clamp(1.1rem, 2.4vw, 1.35rem);
     line-height: 1.55;
-    color: #33445d;
+    color: var(--on-dark-soft);
   }
   .nx-jump {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.6rem;
+    max-width: 52rem;
+    margin-inline: auto;
   }
   .nx-jump a {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
+    gap: 0.45rem;
+    padding: 0.55rem 1.05rem;
     border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.2);
+    backdrop-filter: blur(6px);
     font-weight: 700;
     font-size: 0.95rem;
-    color: var(--navy);
+    color: var(--white);
     text-decoration: none;
-    box-shadow: 0 6px 16px -12px rgb(11 26 51 / 0.45);
   }
   .nx-jump a :global(svg) {
-    color: var(--teal-dark);
+    color: var(--gold-light);
   }
   @media (hover: hover) {
     .nx-jump a {
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
     }
     .nx-jump a:hover {
       transform: translateY(-2px);
-      border-color: var(--teal);
+      background: rgb(255 255 255 / 0.14);
+      border-color: rgb(252 220 109 / 0.6);
     }
   }
-  .nx-hero__art {
-    position: relative;
-    justify-self: center;
-    width: min(19rem, 70vw);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    overflow: hidden;
-    background: linear-gradient(150deg, rgb(12 138 168 / 0.25), rgb(209 154 74 / 0.4));
-    box-shadow: 0 0 0 8px rgb(255 255 255 / 0.7), 0 30px 50px -30px rgb(11 26 51 / 0.5);
+  .nx-community {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin: 1.6rem 0 0;
+    font-weight: 700;
+    color: #a9dceb;
   }
-  .nx-hero__art :global(.nx-hero__toon) {
-    position: absolute;
-    inset: 6% 0 auto;
-    width: 100%;
-    height: auto;
-    mix-blend-mode: multiply;
+  .nx-community :global(svg) {
+    color: var(--gold-light);
   }
-  @media (max-width: 51.99rem) {
-    .nx-hero__art {
-      width: min(9.5rem, 42vw);
-      order: -1;
-    }
+  .nx-community a {
+    color: var(--gold-light);
+    font-weight: 800;
+  }
+  @media (max-width: 36rem) {
     .nx-jump {
       gap: 0.45rem;
     }
     .nx-jump a {
-      padding: 0.4rem 0.75rem;
+      padding: 0.42rem 0.8rem;
       font-size: 0.86rem;
     }
+  }
+
+  /* טיקר הכותרות: פס מבזקים שזז לאט, נעצר כשמצביעים עליו */
+  .nx-ticker {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(0 0 0 / 0.25);
+  }
+  .nx-ticker__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: none;
+    padding: 0.7rem 1.1rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-weight: 900;
+  }
+  .nx-ticker__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: #c0392b;
+    animation: nx-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes nx-pulse {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  .nx-ticker__track {
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    flex: 1;
+  }
+  .nx-ticker__row {
+    display: flex;
+    flex: none;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: nx-tick 110s linear infinite;
+  }
+  .nx-ticker:hover .nx-ticker__row,
+  .nx-ticker:focus-within .nx-ticker__row {
+    animation-play-state: paused;
+  }
+  @keyframes nx-tick {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  .nx-ticker__row li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .nx-ticker__row li::after {
+    content: '✦';
+    margin-inline: 1.1rem;
+    color: var(--gold-light);
+    font-size: 0.8rem;
+  }
+  .nx-ticker__row a {
+    padding-block: 0.7rem;
+    color: var(--white);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .nx-ticker__row a:hover {
+    color: var(--gold-light);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nx-orb,
+    .nx-ticker__dot {
+      animation: none;
+    }
+    .nx-ticker__row {
+      animation: none;
+    }
+    .nx-ticker__track {
+      overflow-x: auto;
+    }
+    .nx-ticker__row--copy {
+      display: none;
+    }
+  }
+
+  /* ---------- תגיות על התמונות ---------- */
+  .nx-tag {
+    position: absolute;
+    z-index: 2;
+    top: 0.75rem;
+    inset-inline-start: 0.75rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    color: var(--navy);
+    font-size: 0.82rem;
+    font-weight: 800;
+    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5);
+    pointer-events: none;
+  }
+  .nx-n__badge {
+    inset-inline-start: auto !important;
+    inset-inline-end: 0.75rem;
+  }
+
+  /* ---------- "הבא בתור": מוביל מפריט לפריט ---------- */
+  .nx-next {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--line);
+    font-weight: 800;
+    color: var(--gold-dark);
+    text-decoration: none;
+  }
+  .nx-next:hover {
+    color: var(--teal-dark);
   }
 
   /* ---------- כותרות האזורים ---------- */
@@ -372,7 +557,6 @@ const has = (id: string) => issue.cards.some((c) => c.id === id);
   /* ---------- אצל נוגה ---------- */
   .nx-noga {
     background: var(--mist);
-    padding-top: 1.5rem;
   }
   .nx-cards {
     list-style: none;
