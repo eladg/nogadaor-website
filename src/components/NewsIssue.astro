@@ -218,7 +218,31 @@ const topCount = news.length % 2 === 0 ? 2 : 1;
       ))}
     </ul>
 
-    <!-- שאר החדשות ממשיכות ברצף, בלי כותרת. ידיעה ראשית ואחריה שורות עם תמונה קטנה -->
+  </div>
+</section>
+
+<!-- השאלון: באנר כהה ובולט, בסגנון הבאנר שבעמוד הבית, אחרי ההודעות ומעל שאר החדשות (נוגה, 26.11) -->
+<section id="quiz" class="nx-quiz" aria-labelledby="quiz-title">
+  <div class="container">
+    <div class="nx-quiz__card">
+      <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
+      <div class="nx-quiz__body">
+        <h2 id="quiz-title" class="nx-quiz__title no-grad">שאלון מיקוד פיתוח עסקי{' '}<span>להגדלת הכנסות בלי הוצאות פרסום</span></h2>
+        <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
+        <ul class="nx-quiz__gets">
+          <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
+          <li><Star size={16} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
+          <li><Star size={16} /> מה כבר עובד אצלך ושווה לחזק</li>
+        </ul>
+        <a class="nx-btn nx-btn--gold nx-btn--big" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- שאר החדשות, אחרי השאלון (נוגה, 26.11: השאלון מעל הכתבות) -->
+<section class="section nx-feed nx-feed--news" aria-label="חדשות החודש">
+  <div class="container">
     <ul id="news" class="nx-list">
       {news.map((n, i) => (
         <li id={n.id} class:list={['nx-n reveal', i < topCount && 'nx-n--top', i < topCount && topCount === 2 && 'nx-n--pair']}>
@@ -247,25 +271,6 @@ const topCount = news.length % 2 === 0 ? 2 : 1;
         </li>
       ))}
     </ul>
-  </div>
-</section>
-
-<!-- השאלון: באנר כהה ובולט, בסגנון הבאנר שבעמוד הבית (אחרי כל התוכן, כדי לא לחתוך את רצף הקריאה) -->
-<section id="quiz" class="nx-quiz" aria-labelledby="quiz-title">
-  <div class="container">
-    <div class="nx-quiz__card">
-      <Image src={img('character/pointing-down-bust-clear.webp')} alt="" widths={[240, 400]} sizes="12rem" class="nx-quiz__toon" />
-      <div class="nx-quiz__body">
-        <h2 id="quiz-title" class="nx-quiz__title no-grad">שאלון מיקוד פיתוח עסקי{' '}<span>להגדלת הכנסות בלי הוצאות פרסום</span></h2>
-        <p class="nx-quiz__text">עשרות בעלות ובעלי עסקים כבר בדקו. שאלון קצר שמסתכל על העסק מלמעלה, כמו בפגישת ייעוץ, ובסופו מקבלים מיד</p>
-        <ul class="nx-quiz__gets">
-          <li><Star size={16} /> תמונת מצב של העסק ב-{quizAreas.length} תחומים</li>
-          <li><Star size={16} /> העצות שכדאי להתחיל מהן, לפי התשובות שלך</li>
-          <li><Star size={16} /> מה כבר עובד אצלך ושווה לחזק</li>
-        </ul>
-        <a class="nx-btn nx-btn--gold nx-btn--big" href="/guides/business-focus-quiz/">לבדיקת העסק שלך <span aria-hidden="true">←</span></a>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1366,11 +1371,12 @@ const topCount = news.length % 2 === 0 ? 2 : 1;
     color: var(--white);
   }
 
-  /* שאר החדשות ממשיכות אחרי ההודעות, עם רווח וקו זהב דק בלבד */
-  .nx-list {
-    margin-top: clamp(3rem, 6vw, 4.5rem);
-    padding-top: clamp(2rem, 4vw, 3rem);
-    border-top: 1.5px solid rgb(209 154 74 / 0.5);
+  /* שאר החדשות: אזור משלהם אחרי השאלון */
+  .nx-feed--news {
+    background: var(--white);
+  }
+  .nx-feed--news .nx-list {
+    margin-top: 0;
     scroll-margin-top: var(--header-h);
   }
 
