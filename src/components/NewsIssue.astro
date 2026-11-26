@@ -39,6 +39,11 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     <span class="nx-orb nx-orb--1"></span>
     <span class="nx-orb nx-orb--2"></span>
     <span class="nx-orb nx-orb--3"></span>
+    <span class="nx-spark nx-spark--1">✦</span>
+    <span class="nx-spark nx-spark--2">✧</span>
+    <span class="nx-spark nx-spark--3">✦</span>
+    <span class="nx-spark nx-spark--4">✧</span>
+    <span class="nx-spark nx-spark--5">✦</span>
   </div>
   <div class="container nx-hero__inner">
     <p class="nx-issue"><Star size={13} /> {issue.month}</p>
@@ -69,6 +74,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
       </ul>
     </div>
   </div>
+  <svg class="nx-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 C 180 6 360 58 560 30 C 760 4 940 52 1140 26 C 1260 10 1360 22 1440 30 L1440 60 L0 60 Z" /></svg>
 </header>
 
 <!-- מבצע מיוחד: כרטיס שחור-זהב בולט, מיד אחרי הפתיח (בתוך אזור בהיר, כי הפתיח כהה) -->
@@ -77,6 +83,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     <div class="container">
       <div class="nx-promo reveal">
         <span class="nx-promo__label">{p.label}</span>
+        {p.burst && <span class="nx-burst" aria-hidden="true">{p.burst}</span>}
         <h2 id={`${p.id}-title`} class="nx-promo__title no-grad">{p.title}</h2>
         <p class="nx-promo__text">{p.text}</p>
         {p.deadline && <p class="nx-promo__deadline"><Icon name="clock" size={16} /> {p.deadline}</p>}
@@ -96,7 +103,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
 <!-- אצל נוגה: כרטיסים אחידים -->
 <section class="section nx-noga" aria-labelledby="noga-title">
   <div class="container">
-    <h2 id="noga-title" class="nx-sec-title">הודעות קהילה חשובות</h2>
+    <h2 id="noga-title" class="nx-sec-title">הודעות קהילה חשובות<span class="nx-sparks" aria-hidden="true">✦<span>✧</span></span></h2>
     <ul class="nx-cards">
       {issue.cards.map((c) => (
         <li id={c.id} class="nx-c reveal">
@@ -173,7 +180,7 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
 <!-- חדשות מעניינות מהשבוע: כרטיסים בהירים, כותרת אחת, משפט אחד, והשאר ב"להמשך קריאה" -->
 <section id="news" class="section nx-news" aria-labelledby="news-title">
   <div class="container">
-    <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהחודש</h2>
+    <h2 id="news-title" class="nx-sec-title">חדשות מעניינות מהחודש<span class="nx-sparks" aria-hidden="true">✦<span>✧</span></span></h2>
     <p class="nx-sec-sub">מה שקרה החודש במשק, ב-AI ובכלים הדיגיטליים</p>
     <ul class="nx-grid">
       {issue.news.map((n, i) => (
@@ -1119,5 +1126,189 @@ const next = (id: string) => seq[seq.findIndex((x) => x.id === id) + 1];
     border-bottom: 1px solid var(--line);
     color: var(--navy);
     text-decoration: none;
+  }
+
+  /* ================================================================
+     סבב 8 (נוגה, 2026-11-26): יותר שמח ומרגש, פחות מכונה. שוברים את הריבועים
+     בעדינות: הטיות קטנות, פינות לא סימטריות, מדבקות, גל, ניצוצות, ורשת חדשות
+     שהידיעה הראשונה בה רחבה. בלי עיגולים ובלי קו מתחת לכותרות.
+     ================================================================ */
+  .nx-hero {
+    padding-bottom: 0;
+  }
+  .nx-wave {
+    display: block;
+    width: 100%;
+    height: clamp(26px, 4vw, 54px);
+    margin-top: -1px;
+    fill: var(--mist);
+  }
+  .nx-ticker {
+    background: rgb(0 0 0 / 0.18);
+  }
+  .nx-spark {
+    position: absolute;
+    color: var(--gold-light);
+    opacity: 0.8;
+    animation: nx-twinkle 3.2s ease-in-out infinite;
+  }
+  .nx-spark--1 { top: 18%; right: 12%; font-size: 1.6rem; }
+  .nx-spark--2 { top: 34%; left: 10%; font-size: 1.1rem; color: #8fdcec; animation-delay: 0.8s; }
+  .nx-spark--3 { top: 64%; right: 22%; font-size: 0.9rem; animation-delay: 1.6s; }
+  .nx-spark--4 { top: 12%; left: 28%; font-size: 1.3rem; color: #fff; animation-delay: 2.2s; }
+  .nx-spark--5 { top: 58%; left: 18%; font-size: 1.7rem; animation-delay: 1.1s; }
+  @keyframes nx-twinkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+    50% { transform: scale(0.55) rotate(25deg); opacity: 0.35; }
+  }
+  .nx-hero__title span {
+    display: inline-block;
+    rotate: -2deg;
+  }
+
+  /* כותרות האזורים: לצד ולא באמצע, עם ניצוצות */
+  .nx-sec-title,
+  .nx-sec-sub {
+    text-align: start;
+  }
+  .nx-sec-sub {
+    margin-inline: 0;
+  }
+  .nx-sparks {
+    display: inline-block;
+    margin-inline-start: 0.4em;
+    font-size: 0.55em;
+    color: var(--gold-dark);
+    vertical-align: super;
+    rotate: 12deg;
+  }
+  .nx-sparks span {
+    font-size: 0.7em;
+    color: var(--teal);
+  }
+
+  /* המבצע: מוטה קצת, עם מדבקת כוכב */
+  .nx-promo {
+    rotate: -1deg;
+    border-radius: 34px 12px 34px 12px;
+  }
+  .nx-promo > * {
+    rotate: 1deg;
+  }
+  .nx-promo .nx-promo__label {
+    rotate: -4deg;
+  }
+  .nx-burst {
+    position: absolute;
+    top: -1.6rem;
+    inset-inline-end: -0.6rem;
+    display: grid;
+    place-items: center;
+    width: 6.4rem;
+    height: 6.4rem;
+    background: var(--gold-gradient);
+    color: var(--navy);
+    font-size: 1.7rem;
+    font-weight: 900;
+    clip-path: polygon(50% 0%, 61% 14%, 79% 8%, 82% 26%, 100% 32%, 90% 50%, 100% 68%, 82% 74%, 79% 92%, 61% 86%, 50% 100%, 39% 86%, 21% 92%, 18% 74%, 0% 68%, 10% 50%, 0% 32%, 18% 26%, 21% 8%, 39% 14%);
+    animation: nx-wobble 4s ease-in-out infinite;
+  }
+  @keyframes nx-wobble {
+    0%, 100% { rotate: 12deg; scale: 1; }
+    50% { rotate: 4deg; scale: 1.07; }
+  }
+
+  /* כרטיסי הקהילה: מוטים בעדינות לסירוגין, פינות לא סימטריות, מדבקות */
+  .nx-c {
+    border-radius: 30px 10px 30px 10px;
+  }
+  .nx-c:nth-child(3n + 1) { rotate: -1.1deg; }
+  .nx-c:nth-child(3n + 2) { rotate: 0.9deg; translate: 0 1.4rem; }
+  .nx-c:nth-child(3n) { rotate: -0.4deg; }
+  .nx-cards {
+    padding-bottom: 1.4rem;
+  }
+  .nx-tag {
+    rotate: -4deg;
+    border-radius: 6px 14px 6px 14px;
+  }
+  li:nth-child(3n + 2) > * > .nx-tag,
+  li:nth-child(3n + 2) .nx-tag { background: var(--gold-light); rotate: 3deg; }
+  li:nth-child(3n) .nx-tag { background: #bfeaf3; }
+
+  /* חדשות: הידיעה הראשונה רחבה, השאר מוטות לסירוגין */
+  .nx-n {
+    border-radius: 12px 28px 12px 28px;
+  }
+  .nx-n:nth-child(odd) { rotate: -0.7deg; }
+  .nx-n:nth-child(even) { rotate: 0.7deg; }
+  @media (min-width: 62.01rem) {
+    .nx-grid > .nx-n:first-child {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      rotate: -0.5deg;
+    }
+    .nx-grid > .nx-n:first-child .nx-n__media :global(.cc) {
+      height: 100%;
+    }
+    .nx-grid > .nx-n:first-child .nx-n__title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* השאלון והקבוצה */
+  .nx-quiz__card {
+    rotate: 0.6deg;
+    border-radius: 12px 36px 12px 36px;
+  }
+  .nx-quiz :global(.nx-quiz__toon) {
+    rotate: -6deg;
+  }
+  .nx-group {
+    border-radius: 36px 12px 36px 12px;
+  }
+  .nx-group :global(.nx-group__img) {
+    padding: 10px 10px 28px;
+    background: #fff;
+    border-radius: 4px;
+    rotate: 3deg;
+    box-shadow: 0 24px 40px -22px rgb(11 26 51 / 0.6);
+  }
+
+  /* ריחוף: הכרטיס מתיישר וקופץ קצת, כמו להרים פתק מהשולחן */
+  @media (hover: hover) {
+    .nx-c,
+    .nx-n,
+    .nx-promo {
+      transition: rotate 0.3s ease, translate 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease, opacity 0.6s ease;
+    }
+    .nx-c:hover,
+    .nx-n:hover {
+      rotate: 0deg;
+    }
+  }
+  @media (max-width: 47.99rem) {
+    .nx-c:nth-child(3n + 2) { translate: none; }
+    .nx-c:nth-child(odd) { rotate: -0.8deg; }
+    .nx-c:nth-child(even) { rotate: 0.8deg; }
+    .nx-burst { width: 5rem; height: 5rem; font-size: 1.35rem; top: -1.4rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nx-spark,
+    .nx-burst {
+      animation: none;
+    }
+  }
+  /* ההטיות לא יוצרות גלילה לצדדים */
+  .nx-promo-sec,
+  .nx-noga,
+  .nx-news,
+  .nx-quiz,
+  .nx-group-sec {
+    overflow-x: clip;
+  }
+  .nx-promo-sec {
+    padding-top: 2.75rem;
   }
 </style>

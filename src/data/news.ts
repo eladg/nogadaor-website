@@ -49,6 +49,7 @@ export type NewsItem = {
 export type Promo = {
   id: string;
   label: string; // התווית בפינה, למשל "בלאק פריידיי"
+  burst?: string; // מדבקה בולטת בפינה, למשל "40%"
   title: string;
   text: string;
   deadline?: string;
@@ -77,6 +78,7 @@ export const issues: Issue[] = [
     promo: {
       id: 'black-friday',
       label: 'בלאק פריידיי',
+      burst: '40%',
       title: '40% הנחה על פגישה ראשונה',
       text: 'לכבוד בלאק פריידיי, פגישת ייעוץ ראשונה עם נוגה ב-40% הנחה. שעה של פיצוח עסקי שיוצאים ממנה עם כיוון ברור, תובנות וסיכום, ועם הצעד הבא של העסק.',
       deadline: 'עד סייבר מאנדיי, 30.11',
