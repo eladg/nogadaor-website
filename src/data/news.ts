@@ -132,7 +132,9 @@ export const issues: Issue[] = [
           { date: '27.12', day: 'ראשון', time: '17:00–19:30', areas: 'רמב"ם, נעורים וגני אסתר' },
           { date: '29.12', day: 'שלישי', time: '09:30–12:00', areas: 'אברמוביץ׳ ונחלת יהודה' },
         ],
-        cover: { title: 'נטוורקינג|*בשכונות*', motif: 'chat', tone: 'warm' },
+        // תמונה אמיתית מהקהילה (נוגה, 26.11: "תמונות שלי ושל הקהילה יש לך כבר בתיקייה"), במקום כריכה
+        image: 'testimonials/moments/01-group-five.jpg',
+        imageAlt: 'נוגה עם בעלות עסקים מהקהילה בכנס',
         cta: { href: 'https://tovimleasakim.pages.dev', label: 'להרשמה למפגש', external: true },
       },
       {
